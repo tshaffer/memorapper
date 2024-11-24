@@ -1,3 +1,10 @@
+/* #root {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+ */
 /* html, body {
   overflow: hidden;
   touch-action: none;
@@ -82,10 +89,10 @@
   height: 100%;
 }
 
-.full-width-container {
+/* .full-width-container {
   max-width: 90% !important;
   padding: 20px;
-}
+} */
 
 /* Dim the first three columns by default */
 .table-row-hover .dimmed {

@@ -859,8 +859,6 @@ const ReviewsPage: React.FC = () => {
     );
   }
 
-  console.log('apiKey', import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY);
-
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!} libraries={libraries}>
       <div className="page-container">
