@@ -1,4 +1,4 @@
-import { openai } from '../index';
+import openai from '../services/openai';
 import { Request, Response } from 'express';
 import ItemOrderedModel from '../models/ItemOrdered';
 

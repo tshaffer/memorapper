@@ -1,5 +1,5 @@
 import { Request, response, Response } from 'express';
-import { openai } from '../index';
+import openai from '../services/openai';
 import Review, { IReview } from '../models/Review';
 import MongoPlace, { IMongoPlace } from '../models/MongoPlace';
 import { PlacesReviewsCollection, GooglePlace, MemoRappReview, QueryRequestBody, QueryResponse } from '../types';

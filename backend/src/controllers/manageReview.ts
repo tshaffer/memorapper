@@ -1,5 +1,5 @@
 import { ChatCompletionMessageParam } from 'openai/resources/chat';
-import { openai } from '../index';
+import openai from '../services/openai';
 import { Request, Response } from 'express';
 import Review, { IReview } from "../models/Review";
 import { extractFieldFromResponse, extractItemReviews, removeSquareBrackets } from '../utilities';
