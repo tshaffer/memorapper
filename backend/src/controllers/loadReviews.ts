@@ -67,8 +67,8 @@ export const addReviewsFromFileHandler = async (
 
   const { fileName } = request.body;
 
-  const projectRoot = process.cwd();
-  const reviewsFilePath = path.join(projectRoot, 'testData', fileName);
+  const backendRoot = process.cwd();
+  const reviewsFilePath = path.join(backendRoot, '../testData', fileName);
 
   try {
     const data = fs.readFileSync(reviewsFilePath, 'utf8');
