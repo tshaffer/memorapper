@@ -225,7 +225,7 @@ const ReviewForm: React.FC = () => {
   };
 
   return (
-    <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY!} libraries={libraries}>
+    <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!} libraries={libraries}>
       <Paper
         style={{
           padding: isMobile ? '16px' : '24px',
