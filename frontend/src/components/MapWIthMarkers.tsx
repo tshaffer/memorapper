@@ -3,15 +3,39 @@ import { ExtendedGooglePlace } from '../types';
 import { AdvancedMarker, APIProvider, InfoWindow, Map, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace } from '../utilities';
 import '../App.css';
-import { Button, Typography } from '@mui/material';
+import { Button } from '@mui/material';
+
+const DEFAULT_ZOOM = 14;
+
+const pinStyle: React.CSSProperties = {
+  width: '0',
+  height: '0',
+  borderLeft: '10px solid transparent',
+  borderRight: '10px solid transparent',
+  borderBottom: '20px solid red', /* Change color as needed */
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -100%)' /* Adjust as needed */
+};
+
+const textStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: '-18px', // Move the text slightly up to align with the triangle's tip
+  left: '6px', // Position to the right of the triangle
+  whiteSpace: 'nowrap', // Prevent text wrapping
+  color: 'red',
+  background: 'transparent', // Optional: Add background for better readability
+  padding: '2px 4px', // Optional: Add padding
+  borderRadius: '4px', // Optional: Round the corners of the background
+  fontSize: '14px', // Adjust font size as needed
+  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)' // Optional: Add shadow for a floating effect
+};
 
 interface MapWithMarkersProps {
   initialCenter: google.maps.LatLngLiteral;
   locations: ExtendedGooglePlace[];
 }
-
-// const DEFAULT_CENTER = { lat: 37.3944829, lng: -122.0790619 };
-const DEFAULT_ZOOM = 14;
 
 const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, locations }) => {
 
@@ -87,15 +111,27 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
     }
   };
 
-
-  const renderMarkers = (): JSX.Element[] => {
-    return locations.map((location, index) => (
+  const renderMarker = (location: ExtendedGooglePlace, index: number): JSX.Element => {
+    return (
       <AdvancedMarker
         key={index}
         position={getLatLngFromPlace(location)}
         onClick={() => handleMarkerClick(location)}
-      />
-    ));
+      >
+        <div style={{ position: 'relative' }}>
+          <div style={pinStyle}></div>
+          <div style={textStyle}>{location.name}</div>
+        </div>
+      </AdvancedMarker>
+    );
+  };
+
+  const renderMarkers = (): JSX.Element[] => {
+    const elements: JSX.Element[] = [];
+    for (let i = 0; i < locations.length; i++) {
+      elements.push(renderMarker(locations[i], i));
+    }
+    return elements;
   }
 
   const renderInfoWindow = (): JSX.Element => {
