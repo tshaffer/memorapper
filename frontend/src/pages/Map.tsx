@@ -119,8 +119,12 @@ const MapPage: React.FC = () => {
       <input
         type="text"
         placeholder="Enter the location"
-        onChange={handleAutocompleteInputChange}
-        style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }}
+        style={{
+          width: '100%',
+          padding: isMobile ? '8px' : '10px', // Smaller padding for mobile
+          boxSizing: 'border-box',
+          fontSize: isMobile ? '14px' : '16px', // Adjust font size
+        }}
       />
     </Autocomplete>
   );
@@ -130,7 +134,13 @@ const MapPage: React.FC = () => {
       return null;
     }
     return (
-      <div style={{ height: '700px', width: '100%' }}>
+      <div
+        style={{
+          flexGrow: 1, // Allow the map to grow and fill available space
+          height: '100%', // Ensure it fills the parent's height
+          width: '100%',
+        }}
+      >
         <MapWithMarkers
           key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })} // Forces re-render on prop change
           initialCenter={mapLocation!}
@@ -153,13 +163,18 @@ const MapPage: React.FC = () => {
     <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!} libraries={libraries}>
       <Paper
         style={{
-          padding: isMobile ? '16px' : '24px',
-          marginBottom: isMobile ? '56px' : '0',
-          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: isMobile ? '12px' : '24px',
+          minHeight: '100%',
+          height: '100%',
+          overflow: 'hidden', // Prevent layout breaking
         }}
       >
-        {renderMapAutocomplete()}
-        {renderMap()}
+        <div style={{ overflowY: 'auto', maxHeight: 'calc(100% - 700px)' }}>
+          {renderMapAutocomplete()}
+        </div>
+        <div style={{ flex: 1 }}>{renderMap()}</div>
       </Paper>
     </LoadScript>
   );

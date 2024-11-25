@@ -3,7 +3,7 @@ import { ExtendedGooglePlace } from '../types';
 import { AdvancedMarker, APIProvider, InfoWindow, Map, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace } from '../utilities';
 import '../App.css';
-import { Button } from '@mui/material';
+import { Button, useMediaQuery } from '@mui/material';
 
 const DEFAULT_ZOOM = 14;
 
@@ -38,6 +38,8 @@ interface MapWithMarkersProps {
 }
 
 const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, locations }) => {
+
+  const isMobile = useMediaQuery('(max-width:768px)');
 
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<ExtendedGooglePlace | null>(null);
@@ -173,8 +175,10 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
           <Button
             onClick={handleShowDirections}
             style={{
-              alignSelf: 'flex-start', // Ensures the button stays left-aligned
-              paddingLeft: '0px',
+              alignSelf: 'flex-start',
+              marginBottom: '8px',
+              padding: '8px 16px', // Ensure it's easy to tap
+              fontSize: isMobile ? '14px' : '16px', // Adjust font size for mobile
             }}
           >
             Directions

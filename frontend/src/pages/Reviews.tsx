@@ -315,7 +315,6 @@ const ReviewsPage: React.FC = () => {
   };
 
   const handleEditReview = (review: MemoRappReview) => {
-    console.log('handleEditReview', review);
     const place: GooglePlace | undefined = getPlaceById(review.place_id);
     if (!place) {
       console.error('Place not found for review:', review);
@@ -732,6 +731,9 @@ const ReviewsPage: React.FC = () => {
                       <IconButton onClick={() => handleShowMap(place.place_id)} size="small" title="View Map">
                         <MapOutlinedIcon fontSize="small" />
                       </IconButton>
+                      <IconButton onClick={() => handleShowDirections(place.place_id)} size="small" title="Show Directions">
+                        <DirectionsIcon />
+                      </IconButton>
                       <IconButton onClick={() => handlePlaceClick(place)} size="small" title="View Reviews">
                         <RateReviewOutlinedIcon fontSize="small" />
                       </IconButton>
@@ -780,6 +782,11 @@ const ReviewsPage: React.FC = () => {
                         <TableCell align="right" className="dimmed" style={smallColumnStyle}>
                           <IconButton onClick={() => handleShowDirections(place.place_id)}>
                             <DirectionsIcon />
+                          </IconButton>
+                        </TableCell>
+                        <TableCell align="right" className="dimmed" style={smallColumnStyle}>
+                          <IconButton onClick={() => handlePlaceClick(place)}>
+                            <RateReviewOutlinedIcon />
                           </IconButton>
                         </TableCell>
                         <TableCell align="right" style={thumbsStyle}>

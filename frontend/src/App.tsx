@@ -19,7 +19,13 @@ const App: React.FC = () => {
           <Button color="inherit" component={Link} to="/add-review">Add Review</Button>
         </Toolbar>
       </AppBar>
-      <Container className="full-width-container">
+      <Container
+        className="full-width-container"
+        style={{
+          height: 'calc(100vh - 64px)', // Subtract AppBar height
+          overflow: 'hidden',          // Prevent unwanted scrollbars
+        }}
+      >
         <Routes>
           <Route path="/" element={<Reviews />} />
           <Route path="/map" element={<Map />} />
