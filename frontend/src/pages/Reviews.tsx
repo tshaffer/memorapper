@@ -15,8 +15,8 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import '../App.css';
 
 import { FilterQueryParams, PlacesReviewsCollection, GooglePlace, ItemReview, MemoRappReview, QueryRequestBody, WouldReturnQuery } from '../types';
-import { Autocomplete, Libraries, LoadScript } from '@react-google-maps/api';
-import { getCityNameFromPlace } from '../utilities';
+import { Autocomplete, LoadScript } from '@react-google-maps/api';
+import { getCityNameFromPlace, libraries } from '../utilities';
 
 interface WouldReturnCounts {
   yesCount: number;
@@ -80,7 +80,6 @@ const ReviewsPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<'list' | 'details'>('list');
   const [selectedPlace, setSelectedPlace] = useState<GooglePlace | null>(null);
 
-  const libraries = ['places'] as Libraries;
 
   useEffect(() => {
     if (navigator.geolocation) {

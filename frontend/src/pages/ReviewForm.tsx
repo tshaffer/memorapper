@@ -18,16 +18,15 @@ import {
   Radio,
   CircularProgress,
 } from '@mui/material';
-import { LoadScript, Autocomplete, Libraries } from '@react-google-maps/api';
+import { LoadScript, Autocomplete } from '@react-google-maps/api';
 import { ReviewFormDisplayTabs, ChatResponse, GooglePlace, FreeformReviewProperties, PreviewRequestBody, ReviewEntity, SubmitReviewBody, StructuredReviewProperties, MemoRappReview, EditableReview, PreviewResponse, ChatRequestBody } from '../types';
 import { pickGooglePlaceProperties } from '../utilities';
+import { libraries } from '../utilities';
 
 type ChatMessage = {
   role: 'user' | 'ai';
   message: string | FreeformReviewProperties;
 };
-
-const libraries = ['places'] as Libraries;
 
 const ReviewForm: React.FC = () => {
 

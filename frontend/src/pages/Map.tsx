@@ -1,13 +1,13 @@
-import { Autocomplete, Libraries, LoadScript } from '@react-google-maps/api';
+import { Autocomplete, LoadScript } from '@react-google-maps/api';
 import MapWithMarkers from '../components/MapWIthMarkers';
 import { Paper, useMediaQuery } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { ExtendedGooglePlace, GooglePlace, MemoRappReview } from '../types';
 import { useParams } from 'react-router-dom';
+import { libraries } from '../utilities';
 
 const MapPage: React.FC = () => {
   const { _id } = useParams<{ _id: string }>();
-  console.log('MapPage _id:', _id);
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
@@ -17,7 +17,6 @@ const MapPage: React.FC = () => {
   const [reviews, setReviews] = useState<MemoRappReview[]>([]);
 
   const mapAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const libraries = ['places'] as Libraries;
 
   // Fetch current location and places/reviews on mount
   useEffect(() => {
@@ -68,7 +67,6 @@ const MapPage: React.FC = () => {
           lng: googlePlace.geometry.location.lng,
         };
         setMapLocation(location);
-        console.log('Setting map location based on placeId:', location);
       } else {
         console.warn('Place not found or missing geometry for placeId:', _id);
       }
