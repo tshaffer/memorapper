@@ -23,6 +23,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<Reviews />} />
           <Route path="/map" element={<Map />} />
+          <Route path="/map/:_id" element={<Map />} />
           <Route path="/add-review" element={<ReviewForm />} />
           <Route path="/add-review/:_id" element={<ReviewForm />} />
         </Routes>

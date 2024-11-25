@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { List, ListItem, ListItemText, useMediaQuery } from '@mui/material';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Typography, Button, Popover, FormControlLabel, Checkbox, TextField, ToggleButton, ToggleButtonGroup, Slider, Switch, Radio, Tooltip, Box } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Typography, Button, Popover, FormControlLabel, Checkbox, TextField, Slider, Switch, Radio, Tooltip, Box } from '@mui/material';
 
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import RateReviewOutlinedIcon from '@mui/icons-material/RateReviewOutlined';
@@ -14,9 +14,8 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 
 import '../App.css';
 
-import { FilterQueryParams, PlacesReviewsCollection, GooglePlace, ItemReview, MemoRappReview, QueryRequestBody, WouldReturnQuery, ExtendedGooglePlace } from '../types';
+import { FilterQueryParams, PlacesReviewsCollection, GooglePlace, ItemReview, MemoRappReview, QueryRequestBody, WouldReturnQuery } from '../types';
 import { Autocomplete, Libraries, LoadScript } from '@react-google-maps/api';
-import MapWithMarkers from '../components/MapWIthMarkers';
 import { getCityNameFromPlace } from '../utilities';
 
 interface WouldReturnCounts {
@@ -78,12 +77,8 @@ const ReviewsPage: React.FC = () => {
   const [standardizedItemsOrdered, setStandardizedItemsOrdered] = useState<string[]>([]);
   const [selectedItemsOrdered, setSelectedItemsOrdered] = useState<Set<string>>(new Set());
 
-  const [viewMode, setViewMode] = useState<'list' | 'details' | 'map'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'details'>('list');
   const [selectedPlace, setSelectedPlace] = useState<GooglePlace | null>(null);
-
-  const [selectedPlaceMapLocation, setSelectedPlaceMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
-  const [showSelectedPlaceMap, setShowSelectedPlaceMap] = useState<boolean>(false);
-  const selectedPlaceMapAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   const libraries = ['places'] as Libraries;
 
@@ -92,10 +87,6 @@ const ReviewsPage: React.FC = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setCurrentLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-          setSelectedPlaceMapLocation({
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           });
@@ -298,36 +289,20 @@ const ReviewsPage: React.FC = () => {
     }
   };
 
-  const getGooglePlaceFromPlace = (place: GooglePlace): google.maps.LatLngLiteral => {
-    return {
-      lat: place!.geometry!.location.lat,
-      lng: place!.geometry!.location.lng,
-    };
-  }
-
   const handlePlaceClick = (place: GooglePlace) => {
     setSelectedPlace(place);
-    setSelectedPlaceMapLocation(getGooglePlaceFromPlace(place));
     if (isMobile) {
       setViewMode('details');
     }
   }
 
   const handleShowMap = (placeId: string) => {
-    const googlePlace: GooglePlace | undefined = places.find(place => place.place_id === placeId);
-    if (googlePlace && googlePlace.geometry) {
-      setSelectedPlaceMapLocation(getGooglePlaceFromPlace(googlePlace));
-      setShowSelectedPlaceMap(true);
-      if (isMobile) {
-        setViewMode('map');
-      }
-    }
+    navigate(`/map/${placeId}`);
   };
 
   const handleBackToList = () => {
     setViewMode('list');
     setSelectedPlace(null);
-    setSelectedPlaceMapLocation(null);
   };
 
   const handleShowDirections = (placeId: string) => {
@@ -337,14 +312,6 @@ const ReviewsPage: React.FC = () => {
       const destinationLatLng: google.maps.LatLngLiteral = { lat: destinationLocation.lat, lng: destinationLocation.lng };
       const url = `https://www.google.com/maps/dir/?api=1&origin=${currentLocation.lat},${currentLocation.lng}&destination=${destinationLatLng.lat},${destinationLatLng.lng}&destination_place_id=${destination.name}`;
       window.open(url, '_blank');
-    }
-  };
-
-  const handleTogglePanel = (_: React.MouseEvent<HTMLElement>, newView: string | null) => {
-    if (newView === "map") {
-      setShowSelectedPlaceMap(true);
-    } else if (newView === "details") {
-      setShowSelectedPlaceMap(false);
     }
   };
 
@@ -361,86 +328,6 @@ const ReviewsPage: React.FC = () => {
   const handleDeleteReview = (review: MemoRappReview) => {
     console.log('handleDeleteReview', review);
   }
-
-  const handlePlaceChanged = () => {
-    if (selectedPlaceMapAutocompleteRef.current) {
-      const place: google.maps.places.PlaceResult = selectedPlaceMapAutocompleteRef.current.getPlace();
-      if (place.geometry !== undefined) {
-        const geometry: google.maps.places.PlaceGeometry = place.geometry!;
-        const newCoordinates: google.maps.LatLngLiteral = {
-          lat: geometry.location!.lat(),
-          lng: geometry.location!.lng(),
-        };
-        setSelectedPlaceMapLocation(newCoordinates);
-        console.log("Place changed:", place, newCoordinates);
-      }
-    }
-  };
-
-  const handleInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = event.target.value.trim().toLowerCase();
-
-    if (inputValue === "current location") {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            setSelectedPlaceMapLocation(
-              {
-                lat: latitude,
-                lng: longitude,
-              }
-            );
-            console.log("Current Location google.maps.LatLngLiteral:", { latitude, longitude });
-
-            // Optionally, you can use reverse geocoding here to convert coordinates to an address
-          },
-          (error) => {
-            console.error("Error retrieving current location:", error);
-          }
-        );
-      } else {
-        console.error("Geolocation is not supported by this browser.");
-      }
-    }
-  };
-
-  const getExtendedGooglePlaces = (): ExtendedGooglePlace[] => {
-    return places.map((place: GooglePlace) => {
-      const reviewsForPlace: MemoRappReview[] = getFilteredReviewsForPlace(place.place_id);
-      return {
-        ...place,
-        reviews: reviewsForPlace,
-      };
-    });
-  }
-
-  const renderMap = () => {
-    return (
-      <MapWithMarkers
-        key={JSON.stringify({ googlePlaces: places, specifiedLocation: selectedPlaceMapLocation })} // Forces re-render on prop change
-        initialCenter={selectedPlaceMapLocation!}
-        locations={getExtendedGooglePlaces()}
-      />
-    );
-  };
-
-  const renderMapView = () => {
-    if (!selectedPlaceMapLocation) {
-      return null;
-    }
-    return (
-      <div style={{ padding: '16px' }}>
-        <Button variant="outlined" onClick={handleBackToList} style={{ marginBottom: '16px' }}>
-          Back to List
-        </Button>
-        {renderSelectedPlaceMapAutocomplete()}
-        <div style={{ height: '400px', width: '100%' }}>
-          {renderMap()}
-        </div>
-      </div>
-    );
-  };
 
   const renderReviewDetails = (review: MemoRappReview): JSX.Element => {
     return (
@@ -804,57 +691,11 @@ const ReviewsPage: React.FC = () => {
       </Popover>
     );
   };
-  const renderSelectedPlaceMapAutocomplete = (): JSX.Element => {
-    return (
-      <Autocomplete
-        onLoad={(autocomplete) => (selectedPlaceMapAutocompleteRef.current = autocomplete)}
-        onPlaceChanged={handlePlaceChanged}
-      >
-        <input
-          type="text"
-          placeholder="Enter the location"
-          onChange={handleInputChange} // Custom input handling
-          style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }}
-        />
-      </Autocomplete>
-    );
-  }
 
-  const renderElementIDontKnowHowToName = (): JSX.Element => {
+  const renderDetailsPanel = (): JSX.Element => {
     return (
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <div>
-          <ToggleButtonGroup
-            value={showSelectedPlaceMap ? "map" : "details"}
-            exclusive
-            onChange={handleTogglePanel}
-            style={{ marginBottom: '10px', display: 'flex', justifyContent: 'left' }}
-          >
-            <ToggleButton value="map">
-              Map
-            </ToggleButton>
-            <ToggleButton value="details">
-              Reviews
-            </ToggleButton>
-          </ToggleButtonGroup>
-          {showSelectedPlaceMap ? ( // If the map is shown, render the autocomplete
-            renderSelectedPlaceMapAutocomplete()
-          ) : null}
-        </div>
-        <div
-          style={{ flex: 1 }}
-        >
-          {showSelectedPlaceMap ? (
-            <Paper id='mapContainer' className="map-container">
-              {renderMap()}
-            </Paper>
-          ) : (
-            <React.Fragment>
-              {renderReviewDetailsForSelectedPlace()}
-            </React.Fragment>
-          )
-          }
-        </div>
+      <div style={{ flex: 1 }}>
+        {renderReviewDetailsForSelectedPlace()}
       </div>
     );
   }
@@ -901,8 +742,7 @@ const ReviewsPage: React.FC = () => {
                 </div>
               ))}
             </div>
-          ) : viewMode === 'details' ? (
-            // Mobile Details View
+          ) : (
             <div style={{ padding: '16px' }}>
               <Button variant="outlined" onClick={handleBackToList} style={{ marginBottom: '16px' }}>
                 Back to List
@@ -914,9 +754,6 @@ const ReviewsPage: React.FC = () => {
                 </div>
               )}
             </div>
-          ) : (
-            // Mobile Map View
-            renderMapView()
           )
         ) : (
           <div className="table-and-details-container">
@@ -960,7 +797,7 @@ const ReviewsPage: React.FC = () => {
                 </TableBody>
               </Table >
             </TableContainer >
-            {renderElementIDontKnowHowToName()}
+            {renderDetailsPanel()}
           </div >
         )}
       </div >
