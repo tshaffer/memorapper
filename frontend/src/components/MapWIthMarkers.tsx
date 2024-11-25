@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ExtendedGooglePlace, GooglePlace } from '../types';
+import { ExtendedGooglePlace } from '../types';
 import { AdvancedMarker, APIProvider, InfoWindow, Map, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace } from '../utilities';
 import '../App.css';
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 
 interface MapWithMarkersProps {
   initialCenter: google.maps.LatLngLiteral;
@@ -78,6 +78,16 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
     setZoom(event.detail.zoom);
   };
 
+  const handleShowDirections = () => {
+    if (selectedLocation && currentLocation) {
+      const destinationLocation: google.maps.LatLngLiteral = selectedLocation.geometry!.location;
+      const destinationLatLng: google.maps.LatLngLiteral = { lat: destinationLocation.lat, lng: destinationLocation.lng };
+      const url = `https://www.google.com/maps/dir/?api=1&origin=${currentLocation.lat},${currentLocation.lng}&destination=${destinationLatLng.lat},${destinationLatLng.lng}&destination_place_id=${selectedLocation.name}`;
+      window.open(url, '_blank');
+    }
+  };
+
+
   const renderMarkers = (): JSX.Element[] => {
     return locations.map((location, index) => (
       <AdvancedMarker
@@ -94,31 +104,53 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
         position={getLatLngFromPlace(selectedLocation!)}
         onCloseClick={handleCloseInfoWindow}
       >
-        <div style={{ padding: '4px' }}>
+        <div
+          style={{
+            padding: '4px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            fontSize: '13px', // Matches .gm-style-iw
+          }}
+        >
           <style>
             {`
-            .gm-style-iw-chr {
-              margin-top: -8px;
-              height: 30px;
-            }
-
-            .gm-style-iw {
-              font-size: 13px;
-            }
-          `}
+              .gm-style-iw-chr {
+                margin-top: -8px;
+                height: 30px;
+              }
+  
+              .gm-style-iw {
+                font-size: 13px;
+              }
+            `}
           </style>
-          <h4 style={{ marginBlockStart: '-6px ' }}>{selectedLocation!.name}</h4>
-          <a href={selectedLocation!.website} target="_blank" rel="noopener noreferrer">
+          <h4 style={{ margin: '0 0 8px 0' }}>{selectedLocation!.name}</h4>
+          <a
+            href={selectedLocation!.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ textDecoration: 'none', color: 'blue' }}
+          >
             {selectedLocation!.website}
           </a>
-          <Typography
+          <Button
+            onClick={handleShowDirections}
             style={{
-              marginTop: '8px',
+              alignSelf: 'flex-start', // Ensures the button stays left-aligned
+              paddingLeft: '0px',
+            }}
+          >
+            Directions
+          </Button>
+          <div
+            style={{
               fontSize: 'inherit',
+              lineHeight: '1.5',
             }}
           >
             {selectedLocation!.reviews[0]?.freeformReviewProperties?.reviewText || 'No review available.'}
-          </Typography>
+          </div>
         </div>
       </InfoWindow>
     );
