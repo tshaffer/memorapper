@@ -331,41 +331,65 @@ const ReviewForm: React.FC = () => {
             renderPreviewResponse(freeformReviewProperties)
           )}
           {displayTab === ReviewFormDisplayTabs.ChatHistory && (
-            <Box>
-              {chatHistory.map((msg, idx) => (
-                <Box
-                  key={idx}
-                  sx={{
-                    display: 'flex',
-                    justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                    mb: 2,
-                  }}
-                >
-                  <Card
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%', // Full height of the parent container
+              }}
+            >
+              {/* Scrollable Chat History */}
+              <Box
+                sx={{
+                  flexGrow: 1, // Take available space
+                  overflowY: 'auto', // Enable scrolling
+                  maxHeight: 'calc(100vh - 400px)', // Adjust height based on other components like headers
+                  padding: 2,
+                }}
+              >
+                {chatHistory.map((msg, idx) => (
+                  <Box
+                    key={idx}
                     sx={{
-                      backgroundColor: msg.role === 'user' ? 'lightgrey' : 'white',
-                      padding: 2,
-                      maxWidth: '80%',
-                      borderRadius: 2,
+                      display: 'flex',
+                      justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                      mb: 2,
                     }}
                   >
-                    {typeof msg.message === 'string' ? (
-                      <Typography variant="body1">{msg.message}</Typography>
-                    ) : (
-                      renderPreviewResponse(msg.message as ReviewEntity)
-                    )}
-                  </Card>
-                </Box>
-              ))}
-              <TextField
-                fullWidth
-                variant="outlined"
-                placeholder="Enter your message..."
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleChat()}
-                style={{ marginTop: 10 }}
-              />
+                    <Card
+                      sx={{
+                        backgroundColor: msg.role === 'user' ? 'lightgrey' : 'white',
+                        padding: 2,
+                        maxWidth: '80%',
+                        borderRadius: 2,
+                      }}
+                    >
+                      {typeof msg.message === 'string' ? (
+                        <Typography variant="body1">{msg.message}</Typography>
+                      ) : (
+                        renderPreviewResponse(msg.message as ReviewEntity)
+                      )}
+                    </Card>
+                  </Box>
+                ))}
+              </Box>
+
+              {/* Fixed Text Input Field */}
+              <Box
+                sx={{
+                  borderTop: '1px solid #ccc', // Optional: Separate visually from chat history
+                  padding: 2,
+                }}
+              >
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  placeholder="Enter your message..."
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleChat()}
+                />
+              </Box>
             </Box>
           )}
         </Box>
