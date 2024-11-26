@@ -19,6 +19,8 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+app.use('/api', routes);
+
 // Serve the frontend
 const frontendPath = path.resolve(__dirname, "../../frontend/dist");
 app.use(express.static(frontendPath));
@@ -26,7 +28,7 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(frontendPath, "index.html"));
 });
 
-app.use('/api', routes);
+// app.use('/api', routes);
 
 // // Serve the static files from the build directory
 // app.use(express.static(path.join(__dirname, 'dist')));
