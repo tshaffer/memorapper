@@ -19,15 +19,22 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+// Serve the frontend
+const frontendPath = path.resolve(__dirname, "../../frontend/dist");
+app.use(express.static(frontendPath));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
+});
+
 app.use('/api', routes);
 
-// Serve the static files from the build directory
-app.use(express.static(path.join(__dirname, 'dist')));
+// // Serve the static files from the build directory
+// app.use(express.static(path.join(__dirname, 'dist')));
 
-// Serve index.html for all other routes (React SPA behavior)
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
+// // Serve index.html for all other routes (React SPA behavior)
+// app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+// });
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || '')
