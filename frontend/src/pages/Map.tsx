@@ -11,7 +11,7 @@ const MapPage: React.FC = () => {
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
-  const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
+  // const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [places, setPlaces] = useState<GooglePlace[]>([]);
   const [reviews, setReviews] = useState<MemoRappReview[]>([]);
@@ -28,7 +28,7 @@ const MapPage: React.FC = () => {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
             };
-            setCurrentLocation(location);
+            // setCurrentLocation(location);
             // If no placeId is provided, use current location as default
             if (!_id) {
               setMapLocation(location);
