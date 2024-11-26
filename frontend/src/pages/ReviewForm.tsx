@@ -97,7 +97,7 @@ const ReviewForm: React.FC = () => {
   }, [place, review]);
 
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setDisplayTab(newValue);
   };
 

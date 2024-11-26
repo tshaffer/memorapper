@@ -1,4 +1,4 @@
-import { FreeformReviewProperties, ItemReview, MemoRappReview } from "./entities";
+import { ItemReview, MemoRappReview } from "./entities";
 import { GooglePlace } from "./googlePlace";
 
 export interface EditableReview {
