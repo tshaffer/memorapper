@@ -5,7 +5,6 @@ import routes from './routes/routes';
 import mongoose from 'mongoose';
 import path from 'path';
 
-// Load environment variables
 dotenv.config();
 
 console.log('environment variables:');
@@ -28,19 +27,7 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(frontendPath, "index.html"));
 });
 
-// app.use('/api', routes);
-
-// // Serve the static files from the build directory
-// app.use(express.static(path.join(__dirname, 'dist')));
-
-// // Serve index.html for all other routes (React SPA behavior)
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-// });
-
 // Connect to MongoDB
-console.log('MONGODB_URI:', process.env.MONGODB_URI);
-
 mongoose.connect(process.env.MONGODB_URI || '')
   .then(() => console.log('Connected to MongoDB'))
   .catch((error) => console.error('Error connecting to MongoDB:', error));
