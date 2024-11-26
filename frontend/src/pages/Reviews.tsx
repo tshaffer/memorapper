@@ -371,18 +371,30 @@ const ReviewsPage: React.FC = () => {
     if (selectedPlace === null) {
       return null;
     }
-    const reviewsForSelectedPlace: MemoRappReview[] = getFilteredReviewsForPlace(selectedPlace.place_id)
+    const reviewsForSelectedPlace: MemoRappReview[] = getFilteredReviewsForPlace(selectedPlace.place_id);
     const reviewDetails = reviewsForSelectedPlace.map((review: MemoRappReview) => {
       return renderReviewDetails(review);
     });
+  
     return (
-      <Paper style={{ boxShadow: 'none' }}>
-        <Typography variant="h6">Reviews for {selectedPlace.name}</Typography>
-        {reviewDetails}
+      <Paper style={{ boxShadow: 'none', height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <Typography variant="h6" style={{ marginBottom: '16px' }}>
+          Reviews for {selectedPlace.name}
+        </Typography>
+        <div
+          style={{
+            flexGrow: 1,
+            overflowY: 'auto', // Scrollable container for all reviews
+            maxHeight: 'calc(100vh - 200px)', // Adjust for AppBar and other content
+            padding: '0 12px', // Optional: Add horizontal padding
+          }}
+        >
+          {reviewDetails}
+        </div>
       </Paper>
-    )
-  }
-
+    );
+  };
+    
   const renderThumbsUps = (placeId: string) => {
     const yesCount = getWouldReturnToPlaceCounts(placeId).yesCount;
     if (yesCount > 0) {
@@ -750,7 +762,6 @@ const ReviewsPage: React.FC = () => {
               </Button>
               {selectedPlace && (
                 <div>
-                  <Typography variant="h5">Reviews for {selectedPlace.name}</Typography>
                   {renderReviewDetailsForSelectedPlace()}
                 </div>
               )}

@@ -92,7 +92,7 @@
 .full-width-container {
   max-width: 90% !important;
   padding: 20px;
-  max-height: calc(100vh - 64px);
+  max-height: calc(100vh - 124px);
   /* Subtract AppBar height */
   overflow: hidden;
   /* Prevent overflow of content */
@@ -140,19 +140,23 @@
     /* Full width for mobile */
   }
 
-  .review-details,
+  /* .review-details,
   .map-container {
     height: auto;
     margin-top: 10px;
-    /* Add spacing between sections */
+  } */
+  .review-details {
+    margin-top: 10px; /* Spacing between individual reviews */
+    padding: 12px; /* Optional: Padding for review content */
+    box-shadow: none; /* Keep it flat if shadows aren't needed */
   }
-
+    
   .full-width-container {
     max-width: 100% !important;
     /* Ensure full width for forms */
     padding: 12px;
     /* Reduce padding for smaller screens */
-    height: calc(100svh - 64px);
+    height: calc(100svh - 124px);
     /* Adjust height for the AppBar */
     overflow: hidden;
     /* Prevent overflow if content exceeds available height */
