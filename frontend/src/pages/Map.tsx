@@ -119,6 +119,7 @@ const MapPage: React.FC = () => {
       <input
         type="text"
         placeholder="Enter the location"
+        onChange={handleAutocompleteInputChange} // Custom input handling
         style={{
           width: '100%',
           padding: isMobile ? '8px' : '10px', // Smaller padding for mobile

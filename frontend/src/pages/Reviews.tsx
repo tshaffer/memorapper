@@ -189,7 +189,7 @@ const ReviewsPage: React.FC = () => {
     setDistanceFilterEnabled((prev) => !prev);
   };
 
-  const handleDistanceSliderChange = (event: Event, newValue: number | number[]) => {
+  const handleDistanceSliderChange = (_: Event, newValue: number | number[]) => {
     setFromLocationDistance(newValue as number);
   };
 
