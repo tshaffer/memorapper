@@ -15,7 +15,9 @@ export const getPlace = async (placeId: any): Promise<IMongoPlace | null> => {
 
 export const getPlaces = async (request: Request, response: Response, next: any) => {
   try {
+    console.log('Getting places...');
     const mongoPlaces: IMongoPlace[] = await MongoPlace.find({}).exec();
+    console.log('mongoPlaces:', mongoPlaces);
     const googlePlaces: GooglePlace[] = convertMongoPlacesToGooglePlaces(mongoPlaces);
     console.log('googlePlaces:', googlePlaces);
     response.status(200).json({ googlePlaces });
