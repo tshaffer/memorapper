@@ -1,3 +1,4 @@
+import RestaurantName from '../components/RestaurantName';
 import '../styles/multiPanelStyles.css';
 
 const ReviewFormPanel = () => {
@@ -6,7 +7,8 @@ const ReviewFormPanel = () => {
       <h2>Form</h2>
       <form>
         <label htmlFor="restaurant-name">Restaurant Name (Required):</label>
-        <input type="text" id="restaurant-name" placeholder="Enter restaurant name" required />
+        <RestaurantName/>
+        {/* <input type="text" id="restaurant-name" placeholder="Enter restaurant name" required /> */}
 
         <label htmlFor="review-text">Review Text (Required):</label>
         <textarea id="review-text" placeholder="Write your review here..." required></textarea>
