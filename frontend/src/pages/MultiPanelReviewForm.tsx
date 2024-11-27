@@ -14,6 +14,7 @@ const MultiPanelReviewForm = () => {
   const [wouldReturn, setWouldReturn] = useState<boolean | null>(null); // New state
   const [dateOfVisit, setDateOfVisit] = useState('');
   const [freeformReviewProperties, setFreeformReviewProperties] = useState<FreeformReviewProperties | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   const handleTabClick = (tab: any) => {
     setActiveTab(tab);
@@ -38,6 +39,10 @@ const MultiPanelReviewForm = () => {
   const handleSetFreeformReviewProperties = (freeformReviewProperties: FreeformReviewProperties) => {
     setFreeformReviewProperties(freeformReviewProperties
     );
+  }
+
+  const handleSetSessionId = (sessionId: string) => {
+    setSessionId(sessionId);
   }
 
   return (
@@ -73,6 +78,7 @@ const MultiPanelReviewForm = () => {
             onSetDateOfVisit={handleSetDateOfVisit}
             onSetWouldReturn={handleSetWouldReturn}
             onSetFreeformReviewProperties={handleSetFreeformReviewProperties}
+            onSetSessionId={handleSetSessionId}
           />
         )}
         {activeTab === "preview" && (
@@ -82,6 +88,7 @@ const MultiPanelReviewForm = () => {
             dateOfVisit={dateOfVisit}
             reviewText={reviewText}
             freeformReviewProperties={freeformReviewProperties!}
+            sessionId={sessionId!}
           />
         )}
         {activeTab === "chat" && (

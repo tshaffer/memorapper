@@ -16,6 +16,7 @@ interface ReviewFormPanelProps {
   onSetWouldReturn: (wouldReturn: boolean | null) => any;
   onSetDateOfVisit: (dateOfVisit: string) => any;
   onSetFreeformReviewProperties: (freeformReviewProperties: FreeformReviewProperties) => any;
+  onSetSessionId: (sessionId: string) => any;
 }
 
 const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelProps) => {
@@ -38,7 +39,9 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
   useEffect(() => {
     setDateOfVisit(getFormattedDate());
     if (!sessionId) {
-      setSessionId(generateSessionId());
+      const newSessionId = generateSessionId();
+      setSessionId(newSessionId);
+      props.onSetSessionId(newSessionId);
     }
   }, [sessionId]);
 
