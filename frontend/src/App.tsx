@@ -5,6 +5,7 @@ import { AppBar, Toolbar, Typography, Button, Container } from '@mui/material';
 import Map from './pages/Map';
 import ReviewForm from './pages/ReviewForm';
 import Reviews from './pages/Reviews';
+import MultiPanelReviewForm from './pages/MultiPanelReviewForm';
 
 const App: React.FC = () => {
   return (
@@ -16,7 +17,8 @@ const App: React.FC = () => {
           </Typography>
           <Button color="inherit" component={Link} to="/">Reviews</Button>
           <Button color="inherit" component={Link} to="/map">Map</Button>
-          <Button color="inherit" component={Link} to="/add-review">Add Review</Button>
+          <Button color="inherit" component={Link} to="/write-review">Write Review</Button>
+          {/* <Button color="inherit" component={Link} to="/add-review">Add Review</Button> */}
         </Toolbar>
       </AppBar>
       <Container
@@ -30,8 +32,9 @@ const App: React.FC = () => {
           <Route path="/" element={<Reviews />} />
           <Route path="/map" element={<Map />} />
           <Route path="/map/:_id" element={<Map />} />
-          <Route path="/add-review" element={<ReviewForm />} />
-          <Route path="/add-review/:_id" element={<ReviewForm />} />
+          <Route path="/write-review" element={<MultiPanelReviewForm />} />
+          {/* <Route path="/add-review" element={<ReviewForm />} />
+          <Route path="/add-review/:_id" element={<ReviewForm />} /> */}
         </Routes>
       </Container>
     </Router>
