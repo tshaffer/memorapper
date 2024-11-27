@@ -3,13 +3,42 @@ import '../styles/multiPanelStyles.css';
 import ReviewFormPanel from "./ReviewFormPanel";
 import ReviewPreviewPanel from "./ReviewPreviewPanel";
 import ReviewChatPanel from "./ReviewChatPanel";
+import { Button } from "@mui/material";
+import { FreeformReviewProperties, GooglePlace } from "../types";
 
 const MultiPanelReviewForm = () => {
   const [activeTab, setActiveTab] = useState("form");
 
+  const [googlePlace, setGooglePlace] = useState<GooglePlace | null>(null);
+  const [reviewText, setReviewText] = useState('');
+  const [wouldReturn, setWouldReturn] = useState<boolean | null>(null); // New state
+  const [dateOfVisit, setDateOfVisit] = useState('');
+  const [freeformReviewProperties, setFreeformReviewProperties] = useState<FreeformReviewProperties | null>(null);
+
   const handleTabClick = (tab: any) => {
     setActiveTab(tab);
   };
+
+  const handleSetGooglePlace = (googlePlace: any) => {
+    setGooglePlace(googlePlace);
+  }
+
+  const handleSetReviewText = (reviewText: string) => {
+    setReviewText(reviewText);
+  }
+
+  const handleSetDateOfVisit = (dateOfVisit: string) => {
+    setDateOfVisit(dateOfVisit);
+  }
+
+  function handleSetWouldReturn(wouldReturn: boolean | null) {
+    setWouldReturn(wouldReturn);
+  }
+
+  const handleSetFreeformReviewProperties = (freeformReviewProperties: FreeformReviewProperties) => {
+    setFreeformReviewProperties(freeformReviewProperties
+    );
+  }
 
   return (
     <div className="container">
@@ -17,31 +46,43 @@ const MultiPanelReviewForm = () => {
         <h1>Memorapper Review</h1>
       </header>
       <nav className="tabs">
-        <button
+        <Button
           className={`tab-button ${activeTab === "form" ? "active" : ""}`}
           onClick={() => handleTabClick("form")}
         >
           Form
-        </button>
-        <button
+        </Button>
+        <Button
           className={`tab-button ${activeTab === "preview" ? "active" : ""}`}
           onClick={() => handleTabClick("preview")}
         >
           Review Preview
-        </button>
-        <button
+        </Button>
+        <Button
           className={`tab-button ${activeTab === "chat" ? "active" : ""}`}
           onClick={() => handleTabClick("chat")}
         >
           Chat
-        </button>
+        </Button>
       </nav>
       <section className="tab-content">
         {activeTab === "form" && (
-          <ReviewFormPanel />
+          <ReviewFormPanel
+            onSetGooglePlace={handleSetGooglePlace}
+            onSetReviewText={handleSetReviewText}
+            onSetDateOfVisit={handleSetDateOfVisit}
+            onSetWouldReturn={handleSetWouldReturn}
+            onSetFreeformReviewProperties={handleSetFreeformReviewProperties}
+          />
         )}
         {activeTab === "preview" && (
-          <ReviewPreviewPanel />
+          <ReviewPreviewPanel
+            place={googlePlace!}
+            wouldReturn={wouldReturn}
+            dateOfVisit={dateOfVisit}
+            reviewText={reviewText}
+            freeformReviewProperties={freeformReviewProperties!}
+          />
         )}
         {activeTab === "chat" && (
           <ReviewChatPanel />

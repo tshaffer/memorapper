@@ -6,7 +6,11 @@ import { Autocomplete, LoadScript } from '@react-google-maps/api';
 import { GooglePlace } from "../types";
 import { libraries, pickGooglePlaceProperties } from "../utilities";
 
-const RestaurantName = () => {
+interface RestaurantNameProps {
+  onSetGooglePlace: (googlePlace: GooglePlace) => any;
+}
+
+const RestaurantName: React.FC<RestaurantNameProps> = (props: RestaurantNameProps) => {
 
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const [googlePlace, setGooglePlace] = useState<GooglePlace | null>(null);
@@ -17,6 +21,7 @@ const RestaurantName = () => {
       const place: google.maps.places.PlaceResult = autocompleteRef.current.getPlace();
       const googlePlace: GooglePlace = pickGooglePlaceProperties(place);
       setGooglePlace(googlePlace);
+      props.onSetGooglePlace(googlePlace);
       const restaurantLabel = googlePlace.name;
       setRestaurantLabel(restaurantLabel);
     }

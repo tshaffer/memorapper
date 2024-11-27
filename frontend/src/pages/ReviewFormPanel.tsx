@@ -2,14 +2,23 @@ import { Box, Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGrou
 import RestaurantName from '../components/RestaurantName';
 import '../styles/multiPanelStyles.css';
 import { useEffect, useState } from 'react';
-import { FreeformReviewProperties, PreviewRequestBody, PreviewResponse } from '../types';
+import { FreeformReviewProperties, GooglePlace, PreviewRequestBody, PreviewResponse } from '../types';
+import { getFormattedDate } from '../utilities';
 
 type ChatMessage = {
   role: 'user' | 'ai';
   message: string | FreeformReviewProperties;
 };
 
-const ReviewFormPanel = () => {
+interface ReviewFormPanelProps {
+  onSetGooglePlace: (googlePlace: GooglePlace) => any;
+  onSetReviewText: (reviewText: string) => any;
+  onSetWouldReturn: (wouldReturn: boolean | null) => any;
+  onSetDateOfVisit: (dateOfVisit: string) => any;
+  onSetFreeformReviewProperties: (freeformReviewProperties: FreeformReviewProperties) => any;
+}
+
+const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelProps) => {
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
@@ -26,20 +35,6 @@ const ReviewFormPanel = () => {
 
   const generateSessionId = (): string => Math.random().toString(36).substring(2) + Date.now().toString(36);
 
-  const formatDateToMMDDYYYY = (dateString: string): string => {
-    if (!dateString) return '';
-    const [year, month, day] = dateString.split('-');
-    return `${month}/${day}/${year}`;
-  };
-
-  const getFormattedDate = (): string => {
-    const today = new Date();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const year = today.getFullYear();
-    return `${year}-${month}-${day}`;
-  };
-
   useEffect(() => {
     setDateOfVisit(getFormattedDate());
     if (!sessionId) {
@@ -47,9 +42,25 @@ const ReviewFormPanel = () => {
     }
   }, [sessionId]);
 
+  const setTheReviewText = (reviewText: string) => {
+    setReviewText(reviewText);
+    props.onSetReviewText(reviewText);
+  }
+
+  const setTheDateOfVisit = (dateOfVisit: string) => {
+    setDateOfVisit(dateOfVisit);
+    props.onSetDateOfVisit(dateOfVisit);
+  }
+
+  const setTheFreeformReviewProperties = (freeformReviewProperties: FreeformReviewProperties) => {
+    setFreeformReviewProperties(freeformReviewProperties);
+    props.onSetFreeformReviewProperties(freeformReviewProperties);
+  }
+
   const handleWouldReturnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value === "yes" ? true : event.target.value === "no" ? false : null;
     setWouldReturn(value);
+    props.onSetWouldReturn(value);
   };
 
   const handlePreview = async () => {
@@ -66,7 +77,7 @@ const ReviewFormPanel = () => {
         body: JSON.stringify(previewBody),
       });
       const data: PreviewResponse = await response.json();
-      setFreeformReviewProperties(data.freeformReviewProperties);
+      setTheFreeformReviewProperties(data.freeformReviewProperties);
       setChatHistory([...chatHistory, { role: 'user', message: reviewText }, { role: 'ai', message: data.freeformReviewProperties }]);
     } catch (error) {
       console.error('Error previewing review:', error);
@@ -79,7 +90,9 @@ const ReviewFormPanel = () => {
     <div id="form" className="tab-panel active">
       <form>
         <label htmlFor="restaurant-name">Restaurant Name (Required):</label>
-        <RestaurantName />
+        <RestaurantName
+          onSetGooglePlace={props.onSetGooglePlace}
+        />
 
         <TextField
           style={{ marginTop: 20 }}
@@ -88,7 +101,7 @@ const ReviewFormPanel = () => {
           rows={isMobile ? 5 : 8}
           label="Write Your Review"
           value={reviewText}
-          onChange={(e) => setReviewText(e.target.value)}
+          onChange={(e) => setTheReviewText(e.target.value)}
           placeholder="Describe your dining experience in detail..."
           required
         />
@@ -97,7 +110,7 @@ const ReviewFormPanel = () => {
           fullWidth
           type="date"
           value={dateOfVisit}
-          onChange={(e) => setDateOfVisit(e.target.value)}
+          onChange={(e) => setTheDateOfVisit(e.target.value)}
           // placeholder="mm/dd/yyyy"
           label="Date of Visit"
         />

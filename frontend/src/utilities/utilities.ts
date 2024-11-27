@@ -62,3 +62,18 @@ export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.
   // return result;
 
 }
+
+export const formatDateToMMDDYYYY = (dateString: string): string => {
+  if (!dateString) return '';
+  const [year, month, day] = dateString.split('-');
+  return `${month}/${day}/${year}`;
+};
+
+export const getFormattedDate = (): string => {
+  const today = new Date();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const year = today.getFullYear();
+  return `${year}-${month}-${day}`;
+};
+
