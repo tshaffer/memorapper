@@ -2,9 +2,9 @@ import { useRef, useState } from "react";
 
 import { Box, TextField } from "@mui/material";
 
-import { Autocomplete } from '@react-google-maps/api';
+import { Autocomplete, LoadScript } from '@react-google-maps/api';
 import { GooglePlace } from "../types";
-import { pickGooglePlaceProperties } from "../utilities";
+import { libraries, pickGooglePlaceProperties } from "../utilities";
 
 const RestaurantName = () => {
 
@@ -23,6 +23,7 @@ const RestaurantName = () => {
   };
 
   return (
+    <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!} libraries={libraries}>
     <Box>
       <Autocomplete
         onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
@@ -39,6 +40,7 @@ const RestaurantName = () => {
         />
       </Autocomplete>
     </Box>
+    </LoadScript >
 
   );
 };
