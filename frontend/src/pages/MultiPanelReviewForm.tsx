@@ -92,7 +92,11 @@ const MultiPanelReviewForm = () => {
           />
         )}
         {activeTab === "chat" && (
-          <ReviewChatPanel />
+          <ReviewChatPanel
+            sessionId={sessionId!}
+            reviewText={reviewText}
+            // freeformReviewProperties={freeformReviewProperties!}
+           />
         )}
       </section>
     </div>
