@@ -101,7 +101,6 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
   }
 
   const renderAIResponse = (freeformReviewProperties: FreeformReviewProperties): JSX.Element => {
-    // const place: GooglePlace = googlePlace!;
     const getReturnString = () => {
       if (wouldReturn === true) return 'Yes';
       if (wouldReturn === false) return 'No';
@@ -114,7 +113,7 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
           <Typography><strong>Date of Visit:</strong> {formatDateToMMDDYYYY(dateOfVisit) || 'Not provided'}</Typography>
           <Typography><strong>Would Return:</strong> {getReturnString()}</Typography>
           <Typography><strong>Items Ordered:</strong></Typography>
-          <ul>
+          <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
             {renderItemReviews(freeformReviewProperties.itemReviews)}
           </ul>
           <Typography><strong>Retrieved Location:</strong>{place?.formatted_address}</Typography>
@@ -134,7 +133,7 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
           mb: 2,
         }}
       >
-        
+
         {typeof chatMessage.message === 'string' ? (
           renderChatQuestion(chatMessage.message)
         ) : (
