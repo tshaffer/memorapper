@@ -75,8 +75,6 @@ const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPrev
           ))}
         </ul>
       <Button onClick={handleSubmit}>Save Review</Button>
-      <Button>Edit Form</Button>
-      <Button>Chat with ChatGPT</Button>
     </div>
   );
 };

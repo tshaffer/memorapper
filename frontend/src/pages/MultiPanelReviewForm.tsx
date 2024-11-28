@@ -51,9 +51,6 @@ const MultiPanelReviewForm = () => {
 
   return (
     <div className="container">
-      <header>
-        <h1>Memorapper Review</h1>
-      </header>
       <nav className="tabs">
         <Button
           className={`tab-button ${activeTab === "form" ? "active" : ""}`}

@@ -185,7 +185,6 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
       />
 
       <Button onClick={handleSendChatMessage}>Send</Button>
-      <Button>Return to Preview</Button>
     </div>
   );
 };

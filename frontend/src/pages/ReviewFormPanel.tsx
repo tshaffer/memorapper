@@ -99,6 +99,7 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
           onSetGooglePlace={props.onSetGooglePlace}
         />
 
+        <label>Review Text (Required):</label>
         <TextField
           style={{ marginTop: 20 }}
           fullWidth
@@ -138,12 +139,12 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
           </Box>
         </FormControl>
 
-        <Button
-          onClick={handlePreview}
-        >
-          Submit
-        </Button>
       </form>
+
+      <Button onClick={handlePreview}>
+        Preview
+      </Button>
+
     </div>
 
   );
