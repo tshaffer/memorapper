@@ -95,6 +95,20 @@ button:hover {
   overflow-y: auto;
 }
 
+.chat-history .user-message, .chat-history .ai-message {
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.chat-history .user-message {
+  background-color: #f0f0f0;
+}
+
+.chat-history .ai-message {
+  background-color: #e0e0e0;
+}
+
 textarea {
   width: 100%;
 }

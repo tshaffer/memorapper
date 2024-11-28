@@ -1,6 +1,6 @@
 import { Box, Button, Card, TextField, Typography } from '@mui/material';
 import '../styles/multiPanelStyles.css';
-import { ChatRequestBody, ChatResponse, FreeformReviewProperties, ReviewEntity } from '../types';
+import { ChatRequestBody, ChatResponse, FreeformReviewProperties, ItemReview, ReviewEntity } from '../types';
 import { useEffect, useState } from 'react';
 
 type ChatMessage = {
@@ -66,7 +66,38 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
     setIsLoading(false);
   };
 
-  const renderPreviewResponse = (freeformReviewProperties: FreeformReviewProperties): JSX.Element => {
+  const renderChatQuestion = (chatMessage: string): JSX.Element => {
+    return (
+      <div className="user-message">
+        <Typography>{chatMessage}</Typography>
+      </div>
+    );
+  }
+
+
+  const renderItemReview = (itemReview: ItemReview, idx: number): JSX.Element => {
+    return (
+      <li key={idx}>
+        {itemReview.item} - {itemReview.review || 'No rating provided'}
+      </li>
+    );
+  }
+
+  const renderItemReviews = (itemReviews: ItemReview[]): JSX.Element[] | null => {
+    if (itemReviews.length === 0) {
+      return null;
+    } else {
+      {
+        const itemsReviewsJSX: JSX.Element[] = [];
+        itemReviews.forEach((itemReview, idx) => {
+          itemsReviewsJSX.push(renderItemReview(itemReview, idx));
+        });
+        return itemsReviewsJSX;
+      }
+    }
+  }
+
+  const renderAIResponse = (freeformReviewProperties: FreeformReviewProperties): JSX.Element => {
     // const place: GooglePlace = googlePlace!;
     // const getReturnString = () => {
     //   if (wouldReturn === true) return 'Yes';
@@ -74,48 +105,38 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
     //   return 'Not specified';
     // }
     return (
-      <Box sx={{ textAlign: 'left' }}>
-        {/* <Typography><strong>Restaurant:</strong> {place.name || 'Not provided'}</Typography> */}
-        {/* <Typography><strong>Date of Visit:</strong> {formatDateToMMDDYYYY(dateOfVisit) || 'Not provided'}</Typography> */}
-        {/* <Typography><strong>Would Return:</strong> {getReturnString()}</Typography> */}
-        <Typography><strong>Items Ordered:</strong></Typography>
-        <ul>
-          {freeformReviewProperties.itemReviews.map((itemReview, idx) => (
-            <li key={idx}>
-              {itemReview.item} - {itemReview.review || 'No rating provided'}
-            </li>
-          ))}
-        </ul>
-        {/* <Typography><strong>Retrieved Location:</strong>{place?.formatted_address}</Typography> */}
-        <Typography><strong>Reviewer:</strong> {freeformReviewProperties.reviewer || 'Not provided'}</Typography>
-      </Box>
+      <div className='ai-message'>
+        <Box sx={{ textAlign: 'left' }}>
+          {/* <Typography><strong>Restaurant:</strong> {place.name || 'Not provided'}</Typography> */}
+          {/* <Typography><strong>Date of Visit:</strong> {formatDateToMMDDYYYY(dateOfVisit) || 'Not provided'}</Typography> */}
+          {/* <Typography><strong>Would Return:</strong> {getReturnString()}</Typography> */}
+          <Typography><strong>Items Ordered:</strong></Typography>
+          <ul>
+            {renderItemReviews(freeformReviewProperties.itemReviews)}
+          </ul>
+          {/* <Typography><strong>Retrieved Location:</strong>{place?.formatted_address}</Typography> */}
+          <Typography><strong>Reviewer:</strong> {freeformReviewProperties.reviewer || 'Not provided'}</Typography>
+        </Box>
+      </div>
     )
   };
 
   const renderChatQuestionAndResponse = (chatMessage: ChatMessage, index: number): JSX.Element => {
+    console.log('renderChatQuestionAndResponse::chatMessage:', chatMessage, 'index:', index);
     return (
       <Box
         key={index}
         sx={{
           display: 'flex',
-          justifyContent: chatMessage.role === 'user' ? 'flex-end' : 'flex-start',
           mb: 2,
         }}
       >
-        <Card
-          sx={{
-            backgroundColor: chatMessage.role === 'user' ? 'lightgrey' : 'white',
-            padding: 2,
-            maxWidth: '80%',
-            borderRadius: 2,
-          }}
-        >
-          {typeof chatMessage.message === 'string' ? (
-            <Typography variant="body1">{chatMessage.message}</Typography>
-          ) : (
-            renderPreviewResponse(chatMessage.message as ReviewEntity)
-          )}
-        </Card>
+        
+        {typeof chatMessage.message === 'string' ? (
+          renderChatQuestion(chatMessage.message)
+        ) : (
+          renderAIResponse(chatMessage.message as ReviewEntity)
+        )}
       </Box>
 
     );
@@ -150,11 +171,8 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
     <div id="chat" className="tab-panel active">
       <h2>Chat</h2>
       <div className="chat-history">
-        <Typography><strong>You:</strong> Example question</Typography>
-        <Typography><strong>ChatGPT:</strong> Example response</Typography>
         {renderChatHistory()}
       </div>
-      {/* <textarea placeholder="Type your message..."></textarea> */}
       <TextField
         fullWidth
         variant="outlined"
