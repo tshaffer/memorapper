@@ -1,5 +1,6 @@
 import { Box, Button, Card, TextField, Typography } from '@mui/material';
 import '../styles/multiPanelStyles.css';
+import '../styles/chatStyles.css';
 import { ChatRequestBody, ChatResponse, FreeformReviewProperties, GooglePlace, ItemReview, ReviewEntity } from '../types';
 import { useEffect, useState } from 'react';
 import { formatDateToMMDDYYYY } from '../utilities';
