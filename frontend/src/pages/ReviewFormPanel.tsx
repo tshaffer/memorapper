@@ -17,6 +17,7 @@ interface ReviewFormPanelProps {
   onSetDateOfVisit: (dateOfVisit: string) => any;
   onSetFreeformReviewProperties: (freeformReviewProperties: FreeformReviewProperties) => any;
   onSetSessionId: (sessionId: string) => any;
+  onReceivedPreviewResponse: () => any;
 }
 
 const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelProps) => {
@@ -82,6 +83,7 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
       const data: PreviewResponse = await response.json();
       setTheFreeformReviewProperties(data.freeformReviewProperties);
       setChatHistory([...chatHistory, { role: 'user', message: reviewText }, { role: 'ai', message: data.freeformReviewProperties }]);
+      props.onReceivedPreviewResponse();
     } catch (error) {
       console.error('Error previewing review:', error);
     }

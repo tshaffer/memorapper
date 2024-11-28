@@ -45,6 +45,10 @@ const MultiPanelReviewForm = () => {
     setSessionId(sessionId);
   }
 
+  const handleReceivedPreviewResponse = () => {
+    setActiveTab("preview");
+  }
+
   return (
     <div className="container">
       <header>
@@ -79,6 +83,7 @@ const MultiPanelReviewForm = () => {
             onSetWouldReturn={handleSetWouldReturn}
             onSetFreeformReviewProperties={handleSetFreeformReviewProperties}
             onSetSessionId={handleSetSessionId}
+            onReceivedPreviewResponse={handleReceivedPreviewResponse}
           />
         )}
         {activeTab === "preview" && (
