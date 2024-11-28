@@ -330,28 +330,26 @@ const ReviewsPage: React.FC = () => {
   const renderReviewDetails = (review: MemoRappReview): JSX.Element => {
     return (
       <Paper id='reviewDetails' key={review._id} className="review-details" style={{ marginTop: '16px', boxShadow: 'none' }}>
-        <Typography>
-          <Box sx={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-            <Tooltip title="Edit Review">
-              <IconButton
-                onClick={() => handleEditReview(review)}
-                size="small" // Makes the button smaller
-                sx={{ padding: '0px' }} // Reduces padding for smaller appearance
-              >
-                <EditIcon fontSize="small" /> {/* Makes the icon smaller */}
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete" arrow>
-              <IconButton
-                onClick={() => handleDeleteReview(review)}
-                size="small" // Makes the button smaller
-                sx={{ padding: '0px' }} // Reduces padding for smaller appearance
-              >
-                <DeleteIcon fontSize="small" /> {/* Makes the icon smaller */}
-              </IconButton>
-            </Tooltip>
-          </Box>
-        </Typography>
+        <div>
+          <Tooltip title="Edit Review">
+            <IconButton
+              onClick={() => handleEditReview(review)}
+              size="small" // Makes the button smaller
+              sx={{ padding: '0px' }} // Reduces padding for smaller appearance
+            >
+              <EditIcon fontSize="small" /> {/* Makes the icon smaller */}
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete" arrow>
+            <IconButton
+              onClick={() => handleDeleteReview(review)}
+              size="small" // Makes the button smaller
+              sx={{ padding: '0px' }} // Reduces padding for smaller appearance
+            >
+              <DeleteIcon fontSize="small" /> {/* Makes the icon smaller */}
+            </IconButton>
+          </Tooltip>
+        </div>
         <Typography><strong>Date of Visit:</strong> {review.structuredReviewProperties.dateOfVisit}</Typography>
         <Typography><strong>Would Return:</strong> {(review.structuredReviewProperties.wouldReturn === true) ? 'Yes' : (review.structuredReviewProperties.wouldReturn === false) ? 'No' : 'Unspecified'}</Typography>
         <Typography><strong>Items Ordered:</strong></Typography>
@@ -375,7 +373,7 @@ const ReviewsPage: React.FC = () => {
     const reviewDetails = reviewsForSelectedPlace.map((review: MemoRappReview) => {
       return renderReviewDetails(review);
     });
-  
+
     return (
       <Paper style={{ boxShadow: 'none', height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Typography variant="h6" style={{ marginBottom: '16px' }}>
@@ -394,7 +392,7 @@ const ReviewsPage: React.FC = () => {
       </Paper>
     );
   };
-    
+
   const renderThumbsUps = (placeId: string) => {
     const yesCount = getWouldReturnToPlaceCounts(placeId).yesCount;
     if (yesCount > 0) {
