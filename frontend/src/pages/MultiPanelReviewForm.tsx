@@ -95,7 +95,9 @@ const MultiPanelReviewForm = () => {
           <ReviewChatPanel
             sessionId={sessionId!}
             reviewText={reviewText}
-            // freeformReviewProperties={freeformReviewProperties!}
+            place={googlePlace!}
+            dateOfVisit={dateOfVisit}
+            wouldReturn={wouldReturn}
            />
         )}
       </section>

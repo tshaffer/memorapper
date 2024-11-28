@@ -1,7 +1,8 @@
 import { Box, Button, Card, TextField, Typography } from '@mui/material';
 import '../styles/multiPanelStyles.css';
-import { ChatRequestBody, ChatResponse, FreeformReviewProperties, ItemReview, ReviewEntity } from '../types';
+import { ChatRequestBody, ChatResponse, FreeformReviewProperties, GooglePlace, ItemReview, ReviewEntity } from '../types';
 import { useEffect, useState } from 'react';
+import { formatDateToMMDDYYYY } from '../utilities';
 
 type ChatMessage = {
   role: 'user' | 'ai';
@@ -11,14 +12,16 @@ type ChatMessage = {
 interface ReviewChatPanelProps {
   sessionId: string;
   reviewText: string;
+  place: GooglePlace;
+  dateOfVisit: string;
+  wouldReturn: boolean | null;
 }
-
 
 const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelProps) => {
 
   console.log('ReviewChatPanel::props:', props);
 
-  const { sessionId, reviewText } = props;
+  const { sessionId, reviewText, place, dateOfVisit, wouldReturn } = props;
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -99,22 +102,22 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
 
   const renderAIResponse = (freeformReviewProperties: FreeformReviewProperties): JSX.Element => {
     // const place: GooglePlace = googlePlace!;
-    // const getReturnString = () => {
-    //   if (wouldReturn === true) return 'Yes';
-    //   if (wouldReturn === false) return 'No';
-    //   return 'Not specified';
-    // }
+    const getReturnString = () => {
+      if (wouldReturn === true) return 'Yes';
+      if (wouldReturn === false) return 'No';
+      return 'Not specified';
+    }
     return (
       <div className='ai-message'>
         <Box sx={{ textAlign: 'left' }}>
-          {/* <Typography><strong>Restaurant:</strong> {place.name || 'Not provided'}</Typography> */}
-          {/* <Typography><strong>Date of Visit:</strong> {formatDateToMMDDYYYY(dateOfVisit) || 'Not provided'}</Typography> */}
-          {/* <Typography><strong>Would Return:</strong> {getReturnString()}</Typography> */}
+          <Typography><strong>Restaurant:</strong> {place.name || 'Not provided'}</Typography>
+          <Typography><strong>Date of Visit:</strong> {formatDateToMMDDYYYY(dateOfVisit) || 'Not provided'}</Typography>
+          <Typography><strong>Would Return:</strong> {getReturnString()}</Typography>
           <Typography><strong>Items Ordered:</strong></Typography>
           <ul>
             {renderItemReviews(freeformReviewProperties.itemReviews)}
           </ul>
-          {/* <Typography><strong>Retrieved Location:</strong>{place?.formatted_address}</Typography> */}
+          <Typography><strong>Retrieved Location:</strong>{place?.formatted_address}</Typography>
           <Typography><strong>Reviewer:</strong> {freeformReviewProperties.reviewer || 'Not provided'}</Typography>
         </Box>
       </div>
