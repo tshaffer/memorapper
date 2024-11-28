@@ -133,7 +133,6 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
           mb: 2,
         }}
       >
-
         {typeof chatMessage.message === 'string' ? (
           renderChatQuestion(chatMessage.message)
         ) : (
@@ -156,7 +155,7 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
         <Box
           sx={{
             flexGrow: 1, // Take available space
-            overflowY: 'auto', // Enable scrolling
+            // overflowY: 'auto', // Enable scrolling
             maxHeight: 'calc(100vh - 400px)', // Adjust height based on other components like headers
             padding: 2,
           }}
