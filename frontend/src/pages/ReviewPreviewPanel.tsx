@@ -6,10 +6,10 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 interface ReviewPreviewPanelProps {
-  place: GooglePlace;
+  place: GooglePlace | null;
+  reviewText: string;
   wouldReturn: boolean | null;
   dateOfVisit: string;
-  reviewText: string;
   freeformReviewProperties: FreeformReviewProperties;
   sessionId: string;
 }
@@ -58,25 +58,35 @@ const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPrev
     setIsLoading(false);
   };
 
-  return (
-    <div id="preview" className="tab-panel active">
-      <h2>Review Preview</h2>
-      <Typography><strong>Restaurant Name:</strong> {place.name || 'Not provided'}</Typography>
-      <Typography><strong>Date of Visit:</strong> {formatDateToMMDDYYYY(dateOfVisit) || 'Not provided'}</Typography>
-      <Typography><strong>Would Return?</strong>{getReturnString()}</Typography>
-      <Typography><strong>Review Text:</strong></Typography>
-      <Typography>{reviewText}</Typography>
-      <h3>Extracted Information</h3>
-      <ul>
+  const renderReviewPreview = () => {
+    if (!place || !reviewText || reviewText === '') return (
+      <div id="preview" className="tab-panel active">
+        <h2>Review Preview</h2>
+        <Typography>Not enough information to generate a preview.</Typography>
+      </div>
+    )
+    else return (
+      <div id="preview" className="tab-panel active">
+        <h2>Review Preview</h2>
+        <Typography><strong>Restaurant Name:</strong> {place.name || 'Not provided'}</Typography>
+        <Typography><strong>Date of Visit:</strong> {formatDateToMMDDYYYY(dateOfVisit) || 'Not provided'}</Typography>
+        <Typography><strong>Would Return?</strong>{getReturnString()}</Typography>
+        <Typography><strong>Review Text:</strong></Typography>
+        <Typography>{reviewText}</Typography>
+        <h3>Extracted Information</h3>
+        <ul>
           {freeformReviewProperties.itemReviews.map((itemReview, idx) => (
             <li key={idx}>
               {itemReview.item} - {itemReview.review || 'No rating provided'}
             </li>
           ))}
         </ul>
-      <Button onClick={handleSubmit}>Save Review</Button>
-    </div>
-  );
+        <Button onClick={handleSubmit}>Save Review</Button>
+      </div>
+    );
+  }
+
+  return renderReviewPreview();
 };
 
 export default ReviewPreviewPanel;
