@@ -782,8 +782,17 @@ const ReviewsPage: React.FC = () => {
             </div>
           )
         ) : (
-          <div className="table-and-details-container">
-            <TableContainer component={Paper} className="scrollable-table-container">
+          <Box id='reviewsTableAndDetailsContainer' sx={{ flexGrow: 1, display: 'flex', overflow: 'hidden' }}>
+            <TableContainer
+              component={Paper}
+              className="scrollable-table-container"
+              sx={{
+                flex: 1,
+                maxWidth: '50%', // Adjust the width as per your layout needs
+                overflowY: 'auto', // Enable vertical scrolling
+                borderRight: '1px solid #ccc', // Separate visually from reviews section
+              }}
+            >
               <Table stickyHeader>
                 <TableHead>
                   <TableRow className="table-head-fixed">
@@ -829,7 +838,7 @@ const ReviewsPage: React.FC = () => {
               </Table >
             </TableContainer >
             {renderDetailsPanel()}
-          </div >
+          </Box >
         )}
       </Box >
     </LoadScript >

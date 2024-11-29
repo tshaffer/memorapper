@@ -75,11 +75,17 @@
   /* Adjusted height to account for header, filters, etc. */
 }
 
-.scrollable-table-container {
+/* .scrollable-table-container {
   flex: 1;
   max-width: 50%;
-  /* You can adjust this value as needed or remove it */
   overflow-y: auto;
+} */
+
+.scrollable-table-container {
+  flex: 1; /* Allow the container to grow/shrink within the layout */
+  max-width: 50%; /* Constrain the width of the table */
+  overflow-y: auto; /* Enable vertical scrolling */
+  border-right: 1px solid #ccc; /* Add a visual separator */
 }
 
 .review-details,
