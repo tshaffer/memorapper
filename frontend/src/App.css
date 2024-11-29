@@ -87,7 +87,22 @@
   flex: 1;
   overflow-y: auto;
   height: 100%;
+  /* max-height: calc(100vh - 124px); */
 }
+
+/* .review-details,
+  .map-container {
+    height: auto;
+    margin-top: 10px;
+  } */
+.review-details {
+  margin-top: 10px;
+  padding: 12px;
+  box-shadow: none;
+  max-height: 260px;
+  /* max-height: calc(100vh - 646px); */
+}
+
 
 .full-width-container {
   max-width: 90% !important;
@@ -140,17 +155,6 @@
     /* Full width for mobile */
   }
 
-  /* .review-details,
-  .map-container {
-    height: auto;
-    margin-top: 10px;
-  } */
-  .review-details {
-    margin-top: 10px; /* Spacing between individual reviews */
-    padding: 12px; /* Optional: Padding for review content */
-    box-shadow: none; /* Keep it flat if shadows aren't needed */
-  }
-    
   .full-width-container {
     max-width: 100% !important;
     /* Ensure full width for forms */

@@ -92,8 +92,14 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
 
   return (
 
-    <div id="form" className="tab-panel active">
-      <form>
+    <div
+      id="form"
+      className="tab-panel active"
+      style={{
+        maxHeight: isMobile ? 'calc(60vh)' : 'auto'
+      }}
+    >
+      <form id='add-review-form'>
         <label htmlFor="restaurant-name">Restaurant Name (Required):</label>
         <RestaurantName
           onSetGooglePlace={props.onSetGooglePlace}
