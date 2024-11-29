@@ -423,8 +423,15 @@ const ReviewsPage: React.FC = () => {
 
   const renderFiltersUI = (): JSX.Element => {
     return (
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-        {/* Specify Filter Buttons */}
+      <Box
+        id='filtersRow'
+        sx={{
+          display: 'flex',
+          gap: 1,
+          padding: 2,
+          borderBottom: '1px solid #ccc',
+        }}
+      >        {/* Specify Filter Buttons */}
         <Button
           variant="outlined"
           onClick={handleDistanceClick}
@@ -478,7 +485,7 @@ const ReviewsPage: React.FC = () => {
         {renderDistanceAwayFilterPopover()}
         {renderWouldReturnFilterPopover()}
         {renderItemOrderedFilterPopover()}
-      </div>
+      </Box>
     );
   }
 
