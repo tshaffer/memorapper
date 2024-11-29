@@ -75,17 +75,13 @@
   /* Adjusted height to account for header, filters, etc. */
 }
 
-/* .scrollable-table-container {
-  flex: 1;
-  max-width: 50%;
-  overflow-y: auto;
-} */
-
 .scrollable-table-container {
-  flex: 1; /* Allow the container to grow/shrink within the layout */
-  max-width: 50%; /* Constrain the width of the table */
+  flex-shrink: 0; /* Prevent shrinking */
+  width: 40%; /* Default width */
+  min-width: 300px; /* Prevent it from shrinking too much */
+  max-width: 50%; /* Cap the maximum width */
   overflow-y: auto; /* Enable vertical scrolling */
-  border-right: 1px solid #ccc; /* Add a visual separator */
+  border-right: 1px solid #ccc; /* Visual separation */
 }
 
 .review-details,

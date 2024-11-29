@@ -329,7 +329,7 @@ const ReviewsPage: React.FC = () => {
 
   const renderReviewDetails = (review: MemoRappReview): JSX.Element => {
     return (
-      <Paper id='reviewDetails' key={review._id} className="review-details" style={{ marginTop: '16px', boxShadow: 'none' }}>
+      <React.Fragment>
         <div>
           <Tooltip title="Edit Review">
             <IconButton
@@ -361,7 +361,7 @@ const ReviewsPage: React.FC = () => {
           ))}
         </ul>
         <Typography><strong>Review Text:</strong> {review.freeformReviewProperties.reviewText}</Typography>
-      </Paper>
+      </React.Fragment>
     );
   }
 
@@ -375,21 +375,37 @@ const ReviewsPage: React.FC = () => {
     });
 
     return (
-      <Paper style={{ boxShadow: 'none', height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="h6" style={{ marginBottom: '16px' }}>
-          Reviews for {selectedPlace.name}
-        </Typography>
-        <div
-          style={{
-            flexGrow: 1,
-            overflowY: 'auto', // Scrollable container for all reviews
-            maxHeight: 'calc(100vh - 200px)', // Adjust for AppBar and other content
-            padding: '0 12px', // Optional: Add horizontal padding
-          }}
-        >
-          {reviewDetails}
-        </div>
+      <Paper
+        // key={idx}
+        sx={{
+          marginBottom: 2,
+          padding: 2,
+        }}
+      >
+        {reviewDetails}
       </Paper>
+
+      // <Paper
+      //   // key={idx}
+      //   sx={{
+      //     marginBottom: 2,
+      //     padding: 2,
+      //   }}
+      // >
+      //   <Typography variant="h6" style={{ marginBottom: '16px' }}>
+      //     Reviews for {selectedPlace.name}
+      //   </Typography>
+      //   <div
+      //     style={{
+      //       flexGrow: 1,
+      //       overflowY: 'auto', // Scrollable container for all reviews
+      //       maxHeight: 'calc(100vh - 200px)', // Adjust for AppBar and other content
+      //       padding: '0 12px', // Optional: Add horizontal padding
+      //     }}
+      //   >
+      //     {reviewDetails}
+      //   </div>
+      // </Paper>
     );
   };
 
@@ -709,9 +725,15 @@ const ReviewsPage: React.FC = () => {
 
   const renderDetailsPanel = (): JSX.Element => {
     return (
-      <div style={{ flex: 1 }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflowY: 'auto',
+          padding: 2,
+        }}
+      >
         {renderReviewDetailsForSelectedPlace()}
-      </div>
+      </Box>
     );
   }
 
@@ -787,8 +809,10 @@ const ReviewsPage: React.FC = () => {
               component={Paper}
               className="scrollable-table-container"
               sx={{
-                flex: 1,
-                maxWidth: '50%', // Adjust the width as per your layout needs
+                flexShrink: 0, // Prevent shrinking
+                width: '40%', // Default width (adjust as needed)
+                minWidth: '300px', // Ensure it doesn’t shrink too much
+                maxWidth: '50%', // Prevent it from growing excessively
                 overflowY: 'auto', // Enable vertical scrolling
                 borderRight: '1px solid #ccc', // Separate visually from reviews section
               }}
