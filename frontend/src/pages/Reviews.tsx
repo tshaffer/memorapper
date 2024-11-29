@@ -710,21 +710,30 @@ const ReviewsPage: React.FC = () => {
 
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!} libraries={libraries}>
-      <div className="page-container">
+      <Box id='reviewPageContainer' sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         {/* Freeform Query Input */}
-        <div style={{ marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <Box
+          id='freeFormQueryInput'
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: 2,
+            borderBottom: '1px solid #ccc',
+          }}
+        >
+
           <TextField
             label="Enter query"
             variant="outlined"
             value={query}
             onChange={handleQueryChange}
-            size="small"
-            style={{ flex: 1 }}
+            fullWidth
+            sx={{ marginRight: 2 }}
           />
           <Button variant="contained" color="primary" onClick={handleNaturalLanguageQuery}>
             Search
           </Button>
-        </div>
+        </Box>
 
         {/* Filters */}
         {renderFiltersUI()}
@@ -815,7 +824,7 @@ const ReviewsPage: React.FC = () => {
             {renderDetailsPanel()}
           </div >
         )}
-      </div >
+      </Box >
     </LoadScript >
   );
 };
