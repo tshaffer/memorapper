@@ -1,27 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { List, ListItem, ListItemText, useMediaQuery } from '@mui/material';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Typography, Button, Popover, FormControlLabel, Checkbox, TextField, Slider, Switch, Radio, Tooltip, Box } from '@mui/material';
-
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import DirectionsIcon from '@mui/icons-material/Directions';
-import MapIcon from '@mui/icons-material/Map';
+import { List, ListItem, ListItemText } from '@mui/material';
+import { Typography, Button, Popover, FormControlLabel, Checkbox, TextField, Slider, Switch, Radio, Box } from '@mui/material';
 
 import '../App.css';
 
-import { FilterQueryParams, PlacesReviewsCollection, GooglePlace, ItemReview, MemoRappReview, QueryRequestBody, WouldReturnQuery } from '../types';
+import { FilterQueryParams, PlacesReviewsCollection, QueryRequestBody, WouldReturnQuery } from '../types';
 import { Autocomplete, LoadScript } from '@react-google-maps/api';
-import { getCityNameFromPlace, libraries } from '../utilities';
+import { libraries } from '../utilities';
+import PlacesAndReviews from './PlacesAndReviews';
 
 const DEFAULT_CENTER: google.maps.LatLngLiteral = { lat: 37.3944829, lng: -122.0790619 };
-
-const smallColumnStyle: React.CSSProperties = {
-  width: '35px',
-  maxWidth: '35px',
-  textAlign: 'center',
-  padding: '0',
-};
 
 const smallTextStyle: React.CSSProperties = {
   fontSize: '0.875rem'
@@ -29,16 +17,7 @@ const smallTextStyle: React.CSSProperties = {
 
 const ReviewsPage: React.FC = () => {
 
-  const isMobile = useMediaQuery('(max-width:768px)');
-  const navigate = useNavigate();
-
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
-
-  const [reviews, setReviews] = useState<MemoRappReview[]>([]);
-  const [places, setPlaces] = useState<GooglePlace[]>([]);
-
-  const [filteredPlaces, setFilteredPlaces] = useState<GooglePlace[]>([]);
-  const [filteredReviews, setFilteredReviews] = useState<MemoRappReview[]>([]);
 
   const [query, setQuery] = useState<string>("");
 
@@ -60,10 +39,6 @@ const ReviewsPage: React.FC = () => {
   const [standardizedItemsOrdered, setStandardizedItemsOrdered] = useState<string[]>([]);
   const [selectedItemsOrdered, setSelectedItemsOrdered] = useState<Set<string>>(new Set());
 
-  const [viewMode, setViewMode] = useState<'list' | 'details'>('list');
-  const [selectedPlace, setSelectedPlace] = useState<GooglePlace | null>(null);
-
-
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -80,35 +55,13 @@ const ReviewsPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const fetchPlaces = async () => {
-      const response = await fetch('/api/places');
-      const data = await response.json();
-      setPlaces(data.googlePlaces);
-      setFilteredPlaces(data.googlePlaces);
-    };
-    const fetchReviews = async () => {
-      const response = await fetch('/api/reviews');
-      const data = await response.json();
-      setReviews(data.memoRappReviews);
-      setFilteredReviews(data.memoRappReviews);
-    };
     const fetchStandardizedItemsOrdered = async () => {
       const response = await fetch('/api/standardizedNames');
       const uniqueStandardizedNames: string[] = await response.json();
       setStandardizedItemsOrdered(uniqueStandardizedNames);
     }
-    fetchPlaces();
-    fetchReviews();
     fetchStandardizedItemsOrdered();
   }, []);
-
-  const getPlaceById = (placeId: string): GooglePlace | undefined => {
-    return places.find((place: GooglePlace) => place.place_id === placeId);
-  }
-
-  const getFilteredReviewsForPlace = (placeId: string): MemoRappReview[] => {
-    return filteredReviews.filter((memoRappReview: MemoRappReview) => memoRappReview.place_id === placeId);
-  };
 
   const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
@@ -130,11 +83,7 @@ const ReviewsPage: React.FC = () => {
       });
       const data = await apiResponse.json();
       console.log('Natural language query results:', data);
-      const { places, reviews } = data.result;
-      setPlaces(places);
-      setFilteredPlaces(places);
-      setReviews(reviews);
-      setFilteredReviews(reviews);
+      // const { places, reviews } = data.result;
     } catch (error) {
       console.error('Error handling query:', error);
     }
@@ -240,108 +189,9 @@ const ReviewsPage: React.FC = () => {
       });
       const data: PlacesReviewsCollection = await apiResponse.json();
       console.log('Filter query results:', data);
-      setFilteredPlaces(data.places);
-      setFilteredReviews(data.reviews);
     } catch (error) {
       console.error('Error handling query:', error);
     }
-  };
-
-  const handlePlaceClick = (place: GooglePlace) => {
-    setSelectedPlace(place);
-    setViewMode('details');
-  }
-
-  const handleShowMap = (placeId: string) => {
-    navigate(`/map/${placeId}`);
-  };
-
-  const handleBackToList = () => {
-    setViewMode('list');
-    setSelectedPlace(null);
-  };
-
-  const handleShowDirections = (placeId: string) => {
-    const destination: GooglePlace | undefined = places.find(place => place.place_id === placeId);
-    if (destination && currentLocation) {
-      const destinationLocation: google.maps.LatLngLiteral = destination.geometry!.location;
-      const destinationLatLng: google.maps.LatLngLiteral = { lat: destinationLocation.lat, lng: destinationLocation.lng };
-      const url = `https://www.google.com/maps/dir/?api=1&origin=${currentLocation.lat},${currentLocation.lng}&destination=${destinationLatLng.lat},${destinationLatLng.lng}&destination_place_id=${destination.name}`;
-      window.open(url, '_blank');
-    }
-  };
-
-  const handleEditReview = (review: MemoRappReview) => {
-    const place: GooglePlace | undefined = getPlaceById(review.place_id);
-    if (!place) {
-      console.error('Place not found for review:', review);
-      return;
-    }
-    navigate(`/add-review/${review._id}`, { state: { place, review } });
-  }
-
-  const handleDeleteReview = (review: MemoRappReview) => {
-    console.log('handleDeleteReview', review);
-  }
-
-  const renderReviewDetails = (review: MemoRappReview): JSX.Element => {
-    return (
-      <React.Fragment>
-        <div>
-          <Tooltip title="Edit Review">
-            <IconButton
-              onClick={() => handleEditReview(review)}
-              size="small" // Makes the button smaller
-              sx={{ padding: '0px' }} // Reduces padding for smaller appearance
-            >
-              <EditIcon fontSize="small" /> {/* Makes the icon smaller */}
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Delete" arrow>
-            <IconButton
-              onClick={() => handleDeleteReview(review)}
-              size="small" // Makes the button smaller
-              sx={{ padding: '0px' }} // Reduces padding for smaller appearance
-            >
-              <DeleteIcon fontSize="small" /> {/* Makes the icon smaller */}
-            </IconButton>
-          </Tooltip>
-        </div>
-        <Typography><strong>Date of Visit:</strong> {review.structuredReviewProperties.dateOfVisit}</Typography>
-        <Typography><strong>Would Return:</strong> {(review.structuredReviewProperties.wouldReturn === true) ? 'Yes' : (review.structuredReviewProperties.wouldReturn === false) ? 'No' : 'Unspecified'}</Typography>
-        <Typography><strong>Items Ordered:</strong></Typography>
-        <ul>
-          {review.freeformReviewProperties.itemReviews.map((itemReview: ItemReview, idx) => (
-            <li key={idx}>
-              {itemReview.item} - {itemReview.review || 'No rating provided'}
-            </li>
-          ))}
-        </ul>
-        <Typography><strong>Review Text:</strong> {review.freeformReviewProperties.reviewText}</Typography>
-      </React.Fragment>
-    );
-  }
-
-  const renderReviewDetailsForSelectedPlace = (): JSX.Element | null => {
-    if (selectedPlace === null) {
-      return null;
-    }
-    const reviewsForSelectedPlace: MemoRappReview[] = getFilteredReviewsForPlace(selectedPlace.place_id);
-    const reviewDetails = reviewsForSelectedPlace.map((review: MemoRappReview) => {
-      return renderReviewDetails(review);
-    });
-
-    return (
-      <Paper
-        // key={idx}
-        sx={{
-          marginBottom: 2,
-          padding: 2,
-        }}
-      >
-        {reviewDetails}
-      </Paper>
-    );
   };
 
   const renderFiltersUI = (): JSX.Element => {
@@ -630,110 +480,6 @@ const ReviewsPage: React.FC = () => {
     );
   };
 
-  const renderPlacesAndReviewsContainer = (): JSX.Element => {
-    return (
-      <Box
-        sx={{
-          height: '100vh',
-          display: 'flex',
-          flexDirection: { xs: viewMode === 'details' ? 'column' : 'row', sm: 'row' },
-          overflow: 'hidden',
-        }}
-      >
-        {/* Places Table */}
-        {renderPlacesTable()}
-
-        {/* Reviews Panel */}
-        {renderReviewsContainer()};
-      </Box>
-    );
-  }
-
-  const renderPlacesTable = (): JSX.Element | null => {
-
-    if (!(viewMode === 'list' || !isMobile)) {
-      return null; // Explicitly return null when the condition is false
-    }
-
-    return (
-      <TableContainer
-        component={Paper}
-        className="scrollable-table-container"
-        sx={{
-          flexShrink: 0,
-          width: { xs: '100%', sm: '30%' },
-          minWidth: { sm: '300px' },
-          maxWidth: { sm: '50%' },
-          overflowY: 'auto',
-          borderRight: { sm: '1px solid #ccc' },
-          borderBottom: { xs: '1px solid #ccc', sm: 'none' },
-          height: { xs: '50vh', sm: 'auto' },
-        }}
-      >
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow className="table-head-fixed">
-              <TableCell align="center"></TableCell>
-              <TableCell align="center"></TableCell>
-              <TableCell>Place</TableCell>
-              <TableCell>Location</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredPlaces.map((place: GooglePlace) => (
-              <React.Fragment key={place.place_id}>
-                <TableRow
-                  className="table-row-hover"
-                  onClick={() => handlePlaceClick(place)}
-                >
-                  <TableCell align="right" className="dimmed" style={smallColumnStyle}>
-                    <IconButton onClick={() => handleShowMap(place.place_id)}>
-                      <MapIcon />
-                    </IconButton>
-                  </TableCell>
-                  <TableCell align="right" className="dimmed" style={smallColumnStyle}>
-                    <IconButton onClick={() => handleShowDirections(place.place_id)}>
-                      <DirectionsIcon />
-                    </IconButton>
-                  </TableCell>
-                  <TableCell>{place.name}</TableCell>
-                  <TableCell>{getCityNameFromPlace(place) || 'Not provided'}</TableCell>
-                </TableRow>
-              </React.Fragment>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    );
-  };
-
-  const renderReviewsContainer = (): JSX.Element => {
-    return (
-      <Box
-        sx={{
-          flexGrow: 1,
-          overflowY: 'auto',
-          padding: 2,
-          width: { xs: '100%', sm: 'auto' },
-        }}
-      >
-        {viewMode === 'details' && isMobile && (
-          <Button variant="outlined" onClick={handleBackToList} sx={{ marginBottom: 2 }}>
-            Back to List
-          </Button>
-        )}
-
-        {selectedPlace ? (
-          <>
-            {renderReviewDetailsForSelectedPlace()}
-          </>
-        ) : (
-          <Typography>Select a place to view reviews</Typography>
-        )}
-      </Box>
-    );
-  }
-
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!} libraries={libraries}>
       <Box id='reviewPageContainer' sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -747,7 +493,6 @@ const ReviewsPage: React.FC = () => {
             borderBottom: '1px solid #ccc',
           }}
         >
-
           <TextField
             label="Enter query"
             variant="outlined"
@@ -764,8 +509,8 @@ const ReviewsPage: React.FC = () => {
         {/* Filters */}
         {renderFiltersUI()}
 
-        {/* Container for Places Table / Map */}
-        {renderPlacesAndReviewsContainer()}
+        {/* Places and Reviews*/}
+        <PlacesAndReviews/>
 
       </Box >
     </LoadScript >
