@@ -289,9 +289,7 @@ const ReviewsPage: React.FC = () => {
 
   const handlePlaceClick = (place: GooglePlace) => {
     setSelectedPlace(place);
-    if (isMobile) {
-      setViewMode('details');
-    }
+    setViewMode('details');
   }
 
   const handleShowMap = (placeId: string) => {
@@ -701,6 +699,8 @@ const ReviewsPage: React.FC = () => {
   };
 
   const renderPlacesAndReviewsContainer = (): JSX.Element => {
+    console.log('renderPlacesAndReviewsContainer');
+    console.log('viewMode:', viewMode);
     return (
       <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         {viewMode === 'list' && (
