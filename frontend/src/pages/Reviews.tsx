@@ -102,7 +102,11 @@ const ReviewsPage: React.FC = () => {
       });
       const data = await apiResponse.json();
       console.log('Natural language query results:', data);
-      // const { places, reviews } = data.result;
+      const { places, reviews } = data.result;
+      setPlaces(places);
+      setFilteredPlaces(places);
+      setReviews(reviews);
+      setFilteredReviews(reviews);
     } catch (error) {
       console.error('Error handling query:', error);
     }
@@ -208,6 +212,8 @@ const ReviewsPage: React.FC = () => {
       });
       const data: PlacesReviewsCollection = await apiResponse.json();
       console.log('Filter query results:', data);
+      setFilteredPlaces(data.places);
+      setFilteredReviews(data.reviews);
     } catch (error) {
       console.error('Error handling query:', error);
     }
