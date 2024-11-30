@@ -17,6 +17,7 @@ import '../App.css';
 import { FilterQueryParams, PlacesReviewsCollection, GooglePlace, ItemReview, MemoRappReview, QueryRequestBody, WouldReturnQuery } from '../types';
 import { Autocomplete, LoadScript } from '@react-google-maps/api';
 import { getCityNameFromPlace, libraries } from '../utilities';
+import { render } from 'react-dom';
 
 interface WouldReturnCounts {
   yesCount: number;
@@ -723,13 +724,92 @@ const ReviewsPage: React.FC = () => {
     );
   };
 
-  const renderDetailsPanel = (): JSX.Element => {
+  const renderLowerPartOfPage = (): JSX.Element => {
     return (
       <Box
         sx={{
           flexGrow: 1,
+          display: 'flex',
+          overflow: 'hidden',
+          flexDirection: { xs: 'column', sm: 'row' }, // Stack vertically on small screens
+        }}
+      >
+        {renderTableContainer()}
+        {renderDetailsPanel()}
+      </Box>
+    );
+  }
+
+  const renderTableContainer = (): JSX.Element => {
+    return (
+      <TableContainer
+        component={Paper}
+        className="scrollable-table-container"
+        sx={{
+          flexShrink: 0,
+          width: { xs: '100%', sm: '30%' }, // Full width on mobile, 30% on larger screens
+          minWidth: { sm: '300px' }, // Only apply minWidth on larger screens
+          maxWidth: { sm: '50%' }, // Apply maxWidth only on larger screens
+          overflowY: 'auto',
+          borderRight: { sm: '1px solid #ccc' }, // Add border only for horizontal layout
+          borderBottom: { xs: '1px solid #ccc', sm: 'none' }, // Add border on mobile
+        }}
+      >
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow className="table-head-fixed">
+              <TableCell align="center"></TableCell>
+              <TableCell align="center"></TableCell>
+              <TableCell align="center"></TableCell>
+              <TableCell align="center"></TableCell>
+              <TableCell>Place</TableCell>
+              <TableCell>Location</TableCell>
+            </TableRow>
+          </TableHead >
+          <TableBody>
+            {filteredPlaces.map((place: GooglePlace) => (
+              <React.Fragment key={place.place_id}>
+                <TableRow className="table-row-hover" onClick={() => handlePlaceClick(place)} >
+                  <TableCell align="right" className="dimmed" style={smallColumnStyle}>
+                    <IconButton onClick={() => handleShowMap(place.place_id)}>
+                      <MapIcon />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell align="right" className="dimmed" style={smallColumnStyle}>
+                    <IconButton onClick={() => handleShowDirections(place.place_id)}>
+                      <DirectionsIcon />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell align="right" className="dimmed" style={smallColumnStyle}>
+                    <IconButton onClick={() => handlePlaceClick(place)}>
+                      <RateReviewOutlinedIcon />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell align="right" style={thumbsStyle}>
+                    {renderThumbsUps(place.place_id)}
+                  </TableCell>
+                  <TableCell align="right" style={thumbsStyle}>
+                    {renderThumbsDowns(place.place_id)}
+                  </TableCell>
+                  <TableCell>{place.name}</TableCell>
+                  <TableCell>{getCityNameFromPlace(place) || 'Not provided'}</TableCell>
+                </TableRow>
+              </React.Fragment>
+            ))}
+          </TableBody>
+        </Table >
+      </TableContainer>
+    )
+  }
+
+  const renderDetailsPanel = (): JSX.Element => {
+    return (
+      < Box
+        sx={{
+          flexGrow: 1,
           overflowY: 'auto',
           padding: 2,
+          width: { xs: '100%', sm: 'auto' }, // Full width on mobile, auto on larger screens
         }}
       >
         {renderReviewDetailsForSelectedPlace()}
@@ -804,64 +884,13 @@ const ReviewsPage: React.FC = () => {
             </div>
           )
         ) : (
-          <Box id='reviewsTableAndDetailsContainer' sx={{ flexGrow: 1, display: 'flex', overflow: 'hidden' }}>
-            <TableContainer
-              component={Paper}
-              className="scrollable-table-container"
-              sx={{
-                flexShrink: 0, // Prevent shrinking
-                width: '40%', // Default width (adjust as needed)
-                minWidth: '300px', // Ensure it doesn’t shrink too much
-                maxWidth: '50%', // Prevent it from growing excessively
-                overflowY: 'auto', // Enable vertical scrolling
-                borderRight: '1px solid #ccc', // Separate visually from reviews section
-              }}
-            >
-              <Table stickyHeader>
-                <TableHead>
-                  <TableRow className="table-head-fixed">
-                    <TableCell align="center"></TableCell>
-                    <TableCell align="center"></TableCell>
-                    <TableCell align="center"></TableCell>
-                    <TableCell align="center"></TableCell>
-                    <TableCell>Place</TableCell>
-                    <TableCell>Location</TableCell>
-                  </TableRow>
-                </TableHead >
-                <TableBody>
-                  {filteredPlaces.map((place: GooglePlace) => (
-                    <React.Fragment key={place.place_id}>
-                      <TableRow className="table-row-hover" onClick={() => handlePlaceClick(place)} >
-                        <TableCell align="right" className="dimmed" style={smallColumnStyle}>
-                          <IconButton onClick={() => handleShowMap(place.place_id)}>
-                            <MapIcon />
-                          </IconButton>
-                        </TableCell>
-                        <TableCell align="right" className="dimmed" style={smallColumnStyle}>
-                          <IconButton onClick={() => handleShowDirections(place.place_id)}>
-                            <DirectionsIcon />
-                          </IconButton>
-                        </TableCell>
-                        <TableCell align="right" className="dimmed" style={smallColumnStyle}>
-                          <IconButton onClick={() => handlePlaceClick(place)}>
-                            <RateReviewOutlinedIcon />
-                          </IconButton>
-                        </TableCell>
-                        <TableCell align="right" style={thumbsStyle}>
-                          {renderThumbsUps(place.place_id)}
-                        </TableCell>
-                        <TableCell align="right" style={thumbsStyle}>
-                          {renderThumbsDowns(place.place_id)}
-                        </TableCell>
-                        <TableCell>{place.name}</TableCell>
-                        <TableCell>{getCityNameFromPlace(place) || 'Not provided'}</TableCell>
-                      </TableRow>
-                    </React.Fragment>
-                  ))}
-                </TableBody>
-              </Table >
-            </TableContainer >
-            {renderDetailsPanel()}
+          <Box id='reviewsTableAndDetailsContainer' sx={{
+            flexGrow: 1,
+            display: 'flex',
+            overflow: 'hidden',
+            flexDirection: { xs: 'column', sm: 'row' }, // Stack vertically on small screens
+          }}>
+            {renderLowerPartOfPage()}
           </Box >
         )}
       </Box >
