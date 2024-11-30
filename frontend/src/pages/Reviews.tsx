@@ -383,28 +383,6 @@ const ReviewsPage: React.FC = () => {
       >
         {reviewDetails}
       </Paper>
-
-      // <Paper
-      //   // key={idx}
-      //   sx={{
-      //     marginBottom: 2,
-      //     padding: 2,
-      //   }}
-      // >
-      //   <Typography variant="h6" style={{ marginBottom: '16px' }}>
-      //     Reviews for {selectedPlace.name}
-      //   </Typography>
-      //   <div
-      //     style={{
-      //       flexGrow: 1,
-      //       overflowY: 'auto', // Scrollable container for all reviews
-      //       maxHeight: 'calc(100vh - 200px)', // Adjust for AppBar and other content
-      //       padding: '0 12px', // Optional: Add horizontal padding
-      //     }}
-      //   >
-      //     {reviewDetails}
-      //   </div>
-      // </Paper>
     );
   };
 
@@ -724,20 +702,53 @@ const ReviewsPage: React.FC = () => {
 
   const renderPlacesAndReviewsContainer = (): JSX.Element => {
     return (
-      <Box
-        id='renderPlacesAndDetailedReviewsContainer'
-        sx={{
-          flexGrow: 1,
-          display: 'flex',
-          overflow: { xs: 'visible', sm: 'hidden' },
-          flexDirection: { xs: 'column', sm: 'row' }, // Stack vertically on small screens
-        }}
-      >
-        {renderPlacesContainer()}
-        {renderReviewsContainer()}
+      <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        {viewMode === 'list' && (
+          <Box
+            id='renderPlacesAndDetailedReviewsContainer'
+            sx={{
+              flexGrow: 1,
+              display: 'flex',
+              overflow: { xs: 'visible', sm: 'hidden' },
+              flexDirection: { xs: 'column', sm: 'row' },
+            }}
+          >
+            {renderPlacesContainer()}
+            <Box
+              sx={{
+                flexGrow: 1,
+                overflowY: 'auto',
+                padding: 2,
+                display: { xs: 'none', sm: 'block' },
+              }}
+            >
+              <Typography>Select a place to view reviews</Typography>
+            </Box>
+
+            {/* {renderReviewsContainer()} */}
+          </Box>
+        )}
+        {
+          viewMode === 'details' && (
+            <Box
+              sx={{
+                flexGrow: 1,
+                overflowY: 'auto',
+                padding: 2,
+                height: { xs: '50vh', sm: 'auto' }, // Constrain height for scrolling
+              }}
+            >
+              <Button variant="outlined" onClick={handleBackToList} sx={{ marginBottom: 2 }}>
+                Back to List
+              </Button>
+              {renderReviewDetailsForSelectedPlace()}
+            </Box>
+          )
+        }
       </Box>
     );
   }
+
 
   const renderPlacesContainer = (): JSX.Element => {
     return (
@@ -754,7 +765,6 @@ const ReviewsPage: React.FC = () => {
           borderRight: { sm: '1px solid #ccc' }, // Add border only for horizontal layout
           borderBottom: { xs: '1px solid #ccc', sm: 'none' }, // Add border on mobile
           height: { xs: '50vh', sm: 'auto' }, // Set height for mobile
-
         }}
       >
         <Table stickyHeader>
@@ -804,10 +814,11 @@ const ReviewsPage: React.FC = () => {
     )
   }
 
+  //         id='reviewsDetailsPanel'
+
   const renderReviewsContainer = (): JSX.Element => {
     return (
       < Box
-        id='reviewsDetailsPanel'
         sx={{
           flexGrow: 1,
           overflowY: 'auto',
