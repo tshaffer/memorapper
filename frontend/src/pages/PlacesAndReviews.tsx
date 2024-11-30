@@ -20,52 +20,22 @@ const smallColumnStyle: React.CSSProperties = {
   padding: '0',
 };
 
-const PlacesAndReviews: React.FC = () => {
+interface PlacesAndReviewsProps {
+  currentLocation: google.maps.LatLngLiteral | null;
+  places: GooglePlace[];
+  filteredPlaces: GooglePlace[];
+  filteredReviews: MemoRappReview[];
+}
+
+const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndReviewsProps) => {
+
+  const { currentLocation, places, filteredPlaces, filteredReviews } = props;
 
   const isMobile = useMediaQuery('(max-width:768px)');
   const navigate = useNavigate();
 
-  const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
-
-  const [places, setPlaces] = useState<GooglePlace[]>([]);
-
-  const [filteredPlaces, setFilteredPlaces] = useState<GooglePlace[]>([]);
-  const [filteredReviews, setFilteredReviews] = useState<MemoRappReview[]>([]);
-
   const [viewMode, setViewMode] = useState<'list' | 'details'>('list');
   const [selectedPlace, setSelectedPlace] = useState<GooglePlace | null>(null);
-
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setCurrentLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => console.error("Error getting current location: ", error),
-        { enableHighAccuracy: true }
-      );
-    }
-  }, []);
-
-  useEffect(() => {
-    const fetchPlaces = async () => {
-      const response = await fetch('/api/places');
-      const data = await response.json();
-      setPlaces(data.googlePlaces);
-      setFilteredPlaces(data.googlePlaces);
-    };
-    const fetchReviews = async () => {
-      const response = await fetch('/api/reviews');
-      const data = await response.json();
-      setFilteredReviews(data.memoRappReviews);
-    };
-    fetchPlaces();
-    fetchReviews();
-  }, []);
-
 
   const getPlaceById = (placeId: string): GooglePlace | undefined => {
     return places.find((place: GooglePlace) => place.place_id === placeId);

@@ -4,7 +4,7 @@ import { Typography, Button, Popover, FormControlLabel, Checkbox, TextField, Sli
 
 import '../App.css';
 
-import { FilterQueryParams, PlacesReviewsCollection, QueryRequestBody, WouldReturnQuery } from '../types';
+import { FilterQueryParams, GooglePlace, MemoRappReview, PlacesReviewsCollection, QueryRequestBody, WouldReturnQuery } from '../types';
 import { Autocomplete, LoadScript } from '@react-google-maps/api';
 import { libraries } from '../utilities';
 import PlacesAndReviews from './PlacesAndReviews';
@@ -19,6 +19,11 @@ const ReviewsPage: React.FC = () => {
 
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
+  const [reviews, setReviews] = useState<MemoRappReview[]>([]);
+  const [places, setPlaces] = useState<GooglePlace[]>([]);
+
+  const [filteredPlaces, setFilteredPlaces] = useState<GooglePlace[]>([]);
+  const [filteredReviews, setFilteredReviews] = useState<MemoRappReview[]>([]);
   const [query, setQuery] = useState<string>("");
 
   const [anchorElSetDistance, setAnchorElSetDistance] = useState<HTMLElement | null>(null);
@@ -55,11 +60,25 @@ const ReviewsPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    const fetchPlaces = async () => {
+      const response = await fetch('/api/places');
+      const data = await response.json();
+      setPlaces(data.googlePlaces);
+      setFilteredPlaces(data.googlePlaces);
+    };
+    const fetchReviews = async () => {
+      const response = await fetch('/api/reviews');
+      const data = await response.json();
+      setReviews(data.memoRappReviews);
+      setFilteredReviews(data.memoRappReviews);
+    };
     const fetchStandardizedItemsOrdered = async () => {
       const response = await fetch('/api/standardizedNames');
       const uniqueStandardizedNames: string[] = await response.json();
       setStandardizedItemsOrdered(uniqueStandardizedNames);
     }
+    fetchPlaces();
+    fetchReviews();
     fetchStandardizedItemsOrdered();
   }, []);
 
@@ -510,7 +529,12 @@ const ReviewsPage: React.FC = () => {
         {renderFiltersUI()}
 
         {/* Places and Reviews*/}
-        <PlacesAndReviews/>
+        <PlacesAndReviews
+          currentLocation={currentLocation}
+          places={places}
+          filteredPlaces={filteredPlaces}
+          filteredReviews={filteredReviews}
+        />
 
       </Box >
     </LoadScript >
