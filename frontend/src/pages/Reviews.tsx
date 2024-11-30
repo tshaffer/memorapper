@@ -729,7 +729,7 @@ const ReviewsPage: React.FC = () => {
         sx={{
           flexGrow: 1,
           display: 'flex',
-          overflow: 'hidden',
+          overflow: { xs: 'visible', sm: 'hidden' },
           flexDirection: { xs: 'column', sm: 'row' }, // Stack vertically on small screens
         }}
       >
@@ -753,6 +753,8 @@ const ReviewsPage: React.FC = () => {
           overflowY: 'auto',
           borderRight: { sm: '1px solid #ccc' }, // Add border only for horizontal layout
           borderBottom: { xs: '1px solid #ccc', sm: 'none' }, // Add border on mobile
+          height: { xs: '50vh', sm: 'auto' }, // Set height for mobile
+
         }}
       >
         <Table stickyHeader>
@@ -810,6 +812,7 @@ const ReviewsPage: React.FC = () => {
           flexGrow: 1,
           overflowY: 'auto',
           padding: 2,
+          height: { xs: '50vh', sm: 'auto' }, // Set height for mobile
           width: { xs: '100%', sm: 'auto' }, // Full width on mobile, auto on larger screens
         }}
       >
