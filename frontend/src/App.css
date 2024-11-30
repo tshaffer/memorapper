@@ -75,13 +75,22 @@
   /* Adjusted height to account for header, filters, etc. */
 }
 
+/*
 .scrollable-table-container {
-  flex-shrink: 0; /* Prevent shrinking */
-  width: 40%; /* Default width */
-  min-width: 300px; /* Prevent it from shrinking too much */
-  max-width: 50%; /* Cap the maximum width */
-  overflow-y: auto; /* Enable vertical scrolling */
-  border-right: 1px solid #ccc; /* Visual separation */
+  flex-shrink: 0;
+  width: 40%;
+  min-width: 300px;
+  max-width: 50%;
+  overflow-y: auto;
+  border-right: 1px solid #ccc;
+}
+*/
+.scrollable-table-container {
+  /* flex-shrink: 0;
+  width: 40%;
+  min-width: 300px;
+  overflow-y: auto;
+  border-right: 1px solid #ccc; */
 }
 
 .review-details,
@@ -152,9 +161,14 @@
     /* Allow height to adjust automatically */
   }
 
-  .scrollable-table-container {
+  /* .scrollable-table-container {
     max-width: 100%;
-    /* Full width for mobile */
+  } */
+
+  .scrollable-table-container {
+    width: 100%; /* Full width on mobile */
+    border-right: none;
+    border-bottom: 1px solid #ccc; /* Bottom border for stacked layout */
   }
 
   .full-width-container {

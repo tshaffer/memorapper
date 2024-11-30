@@ -749,7 +749,7 @@ const ReviewsPage: React.FC = () => {
         className="scrollable-table-container"
         sx={{
           flexShrink: 0,
-          width: { xs: '100%', sm: '30%' }, // Full width on mobile, 30% on larger screens
+          width: { xs: '100%', sm: '40%' }, // Full width on mobile, 30% on larger screens
           minWidth: { sm: '300px' }, // Only apply minWidth on larger screens
           maxWidth: { sm: '50%' }, // Apply maxWidth only on larger screens
           overflowY: 'auto',
@@ -851,51 +851,7 @@ const ReviewsPage: React.FC = () => {
         {renderFiltersUI()}
 
         {/* Container for Places Table / Map */}
-        {isMobile ? (
-          viewMode === 'list' ? (
-            <div className="scrollable-table-container">
-              {filteredPlaces.map((place) => (
-                <div key={place.place_id} style={{ marginBottom: '16px', padding: '8px', borderBottom: '1px solid #ddd' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Typography variant="h6">{place.name}</Typography>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <IconButton onClick={() => handleShowMap(place.place_id)} size="small" title="View Map">
-                        <MapOutlinedIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton onClick={() => handleShowDirections(place.place_id)} size="small" title="Show Directions">
-                        <DirectionsIcon />
-                      </IconButton>
-                      <IconButton onClick={() => handlePlaceClick(place)} size="small" title="View Reviews">
-                        <RateReviewOutlinedIcon fontSize="small" />
-                      </IconButton>
-                    </div>
-                  </div>
-                  <Typography variant="body2" color="textSecondary">{getCityNameFromPlace(place)}</Typography>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div style={{ padding: '16px' }}>
-              <Button variant="outlined" onClick={handleBackToList} style={{ marginBottom: '16px' }}>
-                Back to List
-              </Button>
-              {selectedPlace && (
-                <div>
-                  {renderReviewDetailsForSelectedPlace()}
-                </div>
-              )}
-            </div>
-          )
-        ) : (
-          <Box id='reviewsTableAndDetailsContainer' sx={{
-            flexGrow: 1,
-            display: 'flex',
-            overflow: 'hidden',
-            flexDirection: { xs: 'column', sm: 'row' }, // Stack vertically on small screens
-          }}>
-            {renderReviewsTableAndDetailsContainer()}
-          </Box >
-        )}
+        {renderReviewsTableAndDetailsContainer()}
       </Box >
     </LoadScript >
   );
