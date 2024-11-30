@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { List, ListItem, ListItemText, useMediaQuery } from '@mui/material';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Typography, Button, Popover, FormControlLabel, Checkbox, TextField, Slider, Switch, Radio, Tooltip, Box } from '@mui/material';
 
-import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import RateReviewOutlinedIcon from '@mui/icons-material/RateReviewOutlined';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -17,7 +16,6 @@ import '../App.css';
 import { FilterQueryParams, PlacesReviewsCollection, GooglePlace, ItemReview, MemoRappReview, QueryRequestBody, WouldReturnQuery } from '../types';
 import { Autocomplete, LoadScript } from '@react-google-maps/api';
 import { getCityNameFromPlace, libraries } from '../utilities';
-import { render } from 'react-dom';
 
 interface WouldReturnCounts {
   yesCount: number;
@@ -724,10 +722,10 @@ const ReviewsPage: React.FC = () => {
     );
   };
 
-  const renderReviewsTableAndDetailsContainer = (): JSX.Element => {
+  const renderPlacesAndReviewsContainer = (): JSX.Element => {
     return (
       <Box
-        id='reviewsTableAndDetailsContainer'
+        id='renderPlacesAndDetailedReviewsContainer'
         sx={{
           flexGrow: 1,
           display: 'flex',
@@ -735,13 +733,13 @@ const ReviewsPage: React.FC = () => {
           flexDirection: { xs: 'column', sm: 'row' }, // Stack vertically on small screens
         }}
       >
-        {renderTableContainer()}
-        {renderDetailsPanel()}
+        {renderPlacesContainer()}
+        {renderReviewsContainer()}
       </Box>
     );
   }
 
-  const renderTableContainer = (): JSX.Element => {
+  const renderPlacesContainer = (): JSX.Element => {
     return (
       <TableContainer
         id='placesTableContainer'
@@ -749,7 +747,7 @@ const ReviewsPage: React.FC = () => {
         className="scrollable-table-container"
         sx={{
           flexShrink: 0,
-          width: { xs: '100%', sm: '40%' }, // Full width on mobile, 30% on larger screens
+          width: { xs: '100%', sm: '30%' }, // Full width on mobile, 30% on larger screens
           minWidth: { sm: '300px' }, // Only apply minWidth on larger screens
           maxWidth: { sm: '50%' }, // Apply maxWidth only on larger screens
           overflowY: 'auto',
@@ -804,7 +802,7 @@ const ReviewsPage: React.FC = () => {
     )
   }
 
-  const renderDetailsPanel = (): JSX.Element => {
+  const renderReviewsContainer = (): JSX.Element => {
     return (
       < Box
         id='reviewsDetailsPanel'
@@ -851,7 +849,8 @@ const ReviewsPage: React.FC = () => {
         {renderFiltersUI()}
 
         {/* Container for Places Table / Map */}
-        {renderReviewsTableAndDetailsContainer()}
+        {renderPlacesAndReviewsContainer()}
+
       </Box >
     </LoadScript >
   );
