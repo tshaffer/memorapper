@@ -641,77 +641,95 @@ const ReviewsPage: React.FC = () => {
         }}
       >
         {/* Places Table */}
-        {(viewMode === 'list' || !isMobile) && (
-          <TableContainer
-            component={Paper}
-            className="scrollable-table-container"
-            sx={{
-              flexShrink: 0,
-              width: { xs: '100%', sm: '30%' },
-              minWidth: { sm: '300px' },
-              maxWidth: { sm: '50%' },
-              overflowY: 'auto',
-              borderRight: { sm: '1px solid #ccc' },
-              borderBottom: { xs: '1px solid #ccc', sm: 'none' },
-              height: { xs: '50vh', sm: 'auto' },
-            }}
-          >
-            <Table stickyHeader>
-              <TableHead>
-                <TableRow className="table-head-fixed">
-                  <TableCell align="center"></TableCell>
-                  <TableCell align="center"></TableCell>
-                  <TableCell>Place</TableCell>
-                  <TableCell>Location</TableCell>
-                </TableRow>
-              </TableHead >
-              <TableBody>
-                {filteredPlaces.map((place: GooglePlace) => (
-                  <React.Fragment key={place.place_id}>
-                    <TableRow className="table-row-hover" onClick={() => handlePlaceClick(place)} >
-                      <TableCell align="right" className="dimmed" style={smallColumnStyle}>
-                        <IconButton onClick={() => handleShowMap(place.place_id)}>
-                          <MapIcon />
-                        </IconButton>
-                      </TableCell>
-                      <TableCell align="right" className="dimmed" style={smallColumnStyle}>
-                        <IconButton onClick={() => handleShowDirections(place.place_id)}>
-                          <DirectionsIcon />
-                        </IconButton>
-                      </TableCell>
-                      <TableCell>{place.name}</TableCell>
-                      <TableCell>{getCityNameFromPlace(place) || 'Not provided'}</TableCell>
-                    </TableRow>
-                  </React.Fragment>
-                ))}
-              </TableBody>
-            </Table >
-          </TableContainer>
-        )}
+        {renderPlacesTable()}
 
         {/* Reviews Panel */}
-        <Box
-          sx={{
-            flexGrow: 1,
-            overflowY: 'auto',
-            padding: 2,
-            width: { xs: '100%', sm: 'auto' },
-          }}
-        >
-          {viewMode === 'details' && isMobile && (
-            <Button variant="outlined" onClick={handleBackToList} sx={{ marginBottom: 2 }}>
-              Back to List
-            </Button>
-          )}
+        {renderReviewsContainer()};
+      </Box>
+    );
+  }
 
-          {selectedPlace ? (
-            <>
+  const renderPlacesTable = (): JSX.Element | null => {
+
+    if (!(viewMode === 'list' || !isMobile)) {
+      return null; // Explicitly return null when the condition is false
+    }
+
+    return (
+      <TableContainer
+        component={Paper}
+        className="scrollable-table-container"
+        sx={{
+          flexShrink: 0,
+          width: { xs: '100%', sm: '30%' },
+          minWidth: { sm: '300px' },
+          maxWidth: { sm: '50%' },
+          overflowY: 'auto',
+          borderRight: { sm: '1px solid #ccc' },
+          borderBottom: { xs: '1px solid #ccc', sm: 'none' },
+          height: { xs: '50vh', sm: 'auto' },
+        }}
+      >
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow className="table-head-fixed">
+              <TableCell align="center"></TableCell>
+              <TableCell align="center"></TableCell>
+              <TableCell>Place</TableCell>
+              <TableCell>Location</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredPlaces.map((place: GooglePlace) => (
+              <React.Fragment key={place.place_id}>
+                <TableRow
+                  className="table-row-hover"
+                  onClick={() => handlePlaceClick(place)}
+                >
+                  <TableCell align="right" className="dimmed" style={smallColumnStyle}>
+                    <IconButton onClick={() => handleShowMap(place.place_id)}>
+                      <MapIcon />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell align="right" className="dimmed" style={smallColumnStyle}>
+                    <IconButton onClick={() => handleShowDirections(place.place_id)}>
+                      <DirectionsIcon />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell>{place.name}</TableCell>
+                  <TableCell>{getCityNameFromPlace(place) || 'Not provided'}</TableCell>
+                </TableRow>
+              </React.Fragment>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  };
+
+  const renderReviewsContainer = (): JSX.Element => {
+    return (
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflowY: 'auto',
+          padding: 2,
+          width: { xs: '100%', sm: 'auto' },
+        }}
+      >
+        {viewMode === 'details' && isMobile && (
+          <Button variant="outlined" onClick={handleBackToList} sx={{ marginBottom: 2 }}>
+            Back to List
+          </Button>
+        )}
+
+        {selectedPlace ? (
+          <>
             {renderReviewDetailsForSelectedPlace()}
-            </>
-          ) : (
-            <Typography>Select a place to view reviews</Typography>
-          )}
-        </Box>
+          </>
+        ) : (
+          <Typography>Select a place to view reviews</Typography>
+        )}
       </Box>
     );
   }
