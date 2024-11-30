@@ -724,9 +724,10 @@ const ReviewsPage: React.FC = () => {
     );
   };
 
-  const renderLowerPartOfPage = (): JSX.Element => {
+  const renderReviewsTableAndDetailsContainer = (): JSX.Element => {
     return (
       <Box
+        id='reviewsTableAndDetailsContainer'
         sx={{
           flexGrow: 1,
           display: 'flex',
@@ -743,6 +744,7 @@ const ReviewsPage: React.FC = () => {
   const renderTableContainer = (): JSX.Element => {
     return (
       <TableContainer
+        id='placesTableContainer'
         component={Paper}
         className="scrollable-table-container"
         sx={{
@@ -805,6 +807,7 @@ const ReviewsPage: React.FC = () => {
   const renderDetailsPanel = (): JSX.Element => {
     return (
       < Box
+        id='reviewsDetailsPanel'
         sx={{
           flexGrow: 1,
           overflowY: 'auto',
@@ -890,7 +893,7 @@ const ReviewsPage: React.FC = () => {
             overflow: 'hidden',
             flexDirection: { xs: 'column', sm: 'row' }, // Stack vertically on small screens
           }}>
-            {renderLowerPartOfPage()}
+            {renderReviewsTableAndDetailsContainer()}
           </Box >
         )}
       </Box >
