@@ -729,9 +729,9 @@ const ReviewsPage: React.FC = () => {
                 <TableRow className="table-head-fixed">
                   <TableCell align="center"></TableCell>
                   <TableCell align="center"></TableCell>
-                  <TableCell align="center"></TableCell>
-                  <TableCell align="center"></TableCell>
-                  <TableCell align="center"></TableCell>
+                  {/* <TableCell align="center"></TableCell>
+                  <TableCell align="center"></TableCell> */}
+                  {/* <TableCell align="center"></TableCell> */}
                   <TableCell>Place</TableCell>
                   <TableCell>Location</TableCell>
                 </TableRow>
@@ -750,17 +750,17 @@ const ReviewsPage: React.FC = () => {
                           <DirectionsIcon />
                         </IconButton>
                       </TableCell>
-                      <TableCell align="right" className="dimmed" style={smallColumnStyle}>
+                      {/* <TableCell align="right" className="dimmed" style={smallColumnStyle}>
                         <IconButton onClick={() => handlePlaceClick(place)}>
                           <RateReviewOutlinedIcon />
                         </IconButton>
-                      </TableCell>
-                      <TableCell align="right" style={thumbsStyle}>
+                      </TableCell> */}
+                      {/* <TableCell align="right" style={thumbsStyle}>
                         {renderThumbsUps(place.place_id)}
                       </TableCell>
                       <TableCell align="right" style={thumbsStyle}>
                         {renderThumbsDowns(place.place_id)}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell>{place.name}</TableCell>
                       <TableCell>{getCityNameFromPlace(place) || 'Not provided'}</TableCell>
                     </TableRow>
