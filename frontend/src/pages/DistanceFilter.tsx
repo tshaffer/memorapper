@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import {
   Box,
   Button,
@@ -10,24 +10,54 @@ import {
 } from '@mui/material';
 import { Autocomplete } from '@react-google-maps/api';
 
-const DistanceFilter: React.FC = () => {
-  const [distanceFilterEnabled, setDistanceFilterEnabled] = useState(false);
-  const [useCurrentLocation, setUseCurrentLocation] = useState(true);
-  const [distance, setDistance] = useState<number>(5); // Default to 5 miles
-  const [specificLocation, setSpecificLocation] = useState<string | null>(null);
+interface DistanceFilterProps {
+  filterState: {
+    enabled: boolean;
+    useCurrentLocation: boolean;
+    distance: number;
+    specificLocation: string | null;
+  };
+  onFilterChange: (newState: DistanceFilterProps['filterState']) => void;
+}
+
+const DistanceFilter: React.FC<DistanceFilterProps> = ({
+  filterState,
+  onFilterChange,
+}) => {
   const fromLocationAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
+  // Toggle Distance Filter
   const toggleDistanceFilter = () => {
-    setDistanceFilterEnabled((prev) => !prev);
-    if (!distanceFilterEnabled) {
-      setSpecificLocation(null); // Reset specific location if the filter is turned off
-    }
+    onFilterChange({
+      ...filterState,
+      enabled: !filterState.enabled,
+    });
   };
 
+  // Handle Radio Change
+  const handleUseCurrentLocationChange = (useCurrent: boolean) => {
+    onFilterChange({
+      ...filterState,
+      useCurrentLocation: useCurrent,
+    });
+  };
+
+  // Handle Slider Change
+  const handleDistanceChange = (newDistance: number) => {
+    onFilterChange({
+      ...filterState,
+      distance: newDistance,
+    });
+  };
+
+  // Handle Autocomplete Place Change
   const handleFromLocationPlaceChanged = () => {
     if (fromLocationAutocompleteRef.current) {
       const place = fromLocationAutocompleteRef.current.getPlace();
-      setSpecificLocation(place?.formatted_address || null);
+      onFilterChange({
+        ...filterState,
+        specificLocation: place?.formatted_address || null,
+      });
     }
   };
 
@@ -37,8 +67,7 @@ const DistanceFilter: React.FC = () => {
         border: '1px solid #ccc',
         borderRadius: 2,
         padding: 2,
-        marginBottom: 2,
-        backgroundColor: distanceFilterEnabled ? '#f5f5f5' : 'white',
+        backgroundColor: filterState.enabled ? '#f5f5f5' : 'white',
       }}
     >
       {/* Filter Header */}
@@ -47,19 +76,19 @@ const DistanceFilter: React.FC = () => {
           Distance Away
         </Typography>
         <Button
-          variant={distanceFilterEnabled ? 'contained' : 'outlined'}
+          variant={filterState.enabled ? 'contained' : 'outlined'}
           onClick={toggleDistanceFilter}
         >
-          {distanceFilterEnabled ? 'Disable' : 'Enable'}
+          {filterState.enabled ? 'Disable' : 'Enable'}
         </Button>
       </Box>
 
-      {distanceFilterEnabled && (
+      {filterState.enabled && (
         <>
           {/* Distance Options */}
           <RadioGroup
-            value={useCurrentLocation ? 'current' : 'specific'}
-            onChange={(e) => setUseCurrentLocation(e.target.value === 'current')}
+            value={filterState.useCurrentLocation ? 'current' : 'specific'}
+            onChange={(e) => handleUseCurrentLocationChange(e.target.value === 'current')}
             sx={{ marginTop: 2 }}
           >
             <FormControlLabel
@@ -75,7 +104,7 @@ const DistanceFilter: React.FC = () => {
           </RadioGroup>
 
           {/* Autocomplete Input for Specific Location */}
-          {!useCurrentLocation && (
+          {!filterState.useCurrentLocation && (
             <Autocomplete
               onLoad={(autocomplete) => (fromLocationAutocompleteRef.current = autocomplete)}
               onPlaceChanged={handleFromLocationPlaceChanged}
@@ -90,20 +119,18 @@ const DistanceFilter: React.FC = () => {
                   boxSizing: 'border-box',
                   marginBottom: '10px',
                 }}
-                disabled={!distanceFilterEnabled} // Disable when filter is off
               />
             </Autocomplete>
           )}
 
           {/* Distance Slider */}
-          <Typography gutterBottom>Distance: {distance} miles</Typography>
+          <Typography gutterBottom>Distance: {filterState.distance} miles</Typography>
           <Slider
-            value={distance}
-            onChange={(e, value) => setDistance(value as number)}
+            value={filterState.distance}
+            onChange={(e, value) => handleDistanceChange(value as number)}
             min={0}
             max={10}
             step={0.1}
-            disabled={!distanceFilterEnabled} // Disable when filter is off
           />
         </>
       )}
