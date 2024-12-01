@@ -1,26 +1,30 @@
-import { Modal, Box, Typography, TextField, Button } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { Box, Button, Modal, TextField, Typography } from '@mui/material';
 
-const QueryModal: React.FC = () => {
-  const [queryText, setQueryText] = useState<string | null>(null);
-  const toggleQueryModal = () => setIsQueryModalOpen((prev) => !prev);
+interface QueryModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onApply: (query: string) => void;
+}
 
-  const [isQueryModalOpen, setIsQueryModalOpen] = useState(false);
+const QueryModal: React.FC<QueryModalProps> = ({ isOpen, onClose, onApply }) => {
+  const [inputText, setInputText] = useState('');
 
-  const applyFiltersAndQuery = () => {
-    console.log('Applying filters and query');
+  function handleApply() {
+    onApply(inputText); // Pass query text back to parent
+    setInputText(''); // Clear input field
   }
-  
+
   return (
-    <Modal open={isQueryModalOpen} onClose={toggleQueryModal}>
+    <Modal open={isOpen} onClose={onClose}>
       <Box
         sx={{
-          padding: 3,
-          backgroundColor: 'white',
-          borderRadius: 2,
           width: '400px',
           margin: 'auto',
           marginTop: '20vh',
+          backgroundColor: 'white',
+          padding: 3,
+          borderRadius: 2,
         }}
       >
         <Typography variant="h6" sx={{ marginBottom: 2 }}>
@@ -29,15 +33,12 @@ const QueryModal: React.FC = () => {
         <TextField
           fullWidth
           placeholder="e.g., restaurants near me"
-          value={queryText}
-          onChange={(e) => setQueryText(e.target.value)}
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
         />
         <Button
           variant="contained"
-          onClick={() => {
-            toggleQueryModal();
-            applyFiltersAndQuery(); // Trigger filtering when the modal closes
-          }}
+          onClick={handleApply}
           sx={{ marginTop: 2 }}
         >
           Apply
@@ -45,6 +46,6 @@ const QueryModal: React.FC = () => {
       </Box>
     </Modal>
   );
-}
+};
 
 export default QueryModal;
