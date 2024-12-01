@@ -44,6 +44,8 @@ const ReviewFilters: React.FC = () => {
     });
   };
 
+  console.log('distanceFilter:', distanceFilter);
+  
   return (
     <Box
       sx={{
@@ -63,7 +65,7 @@ const ReviewFilters: React.FC = () => {
       <Button
         variant="outlined"
         onClick={toggleDistanceFilterModal}
-        startIcon={distanceFilter.enabled ? <>&#10003;</> : undefined} // Checkmark if active
+        startIcon={distanceFilter.enabled ? <>&#10003;</> : undefined} // Checkmark if enabled
       >
         Distance Away
       </Button>
