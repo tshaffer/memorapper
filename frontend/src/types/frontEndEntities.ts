@@ -15,3 +15,30 @@ export interface ReviewEntity {
   reviewText: string;
 }
 
+export interface DistanceFilter {
+  enabled: boolean;
+  useCurrentLocation: boolean;
+  distance: number;
+  specificLocation: string | null;
+}
+
+export interface WouldReturnFilter {
+  enabled: boolean;
+  values: {
+    yes: boolean;
+    no: boolean;
+    notSure: boolean;
+  };
+}
+
+export interface ItemsOrderedFilter {
+  enabled: boolean;
+  selectedItems: string[];
+}
+
+export interface ReviewUIFilters {
+  queryText: string | null;
+  distanceFilter: DistanceFilter;
+  wouldReturnFilter: WouldReturnFilter;
+  itemsOrderedFilter: ItemsOrderedFilter;
+}

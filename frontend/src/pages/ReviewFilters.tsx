@@ -4,24 +4,20 @@ import QueryModal from './QueryModal';
 import DistanceFilterModal from './DistanceFilterModal';
 import WouldReturnFilterModal from './WouldReturnModal';
 import ItemsOrderedModal from './ItemsOrderedModal';
+import { DistanceFilter, ItemsOrderedFilter, ReviewUIFilters, WouldReturnFilter } from '../types';
 
 interface ReviewFiltersProps {
-  onApplyFilters: (filterState: {
-    queryText: string | null;
-    distanceFilter: typeof initialDistanceFilter;
-    wouldReturnFilter: typeof initialWouldReturnFilter;
-    itemsOrderedFilter: typeof initialItemsOrderedFilter;
-  }) => void;
+  onApplyFilters: (filterState: ReviewUIFilters) => void;
 }
 
-const initialDistanceFilter = {
+const initialDistanceFilter: DistanceFilter = {
   enabled: false,
   useCurrentLocation: true,
   distance: 5,
   specificLocation: null as string | null,
 };
 
-const initialWouldReturnFilter = {
+const initialWouldReturnFilter: WouldReturnFilter = {
   enabled: false,
   values: {
     yes: false,
@@ -30,12 +26,14 @@ const initialWouldReturnFilter = {
   },
 };
 
-const initialItemsOrderedFilter = {
+const initialItemsOrderedFilter: ItemsOrderedFilter = {
   enabled: false,
   selectedItems: [] as string[],
 };
 
-const ReviewFilters: React.FC<ReviewFiltersProps> = ({ onApplyFilters }) => {
+const ReviewFilters: React.FC<ReviewFiltersProps> = ( props: ReviewFiltersProps ) => {
+  const { onApplyFilters } = props;
+  
   const [isQueryModalOpen, setIsQueryModalOpen] = useState(false);
   const [isDistanceFilterOpen, setIsDistanceFilterOpen] = useState(false);
   const [isWouldReturnFilterOpen, setIsWouldReturnFilterOpen] = useState(false);
