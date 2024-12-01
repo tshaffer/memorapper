@@ -5,31 +5,46 @@ import DistanceFilterModal from './DistanceFilterModal';
 import WouldReturnFilterModal from './WouldReturnModal';
 import ItemsOrderedModal from './ItemsOrderedModal';
 
-const ReviewFilters: React.FC = () => {
+interface ReviewFiltersProps {
+  onApplyFilters: (filterState: {
+    queryText: string | null;
+    distanceFilter: typeof initialDistanceFilter;
+    wouldReturnFilter: typeof initialWouldReturnFilter;
+    itemsOrderedFilter: typeof initialItemsOrderedFilter;
+  }) => void;
+}
+
+const initialDistanceFilter = {
+  enabled: false,
+  useCurrentLocation: true,
+  distance: 5,
+  specificLocation: null as string | null,
+};
+
+const initialWouldReturnFilter = {
+  enabled: false,
+  values: {
+    yes: false,
+    no: false,
+    notSure: false,
+  },
+};
+
+const initialItemsOrderedFilter = {
+  enabled: false,
+  selectedItems: [] as string[],
+};
+
+const ReviewFilters: React.FC<ReviewFiltersProps> = ({ onApplyFilters }) => {
   const [isQueryModalOpen, setIsQueryModalOpen] = useState(false);
   const [isDistanceFilterOpen, setIsDistanceFilterOpen] = useState(false);
   const [isWouldReturnFilterOpen, setIsWouldReturnFilterOpen] = useState(false);
   const [isItemsOrderedFilterOpen, setIsItemsOrderedFilterOpen] = useState(false);
 
   const [queryText, setQueryText] = useState<string | null>(null);
-  const [distanceFilter, setDistanceFilter] = useState({
-    enabled: false,
-    useCurrentLocation: true,
-    distance: 5,
-    specificLocation: null as string | null,
-  });
-  const [wouldReturnFilter, setWouldReturnFilter] = useState({
-    enabled: false,
-    values: {
-      yes: false,
-      no: false,
-      notSure: false,
-    },
-  });
-  const [itemsOrderedFilter, setItemsOrderedFilter] = useState({
-    enabled: false,
-    selectedItems: [] as string[],
-  });
+  const [distanceFilter, setDistanceFilter] = useState(initialDistanceFilter);
+  const [wouldReturnFilter, setWouldReturnFilter] = useState(initialWouldReturnFilter);
+  const [itemsOrderedFilter, setItemsOrderedFilter] = useState(initialItemsOrderedFilter);
 
   const [itemsOrdered, setItemsOrdered] = useState<string[]>([]);
 
@@ -38,65 +53,16 @@ const ReviewFilters: React.FC = () => {
       const response = await fetch('/api/standardizedNames');
       const uniqueStandardizedNames: string[] = await response.json();
       setItemsOrdered(uniqueStandardizedNames);
-    }
+    };
     fetchStandardizedItemsOrdered();
   }, []);
-
-
-  // Toggle Query Modal
-  const toggleQueryModal = () => setIsQueryModalOpen((prev) => !prev);
-
-  // Handle Query Apply
-  const handleQueryApply = (newQuery: string) => {
-    setQueryText(newQuery);
-    setIsQueryModalOpen(false);
-  };
-
-  // Toggle Distance Filter Modal
-  const toggleDistanceFilterModal = () => setIsDistanceFilterOpen((prev) => !prev);
-
-  // Handle Distance Filter Apply
-  const handleDistanceFilterApply = (updatedFilter: typeof distanceFilter) => {
-    setDistanceFilter(updatedFilter);
-    setIsDistanceFilterOpen(false);
-  };
-
-  const toggleWouldReturnFilterModal = () => setIsWouldReturnFilterOpen((prev) => !prev);
-
-  // Handle WouldReturn Filter Apply
-  const handleWouldReturnFilterApply = (updatedFilter: typeof wouldReturnFilter) => {
-    setWouldReturnFilter(updatedFilter);
-    setIsWouldReturnFilterOpen(false);
-  };
-
-  const toggleItemsOrderedFilterModal = () => {
-    setIsItemsOrderedFilterOpen((prev) => !prev);
-  };
-  const handleItemsOrderedFilterApply = (updatedFilter: typeof itemsOrderedFilter) => {
-    setItemsOrderedFilter(updatedFilter);
-  };
 
   // Clear All Filters
   const clearAllFilters = () => {
     setQueryText(null);
-    setDistanceFilter({
-      enabled: false,
-      useCurrentLocation: true,
-      distance: 5,
-      specificLocation: null,
-    });
-    setWouldReturnFilter({
-      enabled: false,
-      values: {
-        yes: false,
-        no: false,
-        notSure: false,
-      },
-    });
-    setItemsOrderedFilter({
-      enabled: false,
-      selectedItems: [],
-    });
+    setDistanceFilter(initialDistanceFilter);
+    setWouldReturnFilter(initialWouldReturnFilter);
+    setItemsOrderedFilter(initialItemsOrderedFilter);
   };
 
   return (
@@ -110,30 +76,32 @@ const ReviewFilters: React.FC = () => {
       }}
     >
       {/* Query Button */}
-      <Button variant="outlined" onClick={toggleQueryModal}>
+      <Button variant="outlined" onClick={() => setIsQueryModalOpen(true)}>
         {queryText ? `Query ✓` : `Query`}
       </Button>
 
       {/* Distance Away Button */}
       <Button
         variant="outlined"
-        onClick={toggleDistanceFilterModal}
-        startIcon={distanceFilter.enabled ? <>&#10003;</> : undefined} // Checkmark if enabled
+        onClick={() => setIsDistanceFilterOpen(true)}
+        startIcon={distanceFilter.enabled ? <>&#10003;</> : undefined}
       >
         Distance Away
       </Button>
 
+      {/* Would Return Button */}
       <Button
         variant="outlined"
-        onClick={toggleWouldReturnFilterModal}
-        startIcon={wouldReturnFilter.enabled ? <>&#10003;</> : undefined} // Checkmark if enabled
+        onClick={() => setIsWouldReturnFilterOpen(true)}
+        startIcon={wouldReturnFilter.enabled ? <>&#10003;</> : undefined}
       >
         Would Return
       </Button>
 
+      {/* Items Ordered Button */}
       <Button
         variant="outlined"
-        onClick={toggleItemsOrderedFilterModal}
+        onClick={() => setIsItemsOrderedFilterOpen(true)}
         startIcon={itemsOrderedFilter.enabled ? <>&#10003;</> : undefined}
       >
         Items Ordered
@@ -145,34 +113,48 @@ const ReviewFilters: React.FC = () => {
       </Button>
 
       {/* Apply Button */}
-      <Button variant="contained" onClick={() => console.log('Apply filters')}>
+      <Button
+        variant="contained"
+        onClick={() =>
+          onApplyFilters({ queryText, distanceFilter, wouldReturnFilter, itemsOrderedFilter })
+        }
+      >
         Apply
       </Button>
 
       {/* Modals */}
       <QueryModal
         isOpen={isQueryModalOpen}
-        onClose={toggleQueryModal}
-        onApply={handleQueryApply}
+        onClose={() => setIsQueryModalOpen(false)}
+        onApply={(newQuery) => {
+          setQueryText(newQuery);
+          setIsQueryModalOpen(false);
+        }}
       />
       <DistanceFilterModal
         isOpen={isDistanceFilterOpen}
-        onClose={toggleDistanceFilterModal}
+        onClose={() => setIsDistanceFilterOpen(false)}
         filterState={distanceFilter}
-        onApply={handleDistanceFilterApply}
+        onApply={(updatedFilter) => {
+          setDistanceFilter(updatedFilter);
+          setIsDistanceFilterOpen(false);
+        }}
       />
       <WouldReturnFilterModal
         isOpen={isWouldReturnFilterOpen}
-        onClose={toggleWouldReturnFilterModal}
+        onClose={() => setIsWouldReturnFilterOpen(false)}
         filterState={wouldReturnFilter}
-        onApply={handleWouldReturnFilterApply}
+        onApply={(updatedFilter) => {
+          setWouldReturnFilter(updatedFilter);
+          setIsWouldReturnFilterOpen(false);
+        }}
       />
       <ItemsOrderedModal
         isOpen={isItemsOrderedFilterOpen}
-        onClose={toggleItemsOrderedFilterModal}
+        onClose={() => setIsItemsOrderedFilterOpen(false)}
         itemsOrdered={itemsOrdered}
         filterState={itemsOrderedFilter}
-        onApply={handleItemsOrderedFilterApply}
+        onApply={(updatedFilter) => setItemsOrderedFilter(updatedFilter)}
       />
     </Box>
   );

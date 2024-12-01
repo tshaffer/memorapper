@@ -506,10 +506,17 @@ const ReviewsPage: React.FC = () => {
     );
   };
 
+  const handleApplyFilters = (filterState: Record<string, any>) => {
+    console.log('Filters applied:', filterState);
+    // setFilters(filterState); // Update the state with the applied filters
+    // Add additional logic to apply filters, e.g., updating displayed reviews
+  };
+
+
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!} libraries={libraries}>
       <Box id='reviewPageContainer' sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <ReviewFilters />
+        <ReviewFilters onApplyFilters={handleApplyFilters} />
         <PlacesAndReviews
           currentLocation={currentLocation}
           places={places}
@@ -522,3 +529,24 @@ const ReviewsPage: React.FC = () => {
 };
 
 export default ReviewsPage;
+
+/*
+import React, { useState } from 'react';
+import ReviewFilters from './ReviewFilters';
+
+const ReviewsPage: React.FC = () => {
+  const [filters, setFilters] = useState({}); // Initial filter state
+
+  const handleApplyFilters = (filterState: Record<string, any>) => {
+    console.log('Filters applied:', filterState);
+    setFilters(filterState); // Update the state with the applied filters
+    // Add additional logic to apply filters, e.g., updating displayed reviews
+  };
+
+  return (
+    <div>
+      <ReviewFilters onApplyFilters={handleApplyFilters} />
+      </div >
+    );
+  };
+  */
