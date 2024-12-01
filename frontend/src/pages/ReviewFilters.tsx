@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Box } from '@mui/material';
 import QueryModal from './QueryModal';
 import DistanceFilterModal from './DistanceFilterModal';
 import WouldReturnFilterModal from './WouldReturnModal';
+import ItemsOrderedModal from './ItemsOrderedModal';
 
 const ReviewFilters: React.FC = () => {
   const [isQueryModalOpen, setIsQueryModalOpen] = useState(false);
   const [isDistanceFilterOpen, setIsDistanceFilterOpen] = useState(false);
   const [isWouldReturnFilterOpen, setIsWouldReturnFilterOpen] = useState(false);
+  const [isItemsOrderedFilterOpen, setIsItemsOrderedFilterOpen] = useState(false);
 
   const [queryText, setQueryText] = useState<string | null>(null);
   const [distanceFilter, setDistanceFilter] = useState({
@@ -24,6 +26,23 @@ const ReviewFilters: React.FC = () => {
       notSure: false,
     },
   });
+  const [itemsOrderedFilter, setItemsOrderedFilter] = useState({
+    enabled: false,
+    selectedItems: [] as string[],
+  });
+
+  const [itemsOrdered, setItemsOrdered] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchStandardizedItemsOrdered = async () => {
+      const response = await fetch('/api/standardizedNames');
+      const uniqueStandardizedNames: string[] = await response.json();
+      setItemsOrdered(uniqueStandardizedNames);
+    }
+    fetchStandardizedItemsOrdered();
+  }, []);
+
+
   // Toggle Query Modal
   const toggleQueryModal = () => setIsQueryModalOpen((prev) => !prev);
 
@@ -50,6 +69,13 @@ const ReviewFilters: React.FC = () => {
     setIsWouldReturnFilterOpen(false);
   };
 
+  const toggleItemsOrderedFilterModal = () => {
+    setIsItemsOrderedFilterOpen((prev) => !prev);
+  };
+  const handleItemsOrderedFilterApply = (updatedFilter: typeof itemsOrderedFilter) => {
+    setItemsOrderedFilter(updatedFilter);
+  };
+
   // Clear All Filters
   const clearAllFilters = () => {
     setQueryText(null);
@@ -66,6 +92,10 @@ const ReviewFilters: React.FC = () => {
         no: false,
         notSure: false,
       },
+    });
+    setItemsOrderedFilter({
+      enabled: false,
+      selectedItems: [],
     });
   };
 
@@ -101,9 +131,13 @@ const ReviewFilters: React.FC = () => {
         Would Return
       </Button>
 
-      {/* Placeholder Buttons */}
-      <Button variant="outlined">Open Now</Button>
-      <Button variant="outlined">Vegan Options</Button>
+      <Button
+        variant="outlined"
+        onClick={toggleItemsOrderedFilterModal}
+        startIcon={itemsOrderedFilter.enabled ? <>&#10003;</> : undefined}
+      >
+        Items Ordered
+      </Button>
 
       {/* Clear All Button */}
       <Button variant="text" color="error" onClick={clearAllFilters}>
@@ -132,6 +166,13 @@ const ReviewFilters: React.FC = () => {
         onClose={toggleWouldReturnFilterModal}
         filterState={wouldReturnFilter}
         onApply={handleWouldReturnFilterApply}
+      />
+      <ItemsOrderedModal
+        isOpen={isItemsOrderedFilterOpen}
+        onClose={toggleItemsOrderedFilterModal}
+        itemsOrdered={itemsOrdered}
+        filterState={itemsOrderedFilter}
+        onApply={handleItemsOrderedFilterApply}
       />
     </Box>
   );
