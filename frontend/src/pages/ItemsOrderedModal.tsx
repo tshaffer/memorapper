@@ -55,20 +55,29 @@ const ItemsOrderedModal: React.FC<ItemsOrderedModalProps> = ({
     <Modal open={isOpen} onClose={onClose}>
       <Box
         sx={{
-          width: '400px',
+          width: '80%',
           margin: 'auto',
-          marginTop: '20vh',
+          marginTop: '10vh',
           backgroundColor: 'white',
           padding: 3,
           borderRadius: 2,
+          maxHeight: '80vh',
+          overflowY: 'auto', // Ensure the modal scrolls if content overflows
         }}
       >
         <Typography variant="h6" sx={{ marginBottom: 2 }}>
           Items Ordered Filter
         </Typography>
 
-        {/* List of Items */}
-        <Box sx={{ maxHeight: '300px', overflowY: 'auto', marginBottom: 2 }}>
+        {/* Multi-Column Checkbox Layout */}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', // Adjust column width as needed
+            gap: 2, // Space between items
+            marginBottom: 2,
+          }}
+        >
           {itemsOrdered.map((item) => (
             <FormControlLabel
               key={item}

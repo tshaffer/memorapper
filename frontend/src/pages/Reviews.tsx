@@ -8,7 +8,7 @@ import { FilterQueryParams, GooglePlace, MemoRappReview, PlacesReviewsCollection
 import { Autocomplete, LoadScript } from '@react-google-maps/api';
 import { libraries } from '../utilities';
 import PlacesAndReviews from './PlacesAndReviews';
-import ReviewsFilters from './ReviewFilters';
+import ReviewFilters from './ReviewFilters';
 
 const DEFAULT_CENTER: google.maps.LatLngLiteral = { lat: 37.3944829, lng: -122.0790619 };
 
@@ -509,7 +509,7 @@ const ReviewsPage: React.FC = () => {
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!} libraries={libraries}>
       <Box id='reviewPageContainer' sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <ReviewsFilters />
+        <ReviewFilters />
         <PlacesAndReviews
           currentLocation={currentLocation}
           places={places}
