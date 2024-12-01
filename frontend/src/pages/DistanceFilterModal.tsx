@@ -33,7 +33,11 @@ const DistanceFilterModal: React.FC<DistanceFilterModalProps> = ({
   const fromLocationAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   const handleApply = () => {
-    onApply(localFilterState);
+    // Enable the filter before applying
+    onApply({
+      ...localFilterState,
+      enabled: true,
+    });
   };
 
   const handleFromLocationPlaceChanged = () => {
