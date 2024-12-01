@@ -1,3 +1,4 @@
+import { WouldReturn } from "./enums";
 import { GooglePlace } from "./googlePlace";
 import { AddressComponent } from "./place";
 
@@ -10,7 +11,7 @@ export interface MemoRappReview {
 
 export interface StructuredReviewProperties {
   dateOfVisit: string;
-  wouldReturn: boolean | null;
+  wouldReturn: WouldReturn | null;
 }
 
 export interface FreeformReviewProperties {

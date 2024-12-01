@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { MemoRappReview } from '../types/entities';
+import { WouldReturn } from '../types';
 
 export interface IReview extends Omit<MemoRappReview, "_id">, Document {}
 
@@ -7,7 +8,11 @@ export type ReviewModel = Model<IReview>;
 
 const StructuredReviewPropertiesSchema: Schema = new Schema({
   dateOfVisit: { type: String, required: true },
-  wouldReturn: { type: Boolean, default: null }
+  wouldReturn: {
+    type: String,
+    enum: Object.values(WouldReturn), // Ensures values are restricted to the enum
+    default: WouldReturn.Undefined,
+  },
 });
 
 const ItemReviewSchema: Schema = new Schema({

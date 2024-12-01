@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import MongoPlace, { IMongoPlace } from '../models/MongoPlace';
 import Review, { IReview } from '../models/Review';
-import { FilterQueryParams, QueryResponse, PlacesReviewsCollection, GooglePlace, MemoRappReview } from '../types';
+import { FilterQueryParams, QueryResponse, PlacesReviewsCollection, GooglePlace, MemoRappReview, WouldReturn } from '../types';
 import { convertMongoPlacesToGooglePlaces } from '../utilities';
 import ItemOrderedModel from '../models/ItemOrdered';
 
@@ -27,28 +27,31 @@ export const filterReviewsHandler = async (
 }
 
 const getFilteredPlacesAndReviews = async (queryParams: FilterQueryParams): Promise<QueryResponse> => {
-  const { distanceAwayQuery, wouldReturn, itemsOrdered } = queryParams;
+  const { distanceAwayQuery, wouldReturnQuery, itemsOrderedQuery } = queryParams;
   const { lat, lng, radius } = distanceAwayQuery || {};
 
   try {
     // Step 0: Initialize queries
     let places: IMongoPlace[] = await MongoPlace.find({});
     let reviews: IReview[] = await Review.find({});
-    const reviewQuery: any = {};
+    const reviewQuery: Record<string, any> = {};
 
     // Step 1: Construct the Would Return filter for reviews
-    if (wouldReturn) {
-      const returnFilter: (boolean | null)[] = [];
-      if (wouldReturn.yes) returnFilter.push(true);
-      if (wouldReturn.no) returnFilter.push(false);
-      if (wouldReturn.notSpecified) returnFilter.push(null);
-      reviewQuery['structuredReviewProperties.wouldReturn'] = { $in: returnFilter };
+    if (wouldReturnQuery) {
+      const returnFilter: WouldReturn[] = [];
+      if (wouldReturnQuery.yes) returnFilter.push(WouldReturn.Yes);
+      if (wouldReturnQuery.no) returnFilter.push(WouldReturn.No);
+      if (wouldReturnQuery.notSure) returnFilter.push(WouldReturn.NotSure);
+  
+      if (returnFilter.length > 0) {
+        reviewQuery['structuredReviewProperties.wouldReturn'] = { $in: returnFilter };
+      }
     }
 
     // Step 2: Construct the Items Ordered filter
-    if (itemsOrdered && itemsOrdered.length > 0) {
+    if (itemsOrderedQuery && itemsOrderedQuery.length > 0) {
       const standardizedNames = await ItemOrderedModel.find({
-        inputName: { $in: itemsOrdered },
+        inputName: { $in: itemsOrderedQuery },
       }).distinct('standardizedName');
 
       const relatedInputNames = await ItemOrderedModel.find({
