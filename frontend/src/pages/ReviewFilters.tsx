@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Button, Box } from '@mui/material';
 import QueryModal from './QueryModal';
 import DistanceFilterModal from './DistanceFilterModal';
+import WouldReturnFilterModal from './WouldReturnModal';
 
 const ReviewFilters: React.FC = () => {
   const [isQueryModalOpen, setIsQueryModalOpen] = useState(false);
   const [isDistanceFilterOpen, setIsDistanceFilterOpen] = useState(false);
+  const [isWouldReturnFilterOpen, setIsWouldReturnFilterOpen] = useState(false);
 
   const [queryText, setQueryText] = useState<string | null>(null);
   const [distanceFilter, setDistanceFilter] = useState({
@@ -14,7 +16,14 @@ const ReviewFilters: React.FC = () => {
     distance: 5,
     specificLocation: null as string | null,
   });
-
+  const [wouldReturnFilter, setWouldReturnFilter] = useState({
+    enabled: false,
+    values: {
+      yes: false,
+      no: false,
+      notSure: false,
+    },
+  });
   // Toggle Query Modal
   const toggleQueryModal = () => setIsQueryModalOpen((prev) => !prev);
 
@@ -33,6 +42,14 @@ const ReviewFilters: React.FC = () => {
     setIsDistanceFilterOpen(false);
   };
 
+  const toggleWouldReturnFilterModal = () => setIsWouldReturnFilterOpen((prev) => !prev);
+
+  // Handle WouldReturn Filter Apply
+  const handleWouldReturnFilterApply = (updatedFilter: typeof wouldReturnFilter) => {
+    setWouldReturnFilter(updatedFilter);
+    setIsWouldReturnFilterOpen(false);
+  };
+
   // Clear All Filters
   const clearAllFilters = () => {
     setQueryText(null);
@@ -42,10 +59,16 @@ const ReviewFilters: React.FC = () => {
       distance: 5,
       specificLocation: null,
     });
+    setWouldReturnFilter({
+      enabled: false,
+      values: {
+        yes: false,
+        no: false,
+        notSure: false,
+      },
+    });
   };
 
-  console.log('distanceFilter:', distanceFilter);
-  
   return (
     <Box
       sx={{
@@ -70,8 +93,15 @@ const ReviewFilters: React.FC = () => {
         Distance Away
       </Button>
 
+      <Button
+        variant="outlined"
+        onClick={toggleWouldReturnFilterModal}
+        startIcon={wouldReturnFilter.enabled ? <>&#10003;</> : undefined} // Checkmark if enabled
+      >
+        Would Return
+      </Button>
+
       {/* Placeholder Buttons */}
-      <Button variant="outlined">Outdoor Seating</Button>
       <Button variant="outlined">Open Now</Button>
       <Button variant="outlined">Vegan Options</Button>
 
@@ -96,6 +126,12 @@ const ReviewFilters: React.FC = () => {
         onClose={toggleDistanceFilterModal}
         filterState={distanceFilter}
         onApply={handleDistanceFilterApply}
+      />
+      <WouldReturnFilterModal
+        isOpen={isWouldReturnFilterOpen}
+        onClose={toggleWouldReturnFilterModal}
+        filterState={wouldReturnFilter}
+        onApply={handleWouldReturnFilterApply}
       />
     </Box>
   );
