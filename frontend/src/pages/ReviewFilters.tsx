@@ -25,10 +25,16 @@ const ReviewsFilters: React.FC = () => {
     setIsOutdoorSeating(prev => !prev);
   }
   
-  function applyFiltersAndQuery(event: MouseEvent<HTMLButtonElement>): void {
-    console.log('Applying filters and query');
-  }
-
+  const applyFiltersAndQuery = () => {
+    const filters = {
+      outdoorSeating: isOutdoorSeating,
+      openNow: isOpenNow,
+      vegan: isVegan,
+    };
+    console.log("Filters applied:", filters, "Query applied:", queryText);
+    // Add logic to filter the list of places based on these criteria
+  };
+  
   return (
     <Box
       sx={{

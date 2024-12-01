@@ -8,6 +8,7 @@ import { FilterQueryParams, GooglePlace, MemoRappReview, PlacesReviewsCollection
 import { Autocomplete, LoadScript } from '@react-google-maps/api';
 import { libraries } from '../utilities';
 import PlacesAndReviews from './PlacesAndReviews';
+import ReviewsFilters from './ReviewFilters';
 
 const DEFAULT_CENTER: google.maps.LatLngLiteral = { lat: 37.3944829, lng: -122.0790619 };
 
@@ -508,40 +509,13 @@ const ReviewsPage: React.FC = () => {
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!} libraries={libraries}>
       <Box id='reviewPageContainer' sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-        {/* Freeform Query Input */}
-        <Box
-          id='freeFormQueryInput'
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            padding: 2,
-            borderBottom: '1px solid #ccc',
-          }}
-        >
-          <TextField
-            label="Enter query"
-            variant="outlined"
-            value={query}
-            onChange={handleQueryChange}
-            fullWidth
-            sx={{ marginRight: 2 }}
-          />
-          <Button variant="contained" color="primary" onClick={handleNaturalLanguageQuery}>
-            Search
-          </Button>
-        </Box>
-
-        {/* Filters */}
-        {renderFiltersUI()}
-
-        {/* Places and Reviews*/}
+        <ReviewsFilters />
         <PlacesAndReviews
           currentLocation={currentLocation}
           places={places}
           filteredPlaces={filteredPlaces}
           filteredReviews={filteredReviews}
         />
-
       </Box >
     </LoadScript >
   );
