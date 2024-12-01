@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Box } from '@mui/material';
 import QueryModal from './QueryModal';
+import DistanceFilter from './DistanceFilter';
 
 const ReviewFilters: React.FC = () => {
   const [isQueryModalOpen, setIsQueryModalOpen] = useState(false);
@@ -21,6 +22,11 @@ const ReviewFilters: React.FC = () => {
       <Button variant="outlined" onClick={toggleQueryModal}>
         {queryText ? `Query ✓` : `Query`}
       </Button>
+
+      <Box sx={{ padding: 2, borderBottom: '1px solid #ccc' }}>
+        {/* Other Filters */}
+        <DistanceFilter />
+      </Box>
 
       {/* Other Filter Buttons */}
       <Button variant="outlined">Outdoor Seating</Button>
