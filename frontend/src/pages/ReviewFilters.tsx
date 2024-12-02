@@ -67,47 +67,61 @@ const ReviewFilters: React.FC<ReviewFiltersProps> = ( props: ReviewFiltersProps 
     <Box
       sx={{
         display: 'flex',
+        flexDirection: { xs: 'column', sm: 'row' }, // Stack on mobile, horizontal on larger screens
         alignItems: 'center',
         gap: 2,
         padding: 2,
         borderBottom: '1px solid #ccc',
+        flexWrap: 'wrap', // Wrap buttons on smaller screens
       }}
     >
       {/* Query Button */}
-      <Button variant="outlined" onClick={() => setIsQueryModalOpen(true)}>
+      <Button
+        variant="outlined"
+        onClick={() => setIsQueryModalOpen(true)}
+        sx={{ minWidth: 'fit-content' }} // Adjust button width
+      >
         {queryText ? `Query ✓` : `Query`}
       </Button>
 
-      {/* Distance Away Button */}
+      {/* Distance Button */}
       <Button
         variant="outlined"
         onClick={() => setIsDistanceFilterOpen(true)}
         startIcon={distanceFilter.enabled ? <>&#10003;</> : undefined}
+        sx={{ minWidth: 'fit-content' }}
       >
-        Distance Away
+        Distance
       </Button>
 
-      {/* Would Return Button */}
+      {/* Return Button */}
       <Button
         variant="outlined"
         onClick={() => setIsWouldReturnFilterOpen(true)}
         startIcon={wouldReturnFilter.enabled ? <>&#10003;</> : undefined}
+        sx={{ minWidth: 'fit-content' }}
       >
-        Would Return
+        Return
       </Button>
 
-      {/* Items Ordered Button */}
+      {/* Items Button */}
       <Button
         variant="outlined"
         onClick={() => setIsItemsOrderedFilterOpen(true)}
         startIcon={itemsOrderedFilter.enabled ? <>&#10003;</> : undefined}
+        sx={{ minWidth: 'fit-content' }}
       >
-        Items Ordered
+        Items
       </Button>
 
-      {/* Clear All Button */}
-      <Button variant="text" color="error" onClick={clearAllFilters}>
-        Clear All
+      {/* Clear Button */}
+      <Button
+        variant="text"
+        color="error"
+        onClick={clearAllFilters}
+        sx={{ minWidth: 'fit-content' }}
+      >
+        Clear
       </Button>
 
       {/* Apply Button */}
@@ -116,44 +130,10 @@ const ReviewFilters: React.FC<ReviewFiltersProps> = ( props: ReviewFiltersProps 
         onClick={() =>
           onApplyFilters({ queryText, distanceFilter, wouldReturnFilter, itemsOrderedFilter })
         }
+        sx={{ minWidth: 'fit-content' }}
       >
         Apply
       </Button>
-
-      {/* Modals */}
-      <QueryModal
-        isOpen={isQueryModalOpen}
-        onClose={() => setIsQueryModalOpen(false)}
-        onApply={(newQuery) => {
-          setQueryText(newQuery);
-          setIsQueryModalOpen(false);
-        }}
-      />
-      <DistanceFilterModal
-        isOpen={isDistanceFilterOpen}
-        onClose={() => setIsDistanceFilterOpen(false)}
-        filterState={distanceFilter}
-        onApply={(updatedFilter) => {
-          setDistanceFilter(updatedFilter);
-          setIsDistanceFilterOpen(false);
-        }}
-      />
-      <WouldReturnFilterModal
-        isOpen={isWouldReturnFilterOpen}
-        onClose={() => setIsWouldReturnFilterOpen(false)}
-        filterState={wouldReturnFilter}
-        onApply={(updatedFilter) => {
-          setWouldReturnFilter(updatedFilter);
-          setIsWouldReturnFilterOpen(false);
-        }}
-      />
-      <ItemsOrderedModal
-        isOpen={isItemsOrderedFilterOpen}
-        onClose={() => setIsItemsOrderedFilterOpen(false)}
-        itemsOrdered={itemsOrdered}
-        filterState={itemsOrderedFilter}
-        onApply={(updatedFilter) => setItemsOrderedFilter(updatedFilter)}
-      />
     </Box>
   );
 };
