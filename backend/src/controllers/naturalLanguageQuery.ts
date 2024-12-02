@@ -2,7 +2,7 @@ import { Request, response, Response } from 'express';
 import openai from '../services/openai';
 import Review, { IReview } from '../models/Review';
 import MongoPlace, { IMongoPlace } from '../models/MongoPlace';
-import { PlacesReviewsCollection, GooglePlace, MemoRappReview, QueryRequestBody, QueryResponse } from '../types';
+import { PlacesReviewsCollection, GooglePlace, MemoRappReview, QueryRequestBody, QueryResponse, WouldReturn, WouldReturnQuery } from '../types';
 import { convertMongoPlacesToGooglePlaces } from '../utilities';
 
 interface DateRange {
@@ -25,11 +25,7 @@ interface StructuredQueryParams {
     lng: number;
     radius: number; // in miles
   };
-  wouldReturn?: {
-    yes: boolean;
-    no: boolean;
-    notSpecified: boolean;
-  };
+  wouldReturn?: WouldReturnQuery;
   placeName?: string; // Partial name match for places
   reviewDateRange?: {
     start?: string; // ISO date string
@@ -204,11 +200,14 @@ const structuredQuery = async (queryParams: StructuredQueryParams): Promise<Quer
 
     // Step 1: Construct the Would Return filter for reviews
     if (wouldReturn) {
-      const returnFilter: (boolean | null)[] = [];
-      if (wouldReturn.yes) returnFilter.push(true);
-      if (wouldReturn.no) returnFilter.push(false);
-      if (wouldReturn.notSpecified) returnFilter.push(null);
-      reviewQuery['structuredReviewProperties.wouldReturn'] = { $in: returnFilter };
+      const returnFilter: WouldReturn[] = [];
+      if (wouldReturn.yes) returnFilter.push(WouldReturn.Yes);
+      if (wouldReturn.no) returnFilter.push(WouldReturn.No);
+      if (wouldReturn.notSure) returnFilter.push(WouldReturn.NotSure);
+  
+      if (returnFilter.length > 0) {
+        reviewQuery['structuredReviewProperties.wouldReturn'] = { $in: returnFilter };
+      }
     }
 
     // Step 2: Add reviewDateRange filter if provided
@@ -377,10 +376,10 @@ const performHybridQuery = async (
 
     // Would Return filter
     if (wouldReturn) {
-      const returnFilter: (boolean | null)[] = [];
-      if (wouldReturn.yes) returnFilter.push(true);
-      if (wouldReturn.no) returnFilter.push(false);
-      if (wouldReturn.notSpecified) returnFilter.push(null);
+      const returnFilter: WouldReturn[] = [];
+      if (wouldReturn.yes) returnFilter.push(WouldReturn.Yes);
+      if (wouldReturn.no) returnFilter.push(WouldReturn.No);
+      if (wouldReturn.notSure) returnFilter.push(WouldReturn.NotSure);
       reviewQuery['structuredReviewProperties.wouldReturn'] = { $in: returnFilter };
     }
 

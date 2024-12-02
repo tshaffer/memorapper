@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import MongoPlace, { IMongoPlace } from '../models/MongoPlace';
 import Review, { IReview } from '../models/Review';
-import { FilterQueryParams, QueryResponse, PlacesReviewsCollection, GooglePlace, MemoRappReview } from '../types';
+import { FilterQueryParams, QueryResponse, PlacesReviewsCollection, GooglePlace, MemoRappReview, WouldReturn } from '../types';
 import { convertMongoPlacesToGooglePlaces } from '../utilities';
 import ItemOrderedModel from '../models/ItemOrdered';
 
@@ -34,15 +34,18 @@ const getFilteredPlacesAndReviews = async (queryParams: FilterQueryParams): Prom
     // Step 0: Initialize queries
     let places: IMongoPlace[] = await MongoPlace.find({});
     let reviews: IReview[] = await Review.find({});
-    const reviewQuery: any = {};
+    const reviewQuery: Record<string, any> = {};
 
     // Step 1: Construct the Would Return filter for reviews
     if (wouldReturn) {
-      const returnFilter: (boolean | null)[] = [];
-      if (wouldReturn.yes) returnFilter.push(true);
-      if (wouldReturn.no) returnFilter.push(false);
-      if (wouldReturn.notSpecified) returnFilter.push(null);
-      reviewQuery['structuredReviewProperties.wouldReturn'] = { $in: returnFilter };
+      const returnFilter: WouldReturn[] = [];
+      if (wouldReturn.yes) returnFilter.push(WouldReturn.Yes);
+      if (wouldReturn.no) returnFilter.push(WouldReturn.No);
+      if (wouldReturn.notSure) returnFilter.push(WouldReturn.NotSure);
+  
+      if (returnFilter.length > 0) {
+        reviewQuery['structuredReviewProperties.wouldReturn'] = { $in: returnFilter };
+      }
     }
 
     // Step 2: Construct the Items Ordered filter
