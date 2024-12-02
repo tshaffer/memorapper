@@ -4,7 +4,7 @@ import { Typography, Button, Popover, FormControlLabel, Checkbox, TextField, Sli
 
 import '../App.css';
 
-import { DistanceAwayQuery, DistanceFilter, FilterQueryParams, GooglePlace, MemoRappReview, PlacesReviewsCollection, QueryRequestBody, ReviewUIFilters, WouldReturnQuery } from '../types';
+import { DistanceAwayQuery, DistanceFilter, FilterQueryParams, GooglePlace, MemoRappReview, PlacesReviewsCollection, QueryRequestBody, ReviewUIFilters, WouldReturnFilter, WouldReturnQuery } from '../types';
 import { Autocomplete, LoadScript } from '@react-google-maps/api';
 import { libraries } from '../utilities';
 import PlacesAndReviews from './PlacesAndReviews';
@@ -103,8 +103,8 @@ const ReviewsPage: React.FC = () => {
 
     const filterQueryParams: FilterQueryParams = {
       distanceAwayQuery: distanceFilterEnabled ? { lat: lat!, lng: lng!, radius: fromLocationDistance } : undefined,
-      wouldReturn,
-      itemsOrdered: selectedItemsOrdered.size > 0 ? Array.from(selectedItemsOrdered) : undefined,
+      wouldReturnQuery: wouldReturn,
+      itemsOrderedQuery: selectedItemsOrdered.size > 0 ? Array.from(selectedItemsOrdered) : undefined,
     };
 
     try {
@@ -183,12 +183,24 @@ const ReviewsPage: React.FC = () => {
     distanceAwayQuery.radius = distanceFilter.distance;
 
     return distanceAwayQuery;
-  } 
+  }
+
+  const buildWouldReturnQuery = (wouldReturnFilter: WouldReturnFilter): WouldReturnQuery => {
+    return {
+      yes: wouldReturnFilter.values.yes,
+      no: wouldReturnFilter.values.no,
+      notSure: wouldReturnFilter.values.notSure,
+    };
+  }
+
+  const buildItemsOrderedQuery = (itemsOrderedFilter: string[]): string[] => {
+    return itemsOrderedFilter;
+  }
 
   const handleApplyFilters = async (reviewFilters: ReviewUIFilters) => {
 
     console.log('Filters applied:', reviewFilters);
-    
+
     let filterQueryParams: FilterQueryParams = {};
 
     if (reviewFilters.queryText) {
@@ -199,6 +211,14 @@ const ReviewsPage: React.FC = () => {
 
     if (reviewFilters.distanceFilter.enabled) {
       filterQueryParams.distanceAwayQuery = buildDistanceAwayQuery(reviewFilters.distanceFilter);
+    }
+
+    if (reviewFilters.wouldReturnFilter.enabled) {
+      filterQueryParams.wouldReturnQuery = buildWouldReturnQuery(reviewFilters.wouldReturnFilter);
+    }
+
+    if (reviewFilters.itemsOrderedFilter.enabled) {
+      filterQueryParams.itemsOrderedQuery = buildItemsOrderedQuery(reviewFilters.itemsOrderedFilter.selectedItems);
     }
 
     await executeSearch(filterQueryParams);
