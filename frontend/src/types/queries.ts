@@ -7,8 +7,6 @@ export interface WouldReturnQuery {
   notSure: boolean;
 }
 
-export type WouldReturnQuerySpec = (boolean | null)[];
-
 export interface QueryParameters {
   lat?: number;
   lng?: number;

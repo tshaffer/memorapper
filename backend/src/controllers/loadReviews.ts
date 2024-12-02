@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
 import { Request, Response } from 'express';
-import { FreeformReviewProperties, GooglePlaceDetails, GooglePlaceDetailsResponse, GooglePlace, GooglePlacesResponse, MemoRappReview, StructuredReviewProperties } from '../types';
+import { FreeformReviewProperties, GooglePlaceDetails, GooglePlaceDetailsResponse, GooglePlace, GooglePlacesResponse, MemoRappReview, StructuredReviewProperties, WouldReturn } from '../types';
 import { parsePreview } from './manageReview';
 import { addPlace } from './places';
 import { IMongoPlace, IReview } from '../models';
@@ -15,13 +15,13 @@ const GOOGLE_PLACE_DETAILS_BASE_URL = 'https://maps.googleapis.com/maps/api/plac
 interface TestReview {
   restaurantName: string;
   dateOfVisit: string;
-  wouldReturn: boolean | null;
+  wouldReturn: WouldReturn | null;
   reviewText: string;
 };
 
 const generateSessionId = () => Math.random().toString(36).substring(2) + Date.now().toString(36);
 
-const addTestReview = async (restaurantName: string, dateOfVisit: string, wouldReturn: boolean | null, reviewText: string): Promise<void> => {
+const addTestReview = async (restaurantName: string, dateOfVisit: string, wouldReturn: WouldReturn | null, reviewText: string): Promise<void> => {
   const sessionId: string = generateSessionId();
 
   const freeformReviewProperties: FreeformReviewProperties = await parsePreview(sessionId, reviewText);

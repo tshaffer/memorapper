@@ -1,4 +1,5 @@
 import { ItemReview, MemoRappReview } from "./entities";
+import { WouldReturn } from "./enums";
 import { GooglePlace } from "./googlePlace";
 
 export interface EditableReview {
@@ -9,7 +10,7 @@ export interface EditableReview {
 export interface ReviewEntity {
   googlePlace: GooglePlace;
   dateOfVisit: string;
-  wouldReturn: boolean | null;
+  wouldReturn: WouldReturn | null;
   itemReviews: ItemReview[];
   reviewer: string;
   reviewText: string;

@@ -4,8 +4,9 @@ export enum ReviewFormDisplayTabs {
   ChatHistory = 2
 }
 
-export enum WouldReturnValues {
-  Yes = 'Yes',
-  No = 'No',
-  Unspecified = 'Unspecified'
+export enum WouldReturn {
+  Yes = "yes",
+  No = "no",
+  NotSure = "not sure",
+  Undefined = "undefined",
 }

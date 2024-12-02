@@ -27,7 +27,7 @@ export const filterReviewsHandler = async (
 }
 
 const getFilteredPlacesAndReviews = async (queryParams: FilterQueryParams): Promise<QueryResponse> => {
-  const { distanceAwayQuery, wouldReturn, itemsOrdered } = queryParams;
+  const { distanceAwayQuery, wouldReturnQuery, itemsOrderedQuery } = queryParams;
   const { lat, lng, radius } = distanceAwayQuery || {};
 
   try {
@@ -37,11 +37,11 @@ const getFilteredPlacesAndReviews = async (queryParams: FilterQueryParams): Prom
     const reviewQuery: Record<string, any> = {};
 
     // Step 1: Construct the Would Return filter for reviews
-    if (wouldReturn) {
+    if (wouldReturnQuery) {
       const returnFilter: WouldReturn[] = [];
-      if (wouldReturn.yes) returnFilter.push(WouldReturn.Yes);
-      if (wouldReturn.no) returnFilter.push(WouldReturn.No);
-      if (wouldReturn.notSure) returnFilter.push(WouldReturn.NotSure);
+      if (wouldReturnQuery.yes) returnFilter.push(WouldReturn.Yes);
+      if (wouldReturnQuery.no) returnFilter.push(WouldReturn.No);
+      if (wouldReturnQuery.notSure) returnFilter.push(WouldReturn.NotSure);
   
       if (returnFilter.length > 0) {
         reviewQuery['structuredReviewProperties.wouldReturn'] = { $in: returnFilter };
@@ -49,9 +49,9 @@ const getFilteredPlacesAndReviews = async (queryParams: FilterQueryParams): Prom
     }
 
     // Step 2: Construct the Items Ordered filter
-    if (itemsOrdered && itemsOrdered.length > 0) {
+    if (itemsOrderedQuery && itemsOrderedQuery.length > 0) {
       const standardizedNames = await ItemOrderedModel.find({
-        inputName: { $in: itemsOrdered },
+        inputName: { $in: itemsOrderedQuery },
       }).distinct('standardizedName');
 
       const relatedInputNames = await ItemOrderedModel.find({
