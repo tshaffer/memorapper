@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 
 import '../App.css';
 
-import { DistanceAwayQuery, DistanceFilter, FilterQueryParams, GooglePlace, MemoRappReview, PlacesReviewsCollection, ReviewUIFilters, WouldReturnFilter, WouldReturnQuery } from '../types';
+import { DistanceAwayQuery, DistanceFilter, FilterQueryParams, GooglePlace, MemoRappReview, PlacesReviewsCollection, QueryRequestBody, ReviewUIFilters, WouldReturnFilter, WouldReturnQuery } from '../types';
 import { LoadScript } from '@react-google-maps/api';
 import { libraries } from '../utilities';
 import PlacesAndReviews from './PlacesAndReviews';
@@ -13,7 +13,6 @@ const ReviewsPage: React.FC = () => {
 
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
-  const [reviews, setReviews] = useState<MemoRappReview[]>([]);
   const [places, setPlaces] = useState<GooglePlace[]>([]);
 
   const [filteredPlaces, setFilteredPlaces] = useState<GooglePlace[]>([]);
@@ -45,31 +44,35 @@ const ReviewsPage: React.FC = () => {
     const fetchReviews = async () => {
       const response = await fetch('/api/reviews');
       const data = await response.json();
-      setReviews(data.memoRappReviews);
       setFilteredReviews(data.memoRappReviews);
     };
     fetchPlaces();
     fetchReviews();
   }, []);
 
-  const executeSearch = async (filterQueryParams: FilterQueryParams) => {
+  const executeUnifiedSearch = async (query: string, filterQueryParams: FilterQueryParams) => {
+    console.log('Unified Query:', query, filterQueryParams);
 
-    // natural language query?
+    const requestBody = { query, filterQueryParams };
+
     try {
-      const apiResponse = await fetch('/api/reviews/filterReviews', {
+      const apiResponse = await fetch('/api/reviews/unifiedQuery', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(filterQueryParams),
+        body: JSON.stringify(requestBody),
       });
+
       const data: PlacesReviewsCollection = await apiResponse.json();
-      console.log('Filter query results:', data);
-      setFilteredPlaces(data.places);
-      setFilteredReviews(data.reviews);
+      console.log('Unified query results:', data);
+      const { places, reviews } = data;
+
+      setPlaces(places);
+      setFilteredPlaces(places);
+      setFilteredReviews(reviews);
     } catch (error) {
-      console.error('Error handling query:', error);
+      console.error('Error executing unified query:', error);
     }
   }
-
   const buildDistanceAwayQuery = (distanceFilter: DistanceFilter): DistanceAwayQuery => {
     let distanceAwayQuery: DistanceAwayQuery = {
       lat: 0,
@@ -125,8 +128,7 @@ const ReviewsPage: React.FC = () => {
       filterQueryParams.itemsOrderedQuery = buildItemsOrderedQuery(reviewFilters.itemsOrderedFilter.selectedItems);
     }
 
-    await executeSearch(filterQueryParams);
-
+    await executeUnifiedSearch(filterQueryParams.naturalLanguageQuery!, filterQueryParams);
   };
 
 
