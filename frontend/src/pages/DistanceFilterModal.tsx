@@ -19,14 +19,10 @@ interface DistanceFilterModalProps {
   onApply: (newState: DistanceFilterModalProps['filterState']) => void;
 }
 
-const DistanceFilterModal: React.FC<DistanceFilterModalProps> = ({
-  isOpen,
-  onClose,
-  filterState,
-  onApply,
-}) => {
+const DistanceFilterModal: React.FC<DistanceFilterModalProps> = (props: DistanceFilterModalProps) => {
+  const { isOpen, onClose, filterState, onApply } = props;
   const [localFilterState, setLocalFilterState] = useState(filterState);
-  const fromLocationAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+  const specificLocationAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   const handleApply = () => {
     // Enable the filter before applying
@@ -36,15 +32,15 @@ const DistanceFilterModal: React.FC<DistanceFilterModalProps> = ({
     });
   };
 
-  const handleFromLocationPlaceChanged = () => {
-    if (fromLocationAutocompleteRef.current) {
-      const place = fromLocationAutocompleteRef.current.getPlace();
+  const handleSpecificLocationPlaceChanged = () => {
+    if (specificLocationAutocompleteRef.current) {
+      const place = specificLocationAutocompleteRef.current.getPlace();
       if (place.geometry !== undefined) {
         const geometry: google.maps.places.PlaceGeometry = place.geometry!;
         setLocalFilterState(
           {
             ...localFilterState,
-            fromLocation: {
+            specificLocation: {
               lat: geometry.location!.lat(),
               lng: geometry.location!.lng(),
             }
@@ -97,8 +93,8 @@ return (
       {/* Autocomplete Input */}
       {!localFilterState.useCurrentLocation && (
         <Autocomplete
-          onLoad={(autocomplete) => (fromLocationAutocompleteRef.current = autocomplete)}
-          onPlaceChanged={handleFromLocationPlaceChanged}
+          onLoad={(autocomplete) => (specificLocationAutocompleteRef.current = autocomplete)}
+          onPlaceChanged={handleSpecificLocationPlaceChanged}
         >
           <input
             type="text"

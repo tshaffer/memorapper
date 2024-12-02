@@ -4,7 +4,7 @@ import { Typography, Button, Popover, FormControlLabel, Checkbox, TextField, Sli
 
 import '../App.css';
 
-import { FilterQueryParams, GooglePlace, MemoRappReview, PlacesReviewsCollection, QueryRequestBody, ReviewUIFilters, WouldReturnQuery } from '../types';
+import { DistanceAwayQuery, DistanceFilter, FilterQueryParams, GooglePlace, MemoRappReview, PlacesReviewsCollection, QueryRequestBody, ReviewUIFilters, WouldReturnQuery } from '../types';
 import { Autocomplete, LoadScript } from '@react-google-maps/api';
 import { libraries } from '../utilities';
 import PlacesAndReviews from './PlacesAndReviews';
@@ -148,24 +148,61 @@ const ReviewsPage: React.FC = () => {
     }
   }
 
+  const executeSearch = async (filterQueryParams: FilterQueryParams) => {
+
+    // natural language query?
+    try {
+      const apiResponse = await fetch('/api/reviews/filterReviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(filterQueryParams),
+      });
+      const data: PlacesReviewsCollection = await apiResponse.json();
+      console.log('Filter query results:', data);
+      setFilteredPlaces(data.places);
+      setFilteredReviews(data.reviews);
+    } catch (error) {
+      console.error('Error handling query:', error);
+    }
+  }
+
+  const buildDistanceAwayQuery = (distanceFilter: DistanceFilter): DistanceAwayQuery => {
+    let distanceAwayQuery: DistanceAwayQuery = {
+      lat: 0,
+      lng: 0,
+      radius: 0,
+    };
+
+    if (distanceFilter.useCurrentLocation) {
+      distanceAwayQuery.lat = currentLocation!.lat;
+      distanceAwayQuery.lng = currentLocation!.lng;
+    } else {
+      distanceAwayQuery.lat = distanceFilter.specificLocation!.lat;
+      distanceAwayQuery.lng = distanceFilter.specificLocation!.lng;
+    }
+    distanceAwayQuery.radius = distanceFilter.distance;
+
+    return distanceAwayQuery;
+  } 
 
   const handleApplyFilters = async (reviewFilters: ReviewUIFilters) => {
+
     console.log('Filters applied:', reviewFilters);
-    // setFilters(filterState); // Update the state with the applied filters
-    // Add additional logic to apply filters, e.g., updating displayed reviews
+    
+    let filterQueryParams: FilterQueryParams = {};
 
     if (reviewFilters.queryText) {
+      filterQueryParams.naturalLanguageQuery = reviewFilters.queryText;
       setQuery(reviewFilters.queryText);
-      await handleNaturalLanguageQuery(reviewFilters.queryText);
+      // await handleNaturalLanguageQuery(reviewFilters.queryText);
     }
 
     if (reviewFilters.distanceFilter.enabled) {
-      setDistanceFilterEnabled(true);
-      setFromLocation(reviewFilters.distanceFilter.useCurrentLocation ? 'current' : 'specified');
-      setFromLocationLocation(reviewFilters.distanceFilter.useCurrentLocation ? currentLocation! : DEFAULT_CENTER);
-      setFromLocationDistance(reviewFilters.distanceFilter.distance);
-      await handleSearchByFilter();
+      filterQueryParams.distanceAwayQuery = buildDistanceAwayQuery(reviewFilters.distanceFilter);
     }
+
+    await executeSearch(filterQueryParams);
+
   };
 
 

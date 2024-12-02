@@ -18,9 +18,8 @@ export interface ReviewEntity {
 export interface DistanceFilter {
   enabled: boolean;
   useCurrentLocation: boolean;
-  fromLocation: google.maps.LatLngLiteral | null;
+  specificLocation: google.maps.LatLngLiteral | null;
   distance: number;
-  specificLocation: string | null;
 }
 
 export interface WouldReturnFilter {

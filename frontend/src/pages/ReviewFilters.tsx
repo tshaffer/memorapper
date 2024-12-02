@@ -13,9 +13,8 @@ interface ReviewFiltersProps {
 const initialDistanceFilter: DistanceFilter = {
   enabled: false,
   useCurrentLocation: true,
-  fromLocation: null,
   distance: 5,
-  specificLocation: null as string | null,
+  specificLocation: null,
 };
 
 const initialWouldReturnFilter: WouldReturnFilter = {
