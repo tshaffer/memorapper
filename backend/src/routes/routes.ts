@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { addReviewsFromFileHandler, chatReviewHandler, checkTextSimilarityHandler, filterReviewsHandler, getPlaces, getReviews, getStandardizedNames, healthHandler, naturalLanguageQueryHandler, previewReviewHandler, submitReviewHandler, testHandler } from '../controllers';
+import { addReviewsFromFileHandler, chatReviewHandler, checkTextSimilarityHandler, getPlaces, getReviews, getStandardizedNames, healthHandler, previewReviewHandler, submitReviewHandler, testHandler } from '../controllers';
+import { unifiedQueryHandler } from '../controllers/unifiedQuery';
 
 const router = Router();
 
@@ -12,9 +13,9 @@ router.get('/standardizedNames', getStandardizedNames);
 router.post('/reviews/preview', previewReviewHandler);
 router.post('/reviews/chat', chatReviewHandler);
 router.post('/reviews/submit', submitReviewHandler);
-router.post('/reviews/naturalLanguageQuery', naturalLanguageQueryHandler);
-router.post('/reviews/filterReviews', filterReviewsHandler);
 router.post('/reviews/addReviewsFromFile', addReviewsFromFileHandler);
 router.post('/checkTextSimilarity', checkTextSimilarityHandler);
+
+router.post('/reviews/unifiedQuery', unifiedQueryHandler);
 
 export default router;

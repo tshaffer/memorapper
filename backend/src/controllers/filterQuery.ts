@@ -1,39 +1,21 @@
-import { Request, Response } from 'express';
-import MongoPlace, { IMongoPlace } from '../models/MongoPlace';
-import Review, { IReview } from '../models/Review';
-import { FilterQueryParams, QueryResponse, PlacesReviewsCollection, GooglePlace, MemoRappReview, WouldReturn } from '../types';
-import { convertMongoPlacesToGooglePlaces } from '../utilities';
+import { IMongoPlace } from '../models/MongoPlace';
+import { IReview } from '../models/Review';
+import { FilterQueryParams, QueryResponse, WouldReturn } from '../types';
 import ItemOrderedModel from '../models/ItemOrdered';
 
-export const filterReviewsHandler = async (
-  request: Request<{}, {}, FilterQueryParams>,
-  response: Response
-): Promise<void> => {
-  const filterQueryResponse: QueryResponse = await getFilteredPlacesAndReviews(request.body);
-  console.log('filterQueryResponse');
-  console.log(filterQueryResponse);
-
-  const { places, reviews } = filterQueryResponse;
-  const googlePlaces: GooglePlace[] = convertMongoPlacesToGooglePlaces(places);
-  const memoRappReviews: MemoRappReview[] = reviews.map((review: IReview) => {
-    return review.toObject();
-  });
-
-  const filterResponse: PlacesReviewsCollection = {
-    places: googlePlaces,
-    reviews: memoRappReviews,
-  };
-  response.json(filterResponse);
-}
-
-const getFilteredPlacesAndReviews = async (queryParams: FilterQueryParams): Promise<QueryResponse> => {
+export const getFilteredPlacesAndReviews = async (
+  queryParams: FilterQueryParams,
+  initialPlaces: IMongoPlace[],
+  initialReviews: IReview[]
+): Promise<QueryResponse> => {
   const { distanceAwayQuery, wouldReturnQuery, itemsOrderedQuery } = queryParams;
   const { lat, lng, radius } = distanceAwayQuery || {};
 
   try {
-    // Step 0: Initialize queries
-    let places: IMongoPlace[] = await MongoPlace.find({});
-    let reviews: IReview[] = await Review.find({});
+    // Start with subsets provided by natural language query
+    let places = initialPlaces;
+    let reviews = initialReviews;
+
     const reviewQuery: Record<string, any> = {};
 
     // Step 1: Construct the Would Return filter for reviews
@@ -42,7 +24,7 @@ const getFilteredPlacesAndReviews = async (queryParams: FilterQueryParams): Prom
       if (wouldReturnQuery.yes) returnFilter.push(WouldReturn.Yes);
       if (wouldReturnQuery.no) returnFilter.push(WouldReturn.No);
       if (wouldReturnQuery.notSure) returnFilter.push(WouldReturn.NotSure);
-  
+
       if (returnFilter.length > 0) {
         reviewQuery['structuredReviewProperties.wouldReturn'] = { $in: returnFilter };
       }
@@ -69,15 +51,17 @@ const getFilteredPlacesAndReviews = async (queryParams: FilterQueryParams): Prom
 
     // Step 3: Filter reviews based on the reviewQuery
     if (Object.keys(reviewQuery).length > 0) {
-      reviews = await Review.find(reviewQuery);
+      reviews = reviews.filter((review) => {
+        return Object.keys(reviewQuery).every((key) => {
+          const queryValue = reviewQuery[key];
+          return queryValue.$in.includes(review[key as keyof IReview]);
+          // return queryValue.$in.includes(review[key]);
+        });
+      });
     }
 
     // Extract unique place_ids from the filtered reviews
     const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.place_id)));
-
-    if (placeIdsWithReviews.length === 0) {
-      return { places: [], reviews: [] }; // No matching reviews
-    }
 
     // Step 4: Filter places based on distance or matching place IDs
     let placeQuery: any = { place_id: { $in: placeIdsWithReviews } };
@@ -91,11 +75,7 @@ const getFilteredPlacesAndReviews = async (queryParams: FilterQueryParams): Prom
       };
     }
 
-    places = await MongoPlace.find(placeQuery);
-
-    // Step 5: Filter reviews to include only those belonging to the filtered places
-    const filteredPlaceIds = places.map((place) => place.place_id);
-    reviews = reviews.filter((review) => filteredPlaceIds.includes(review.place_id));
+    places = places.filter((place) => placeQuery.place_id.$in.includes(place.place_id));
 
     // Combine results
     return { places, reviews };

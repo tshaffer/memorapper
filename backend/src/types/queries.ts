@@ -1,6 +1,21 @@
 import { MemoRappReview } from "./entities";
 import { GooglePlace } from "./googlePlace";
 
+interface DateRange {
+  start: string;
+  end: string;
+}
+
+export interface QueryParameters {
+  location?: string;
+  radius?: number;
+  dateRange: DateRange;
+  restaurantName?: string;
+  wouldReturn: boolean | null;
+  itemsOrdered: any;
+}
+
+
 export interface WouldReturnQuery {
   yes: boolean;
   no: boolean;
@@ -8,16 +23,6 @@ export interface WouldReturnQuery {
 }
 
 export type WouldReturnQuerySpec = (boolean | null)[];
-
-export interface QueryParameters {
-  lat?: number;
-  lng?: number;
-  radius?: number;
-  restaurantName?: string;
-  dateRange?: any;
-  wouldReturn?: WouldReturnQuery;
-  itemsOrdered?: any;
-}
 
 export interface DistanceAwayQuery {
   lat: number;
@@ -36,3 +41,26 @@ export interface PlacesReviewsCollection {
   places: GooglePlace[];
   reviews: MemoRappReview[];
 }
+
+export interface StructuredQueryParams {
+  distanceAwayQuery?: {
+    lat: number;
+    lng: number;
+    radius: number; // in miles
+  };
+  wouldReturn?: WouldReturnQuery;
+  placeName?: string; // Partial name match for places
+  reviewDateRange?: {
+    start?: string; // ISO date string
+    end?: string;   // ISO date string
+  };
+  itemsOrdered?: string[]; // Array of item names for filtering reviews
+  additionalPlaceFilters?: Record<string, any>; // Additional Mongo filters for places
+  additionalReviewFilters?: Record<string, any>; // Additional Mongo filters for reviews
+}
+
+export interface ParsedQuery {
+  queryType: 'structured' | 'full-text' | 'hybrid';
+  queryParameters: QueryParameters;
+}
+
