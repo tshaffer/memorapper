@@ -6,6 +6,8 @@ import {
   FormControlLabel,
   Typography,
   Modal,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 
 interface WouldReturnFilterModalProps {
@@ -30,6 +32,9 @@ const WouldReturnFilterModal: React.FC<WouldReturnFilterModalProps> = ({
 }) => {
   const [localFilterState, setLocalFilterState] = useState(filterState);
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Detect mobile screens
+
   const toggleValue = (key: keyof typeof localFilterState.values) => {
     setLocalFilterState((prev) => ({
       ...prev,
@@ -50,21 +55,28 @@ const WouldReturnFilterModal: React.FC<WouldReturnFilterModalProps> = ({
       ...localFilterState,
       enabled: isEnabled,
     });
+    onClose();
   };
 
   return (
     <Modal open={isOpen} onClose={onClose}>
       <Box
         sx={{
-          width: '400px',
+          width: isMobile ? '90%' : '400px', // Responsive width
           margin: 'auto',
-          marginTop: '20vh',
+          marginTop: isMobile ? '10vh' : '20vh', // Adjust vertical position for mobile
           backgroundColor: 'white',
-          padding: 3,
+          padding: isMobile ? 2 : 3, // Adjust padding for mobile
           borderRadius: 2,
+          boxShadow: 24,
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        <Typography variant="h6" sx={{ marginBottom: 2 }}>
+        <Typography
+          variant="h6"
+          sx={{ marginBottom: 2, textAlign: isMobile ? 'center' : 'left' }} // Center text for mobile
+        >
           Would Return Filter
         </Typography>
 
@@ -98,11 +110,26 @@ const WouldReturnFilterModal: React.FC<WouldReturnFilterModalProps> = ({
         />
 
         {/* Action Buttons */}
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, marginTop: 2 }}>
-          <Button onClick={onClose} variant="outlined">
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: isMobile ? 'center' : 'flex-end', // Center buttons for mobile
+            gap: 2,
+            marginTop: 2,
+          }}
+        >
+          <Button
+            onClick={onClose}
+            variant="outlined"
+            sx={{ fontSize: isMobile ? '0.875rem' : '1rem' }} // Adjust font size for mobile
+          >
             Cancel
           </Button>
-          <Button onClick={handleApply} variant="contained">
+          <Button
+            onClick={handleApply}
+            variant="contained"
+            sx={{ fontSize: isMobile ? '0.875rem' : '1rem' }} // Adjust font size for mobile
+          >
             Apply
           </Button>
         </Box>

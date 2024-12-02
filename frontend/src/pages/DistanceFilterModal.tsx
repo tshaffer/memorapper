@@ -8,6 +8,8 @@ import {
   Radio,
   Slider,
   Modal,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import { Autocomplete } from '@react-google-maps/api';
 import { DistanceFilter } from '../types';
@@ -24,12 +26,16 @@ const DistanceFilterModal: React.FC<DistanceFilterModalProps> = (props: Distance
   const [localFilterState, setLocalFilterState] = useState(filterState);
   const specificLocationAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Detect mobile screens
+
   const handleApply = () => {
     // Enable the filter before applying
     onApply({
       ...localFilterState,
       enabled: true,
     });
+    onClose();
   };
 
   const handleSpecificLocationPlaceChanged = () => {
@@ -48,95 +54,99 @@ const DistanceFilterModal: React.FC<DistanceFilterModalProps> = (props: Distance
         );
         console.log("From location place changed:", place);
       }
-  }
-};
+    }
+  };
 
-return (
-  <Modal open={isOpen} onClose={onClose}>
-    <Box
-      sx={{
-        width: '400px',
-        margin: 'auto',
-        marginTop: '20vh',
-        backgroundColor: 'white',
-        padding: 3,
-        borderRadius: 2,
-      }}
-    >
-      <Typography variant="h6" sx={{ marginBottom: 2 }}>
-        Configure Distance Filter
-      </Typography>
-
-      {/* Distance Options */}
-      <RadioGroup
-        value={localFilterState.useCurrentLocation ? 'current' : 'specific'}
-        onChange={(e) =>
-          setLocalFilterState({
-            ...localFilterState,
-            useCurrentLocation: e.target.value === 'current',
-          })
-        }
-        sx={{ marginTop: 2 }}
+  return (
+    <Modal open={isOpen} onClose={onClose}>
+      <Box
+        sx={{
+          width: isMobile ? '90%' : '400px', // Responsive width
+          margin: 'auto',
+          marginTop: isMobile ? '10vh' : '20vh',
+          backgroundColor: 'white',
+          padding: isMobile ? 2 : 3,
+          borderRadius: 2,
+          boxShadow: 24,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
       >
-        <FormControlLabel
-          value="current"
-          control={<Radio />}
-          label="From Current Location"
-        />
-        <FormControlLabel
-          value="specific"
-          control={<Radio />}
-          label="From Specific Location"
-        />
-      </RadioGroup>
+        <Typography variant="h6" sx={{ marginBottom: 2, textAlign: isMobile ? 'center' : 'left' }}>
+          Configure Distance Filter
+        </Typography>
 
-      {/* Autocomplete Input */}
-      {!localFilterState.useCurrentLocation && (
-        <Autocomplete
-          onLoad={(autocomplete) => (specificLocationAutocompleteRef.current = autocomplete)}
-          onPlaceChanged={handleSpecificLocationPlaceChanged}
+        {/* Distance Options */}
+        <RadioGroup
+          value={localFilterState.useCurrentLocation ? 'current' : 'specific'}
+          onChange={(e) =>
+            setLocalFilterState({
+              ...localFilterState,
+              useCurrentLocation: e.target.value === 'current',
+            })
+          }
+          sx={{ marginTop: 2 }}
         >
-          <input
-            type="text"
-            placeholder="Enter a specific location"
-            style={{
-              fontSize: '0.875rem',
-              width: '100%',
-              padding: '10px',
-              boxSizing: 'border-box',
-              marginBottom: '10px',
-            }}
-          />
-        </Autocomplete>
-      )}
+          <FormControlLabel value="current" control={<Radio />} label="From Current Location" />
+          <FormControlLabel value="specific" control={<Radio />} label="From Specific Location" />
+        </RadioGroup>
 
-      {/* Distance Slider */}
-      <Typography gutterBottom>Distance: {localFilterState.distance} miles</Typography>
-      <Slider
-        value={localFilterState.distance}
-        onChange={(e, value) =>
-          setLocalFilterState({
-            ...localFilterState,
-            distance: value as number,
-          })
-        }
-        min={0}
-        max={10}
-        step={0.1}
-      />
+        {/* Autocomplete Input */}
+        {!localFilterState.useCurrentLocation && (
+          <Autocomplete
+            onLoad={(autocomplete) => (specificLocationAutocompleteRef.current = autocomplete)}
+            onPlaceChanged={handleSpecificLocationPlaceChanged}
+          >
+            <input
+              type="text"
+              placeholder="Enter a specific location"
+              style={{
+                fontSize: '0.875rem',
+                width: '100%',
+                padding: '10px',
+                boxSizing: 'border-box',
+                marginBottom: '10px',
+              }}
+            />
+          </Autocomplete>
+        )}
 
-      {/* Action Buttons */}
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, marginTop: 2 }}>
-        <Button onClick={onClose} variant="outlined">
-          Cancel
-        </Button>
-        <Button onClick={handleApply} variant="contained">
-          Apply
-        </Button>
+        {/* Distance Slider */}
+        <Typography gutterBottom textAlign={isMobile ? 'center' : 'left'}>
+          Distance: {localFilterState.distance} miles
+        </Typography>
+        <Slider
+          value={localFilterState.distance}
+          onChange={(e, value) =>
+            setLocalFilterState({
+              ...localFilterState,
+              distance: value as number,
+            })
+          }
+          min={0}
+          max={10}
+          step={0.1}
+        />
+
+        {/* Action Buttons */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: isMobile ? 'center' : 'flex-end',
+            gap: 2,
+            marginTop: 2,
+          }}
+        >
+          <Button onClick={onClose} variant="outlined" sx={{ fontSize: isMobile ? '0.875rem' : '1rem' }}>
+            Cancel
+          </Button>
+          <Button onClick={handleApply} variant="contained" sx={{ fontSize: isMobile ? '0.875rem' : '1rem' }}>
+            Apply
+          </Button>
+        </Box>
       </Box>
-    </Box>
-  </Modal>
-);
+    </Modal>
+  );
 };
 
 export default DistanceFilterModal;
