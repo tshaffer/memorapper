@@ -122,10 +122,50 @@ const ReviewsPage: React.FC = () => {
     }
   };
 
-  const handleApplyFilters = (reviewFilters: ReviewUIFilters) => {
-    console.log('Filters applied:', filterState);
+  const handleNaturalLanguageQuery = async (query: string) => {
+
+    console.log('Query:', query);
+
+    const queryRequestBody: QueryRequestBody = {
+      query,
+    };
+
+    try {
+      const apiResponse = await fetch('/api/reviews/naturalLanguageQuery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(queryRequestBody),
+      });
+      const data = await apiResponse.json();
+      console.log('Natural language query results:', data);
+      const { places, reviews } = data.result;
+      setPlaces(places);
+      setFilteredPlaces(places);
+      setReviews(reviews);
+      setFilteredReviews(reviews);
+    } catch (error) {
+      console.error('Error handling query:', error);
+    }
+  }
+
+
+  const handleApplyFilters = async (reviewFilters: ReviewUIFilters) => {
+    console.log('Filters applied:', reviewFilters);
     // setFilters(filterState); // Update the state with the applied filters
     // Add additional logic to apply filters, e.g., updating displayed reviews
+
+    if (reviewFilters.queryText) {
+      setQuery(reviewFilters.queryText);
+      await handleNaturalLanguageQuery(reviewFilters.queryText);
+    }
+
+    if (reviewFilters.distanceFilter.enabled) {
+      setDistanceFilterEnabled(true);
+      setFromLocation(reviewFilters.distanceFilter.useCurrentLocation ? 'current' : 'specified');
+      setFromLocationLocation(reviewFilters.distanceFilter.useCurrentLocation ? currentLocation! : DEFAULT_CENTER);
+      setFromLocationDistance(reviewFilters.distanceFilter.distance);
+      await handleSearchByFilter();
+    }
   };
 
 
