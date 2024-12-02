@@ -4,7 +4,7 @@ import { GooglePlace } from "./googlePlace";
 export interface WouldReturnQuery {
   yes: boolean;
   no: boolean;
-  notSpecified: boolean;
+  notSure: boolean;
 }
 
 export type WouldReturnQuerySpec = (boolean | null)[];
@@ -34,10 +34,4 @@ export interface FilterQueryParams {
 export interface PlacesReviewsCollection {
   places: GooglePlace[];
   reviews: MemoRappReview[];
-}
-
-export interface WouldReturnQuery {
-  yes: boolean;
-  no: boolean;
-  notSpecified: boolean;
 }
