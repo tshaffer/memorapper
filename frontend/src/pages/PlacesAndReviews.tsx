@@ -233,7 +233,7 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
           </Tooltip>
         </div>
         <Typography><strong>Date of Visit:</strong> {review.structuredReviewProperties.dateOfVisit}</Typography>
-        <Typography><strong>Would Return:</strong> {(review.structuredReviewProperties.wouldReturn === true) ? 'Yes' : (review.structuredReviewProperties.wouldReturn === false) ? 'No' : 'Unspecified'}</Typography>
+        <Typography><strong>Would Return:</strong> {review.structuredReviewProperties.wouldReturn === null ? 'Unspecified' : review.structuredReviewProperties.wouldReturn ? 'Yes' : 'No'}</Typography>
         <Typography><strong>Items Ordered:</strong></Typography>
         <ul>
           {review.freeformReviewProperties.itemReviews.map((itemReview: ItemReview, idx) => (
