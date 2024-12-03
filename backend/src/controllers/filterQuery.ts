@@ -53,13 +53,40 @@ export const getFilteredPlacesAndReviews = async (
     if (Object.keys(reviewQuery).length > 0) {
       reviews = reviews.filter((review) => {
         return Object.keys(reviewQuery).every((key) => {
-          const queryValue = reviewQuery[key];
-          return queryValue.$in.includes(review[key as keyof IReview]);
-          // return queryValue.$in.includes(review[key]);
+          const queryValue = reviewQuery[key as keyof typeof reviewQuery];
+    
+          // Handle nested properties with safe traversal
+          const keys = key.split('.'); // Split the key by dots to traverse the object
+          let value: any = review;
+          for (const k of keys) {
+            value = value?.[k as keyof typeof value];
+            if (value === undefined) return false; // Property doesn't exist
+          }
+    
+          // Check if value is an array for $elemMatch
+          if (queryValue.$elemMatch && Array.isArray(value)) {
+            return value.some((item: any) =>
+              Object.keys(queryValue.$elemMatch).every((elemKey) => {
+                const elemValue = queryValue.$elemMatch[elemKey];
+                if (elemValue.$in) {
+                  return elemValue.$in.includes(item[elemKey]);
+                }
+                return item[elemKey] === elemValue;
+              })
+            );
+          }
+    
+          // Handle $in for non-array properties
+          if (queryValue.$in) {
+            return queryValue.$in.includes(value);
+          }
+    
+          // Fallback for exact matches
+          return value === queryValue;
         });
       });
     }
-
+        
     // Extract unique place_ids from the filtered reviews
     const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.place_id)));
 
