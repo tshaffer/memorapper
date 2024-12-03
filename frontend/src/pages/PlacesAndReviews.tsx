@@ -36,6 +36,7 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
 
   const [viewMode, setViewMode] = useState<'list' | 'details'>('list');
   const [selectedPlace, setSelectedPlace] = useState<GooglePlace | null>(null);
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
 
   const [sortCriteria, setSortCriteria] = useState<'name' | 'distance' | 'reviewer' | 'recentReview'>('name');
 
@@ -93,10 +94,11 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
   };
 
   const handlePlaceClick = (place: GooglePlace) => {
+    setSelectedPlaceId(place.place_id); // Update selected place ID
     setSelectedPlace(place);
     setViewMode('details');
-  }
-
+  };
+  
   const handleShowMap = (placeId: string) => {
     navigate(`/map/${placeId}`);
   };
@@ -147,9 +149,9 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
     if (!(viewMode === 'list' || !isMobile)) {
       return null; // Explicitly return null when the condition is false
     }
-  
+
     const sortedPlaces = getSortedPlaces(); // Get the sorted places
-  
+
     return (
       <Box
         sx={{
@@ -166,7 +168,7 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
       >
         {/* Sort Dropdown */}
         {renderSortDropdown()}
-  
+
         {/* Places Table */}
         <TableContainer
           component={Paper}
@@ -191,6 +193,11 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
                   <TableRow
                     className="table-row-hover"
                     onClick={() => handlePlaceClick(place)}
+                    sx={{
+                      backgroundColor:
+                        place.place_id === selectedPlaceId ? '#f0f8ff' : 'inherit', // Highlight selected row
+                      cursor: 'pointer', // Indicate clickable rows
+                    }}
                   >
                     <TableCell align="right" className="dimmed" style={smallColumnStyle}>
                       <IconButton onClick={() => handleShowMap(place.place_id)}>
@@ -213,7 +220,7 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
       </Box>
     );
   };
-  
+
   const renderSortDropdown = (): JSX.Element => {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', padding: 2 }}>
