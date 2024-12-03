@@ -18,7 +18,16 @@ const SimilarityGrid: React.FC = () => {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const result: SimilarityData[] = await response.json();
-        setData(result);
+
+        // Sort the data as per requirements:
+        const sortedData = result.sort((a, b) => {
+          if (a.inputName1 === b.inputName1) {
+            return b.similarity - a.similarity; // Sort by similarity in descending order
+          }
+          return a.inputName1.localeCompare(b.inputName1); // Sort by inputName1 alphabetically
+        });
+
+        setData(sortedData);
       } catch (error) {
         console.error("Error fetching similarity data:", error);
       } finally {
@@ -36,24 +45,26 @@ const SimilarityGrid: React.FC = () => {
   return (
     <div>
       <h1>Text Similarities</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Input Name 1</th>
-            <th>Input Name 2</th>
-            <th>Similarity</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map(({ inputName1, inputName2, similarity }, index) => (
-            <tr key={index}>
-              <td>{inputName1}</td>
-              <td>{inputName2}</td>
-              <td>{similarity.toFixed(2)}</td>
+      <div style={{ overflowY: "auto", maxHeight: "700px", border: "1px solid #ccc" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr>
+              <th style={{ border: "1px solid #ccc", padding: "8px" }}>Input Name 1</th>
+              <th style={{ border: "1px solid #ccc", padding: "8px" }}>Input Name 2</th>
+              <th style={{ border: "1px solid #ccc", padding: "8px" }}>Similarity</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data.map(({ inputName1, inputName2, similarity }, index) => (
+              <tr key={index}>
+                <td style={{ border: "1px solid #ccc", padding: "8px" }}>{inputName1}</td>
+                <td style={{ border: "1px solid #ccc", padding: "8px" }}>{inputName2}</td>
+                <td style={{ border: "1px solid #ccc", padding: "8px" }}>{similarity.toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
