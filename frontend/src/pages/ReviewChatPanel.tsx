@@ -1,7 +1,7 @@
 import { Box, Button, Card, TextField, Typography } from '@mui/material';
 import '../styles/multiPanelStyles.css';
 import '../styles/chatStyles.css';
-import { ChatRequestBody, ChatResponse, FreeformReviewProperties, GooglePlace, ItemReview, ReviewEntity } from '../types';
+import { ChatRequestBody, ChatResponse, FreeformReviewProperties, GooglePlace, ItemReview, ReviewEntity, WouldReturn } from '../types';
 import { useEffect, useState } from 'react';
 import { formatDateToMMDDYYYY } from '../utilities';
 
@@ -15,7 +15,7 @@ interface ReviewChatPanelProps {
   reviewText: string;
   place: GooglePlace;
   dateOfVisit: string;
-  wouldReturn: boolean | null;
+  wouldReturn: WouldReturn | null;
 }
 
 const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelProps) => {
@@ -103,8 +103,9 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
 
   const renderAIResponse = (freeformReviewProperties: FreeformReviewProperties): JSX.Element => {
     const getReturnString = () => {
-      if (wouldReturn === true) return 'Yes';
-      if (wouldReturn === false) return 'No';
+      if (wouldReturn === WouldReturn.Yes) return 'Yes';
+      if (wouldReturn === WouldReturn.No) return 'No';
+      if (wouldReturn === WouldReturn.NotSure) return 'Not sure';
       return 'Not specified';
     }
     return (

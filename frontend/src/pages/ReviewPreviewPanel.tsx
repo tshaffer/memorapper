@@ -1,6 +1,6 @@
 import { Button, Typography } from '@mui/material';
 import '../styles/multiPanelStyles.css';
-import { FreeformReviewProperties, GooglePlace, StructuredReviewProperties, SubmitReviewBody } from '../types';
+import { FreeformReviewProperties, GooglePlace, StructuredReviewProperties, SubmitReviewBody, WouldReturn } from '../types';
 import { formatDateToMMDDYYYY } from '../utilities';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 interface ReviewPreviewPanelProps {
   place: GooglePlace | null;
   reviewText: string;
-  wouldReturn: boolean | null;
+  wouldReturn: WouldReturn | null;
   dateOfVisit: string;
   freeformReviewProperties: FreeformReviewProperties;
   sessionId: string;
@@ -23,8 +23,9 @@ const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPrev
   const [isLoading, setIsLoading] = useState(false);
 
   const getReturnString = () => {
-    if (wouldReturn === true) return 'Yes';
-    if (wouldReturn === false) return 'No';
+    if (wouldReturn === WouldReturn.Yes) return 'Yes';
+    if (wouldReturn === WouldReturn.No) return 'No';
+    if (wouldReturn === WouldReturn.NotSure) return 'Not sure';
     return 'Not specified';
   }
 
@@ -35,7 +36,7 @@ const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPrev
       const structuredReviewProperties: StructuredReviewProperties = { dateOfVisit, wouldReturn };
       const submitBody: SubmitReviewBody = {
         _id,
-        place,
+        place: place!,
         structuredReviewProperties,
         freeformReviewProperties,
         reviewText,

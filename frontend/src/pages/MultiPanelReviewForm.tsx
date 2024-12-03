@@ -4,14 +4,14 @@ import ReviewFormPanel from "./ReviewFormPanel";
 import ReviewPreviewPanel from "./ReviewPreviewPanel";
 import ReviewChatPanel from "./ReviewChatPanel";
 import { Button } from "@mui/material";
-import { FreeformReviewProperties, GooglePlace } from "../types";
+import { FreeformReviewProperties, GooglePlace, WouldReturn } from "../types";
 
 const MultiPanelReviewForm = () => {
   const [activeTab, setActiveTab] = useState("form");
 
   const [googlePlace, setGooglePlace] = useState<GooglePlace | null>(null);
   const [reviewText, setReviewText] = useState('');
-  const [wouldReturn, setWouldReturn] = useState<boolean | null>(null); // New state
+  const [wouldReturn, setWouldReturn] = useState<WouldReturn | null>(null); // New state
   const [dateOfVisit, setDateOfVisit] = useState('');
   const [freeformReviewProperties, setFreeformReviewProperties] = useState<FreeformReviewProperties | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -32,7 +32,7 @@ const MultiPanelReviewForm = () => {
     setDateOfVisit(dateOfVisit);
   }
 
-  function handleSetWouldReturn(wouldReturn: boolean | null) {
+  function handleSetWouldReturn(wouldReturn: WouldReturn | null) {
     setWouldReturn(wouldReturn);
   }
 

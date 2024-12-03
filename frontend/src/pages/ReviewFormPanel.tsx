@@ -2,7 +2,7 @@ import { Box, Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGrou
 import RestaurantName from '../components/RestaurantName';
 import '../styles/multiPanelStyles.css';
 import { useEffect, useState } from 'react';
-import { FreeformReviewProperties, GooglePlace, PreviewRequestBody, PreviewResponse } from '../types';
+import { FreeformReviewProperties, GooglePlace, PreviewRequestBody, PreviewResponse, WouldReturn } from '../types';
 import { getFormattedDate } from '../utilities';
 
 type ChatMessage = {
@@ -13,7 +13,7 @@ type ChatMessage = {
 interface ReviewFormPanelProps {
   onSetGooglePlace: (googlePlace: GooglePlace) => any;
   onSetReviewText: (reviewText: string) => any;
-  onSetWouldReturn: (wouldReturn: boolean | null) => any;
+  onSetWouldReturn: (wouldReturn: WouldReturn | null) => any;
   onSetDateOfVisit: (dateOfVisit: string) => any;
   onSetFreeformReviewProperties: (freeformReviewProperties: FreeformReviewProperties) => any;
   onSetSessionId: (sessionId: string) => any;
@@ -27,7 +27,7 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
   const [isLoading, setIsLoading] = useState(false);
 
   const [reviewText, setReviewText] = useState('');
-  const [wouldReturn, setWouldReturn] = useState<boolean | null>(null); // New state
+  const [wouldReturn, setWouldReturn] = useState<WouldReturn | null>(null); // New state
   const [dateOfVisit, setDateOfVisit] = useState('');
 
   const [freeformReviewProperties, setFreeformReviewProperties] = useState<FreeformReviewProperties | null>(null);
@@ -62,9 +62,8 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
   }
 
   const handleWouldReturnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value === "yes" ? true : event.target.value === "no" ? false : null;
-    setWouldReturn(value);
-    props.onSetWouldReturn(value);
+    setWouldReturn(event.target.value as WouldReturn);
+    props.onSetWouldReturn(event.target.value as WouldReturn);
   };
 
   const handlePreview = async () => {
@@ -133,11 +132,12 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
             <RadioGroup
               row
               name="would-return"
-              value={wouldReturn === true ? 'yes' : wouldReturn === false ? 'no' : ''}
+              value={wouldReturn}
               onChange={handleWouldReturnChange}
             >
-              <FormControlLabel value="yes" control={<Radio />} label="Yes" />
-              <FormControlLabel value="no" control={<Radio />} label="No" />
+              <FormControlLabel value={WouldReturn.Yes} control={<Radio />} label="Yes" />
+              <FormControlLabel value={WouldReturn.No} control={<Radio />} label="No" />
+              <FormControlLabel value={WouldReturn.NotSure} control={<Radio />} label="Not Sure" />
             </RadioGroup>
             <Button onClick={() => setWouldReturn(null)} size="small">
               Clear
