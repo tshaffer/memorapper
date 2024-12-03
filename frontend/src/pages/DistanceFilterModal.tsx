@@ -38,6 +38,15 @@ const DistanceFilterModal: React.FC<DistanceFilterModalProps> = (props: Distance
     onClose();
   };
 
+  const handleDisable = () => {
+    // Reset the filter state to default
+    onApply({
+      ...localFilterState,
+      enabled: false,
+    });
+    onClose();
+  }
+
   const handleSpecificLocationPlaceChanged = () => {
     if (specificLocationAutocompleteRef.current) {
       const place = specificLocationAutocompleteRef.current.getPlace();
@@ -132,15 +141,22 @@ const DistanceFilterModal: React.FC<DistanceFilterModalProps> = (props: Distance
         <Box
           sx={{
             display: 'flex',
-            justifyContent: isMobile ? 'center' : 'flex-end',
+            justifyContent: 'space-between',
             gap: 2,
             marginTop: 2,
           }}
         >
-          <Button onClick={onClose} variant="outlined" sx={{ fontSize: isMobile ? '0.875rem' : '1rem' }}>
+          <Button onClick={onClose} variant="outlined">
             Cancel
           </Button>
-          <Button onClick={handleApply} variant="contained" sx={{ fontSize: isMobile ? '0.875rem' : '1rem' }}>
+          <Button
+            onClick={handleDisable}
+            variant="text"
+            color="error"
+          >
+            Disable
+          </Button>
+          <Button onClick={handleApply} variant="contained">
             Apply
           </Button>
         </Box>

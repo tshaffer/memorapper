@@ -14,10 +14,15 @@ const QueryModal: React.FC<QueryModalProps> = ({ isOpen, onClose, onApply }) => 
 
   function handleApply() {
     onApply(inputText); // Pass query text back to parent
-    setInputText(''); // Clear input field
     onClose(); // Close the modal
   }
 
+  const handleDisable = () => {
+    onApply(''); // Pass query text back to parent
+    setInputText(''); // Clear input field
+    onClose(); // Close the modal
+  }
+  
   return (
     <Modal open={isOpen} onClose={onClose}>
       <Box
@@ -43,17 +48,29 @@ const QueryModal: React.FC<QueryModalProps> = ({ isOpen, onClose, onApply }) => 
           onChange={(e) => setInputText(e.target.value)}
           inputProps={{ style: { fontSize: isMobile ? '0.875rem' : '1rem' } }} // Smaller font for mobile
         />
-        <Button
-          variant="contained"
-          onClick={handleApply}
+        {/* Action Buttons */}
+        <Box
           sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            gap: 2,
             marginTop: 2,
-            fontSize: isMobile ? '0.875rem' : '1rem', // Adjust button font size
-            alignSelf: 'center', // Center button horizontally
           }}
         >
-          Apply
-        </Button>
+          <Button onClick={onClose} variant="outlined">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDisable}
+            variant="text"
+            color="error"
+          >
+            Disable
+          </Button>
+          <Button onClick={handleApply} variant="contained">
+            Apply
+          </Button>
+        </Box>
       </Box>
     </Modal>
   );

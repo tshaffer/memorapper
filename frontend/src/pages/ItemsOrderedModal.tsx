@@ -51,6 +51,15 @@ const ItemsOrderedModal: React.FC<ItemsOrderedModalProps> = ({
     onClose();
   };
 
+  const handleDisable = () => {
+    // Reset the filter state to default
+    onApply({
+      ...localFilterState,
+      enabled: false,
+    });
+    onClose();
+  }
+
   return (
     <Modal open={isOpen} onClose={onClose}>
       <Box
@@ -93,9 +102,23 @@ const ItemsOrderedModal: React.FC<ItemsOrderedModalProps> = ({
         </Box>
 
         {/* Action Buttons */}
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            gap: 2,
+            marginTop: 2,
+          }}
+        >
           <Button onClick={onClose} variant="outlined">
             Cancel
+          </Button>
+          <Button
+            onClick={handleDisable}
+            variant="text"
+            color="error"
+          >
+            Disable
           </Button>
           <Button onClick={handleApply} variant="contained">
             Apply

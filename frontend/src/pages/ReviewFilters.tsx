@@ -93,7 +93,7 @@ const ReviewFilters: React.FC<ReviewFiltersProps> = ( props: ReviewFiltersProps 
           variant="outlined"
           onClick={() => setIsQueryModalOpen(true)}
         >
-          {queryText ? `Query ✓` : `Query`}
+          {(queryText && (queryText !== '')) ? `Query ✓` : `Query`}
         </Button>
       )}
 

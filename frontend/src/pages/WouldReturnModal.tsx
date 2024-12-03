@@ -58,6 +58,15 @@ const WouldReturnFilterModal: React.FC<WouldReturnFilterModalProps> = ({
     onClose();
   };
 
+  const handleDisable = () => {
+    // Reset the filter state to default
+    onApply({
+      ...localFilterState,
+      enabled: false,
+    });
+    onClose();
+  }
+
   return (
     <Modal open={isOpen} onClose={onClose}>
       <Box
@@ -113,23 +122,22 @@ const WouldReturnFilterModal: React.FC<WouldReturnFilterModalProps> = ({
         <Box
           sx={{
             display: 'flex',
-            justifyContent: isMobile ? 'center' : 'flex-end', // Center buttons for mobile
+            justifyContent: 'space-between',
             gap: 2,
             marginTop: 2,
           }}
         >
-          <Button
-            onClick={onClose}
-            variant="outlined"
-            sx={{ fontSize: isMobile ? '0.875rem' : '1rem' }} // Adjust font size for mobile
-          >
+          <Button onClick={onClose} variant="outlined">
             Cancel
           </Button>
           <Button
-            onClick={handleApply}
-            variant="contained"
-            sx={{ fontSize: isMobile ? '0.875rem' : '1rem' }} // Adjust font size for mobile
+            onClick={handleDisable}
+            variant="text"
+            color="error"
           >
+            Disable
+          </Button>
+          <Button onClick={handleApply} variant="contained">
             Apply
           </Button>
         </Box>
