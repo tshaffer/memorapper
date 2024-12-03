@@ -4,6 +4,7 @@ import { FreeformReviewProperties, GooglePlace, StructuredReviewProperties, Subm
 import { formatDateToMMDDYYYY } from '../utilities';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import PulsingDots from '../components/PulsingDots';
 
 interface ReviewPreviewPanelProps {
   place: GooglePlace | null;
@@ -83,9 +84,20 @@ const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPrev
           ))}
         </ul>
         <Button onClick={handleSubmit}>Save Review</Button>
+
+        {renderPulsingDots()}
+
       </div>
     );
   }
+
+  const renderPulsingDots = (): JSX.Element | null => {
+    if (!isLoading) {
+      return null;
+    }
+    return (<PulsingDots />);
+  };
+
 
   return renderReviewPreview();
 };

@@ -4,6 +4,7 @@ import '../styles/chatStyles.css';
 import { ChatRequestBody, ChatResponse, FreeformReviewProperties, GooglePlace, ItemReview, ReviewEntity, WouldReturn } from '../types';
 import { useEffect, useState } from 'react';
 import { formatDateToMMDDYYYY } from '../utilities';
+import PulsingDots from '../components/PulsingDots';
 
 type ChatMessage = {
   role: 'user' | 'ai';
@@ -170,6 +171,13 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
     );
   }
 
+  const renderPulsingDots = (): JSX.Element | null => {
+    if (!isLoading) {
+      return null;
+    }
+    return (<PulsingDots />);
+  };
+
   return (
     <div id="chat" className="tab-panel active">
       <h2>Chat</h2>
@@ -186,6 +194,9 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
       />
 
       <Button onClick={handleSendChatMessage}>Send</Button>
+
+      {renderPulsingDots()}
+
     </div>
   );
 };

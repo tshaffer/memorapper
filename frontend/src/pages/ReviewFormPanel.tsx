@@ -4,6 +4,7 @@ import '../styles/multiPanelStyles.css';
 import { useEffect, useState } from 'react';
 import { FreeformReviewProperties, GooglePlace, PreviewRequestBody, PreviewResponse, WouldReturn } from '../types';
 import { getFormattedDate } from '../utilities';
+import PulsingDots from '../components/PulsingDots';
 
 type ChatMessage = {
   role: 'user' | 'ai';
@@ -89,6 +90,13 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
     setIsLoading(false);
   };
 
+  const renderPulsingDots = (): JSX.Element | null => {
+    if (!isLoading) {
+      return null;
+    }
+    return (<PulsingDots />);
+  };
+
   return (
 
     <div
@@ -150,6 +158,8 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
       <Button onClick={handlePreview}>
         Preview
       </Button>
+
+      {renderPulsingDots()}
 
     </div>
 
