@@ -233,7 +233,21 @@ export const submitReview = async (memoRappReview: SubmitReviewBody): Promise<IR
 
 export const getStandardizedNames = async (request: Request, response: Response) => {
   try {
-    const uniqueStandardizedNames: string[] = await ItemOrderedModel.distinct("standardizedName").exec();
+    const uniqueStandardizedNamesAggregation: any[] = await ItemOrderedModel.aggregate([
+      {
+        $group: {
+          _id: { $toLower: "$standardizedName" }, // Group by case-insensitive value
+          originalName: { $first: "$standardizedName" }, // Keep the original case
+        },
+      },
+      {
+        $sort: { _id: 1 }, // Sort by case-insensitive `_id` (lowercased value)
+      },
+      {
+        $replaceRoot: { newRoot: { standardizedName: "$originalName" } }, // Restore original case
+      },
+    ]).exec();
+    const uniqueStandardizedNames: string[] = uniqueStandardizedNamesAggregation.map(obj => obj.standardizedName);
     response.json(uniqueStandardizedNames);
   } catch (error) {
     console.error("Error fetching standardized names:", error);
