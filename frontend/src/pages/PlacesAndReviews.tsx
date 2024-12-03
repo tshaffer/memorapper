@@ -164,7 +164,7 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
           overflowY: 'auto',
           borderRight: { sm: '1px solid #ccc' },
           borderBottom: { xs: '1px solid #ccc', sm: 'none' },
-          height: { xs: '75vh', sm: 'auto' },
+          height: { xs: '75vh', sm: '80vh' },
         }}
       >
         {/* Sort Dropdown */}
