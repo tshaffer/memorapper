@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from '@mui/material';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Typography, Button, Tooltip, Box } from '@mui/material';
@@ -129,6 +129,7 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
   const renderPlacesAndReviewsContainer = (): JSX.Element => {
     return (
       <Box
+        id='placesAndReviewsContainer'
         sx={{
           height: '100vh',
           display: 'flex',
@@ -154,6 +155,7 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
 
     return (
       <Box
+        id='placesTableContainer'
         sx={{
           flexShrink: 0,
           width: { xs: '100%', sm: '30%' },
@@ -162,7 +164,7 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
           overflowY: 'auto',
           borderRight: { sm: '1px solid #ccc' },
           borderBottom: { xs: '1px solid #ccc', sm: 'none' },
-          height: { xs: '50vh', sm: 'auto' },
+          height: { xs: '75vh', sm: 'auto' },
         }}
       >
         {/* Sort Dropdown */}
@@ -170,6 +172,7 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
 
         {/* Places Table */}
         <TableContainer
+          id='tableContainer'
           component={Paper}
           className="scrollable-table-container"
         >
