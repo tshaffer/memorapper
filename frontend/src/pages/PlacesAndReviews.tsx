@@ -98,7 +98,7 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
     setSelectedPlace(place);
     setViewMode('details');
   };
-  
+
   const handleShowMap = (placeId: string) => {
     navigate(`/map/${placeId}`);
   };
@@ -155,15 +155,14 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
     return (
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column', // Stack elements vertically
+          flexShrink: 0,
           width: { xs: '100%', sm: '30%' },
           minWidth: { sm: '300px' },
           maxWidth: { sm: '50%' },
-          height: { xs: '50vh', sm: 'auto' },
+          overflowY: 'auto',
           borderRight: { sm: '1px solid #ccc' },
           borderBottom: { xs: '1px solid #ccc', sm: 'none' },
-          overflow: 'hidden', // Ensure no overflow issues
+          height: { xs: '50vh', sm: 'auto' },
         }}
       >
         {/* Sort Dropdown */}
@@ -173,10 +172,6 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
         <TableContainer
           component={Paper}
           className="scrollable-table-container"
-          sx={{
-            flex: 1, // Allow table to grow to fill available space
-            overflowY: 'auto',
-          }}
         >
           <Table stickyHeader>
             <TableHead>
