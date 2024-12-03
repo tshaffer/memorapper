@@ -5,6 +5,7 @@ import { AppBar, Toolbar, Typography, Button, Container, Box } from '@mui/materi
 import Map from './pages/Map';
 import Reviews from './pages/Reviews';
 import MultiPanelReviewForm from './pages/MultiPanelReviewForm';
+import SimilarityGrid from "./pages/SimilarityGrid";
 
 const App: React.FC = () => {
   return (
@@ -20,6 +21,7 @@ const App: React.FC = () => {
             <Button color="inherit" component={Link} to="/">Reviews</Button>
             <Button color="inherit" component={Link} to="/map">Map</Button>
             <Button color="inherit" component={Link} to="/write-review">Write Review</Button>
+            <Button color="inherit" component={Link} to="/similarities">Items Ordered Test</Button>
           </Toolbar>
         </AppBar>
 
@@ -32,6 +34,7 @@ const App: React.FC = () => {
             <Route path="/write-review" element={<MultiPanelReviewForm />} />
             {/* <Route path="/add-review" element={<ReviewForm />} />
             <Route path="/add-review/:_id" element={<ReviewForm />} /> */}
+            <Route path="/similarities" element={<SimilarityGrid />} />
           </Routes>
         </Box>
       </Box>

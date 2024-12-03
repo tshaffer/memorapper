@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { addReviewsFromFileHandler, chatReviewHandler, checkTextSimilarityHandler, getPlaces, getReviews, getStandardizedNames, healthHandler, previewReviewHandler, submitReviewHandler, testHandler } from '../controllers';
 import { unifiedQueryHandler } from '../controllers/unifiedQuery';
+import { calculateTextSimilarities } from '../controllers/calculateTextSimilarities';
+
 
 const router = Router();
 
@@ -17,5 +19,7 @@ router.post('/reviews/addReviewsFromFile', addReviewsFromFileHandler);
 router.post('/checkTextSimilarity', checkTextSimilarityHandler);
 
 router.post('/reviews/unifiedQuery', unifiedQueryHandler);
+
+router.get("/text-similarities", calculateTextSimilarities);
 
 export default router;

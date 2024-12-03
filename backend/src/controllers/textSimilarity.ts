@@ -2,7 +2,7 @@ import openai from '../services/openai';
 import { Request, Response } from 'express';
 import ItemOrderedModel from '../models/ItemOrdered';
 
-async function generateEmbeddings(texts: string[]): Promise<number[][]> {
+export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
   try {
     const response = await openai.embeddings.create({
       model: "text-embedding-ada-002", // Embedding model
