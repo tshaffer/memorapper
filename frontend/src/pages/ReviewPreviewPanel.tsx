@@ -3,7 +3,6 @@ import '../styles/multiPanelStyles.css';
 import { ReviewData, WouldReturn } from '../types';
 import { formatDateToMMDDYYYY } from '../utilities';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
 import PulsingDots from '../components/PulsingDots';
 
 interface ReviewPreviewPanelProps {
@@ -16,10 +15,8 @@ const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPrev
   const { reviewData, onSubmitReview } = props;
 
   console.log('ReviewPreviewPanel reviewData:', reviewData);
-  
-  const { place, wouldReturn, dateOfVisit, reviewText, itemReviews, sessionId } = reviewData;
 
-  const { _id } = useParams<{ _id: string }>();
+  const { place, wouldReturn, dateOfVisit, reviewText, itemReviews } = reviewData;
 
   const [isLoading, setIsLoading] = useState(false);
 

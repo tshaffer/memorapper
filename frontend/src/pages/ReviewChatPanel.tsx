@@ -1,8 +1,8 @@
-import { Box, Button, Card, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography } from '@mui/material';
 import '../styles/multiPanelStyles.css';
 import '../styles/chatStyles.css';
-import { ChatRequestBody, ChatResponse, FreeformReviewProperties, GooglePlace, ItemReview, ReviewData, ReviewEntity, WouldReturn } from '../types';
-import { useEffect, useState } from 'react';
+import { ChatRequestBody, ChatResponse, FreeformReviewProperties, ItemReview, ReviewData, ReviewEntity, WouldReturn } from '../types';
+import { useState } from 'react';
 import { formatDateToMMDDYYYY } from '../utilities';
 import PulsingDots from '../components/PulsingDots';
 
@@ -13,64 +13,25 @@ type ChatMessage = {
 
 interface ReviewChatPanelProps {
   reviewData: ReviewData;
-
-  // chatHistory: { message: string; response?: string }[];
   onSendMessage: (message: string) => void;
   setReviewData: React.Dispatch<React.SetStateAction<ReviewData>>;
-
-  // sessionId: string;
-  // reviewText: string;
-  // place: GooglePlace;
-  // dateOfVisit: string;
-  // wouldReturn: WouldReturn | null;
 }
 
 const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelProps) => {
 
   console.log('ReviewChatPanel::props:', props);
 
-  const { reviewData, setReviewData } = props;
+  const { reviewData, onSendMessage } = props;
 
   const [isLoading, setIsLoading] = useState(false);
 
   const [chatInput, setChatInput] = useState<string>('');
-  // const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
-
-  // const [theReviewText, setTheReviewText] = useState('');
-  const [freeformReviewProperties, setFreeformReviewProperties] = useState<FreeformReviewProperties | null>(null);
-
-  const handleChange = (field: keyof ReviewData, value: any) => {
-    setReviewData((prev) => ({ ...prev, [field]: value }));
-  };
-
-
-  // useEffect(() => {
-  //   setTheReviewText(reviewText);
-  //   console.log('useEffect: sessionId:', sessionId);
-  // }, [reviewText]);
-
 
   const handleSendChatMessage = async () => {
     if (!reviewData.sessionId || !chatInput) return;
     try {
       setIsLoading(true);
-      const chatRequestBody: ChatRequestBody = {
-        userInput: chatInput,
-        sessionId: reviewData.sessionId,
-        reviewText: reviewData.reviewText!,
-      };
-      const response: Response = await fetch('/api/reviews/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(chatRequestBody),
-      });
-      const chatResponse: ChatResponse = (await response.json()) as ChatResponse;
-      const { freeformReviewProperties, updatedReviewText } = chatResponse;
-
-      setFreeformReviewProperties(freeformReviewProperties);
-
-      handleChange('reviewText', updatedReviewText);
-      handleChange('chatHistory', [...reviewData.chatHistory, { role: 'user', message: chatInput }, { role: 'ai', message: freeformReviewProperties }]);  
+      onSendMessage(chatInput);
       setChatInput('');
     } catch (error) {
       console.error('Error during chat:', error);
@@ -85,7 +46,6 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
       </div>
     );
   }
-
 
   const renderItemReview = (itemReview: ItemReview, idx: number): JSX.Element => {
     return (

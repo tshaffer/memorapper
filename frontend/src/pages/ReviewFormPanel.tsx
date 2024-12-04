@@ -2,7 +2,7 @@ import { Box, Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGrou
 import RestaurantName from '../components/RestaurantName';
 import '../styles/multiPanelStyles.css';
 import { useEffect, useState } from 'react';
-import { PreviewRequestBody, PreviewResponse, ReviewData, WouldReturn } from '../types';
+import { ReviewData, WouldReturn } from '../types';
 import PulsingDots from '../components/PulsingDots';
 
 interface ReviewFormPanelProps {
@@ -24,7 +24,6 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
     setReviewData((prev) => ({ ...prev, [field]: value }));
   };
 
-
   const generateSessionId = (): string => Math.random().toString(36).substring(2) + Date.now().toString(36);
 
   useEffect(() => {
@@ -40,20 +39,6 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
     try {
       setIsLoading(true);
       onSubmit(reviewData);
-      const previewBody: PreviewRequestBody = {
-        reviewText: reviewData.reviewText!,
-        sessionId: reviewData.sessionId!,
-      };
-      const response = await fetch('/api/reviews/preview', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(previewBody),
-      });
-      const data: PreviewResponse = await response.json();
-      handleChange('reviewText', data.freeformReviewProperties.reviewText);
-      handleChange('itemReviews', data.freeformReviewProperties.itemReviews);
-      handleChange('reviewer', data.freeformReviewProperties.reviewer);
-      handleChange('chatHistory', [...reviewData.chatHistory, { role: 'user', message: reviewData.reviewText }, { role: 'ai', message: data.freeformReviewProperties }]);
       props.onReceivedPreviewResponse();
     } catch (error) {
       console.error('Error previewing review:', error);

@@ -111,6 +111,8 @@ const MultiPanelReviewForm = () => {
     setReviewData((prev) => ({
       ...prev,
       reviewText: updatedReviewText,
+      itemReviews: freeformReviewProperties.itemReviews,
+      reviewer: freeformReviewProperties.reviewer,
       chatHistory: [...reviewData.chatHistory, { role: 'user', message: chatInput }, { role: 'ai', message: freeformReviewProperties }]
     }));
   };
