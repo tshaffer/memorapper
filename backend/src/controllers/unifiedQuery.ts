@@ -31,26 +31,34 @@ export const unifiedQueryHandler = async (
 
       let naturalLanguageResponse: QueryResponse = { places: [], reviews: [] };
 
-      if (queryType === 'structured') {
-        const structuredQueryParams: StructuredQueryParams =
-          buildStructuredQueryParamsFromParsedQuery(parsedQuery);
-        naturalLanguageResponse = await performStructuredQuery(structuredQueryParams);
-      } else if (queryType === 'full-text') {
-        const places = await MongoPlace.find({});
-        const reviews = await Review.find({});
-        naturalLanguageResponse = await performNaturalLanguageQuery(
-          query,
-          places,
-          reviews
-        );
-      } else {
-        const structuredQueryParams: StructuredQueryParams =
-          buildStructuredQueryParamsFromParsedQuery(parsedQuery);
-        naturalLanguageResponse = await performHybridQuery(
-          query,
-          structuredQueryParams
-        );
-      }
+      const places = await MongoPlace.find({});
+      const reviews = await Review.find({});
+      naturalLanguageResponse = await performNaturalLanguageQuery(
+        query,
+        places,
+        reviews
+      );
+
+      // if (queryType === 'structured') {
+      //   const structuredQueryParams: StructuredQueryParams =
+      //     buildStructuredQueryParamsFromParsedQuery(parsedQuery);
+      //   naturalLanguageResponse = await performStructuredQuery(structuredQueryParams);
+      // } else if (queryType === 'full-text') {
+      //   const places = await MongoPlace.find({});
+      //   const reviews = await Review.find({});
+      //   naturalLanguageResponse = await performNaturalLanguageQuery(
+      //     query,
+      //     places,
+      //     reviews
+      //   );
+      // } else {
+      //   const structuredQueryParams: StructuredQueryParams =
+      //     buildStructuredQueryParamsFromParsedQuery(parsedQuery);
+      //   naturalLanguageResponse = await performHybridQuery(
+      //     query,
+      //     structuredQueryParams
+      //   );
+      // }
 
       nlPlaces = naturalLanguageResponse.places;
       nlReviews = naturalLanguageResponse.reviews;
