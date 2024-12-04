@@ -5,13 +5,14 @@ import ReviewPreviewPanel from "./ReviewPreviewPanel";
 import ReviewChatPanel from "./ReviewChatPanel";
 import { Button } from "@mui/material";
 import { ChatRequestBody, ChatResponse, FreeformReviewProperties, PreviewRequestBody, PreviewResponse, ReviewData, StructuredReviewProperties, SubmitReviewBody } from "../types";
+import { getFormattedDate } from "../utilities";
 
 const MultiPanelReviewForm = () => {
 
   const initialReviewData: ReviewData = {
     place: null,
     reviewText: '',
-    dateOfVisit: '',
+    dateOfVisit: getFormattedDate(),
     wouldReturn: null,
     itemReviews: [],
     reviewer: null,
