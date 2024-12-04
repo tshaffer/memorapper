@@ -1,8 +1,8 @@
-import { Box, Button, Card, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography } from '@mui/material';
 import '../styles/multiPanelStyles.css';
 import '../styles/chatStyles.css';
-import { ChatRequestBody, ChatResponse, FreeformReviewProperties, GooglePlace, ItemReview, ReviewEntity, WouldReturn } from '../types';
-import { useEffect, useState } from 'react';
+import { FreeformReviewProperties, ItemReview, ReviewData, ReviewEntity, WouldReturn } from '../types';
+import { useState } from 'react';
 import { formatDateToMMDDYYYY } from '../utilities';
 import PulsingDots from '../components/PulsingDots';
 
@@ -12,58 +12,26 @@ type ChatMessage = {
 };
 
 interface ReviewChatPanelProps {
-  sessionId: string;
-  reviewText: string;
-  place: GooglePlace;
-  dateOfVisit: string;
-  wouldReturn: WouldReturn | null;
+  reviewData: ReviewData;
+  onSendChatMessage: (message: string) => void;
+  setReviewData: React.Dispatch<React.SetStateAction<ReviewData>>;
 }
 
 const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelProps) => {
 
   console.log('ReviewChatPanel::props:', props);
 
-  const { sessionId, reviewText, place, dateOfVisit, wouldReturn } = props;
+  const { reviewData, onSendChatMessage } = props;
 
   const [isLoading, setIsLoading] = useState(false);
 
   const [chatInput, setChatInput] = useState<string>('');
-  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
-
-  const [theReviewText, setTheReviewText] = useState('');
-  const [freeformReviewProperties, setFreeformReviewProperties] = useState<FreeformReviewProperties | null>(null);
-
-  useEffect(() => {
-    setTheReviewText(reviewText);
-    console.log('useEffect: sessionId:', sessionId);
-  }, [reviewText]);
-
-
-  const setTheChatHistory = (chatHistory: ChatMessage[]) => {
-    console.log('setTheChatHistory::chatHistory:', chatHistory);
-    setChatHistory(chatHistory);
-  }
 
   const handleSendChatMessage = async () => {
-    if (!sessionId || !chatInput) return;
+    if (!reviewData.sessionId || !chatInput) return;
     try {
       setIsLoading(true);
-      const chatRequestBody: ChatRequestBody = {
-        userInput: chatInput,
-        sessionId,
-        reviewText: theReviewText,
-      };
-      const response: Response = await fetch('/api/reviews/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(chatRequestBody),
-      });
-      const chatResponse: ChatResponse = (await response.json()) as ChatResponse;
-      const { freeformReviewProperties, updatedReviewText } = chatResponse;
-
-      setFreeformReviewProperties(freeformReviewProperties);
-      setTheReviewText(updatedReviewText);
-      setTheChatHistory([...chatHistory, { role: 'user', message: chatInput }, { role: 'ai', message: freeformReviewProperties }]);
+      onSendChatMessage(chatInput);
       setChatInput('');
     } catch (error) {
       console.error('Error during chat:', error);
@@ -78,7 +46,6 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
       </div>
     );
   }
-
 
   const renderItemReview = (itemReview: ItemReview, idx: number): JSX.Element => {
     return (
@@ -104,22 +71,22 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
 
   const renderAIResponse = (freeformReviewProperties: FreeformReviewProperties): JSX.Element => {
     const getReturnString = () => {
-      if (wouldReturn === WouldReturn.Yes) return 'Yes';
-      if (wouldReturn === WouldReturn.No) return 'No';
-      if (wouldReturn === WouldReturn.NotSure) return 'Not sure';
+      if (reviewData.wouldReturn === WouldReturn.Yes) return 'Yes';
+      if (reviewData.wouldReturn === WouldReturn.No) return 'No';
+      if (reviewData.wouldReturn === WouldReturn.NotSure) return 'Not sure';
       return 'Not specified';
     }
     return (
       <div className='ai-message'>
         <Box sx={{ textAlign: 'left' }}>
-          <Typography><strong>Restaurant:</strong> {place.name || 'Not provided'}</Typography>
-          <Typography><strong>Date of Visit:</strong> {formatDateToMMDDYYYY(dateOfVisit) || 'Not provided'}</Typography>
+          <Typography><strong>Restaurant:</strong> {reviewData.place!.name || 'Not provided'}</Typography>
+          <Typography><strong>Date of Visit:</strong> {formatDateToMMDDYYYY(reviewData.dateOfVisit!) || 'Not provided'}</Typography>
           <Typography><strong>Would Return:</strong> {getReturnString()}</Typography>
           <Typography><strong>Items Ordered:</strong></Typography>
           <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
             {renderItemReviews(freeformReviewProperties.itemReviews)}
           </ul>
-          <Typography><strong>Retrieved Location:</strong>{place?.formatted_address}</Typography>
+          <Typography><strong>Retrieved Location:</strong>{reviewData.place?.formatted_address}</Typography>
           <Typography><strong>Reviewer:</strong> {freeformReviewProperties.reviewer || 'Not provided'}</Typography>
         </Box>
       </div>
@@ -163,7 +130,7 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
             padding: 2,
           }}
         >
-          {chatHistory.map((msg, idx) => (
+          {reviewData.chatHistory.map((msg, idx) => (
             renderChatQuestionAndResponse(msg, idx)
           ))}
         </Box>

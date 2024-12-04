@@ -4,50 +4,119 @@ import ReviewFormPanel from "./ReviewFormPanel";
 import ReviewPreviewPanel from "./ReviewPreviewPanel";
 import ReviewChatPanel from "./ReviewChatPanel";
 import { Button } from "@mui/material";
-import { FreeformReviewProperties, GooglePlace, WouldReturn } from "../types";
+import { ChatRequestBody, ChatResponse, FreeformReviewProperties, PreviewRequestBody, PreviewResponse, ReviewData, StructuredReviewProperties, SubmitReviewBody } from "../types";
+import { getFormattedDate } from "../utilities";
 
 const MultiPanelReviewForm = () => {
+
+  const initialReviewData: ReviewData = {
+    place: null,
+    reviewText: '',
+    dateOfVisit: getFormattedDate(),
+    wouldReturn: null,
+    itemReviews: [],
+    reviewer: null,
+    sessionId: '',
+    restaurantName: '',
+    chatHistory: [],
+  };
+
+  const [reviewData, setReviewData] = useState<ReviewData>(initialReviewData);
+  const resetReviewData = () => setReviewData(initialReviewData);
+
   const [activeTab, setActiveTab] = useState("form");
 
-  const [googlePlace, setGooglePlace] = useState<GooglePlace | null>(null);
-  const [reviewText, setReviewText] = useState('');
-  const [wouldReturn, setWouldReturn] = useState<WouldReturn | null>(null); // New state
-  const [dateOfVisit, setDateOfVisit] = useState('');
-  const [freeformReviewProperties, setFreeformReviewProperties] = useState<FreeformReviewProperties | null>(null);
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  type ChatMessage = {
+    role: 'user' | 'ai';
+    message: string | FreeformReviewProperties;
+  };
 
   const handleTabClick = (tab: any) => {
     setActiveTab(tab);
   };
 
-  const handleSetGooglePlace = (googlePlace: any) => {
-    setGooglePlace(googlePlace);
-  }
-
-  const handleSetReviewText = (reviewText: string) => {
-    setReviewText(reviewText);
-  }
-
-  const handleSetDateOfVisit = (dateOfVisit: string) => {
-    setDateOfVisit(dateOfVisit);
-  }
-
-  function handleSetWouldReturn(wouldReturn: WouldReturn | null) {
-    setWouldReturn(wouldReturn);
-  }
-
-  const handleSetFreeformReviewProperties = (freeformReviewProperties: FreeformReviewProperties) => {
-    setFreeformReviewProperties(freeformReviewProperties
-    );
-  }
-
-  const handleSetSessionId = (sessionId: string) => {
-    setSessionId(sessionId);
-  }
-
   const handleReceivedPreviewResponse = () => {
     setActiveTab("preview");
   }
+
+  const handleSubmitPreview = async (formData: Omit<ReviewData, 'chatHistory'>) => {
+    setReviewData((prev) => ({ ...prev, ...formData }));
+
+    const previewBody: PreviewRequestBody = {
+      reviewText: reviewData.reviewText!,
+      sessionId: reviewData.sessionId!,
+    };
+    const response = await fetch('/api/reviews/preview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(previewBody),
+    });
+    const data: PreviewResponse = await response.json();
+    const chatHistory: ChatMessage[] = reviewData.chatHistory;
+    const userChatMessage: ChatMessage = { role: 'user', message: reviewData.reviewText! };
+    const aiChatMessage: ChatMessage = { role: 'ai', message: data.freeformReviewProperties };
+    chatHistory.push(userChatMessage, aiChatMessage);
+
+    setReviewData((prev) => ({
+      ...prev,
+      'reviewText': data.freeformReviewProperties.reviewText,
+      'itemReviews': data.freeformReviewProperties.itemReviews,
+      'reviewer': data.freeformReviewProperties.reviewer,
+      'chatHistory': chatHistory,
+    }));
+  };
+
+  const handleSubmitReview = async () => {
+    const structuredReviewProperties: StructuredReviewProperties = { dateOfVisit: reviewData.dateOfVisit!, wouldReturn: reviewData.wouldReturn! };
+    const submitBody: SubmitReviewBody = {
+      _id: '', // _id,
+      place: reviewData.place!,
+      structuredReviewProperties,
+      freeformReviewProperties: {
+        reviewText: reviewData.reviewText!,
+        itemReviews: reviewData.itemReviews,
+        reviewer: reviewData.reviewer ? reviewData.reviewer : undefined
+      },
+      reviewText: reviewData.reviewText!,
+      sessionId: reviewData.sessionId!,
+    };
+    console.log('submitBody:', submitBody);
+
+    const response = await fetch('/api/reviews/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...submitBody,
+      }),
+    });
+    const data = await response.json();
+    console.log('Review submitted:', data);
+
+    resetReviewData(); // Reset data after successful submission
+  };
+
+  const handleSendChatMessage = async (chatInput: string) => {
+    const chatRequestBody: ChatRequestBody = {
+      userInput: chatInput,
+      sessionId: reviewData.sessionId!,
+      reviewText: reviewData.reviewText!,
+    };
+    const response: Response = await fetch('/api/reviews/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(chatRequestBody),
+    });
+    const chatResponse: ChatResponse = (await response.json()) as ChatResponse;
+    const { freeformReviewProperties, updatedReviewText } = chatResponse;
+
+    setReviewData((prev) => ({
+      ...prev,
+      reviewText: updatedReviewText,
+      itemReviews: freeformReviewProperties.itemReviews,
+      reviewer: freeformReviewProperties.reviewer,
+      chatHistory: [...reviewData.chatHistory, { role: 'user', message: chatInput }, { role: 'ai', message: freeformReviewProperties }]
+    }));
+  };
 
   return (
     <div className="container">
@@ -74,33 +143,24 @@ const MultiPanelReviewForm = () => {
       <section className="tab-content">
         {activeTab === "form" && (
           <ReviewFormPanel
-            onSetGooglePlace={handleSetGooglePlace}
-            onSetReviewText={handleSetReviewText}
-            onSetDateOfVisit={handleSetDateOfVisit}
-            onSetWouldReturn={handleSetWouldReturn}
-            onSetFreeformReviewProperties={handleSetFreeformReviewProperties}
-            onSetSessionId={handleSetSessionId}
+            reviewData={reviewData}
+            setReviewData={setReviewData}
+            onSubmitPreview={handleSubmitPreview}
             onReceivedPreviewResponse={handleReceivedPreviewResponse}
           />
         )}
         {activeTab === "preview" && (
           <ReviewPreviewPanel
-            place={googlePlace!}
-            wouldReturn={wouldReturn}
-            dateOfVisit={dateOfVisit}
-            reviewText={reviewText}
-            freeformReviewProperties={freeformReviewProperties!}
-            sessionId={sessionId!}
+            reviewData={reviewData}
+            onSubmitReview={handleSubmitReview}
           />
         )}
         {activeTab === "chat" && (
           <ReviewChatPanel
-            sessionId={sessionId!}
-            reviewText={reviewText}
-            place={googlePlace!}
-            dateOfVisit={dateOfVisit}
-            wouldReturn={wouldReturn}
-           />
+            reviewData={reviewData}
+            setReviewData={setReviewData}
+            onSendChatMessage={handleSendChatMessage}
+          />
         )}
       </section>
     </div>
