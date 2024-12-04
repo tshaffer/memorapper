@@ -9,9 +9,7 @@ import MultiPanelReviewForm from './pages/writeReviews/MultiPanelReviewForm';
 const App: React.FC = () => {
   return (
     <Router>
-      {/* Main layout container */}
       <Box id='mainLayoutContainer' sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-        {/* AppBar at the top */}
         <AppBar id='appBar' position="static">
           <Toolbar id='toolBar'>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -23,15 +21,13 @@ const App: React.FC = () => {
           </Toolbar>
         </AppBar>
 
-        {/* Main content area below AppBar */}
         <Box id='mainAppContentArea' sx={{ flexGrow: 1, overflow: 'hidden' }}>
           <Routes>
             <Route path="/" element={<Reviews />} />
             <Route path="/map" element={<Map />} />
             <Route path="/map/:_id" element={<Map />} />
             <Route path="/write-review" element={<MultiPanelReviewForm />} />
-            {/* <Route path="/add-review" element={<ReviewForm />} />
-            <Route path="/add-review/:_id" element={<ReviewForm />} /> */}
+            <Route path="/write-review/:_id" element={<MultiPanelReviewForm />} />
           </Routes>
         </Box>
       </Box>

@@ -4,20 +4,34 @@ import ReviewFormPanel from "./ReviewFormPanel";
 import ReviewPreviewPanel from "./ReviewPreviewPanel";
 import ReviewChatPanel from "./ReviewChatPanel";
 import { Button } from "@mui/material";
-import { ChatRequestBody, ChatResponse, FreeformReviewProperties, PreviewRequestBody, PreviewResponse, ReviewData, StructuredReviewProperties, SubmitReviewBody } from "../../types";
+import { ChatMessage, ChatRequestBody, ChatResponse, EditableReview, GooglePlace, MemoRappReview, PreviewRequestBody, PreviewResponse, ReviewData, StructuredReviewProperties, SubmitReviewBody } from "../../types";
 import { getFormattedDate } from "../../utilities";
+import { useLocation, useParams } from "react-router-dom";
 
 const MultiPanelReviewForm = () => {
 
+  const { _id } = useParams<{ _id: string }>();
+  console.log('MultiPanelReviewForm _id:', _id);
+  const location = useLocation();
+  const editableReview = location.state as EditableReview | null;
+
+  let place: GooglePlace | null = null;
+  let review: MemoRappReview | null = null;
+  if (editableReview) {
+    place = editableReview.place;
+    review = editableReview.review;
+  }
+
   const initialReviewData: ReviewData = {
-    place: null,
-    reviewText: '',
+    _id: _id ? _id : '',
+    place,
+    restaurantName: place ? place.name : '',
+    reviewText: review ? review.freeformReviewProperties.reviewText : '',
     dateOfVisit: getFormattedDate(),
-    wouldReturn: null,
-    itemReviews: [],
-    reviewer: null,
+    wouldReturn: review ? review.structuredReviewProperties.wouldReturn : null,
+    itemReviews: review ? review.freeformReviewProperties.itemReviews : [],
+    reviewer: review ? review.freeformReviewProperties.reviewer : '',
     sessionId: '',
-    restaurantName: '',
     chatHistory: [],
   };
 
@@ -25,11 +39,6 @@ const MultiPanelReviewForm = () => {
   const resetReviewData = () => setReviewData(initialReviewData);
 
   const [activeTab, setActiveTab] = useState("form");
-
-  type ChatMessage = {
-    role: 'user' | 'ai';
-    message: string | FreeformReviewProperties;
-  };
 
   const handleTabClick = (tab: any) => {
     setActiveTab(tab);
@@ -69,7 +78,7 @@ const MultiPanelReviewForm = () => {
   const handleSubmitReview = async () => {
     const structuredReviewProperties: StructuredReviewProperties = { dateOfVisit: reviewData.dateOfVisit!, wouldReturn: reviewData.wouldReturn! };
     const submitBody: SubmitReviewBody = {
-      _id: '', // _id,
+      _id: reviewData._id,
       place: reviewData.place!,
       structuredReviewProperties,
       freeformReviewProperties: {
@@ -117,6 +126,8 @@ const MultiPanelReviewForm = () => {
       chatHistory: [...reviewData.chatHistory, { role: 'user', message: chatInput }, { role: 'ai', message: freeformReviewProperties }]
     }));
   };
+
+  console.log('MultiPanelReviewForm reviewData:', reviewData);
 
   return (
     <div className="container">

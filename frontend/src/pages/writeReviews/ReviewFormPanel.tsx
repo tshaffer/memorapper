@@ -52,6 +52,8 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
     return (<PulsingDots />);
   };
 
+  console.log('ReviewFormPanel reviewData:', reviewData);
+  
   return (
 
     <div

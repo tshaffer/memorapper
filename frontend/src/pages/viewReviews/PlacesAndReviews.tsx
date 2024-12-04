@@ -119,7 +119,7 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
       console.error('Place not found for review:', review);
       return;
     }
-    navigate(`/add-review/${review._id}`, { state: { place, review } });
+    navigate(`/write-review/${review._id}`, { state: { place, review } });
   }
 
   const handleDeleteReview = (review: MemoRappReview) => {

@@ -2,12 +2,13 @@ import { FreeformReviewProperties, ItemReview } from "./entities";
 import { WouldReturn } from "./enums";
 import { GooglePlace } from "./googlePlace";
 
-type ChatMessage = {
+export type ChatMessage = {
   role: 'user' | 'ai';
   message: string | FreeformReviewProperties;
 };
 
 export interface ReviewData {
+  _id: string;
   place: GooglePlace | null;
   reviewText: string | null;
   dateOfVisit: string | null;
@@ -15,7 +16,6 @@ export interface ReviewData {
   itemReviews: ItemReview[];
   reviewer?: string | null;
   sessionId: string | null;
-
   restaurantName: string;
   chatHistory: ChatMessage[]; // Chat history
 }

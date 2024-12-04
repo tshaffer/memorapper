@@ -32,6 +32,8 @@ const RestaurantName: React.FC<RestaurantNameProps> = (props: RestaurantNameProp
     }
   };
 
+  console.log('RestaurantName reviewData:', reviewData);
+
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!} libraries={libraries}>
     <Box>
