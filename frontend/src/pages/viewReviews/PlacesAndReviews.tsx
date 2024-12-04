@@ -8,10 +8,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import DirectionsIcon from '@mui/icons-material/Directions';
 import MapIcon from '@mui/icons-material/Map';
 
-import '../App.css';
+import '../../App.css';
 
-import { GooglePlace, ItemReview, MemoRappReview } from '../types';
-import { getCityNameFromPlace } from '../utilities';
+import { GooglePlace, ItemReview, MemoRappReview } from '../../types';
+import { getCityNameFromPlace } from '../../utilities';
 
 const smallColumnStyle: React.CSSProperties = {
   width: '35px',

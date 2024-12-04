@@ -1,9 +1,9 @@
 import { Box, Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField, useMediaQuery } from '@mui/material';
-import RestaurantName from '../components/RestaurantName';
-import '../styles/multiPanelStyles.css';
+import RestaurantName from '../../components/RestaurantName';
+import '../../styles/multiPanelStyles.css';
 import { useEffect, useState } from 'react';
-import { ReviewData, WouldReturn } from '../types';
-import PulsingDots from '../components/PulsingDots';
+import { ReviewData, WouldReturn } from '../../types';
+import PulsingDots from '../../components/PulsingDots';
 
 interface ReviewFormPanelProps {
   reviewData: ReviewData;
@@ -27,7 +27,6 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
   const generateSessionId = (): string => Math.random().toString(36).substring(2) + Date.now().toString(36);
 
   useEffect(() => {
-    // setDateOfVisit(getFormattedDate());
     if (!reviewData.sessionId) {
       const newSessionId = generateSessionId();
       handleChange('sessionId', newSessionId);

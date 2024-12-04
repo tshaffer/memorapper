@@ -12,7 +12,7 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { Autocomplete } from '@react-google-maps/api';
-import { DistanceFilter } from '../types';
+import { DistanceFilter } from '../../types';
 
 interface DistanceFilterModalProps {
   isOpen: boolean;

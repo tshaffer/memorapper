@@ -1,11 +1,11 @@
 import { useState } from "react";
-import '../styles/multiPanelStyles.css';
+import '../../styles/multiPanelStyles.css';
 import ReviewFormPanel from "./ReviewFormPanel";
 import ReviewPreviewPanel from "./ReviewPreviewPanel";
 import ReviewChatPanel from "./ReviewChatPanel";
 import { Button } from "@mui/material";
-import { ChatRequestBody, ChatResponse, FreeformReviewProperties, PreviewRequestBody, PreviewResponse, ReviewData, StructuredReviewProperties, SubmitReviewBody } from "../types";
-import { getFormattedDate } from "../utilities";
+import { ChatRequestBody, ChatResponse, FreeformReviewProperties, PreviewRequestBody, PreviewResponse, ReviewData, StructuredReviewProperties, SubmitReviewBody } from "../../types";
+import { getFormattedDate } from "../../utilities";
 
 const MultiPanelReviewForm = () => {
 

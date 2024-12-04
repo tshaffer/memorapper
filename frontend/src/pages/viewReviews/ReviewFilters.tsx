@@ -10,7 +10,7 @@ import QueryModal from './QueryModal';
 import DistanceFilterModal from './DistanceFilterModal';
 import WouldReturnFilterModal from './WouldReturnModal';
 import ItemsOrderedModal from './ItemsOrderedModal';
-import { DistanceFilter, ItemsOrderedFilter, ReviewUIFilters, WouldReturnFilter } from '../types';
+import { DistanceFilter, ItemsOrderedFilter, ReviewUIFilters, WouldReturnFilter } from '../../types';
 
 interface ReviewFiltersProps {
   onApplyFilters: (filterState: ReviewUIFilters) => void;
@@ -37,9 +37,9 @@ const initialItemsOrderedFilter: ItemsOrderedFilter = {
   selectedItems: [] as string[],
 };
 
-const ReviewFilters: React.FC<ReviewFiltersProps> = ( props: ReviewFiltersProps ) => {
+const ReviewFilters: React.FC<ReviewFiltersProps> = (props: ReviewFiltersProps) => {
   const { onApplyFilters } = props;
-  
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Check if screen size is mobile
 

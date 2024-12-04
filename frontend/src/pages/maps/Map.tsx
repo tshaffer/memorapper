@@ -1,10 +1,10 @@
 import { Autocomplete, LoadScript } from '@react-google-maps/api';
-import MapWithMarkers from '../components/MapWIthMarkers';
+import MapWithMarkers from '../../components/MapWIthMarkers';
 import { Paper, useMediaQuery } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
-import { ExtendedGooglePlace, GooglePlace, MemoRappReview } from '../types';
+import { ExtendedGooglePlace, GooglePlace, MemoRappReview } from '../../types';
 import { useParams } from 'react-router-dom';
-import { libraries } from '../utilities';
+import { libraries } from '../../utilities';
 
 const MapPage: React.FC = () => {
   const { _id } = useParams<{ _id: string }>();

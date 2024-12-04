@@ -1,9 +1,9 @@
 import { Button, Typography } from '@mui/material';
-import '../styles/multiPanelStyles.css';
-import { ReviewData, WouldReturn } from '../types';
-import { formatDateToMMDDYYYY } from '../utilities';
+import '../../styles/multiPanelStyles.css';
+import { ReviewData, WouldReturn } from '../../types';
+import { formatDateToMMDDYYYY } from '../../utilities';
 import { useState } from 'react';
-import PulsingDots from '../components/PulsingDots';
+import PulsingDots from '../../components/PulsingDots';
 
 interface ReviewPreviewPanelProps {
   reviewData: ReviewData;

@@ -1,10 +1,10 @@
 import { Box, Button, TextField, Typography } from '@mui/material';
-import '../styles/multiPanelStyles.css';
-import '../styles/chatStyles.css';
-import { FreeformReviewProperties, ItemReview, ReviewData, ReviewEntity, WouldReturn } from '../types';
+import '../../styles/multiPanelStyles.css';
+import '../../styles/chatStyles.css';
+import { FreeformReviewProperties, ItemReview, ReviewData, ReviewEntity, WouldReturn } from '../../types';
 import { useState } from 'react';
-import { formatDateToMMDDYYYY } from '../utilities';
-import PulsingDots from '../components/PulsingDots';
+import { formatDateToMMDDYYYY } from '../../utilities';
+import PulsingDots from '../../components/PulsingDots';
 
 type ChatMessage = {
   role: 'user' | 'ai';

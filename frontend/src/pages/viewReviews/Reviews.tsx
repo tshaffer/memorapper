@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 
-import '../App.css';
+import '../../App.css';
 
-import { DistanceAwayQuery, DistanceFilter, FilterQueryParams, GooglePlace, MemoRappReview, PlacesReviewsCollection, QueryRequestBody, ReviewUIFilters, WouldReturnFilter, WouldReturnQuery } from '../types';
+import { DistanceAwayQuery, DistanceFilter, FilterQueryParams, GooglePlace, MemoRappReview, PlacesReviewsCollection, QueryRequestBody, ReviewUIFilters, WouldReturnFilter, WouldReturnQuery } from '../../types';
 import { LoadScript } from '@react-google-maps/api';
-import { libraries } from '../utilities';
+import { libraries } from '../../utilities';
 import PlacesAndReviews from './PlacesAndReviews';
 import ReviewFilters from './ReviewFilters';
-import PulsingDots from '../components/PulsingDots';
+import PulsingDots from '../../components/PulsingDots';
 
 const ReviewsPage: React.FC = () => {
 
