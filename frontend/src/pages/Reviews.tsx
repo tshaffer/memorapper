@@ -8,6 +8,7 @@ import { LoadScript } from '@react-google-maps/api';
 import { libraries } from '../utilities';
 import PlacesAndReviews from './PlacesAndReviews';
 import ReviewFilters from './ReviewFilters';
+import PulsingDots from '../components/PulsingDots';
 
 const ReviewsPage: React.FC = () => {
 
@@ -18,6 +19,8 @@ const ReviewsPage: React.FC = () => {
   const [filteredPlaces, setFilteredPlaces] = useState<GooglePlace[]>([]);
   const [filteredReviews, setFilteredReviews] = useState<MemoRappReview[]>([]);
   const [query, setQuery] = useState<string>("");
+
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -128,7 +131,18 @@ const ReviewsPage: React.FC = () => {
       filterQueryParams.itemsOrderedQuery = buildItemsOrderedQuery(reviewFilters.itemsOrderedFilter.selectedItems);
     }
 
+    setIsLoading(true);
+
     await executeUnifiedSearch(filterQueryParams.naturalLanguageQuery!, filterQueryParams);
+
+    setIsLoading(false);
+  };
+
+  const renderPulsingDots = (): JSX.Element | null => {
+    if (!isLoading) {
+      return null;
+    }
+    return (<PulsingDots />);
   };
 
 
@@ -136,6 +150,7 @@ const ReviewsPage: React.FC = () => {
     <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!} libraries={libraries}>
       <Box id='reviewPageContainer' sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         <ReviewFilters onApplyFilters={handleApplyFilters} />
+        {renderPulsingDots()}
         <PlacesAndReviews
           currentLocation={currentLocation}
           places={places}
