@@ -2,26 +2,13 @@ import { Box, Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGrou
 import RestaurantName from '../components/RestaurantName';
 import '../styles/multiPanelStyles.css';
 import { useEffect, useState } from 'react';
-import { FreeformReviewProperties, GooglePlace, PreviewRequestBody, PreviewResponse, ReviewData, WouldReturn } from '../types';
-import { getFormattedDate } from '../utilities';
+import { PreviewRequestBody, PreviewResponse, ReviewData, WouldReturn } from '../types';
 import PulsingDots from '../components/PulsingDots';
-
-type ChatMessage = {
-  role: 'user' | 'ai';
-  message: string | FreeformReviewProperties;
-};
 
 interface ReviewFormPanelProps {
   reviewData: ReviewData;
   setReviewData: React.Dispatch<React.SetStateAction<ReviewData>>;
   onSubmit: (formData: Omit<ReviewData, 'chatHistory'>) => void;
-
-  // onSetGooglePlace: (googlePlace: GooglePlace) => any;
-  // onSetReviewText: (reviewText: string) => any;
-  // onSetWouldReturn: (wouldReturn: WouldReturn | null) => any;
-  // onSetDateOfVisit: (dateOfVisit: string) => any;
-  // onSetFreeformReviewProperties: (freeformReviewProperties: FreeformReviewProperties) => any;
-  // onSetSessionId: (sessionId: string) => any;
   onReceivedPreviewResponse: () => any;
 }
 
@@ -32,15 +19,6 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
   const isMobile = useMediaQuery('(max-width:768px)');
 
   const [isLoading, setIsLoading] = useState(false);
-
-  // const [reviewText, setReviewText] = useState('');
-  // const [wouldReturn, setWouldReturn] = useState<WouldReturn | null>(null); // New state
-  // const [dateOfVisit, setDateOfVisit] = useState('');
-
-  // const [freeformReviewProperties, setFreeformReviewProperties] = useState<FreeformReviewProperties | null>(null);
-
-  // const [sessionId, setSessionId] = useState<string | null>(null);
-  // const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
 
   const handleChange = (field: keyof ReviewData, value: any) => {
     setReviewData((prev) => ({ ...prev, [field]: value }));
@@ -61,6 +39,7 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
     if (!reviewData.sessionId) return;
     try {
       setIsLoading(true);
+      onSubmit(reviewData);
       const previewBody: PreviewRequestBody = {
         reviewText: reviewData.reviewText!,
         sessionId: reviewData.sessionId!,
