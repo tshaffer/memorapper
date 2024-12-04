@@ -50,11 +50,6 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
   // }, [reviewText]);
 
 
-  // const setTheChatHistory = (chatHistory: ChatMessage[]) => {
-  //   console.log('setTheChatHistory::chatHistory:', chatHistory);
-  //   setChatHistory(chatHistory);
-  // }
-
   const handleSendChatMessage = async () => {
     if (!reviewData.sessionId || !chatInput) return;
     try {

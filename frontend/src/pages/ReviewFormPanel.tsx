@@ -101,6 +101,8 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
       <form id='add-review-form'>
         <label htmlFor="restaurant-name">Restaurant Name (Required):</label>
         <RestaurantName
+          reviewData={reviewData}
+          setReviewData={setReviewData}
           onSetGooglePlace={(place) => handleChange('place', place)}
         />
 
