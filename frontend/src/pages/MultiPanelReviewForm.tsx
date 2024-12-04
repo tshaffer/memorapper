@@ -4,15 +4,34 @@ import ReviewFormPanel from "./ReviewFormPanel";
 import ReviewPreviewPanel from "./ReviewPreviewPanel";
 import ReviewChatPanel from "./ReviewChatPanel";
 import { Button } from "@mui/material";
-import { FreeformReviewProperties, GooglePlace, WouldReturn } from "../types";
+import { FreeformReviewProperties, GooglePlace, ReviewData, WouldReturn } from "../types";
 
 const MultiPanelReviewForm = () => {
+
+  const initialReviewData: ReviewData = {
+    place: null,
+    reviewText: '',
+    dateOfVisit: '',
+    wouldReturn: null,
+    itemReviews: [],
+    reviewer: null,
+    sessionId: '',
+    restaurantName: '',
+    chatHistory: [],
+  };
+
+  const [reviewData, setReviewData] = useState<ReviewData>(initialReviewData);
+  const resetReviewData = () => setReviewData(initialReviewData);
+
+
+
   const [activeTab, setActiveTab] = useState("form");
 
   const [googlePlace, setGooglePlace] = useState<GooglePlace | null>(null);
   const [reviewText, setReviewText] = useState('');
   const [wouldReturn, setWouldReturn] = useState<WouldReturn | null>(null); // New state
   const [dateOfVisit, setDateOfVisit] = useState('');
+
   const [freeformReviewProperties, setFreeformReviewProperties] = useState<FreeformReviewProperties | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
 
@@ -49,6 +68,50 @@ const MultiPanelReviewForm = () => {
     setActiveTab("preview");
   }
 
+  const handleFormSubmit = async (formData: Omit<ReviewData, 'chatHistory'>) => {
+    setReviewData((prev) => ({ ...prev, ...formData }));
+    // Call backend API to generate preview data
+    const previewResponse = await fetch('/api/generatePreview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    const previewData = await previewResponse.json();
+    setReviewData((prev) => ({ ...prev, ...previewData }));
+  };
+
+  const handleReviewSubmit = async () => {
+    await fetch('/api/submitReview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reviewData),
+    });
+    resetReviewData(); // Reset data after successful submission
+  };
+
+  const handleChatMessage = async (message: string) => {
+    const newMessage = { message };
+    setReviewData((prev) => ({
+      ...prev,
+      chatHistory: [...prev.chatHistory, newMessage],
+    }));
+
+    const chatResponse = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message }),
+    });
+    const response = await chatResponse.json();
+
+    setReviewData((prev) => {
+      const updatedHistory = prev.chatHistory.map((chat, idx) =>
+        idx === prev.chatHistory.length - 1 ? { ...chat, response } : chat
+      );
+      return { ...prev, chatHistory: updatedHistory, ...response.updatedReview };
+    });
+  };
+
+
   return (
     <div className="container">
       <nav className="tabs">
@@ -74,6 +137,10 @@ const MultiPanelReviewForm = () => {
       <section className="tab-content">
         {activeTab === "form" && (
           <ReviewFormPanel
+            reviewData={reviewData}
+            setReviewData={setReviewData}
+            onSubmit={handleFormSubmit}
+
             onSetGooglePlace={handleSetGooglePlace}
             onSetReviewText={handleSetReviewText}
             onSetDateOfVisit={handleSetDateOfVisit}
@@ -85,6 +152,9 @@ const MultiPanelReviewForm = () => {
         )}
         {activeTab === "preview" && (
           <ReviewPreviewPanel
+            reviewData={reviewData}
+            onSubmitReview={handleReviewSubmit}
+
             place={googlePlace!}
             wouldReturn={wouldReturn}
             dateOfVisit={dateOfVisit}
@@ -100,7 +170,11 @@ const MultiPanelReviewForm = () => {
             place={googlePlace!}
             dateOfVisit={dateOfVisit}
             wouldReturn={wouldReturn}
-           />
+
+            chatHistory={reviewData.chatHistory}
+            onSendMessage={handleChatMessage}
+
+          />
         )}
       </section>
     </div>

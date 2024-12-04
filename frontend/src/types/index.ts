@@ -4,4 +4,5 @@ export * from './frontEndEntities';
 export * from './place';
 export * from './googlePlace';
 export * from './queries';
+export * from './reviewTypes';
 

@@ -13,14 +13,12 @@ interface RestaurantNameProps {
 const RestaurantName: React.FC<RestaurantNameProps> = (props: RestaurantNameProps) => {
 
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const [googlePlace, setGooglePlace] = useState<GooglePlace | null>(null);
   const [restaurantLabel, setRestaurantLabel] = useState('');
 
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
       const place: google.maps.places.PlaceResult = autocompleteRef.current.getPlace();
       const googlePlace: GooglePlace = pickGooglePlaceProperties(place);
-      setGooglePlace(googlePlace);
       props.onSetGooglePlace(googlePlace);
       const restaurantLabel = googlePlace.name;
       setRestaurantLabel(restaurantLabel);
