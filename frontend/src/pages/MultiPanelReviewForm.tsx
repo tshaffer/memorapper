@@ -4,7 +4,7 @@ import ReviewFormPanel from "./ReviewFormPanel";
 import ReviewPreviewPanel from "./ReviewPreviewPanel";
 import ReviewChatPanel from "./ReviewChatPanel";
 import { Button } from "@mui/material";
-import { FreeformReviewProperties, GooglePlace, ReviewData, WouldReturn } from "../types";
+import { FreeformReviewProperties, GooglePlace, ReviewData, StructuredReviewProperties, SubmitReviewBody, WouldReturn } from "../types";
 
 const MultiPanelReviewForm = () => {
 
@@ -81,11 +81,37 @@ const MultiPanelReviewForm = () => {
   };
 
   const handleReviewSubmit = async () => {
-    await fetch('/api/submitReview', {
+    // await fetch('/api/submitReview', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify(reviewData),
+    // });
+
+    const structuredReviewProperties: StructuredReviewProperties = { dateOfVisit: dateOfVisit!, wouldReturn };
+    const submitBody: SubmitReviewBody = {
+      _id: '', // _id,
+      place: reviewData.place!,
+      structuredReviewProperties,
+      freeformReviewProperties: {
+        reviewText: reviewText!,
+        itemReviews: reviewData.itemReviews,
+        reviewer: reviewData.reviewer ? reviewData.reviewer : undefined
+      },
+      reviewText: reviewText!,
+      sessionId: sessionId!,
+    };
+    console.log('submitBody:', submitBody);
+
+    const response = await fetch('/api/reviews/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(reviewData),
+      body: JSON.stringify({
+        ...submitBody,
+      }),
     });
+    const data = await response.json();
+    console.log('Review submitted:', data);
+
     resetReviewData(); // Reset data after successful submission
   };
 
@@ -154,13 +180,6 @@ const MultiPanelReviewForm = () => {
           <ReviewPreviewPanel
             reviewData={reviewData}
             onSubmitReview={handleReviewSubmit}
-
-            place={googlePlace!}
-            wouldReturn={wouldReturn}
-            dateOfVisit={dateOfVisit}
-            reviewText={reviewText}
-            freeformReviewProperties={freeformReviewProperties!}
-            sessionId={sessionId!}
           />
         )}
         {activeTab === "chat" && (

@@ -1,23 +1,20 @@
 import { Button, Typography } from '@mui/material';
 import '../styles/multiPanelStyles.css';
-import { FreeformReviewProperties, GooglePlace, StructuredReviewProperties, SubmitReviewBody, WouldReturn } from '../types';
+import { FreeformReviewProperties, GooglePlace, ReviewData, StructuredReviewProperties, SubmitReviewBody, WouldReturn } from '../types';
 import { formatDateToMMDDYYYY } from '../utilities';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import PulsingDots from '../components/PulsingDots';
 
 interface ReviewPreviewPanelProps {
-  place: GooglePlace | null;
-  reviewText: string;
-  wouldReturn: WouldReturn | null;
-  dateOfVisit: string;
-  freeformReviewProperties: FreeformReviewProperties;
-  sessionId: string;
+  reviewData: ReviewData;
+  onSubmitReview: () => void;
 }
 
 const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPreviewPanelProps) => {
 
-  const { place, wouldReturn, dateOfVisit, reviewText, freeformReviewProperties, sessionId } = props;
+  const { reviewData, onSubmitReview } = props;
+  const { place, wouldReturn, dateOfVisit, reviewText, itemReviews, sessionId } = reviewData;
 
   const { _id } = useParams<{ _id: string }>();
 
@@ -31,33 +28,39 @@ const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPrev
   }
 
   const handleSubmit = async () => {
-    if (!freeformReviewProperties) return;
+    // if (!freeformReviewProperties) return;
     try {
       setIsLoading(true);
-      const structuredReviewProperties: StructuredReviewProperties = { dateOfVisit, wouldReturn };
-      const submitBody: SubmitReviewBody = {
-        _id,
-        place: place!,
-        structuredReviewProperties,
-        freeformReviewProperties,
-        reviewText,
-        sessionId,
-      };
-      console.log('submitBody:', submitBody);
+      onSubmitReview();
+      // const structuredReviewProperties: StructuredReviewProperties = { dateOfVisit: dateOfVisit!, wouldReturn };
+      // const submitBody: SubmitReviewBody = {
+      //   _id,
+      //   place: reviewData.place!,
+      //   structuredReviewProperties,
+      //   freeformReviewProperties: {
+      //     reviewText: reviewText!,
+      //     itemReviews: reviewData.itemReviews,
+      //     reviewer: reviewData.reviewer ? reviewData.reviewer : undefined
+      //   },
+      //   reviewText: reviewText!,
+      //   sessionId: sessionId!,
+      // };
+      // console.log('submitBody:', submitBody);
 
-      const response = await fetch('/api/reviews/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...submitBody,
-        }),
-      });
-      const data = await response.json();
-      console.log('Review submitted:', data);
+      // const response = await fetch('/api/reviews/submit', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({
+      //     ...submitBody,
+      //   }),
+      // });
+      // const data = await response.json();
+      // console.log('Review submitted:', data);
     } catch (error) {
       console.error('Error submitting review:', error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const renderReviewPreview = () => {
@@ -71,13 +74,13 @@ const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPrev
       <div id="preview" className="tab-panel active">
         <h2>Review Preview</h2>
         <Typography><strong>Restaurant Name:</strong> {place.name || 'Not provided'}</Typography>
-        <Typography><strong>Date of Visit:</strong> {formatDateToMMDDYYYY(dateOfVisit) || 'Not provided'}</Typography>
+        <Typography><strong>Date of Visit:</strong> {formatDateToMMDDYYYY(dateOfVisit!) || 'Not provided'}</Typography>
         <Typography><strong>Would Return?</strong>{getReturnString()}</Typography>
         <Typography><strong>Review Text:</strong></Typography>
         <Typography>{reviewText}</Typography>
         <h3>Extracted Information</h3>
         <ul>
-          {freeformReviewProperties.itemReviews.map((itemReview, idx) => (
+          {itemReviews.map((itemReview, idx) => (
             <li key={idx}>
               {itemReview.item} - {itemReview.review || 'No rating provided'}
             </li>
