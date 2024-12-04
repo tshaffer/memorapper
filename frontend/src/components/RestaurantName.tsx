@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 import { Box, TextField } from "@mui/material";
 
@@ -17,7 +17,6 @@ const RestaurantName: React.FC<RestaurantNameProps> = (props: RestaurantNameProp
   const { reviewData, setReviewData } = props;
 
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  // const [restaurantLabel, setRestaurantLabel] = useState('');
 
   const handleChange = (field: keyof ReviewData, value: any) => {
     setReviewData((prev) => ({ ...prev, [field]: value }));

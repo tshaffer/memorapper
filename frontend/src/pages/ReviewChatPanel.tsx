@@ -1,7 +1,7 @@
 import { Box, Button, TextField, Typography } from '@mui/material';
 import '../styles/multiPanelStyles.css';
 import '../styles/chatStyles.css';
-import { ChatRequestBody, ChatResponse, FreeformReviewProperties, ItemReview, ReviewData, ReviewEntity, WouldReturn } from '../types';
+import { FreeformReviewProperties, ItemReview, ReviewData, ReviewEntity, WouldReturn } from '../types';
 import { useState } from 'react';
 import { formatDateToMMDDYYYY } from '../utilities';
 import PulsingDots from '../components/PulsingDots';
@@ -13,7 +13,7 @@ type ChatMessage = {
 
 interface ReviewChatPanelProps {
   reviewData: ReviewData;
-  onSendMessage: (message: string) => void;
+  onSendChatMessage: (message: string) => void;
   setReviewData: React.Dispatch<React.SetStateAction<ReviewData>>;
 }
 
@@ -21,7 +21,7 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
 
   console.log('ReviewChatPanel::props:', props);
 
-  const { reviewData, onSendMessage } = props;
+  const { reviewData, onSendChatMessage } = props;
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -31,7 +31,7 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
     if (!reviewData.sessionId || !chatInput) return;
     try {
       setIsLoading(true);
-      onSendMessage(chatInput);
+      onSendChatMessage(chatInput);
       setChatInput('');
     } catch (error) {
       console.error('Error during chat:', error);

@@ -8,13 +8,13 @@ import PulsingDots from '../components/PulsingDots';
 interface ReviewFormPanelProps {
   reviewData: ReviewData;
   setReviewData: React.Dispatch<React.SetStateAction<ReviewData>>;
-  onSubmit: (formData: Omit<ReviewData, 'chatHistory'>) => void;
+  onSubmitPreview: (formData: Omit<ReviewData, 'chatHistory'>) => void;
   onReceivedPreviewResponse: () => any;
 }
 
 const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelProps) => {
 
-  const { reviewData, setReviewData, onSubmit } = props;
+  const { reviewData, setReviewData, onSubmitPreview } = props;
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
@@ -38,7 +38,7 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
     if (!reviewData.sessionId) return;
     try {
       setIsLoading(true);
-      onSubmit(reviewData);
+      onSubmitPreview(reviewData);
       props.onReceivedPreviewResponse();
     } catch (error) {
       console.error('Error previewing review:', error);

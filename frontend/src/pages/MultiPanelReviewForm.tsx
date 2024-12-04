@@ -29,7 +29,7 @@ const MultiPanelReviewForm = () => {
     role: 'user' | 'ai';
     message: string | FreeformReviewProperties;
   };
-    
+
   const handleTabClick = (tab: any) => {
     setActiveTab(tab);
   };
@@ -38,7 +38,7 @@ const MultiPanelReviewForm = () => {
     setActiveTab("preview");
   }
 
-  const handleFormSubmit = async (formData: Omit<ReviewData, 'chatHistory'>) => {
+  const handleSubmitPreview = async (formData: Omit<ReviewData, 'chatHistory'>) => {
     setReviewData((prev) => ({ ...prev, ...formData }));
 
     const previewBody: PreviewRequestBody = {
@@ -65,7 +65,7 @@ const MultiPanelReviewForm = () => {
     }));
   };
 
-  const handleReviewSubmit = async () => {
+  const handleSubmitReview = async () => {
     const structuredReviewProperties: StructuredReviewProperties = { dateOfVisit: reviewData.dateOfVisit!, wouldReturn: reviewData.wouldReturn! };
     const submitBody: SubmitReviewBody = {
       _id: '', // _id,
@@ -94,7 +94,7 @@ const MultiPanelReviewForm = () => {
     resetReviewData(); // Reset data after successful submission
   };
 
-  const handleChatMessage = async (chatInput: string) => {
+  const handleSendChatMessage = async (chatInput: string) => {
     const chatRequestBody: ChatRequestBody = {
       userInput: chatInput,
       sessionId: reviewData.sessionId!,
@@ -144,21 +144,21 @@ const MultiPanelReviewForm = () => {
           <ReviewFormPanel
             reviewData={reviewData}
             setReviewData={setReviewData}
-            onSubmit={handleFormSubmit}
+            onSubmitPreview={handleSubmitPreview}
             onReceivedPreviewResponse={handleReceivedPreviewResponse}
           />
         )}
         {activeTab === "preview" && (
           <ReviewPreviewPanel
             reviewData={reviewData}
-            onSubmitReview={handleReviewSubmit}
+            onSubmitReview={handleSubmitReview}
           />
         )}
         {activeTab === "chat" && (
           <ReviewChatPanel
             reviewData={reviewData}
             setReviewData={setReviewData}
-            onSendMessage={handleChatMessage}
+            onSendChatMessage={handleSendChatMessage}
           />
         )}
       </section>
