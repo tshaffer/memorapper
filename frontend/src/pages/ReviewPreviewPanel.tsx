@@ -1,6 +1,6 @@
 import { Button, Typography } from '@mui/material';
 import '../styles/multiPanelStyles.css';
-import { FreeformReviewProperties, GooglePlace, ReviewData, StructuredReviewProperties, SubmitReviewBody, WouldReturn } from '../types';
+import { ReviewData, WouldReturn } from '../types';
 import { formatDateToMMDDYYYY } from '../utilities';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -14,6 +14,9 @@ interface ReviewPreviewPanelProps {
 const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPreviewPanelProps) => {
 
   const { reviewData, onSubmitReview } = props;
+
+  console.log('ReviewPreviewPanel reviewData:', reviewData);
+  
   const { place, wouldReturn, dateOfVisit, reviewText, itemReviews, sessionId } = reviewData;
 
   const { _id } = useParams<{ _id: string }>();
@@ -32,30 +35,6 @@ const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPrev
     try {
       setIsLoading(true);
       onSubmitReview();
-      // const structuredReviewProperties: StructuredReviewProperties = { dateOfVisit: dateOfVisit!, wouldReturn };
-      // const submitBody: SubmitReviewBody = {
-      //   _id,
-      //   place: reviewData.place!,
-      //   structuredReviewProperties,
-      //   freeformReviewProperties: {
-      //     reviewText: reviewText!,
-      //     itemReviews: reviewData.itemReviews,
-      //     reviewer: reviewData.reviewer ? reviewData.reviewer : undefined
-      //   },
-      //   reviewText: reviewText!,
-      //   sessionId: sessionId!,
-      // };
-      // console.log('submitBody:', submitBody);
-
-      // const response = await fetch('/api/reviews/submit', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     ...submitBody,
-      //   }),
-      // });
-      // const data = await response.json();
-      // console.log('Review submitted:', data);
     } catch (error) {
       console.error('Error submitting review:', error);
     } finally {
