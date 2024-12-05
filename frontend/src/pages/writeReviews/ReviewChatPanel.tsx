@@ -26,7 +26,7 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
     if (!reviewData.sessionId || !chatInput) return;
     try {
       setIsLoading(true);
-      onSendChatMessage(chatInput);
+      await onSendChatMessage(chatInput);
       setChatInput('');
     } catch (error) {
       console.error('Error during chat:', error);

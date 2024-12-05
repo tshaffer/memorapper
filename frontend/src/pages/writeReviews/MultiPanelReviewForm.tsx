@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import '../../styles/multiPanelStyles.css';
 import ReviewFormPanel from "./ReviewFormPanel";
 import ReviewPreviewPanel from "./ReviewPreviewPanel";
@@ -91,17 +91,22 @@ const MultiPanelReviewForm = () => {
     };
     console.log('submitBody:', submitBody);
 
-    const response = await fetch('/api/reviews/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...submitBody,
-      }),
-    });
-    const data = await response.json();
-    console.log('Review submitted:', data);
+    try {
+      const response = await fetch('/api/reviews/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...submitBody,
+        }),
+      });
+      const data = await response.json();
+      console.log('Review submitted:', data);
 
-    resetReviewData(); // Reset data after successful submission
+      resetReviewData();
+
+    } catch (error) {
+      console.error('Error submitting review:', error);
+    }
   };
 
   const handleSendChatMessage = async (chatInput: string) => {
@@ -126,8 +131,6 @@ const MultiPanelReviewForm = () => {
       chatHistory: [...reviewData.chatHistory, { role: 'user', message: chatInput }, { role: 'ai', message: freeformReviewProperties }]
     }));
   };
-
-  console.log('MultiPanelReviewForm reviewData:', reviewData);
 
   return (
     <div className="container">

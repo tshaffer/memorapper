@@ -37,7 +37,7 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
     if (!reviewData.sessionId) return;
     try {
       setIsLoading(true);
-      onSubmitPreview(reviewData);
+      await onSubmitPreview(reviewData);
       props.onReceivedPreviewResponse();
     } catch (error) {
       console.error('Error previewing review:', error);

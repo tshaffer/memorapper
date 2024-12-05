@@ -1,8 +1,14 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import { Button, Typography } from '@mui/material';
 import '../../styles/multiPanelStyles.css';
 import { ReviewData, WouldReturn } from '../../types';
 import { formatDateToMMDDYYYY } from '../../utilities';
-import { useState } from 'react';
 import PulsingDots from '../../components/PulsingDots';
 
 interface ReviewPreviewPanelProps {
@@ -19,6 +25,8 @@ const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPrev
   const { place, wouldReturn, dateOfVisit, reviewText, itemReviews } = reviewData;
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+  const navigate = useNavigate();
 
   const getReturnString = () => {
     if (wouldReturn === WouldReturn.Yes) return 'Yes';
@@ -27,11 +35,17 @@ const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPrev
     return 'Not specified';
   }
 
+  const handleConfirmationClose = () => {
+    setIsConfirmationOpen(false);
+    navigate('/'); // Navigate to "/"
+  };
+
   const handleSubmit = async () => {
     // if (!freeformReviewProperties) return;
     try {
       setIsLoading(true);
-      onSubmitReview();
+      await onSubmitReview();
+      setIsConfirmationOpen(true);
     } catch (error) {
       console.error('Error submitting review:', error);
     } finally {
@@ -39,11 +53,33 @@ const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPrev
     }
   };
 
+  const renderConfirmationDialog = () => {
+    return (
+      <Dialog open={isConfirmationOpen} onClose={handleConfirmationClose}>
+        <DialogTitle>Save Successful</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Your review has been saved successfully.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleConfirmationClose} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  }
+
   const renderReviewPreview = () => {
+
+    console.log('renderReviewPreview isLoading:', isLoading);
+
     if (!place || !reviewText || reviewText === '') return (
       <div id="preview" className="tab-panel active">
         <h2>Review Preview</h2>
         <Typography>Not enough information to generate a preview.</Typography>
+        {renderConfirmationDialog()}
       </div>
     )
     else return (
@@ -62,10 +98,9 @@ const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPrev
             </li>
           ))}
         </ul>
-        <Button onClick={handleSubmit}>Save Review</Button>
-
         {renderPulsingDots()}
-
+        <Button onClick={handleSubmit}>Save Review</Button>
+        {renderConfirmationDialog()}
       </div>
     );
   }
@@ -76,7 +111,6 @@ const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPrev
     }
     return (<PulsingDots />);
   };
-
 
   return renderReviewPreview();
 };

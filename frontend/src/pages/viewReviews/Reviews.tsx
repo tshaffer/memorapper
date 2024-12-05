@@ -145,7 +145,6 @@ const ReviewsPage: React.FC = () => {
     return (<PulsingDots />);
   };
 
-
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!} libraries={libraries}>
       <Box id='reviewPageContainer' sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
