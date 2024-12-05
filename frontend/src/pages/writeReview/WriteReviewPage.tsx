@@ -3,7 +3,7 @@ import '../../styles/multiPanelStyles.css';
 import FormTab from "./FormTab";
 import PreviewTab from "./PreviewTab";
 import ChatTab from "./ChatTab";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { ChatMessage, ChatRequestBody, ChatResponse, EditableReview, GooglePlace, MemoRappReview, PreviewRequestBody, PreviewResponse, ReviewData, StructuredReviewProperties, SubmitReviewBody } from "../../types";
 import { getFormattedDate } from "../../utilities";
 import { useLocation, useParams } from "react-router-dom";
@@ -177,6 +177,17 @@ const MultiPanelReviewForm = () => {
           />
         )}
       </section>
+  
+      {/* Reset Button */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={resetReviewData}
+        >
+          Reset
+        </Button>
+      </Box>
     </div>
   );
 };
