@@ -1,10 +1,9 @@
-import { Autocomplete, LoadScript } from '@react-google-maps/api';
+import { Autocomplete } from '@react-google-maps/api';
 import MapWithMarkers from '../../components/MapWIthMarkers';
 import { Paper, useMediaQuery } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { ExtendedGooglePlace, GooglePlace, MemoRappReview } from '../../types';
 import { useParams } from 'react-router-dom';
-import { libraries } from '../../utilities';
 
 const MapPage: React.FC = () => {
   const { _id } = useParams<{ _id: string }>();
@@ -157,23 +156,21 @@ const MapPage: React.FC = () => {
     }));
 
   return (
-    <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!} libraries={libraries}>
-      <Paper
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          padding: isMobile ? '12px' : '24px',
-          minHeight: '100%',
-          height: '100%',
-          overflow: 'hidden', // Prevent layout breaking
-        }}
-      >
-        <div style={{ overflowY: 'auto', maxHeight: 'calc(100% - 700px)' }}>
-          {renderMapAutocomplete()}
-        </div>
-        <div style={{ flex: 1 }}>{renderMap()}</div>
-      </Paper>
-    </LoadScript>
+    <Paper
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        padding: isMobile ? '12px' : '24px',
+        minHeight: '100%',
+        height: '100%',
+        overflow: 'hidden', // Prevent layout breaking
+      }}
+    >
+      <div style={{ overflowY: 'auto', maxHeight: 'calc(100% - 700px)' }}>
+        {renderMapAutocomplete()}
+      </div>
+      <div style={{ flex: 1 }}>{renderMap()}</div>
+    </Paper>
   );
 };
 

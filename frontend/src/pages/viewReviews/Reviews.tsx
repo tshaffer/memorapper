@@ -4,8 +4,6 @@ import { Box } from '@mui/material';
 import '../../App.css';
 
 import { DistanceAwayQuery, DistanceFilter, FilterQueryParams, GooglePlace, MemoRappReview, PlacesReviewsCollection, QueryRequestBody, ReviewUIFilters, WouldReturnFilter, WouldReturnQuery } from '../../types';
-import { LoadScript } from '@react-google-maps/api';
-import { libraries } from '../../utilities';
 import PlacesAndReviews from './PlacesAndReviews';
 import ReviewFilters from './ReviewFilters';
 import PulsingDots from '../../components/PulsingDots';
@@ -146,18 +144,16 @@ const ReviewsPage: React.FC = () => {
   };
 
   return (
-    <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!} libraries={libraries}>
-      <Box id='reviewPageContainer' sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <ReviewFilters onApplyFilters={handleApplyFilters} />
-        {renderPulsingDots()}
-        <PlacesAndReviews
-          currentLocation={currentLocation}
-          places={places}
-          filteredPlaces={filteredPlaces}
-          filteredReviews={filteredReviews}
-        />
-      </Box >
-    </LoadScript >
+    <Box id='reviewPageContainer' sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <ReviewFilters onApplyFilters={handleApplyFilters} />
+      {renderPulsingDots()}
+      <PlacesAndReviews
+        currentLocation={currentLocation}
+        places={places}
+        filteredPlaces={filteredPlaces}
+        filteredReviews={filteredReviews}
+      />
+    </Box >
   );
 };
 

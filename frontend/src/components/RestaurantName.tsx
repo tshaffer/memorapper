@@ -1,8 +1,8 @@
 import { useRef } from "react";
 import { Box, TextField } from "@mui/material";
-import { Autocomplete, LoadScript } from '@react-google-maps/api';
+import { Autocomplete } from '@react-google-maps/api';
 import { GooglePlace, ReviewData } from "../types";
-import { libraries, pickGooglePlaceProperties } from "../utilities";
+import { pickGooglePlaceProperties } from "../utilities";
 
 interface RestaurantNameProps {
   reviewData: ReviewData;
@@ -41,25 +41,23 @@ const RestaurantName: React.FC<RestaurantNameProps> = (props: RestaurantNameProp
   console.log('RestaurantName reviewData:', reviewData);
 
   return (
-    <LoadScript googleMapsApiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!} libraries={libraries}>
-      <Box>
-        <Autocomplete
-          onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
-          onPlaceChanged={handlePlaceChanged}
-        >
-          <TextField
-            fullWidth
-            label="Restaurant Name"
-            value={reviewData.restaurantName}
-            onChange={(e) => handleChange('restaurantName', e.target.value)}
-            placeholder="Enter the restaurant name"
-            required
-            style={{ marginBottom: 20 }}
-            onKeyDown={handleKeyDown} // Intercept Enter key
-          />
-        </Autocomplete>
-      </Box>
-    </LoadScript>
+    <Box>
+      <Autocomplete
+        onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
+        onPlaceChanged={handlePlaceChanged}
+      >
+        <TextField
+          fullWidth
+          label="Restaurant Name"
+          value={reviewData.restaurantName}
+          onChange={(e) => handleChange('restaurantName', e.target.value)}
+          placeholder="Enter the restaurant name"
+          required
+          style={{ marginBottom: 20 }}
+          onKeyDown={handleKeyDown} // Intercept Enter key
+        />
+      </Autocomplete>
+    </Box>
   );
 };
 
