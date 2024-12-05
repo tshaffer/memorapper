@@ -34,14 +34,7 @@ const RestaurantName: React.FC<RestaurantNameProps> = (props: RestaurantNameProp
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === "Enter") {
-      // debugger;
       event.preventDefault();
-      // Optionally move to the next focusable element
-      const form = (event.currentTarget as any).form;
-      if (form) {
-        const index = Array.prototype.indexOf.call(form, event.currentTarget);
-        form.elements[index + 1]?.focus();
-      }
     }
   };
 
