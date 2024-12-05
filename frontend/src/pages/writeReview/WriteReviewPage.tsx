@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import '../../styles/multiPanelStyles.css';
-import ReviewFormPanel from "./ReviewFormPanel";
-import ReviewPreviewPanel from "./ReviewPreviewPanel";
-import ReviewChatPanel from "./ReviewChatPanel";
+import FormTab from "./FormTab";
+import PreviewTab from "./PreviewTab";
+import ChatTab from "./ChatTab";
 import { Button } from "@mui/material";
 import { ChatMessage, ChatRequestBody, ChatResponse, EditableReview, GooglePlace, MemoRappReview, PreviewRequestBody, PreviewResponse, ReviewData, StructuredReviewProperties, SubmitReviewBody } from "../../types";
 import { getFormattedDate } from "../../utilities";
@@ -156,7 +156,7 @@ const MultiPanelReviewForm = () => {
       </nav>
       <section className="tab-content">
         {activeTab === "form" && (
-          <ReviewFormPanel
+          <FormTab
             reviewData={reviewData}
             setReviewData={setReviewData}
             onSubmitPreview={handleSubmitPreview}
@@ -164,13 +164,13 @@ const MultiPanelReviewForm = () => {
           />
         )}
         {activeTab === "preview" && (
-          <ReviewPreviewPanel
+          <PreviewTab
             reviewData={reviewData}
             onSubmitReview={handleSubmitReview}
           />
         )}
         {activeTab === "chat" && (
-          <ReviewChatPanel
+          <ChatTab
             reviewData={reviewData}
             setReviewData={setReviewData}
             onSendChatMessage={handleSendChatMessage}

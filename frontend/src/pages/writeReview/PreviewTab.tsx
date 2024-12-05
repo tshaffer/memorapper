@@ -11,12 +11,12 @@ import { ReviewData, WouldReturn } from '../../types';
 import { formatDateToMMDDYYYY } from '../../utilities';
 import PulsingDots from '../../components/PulsingDots';
 
-interface ReviewPreviewPanelProps {
+interface PreviewTabProps {
   reviewData: ReviewData;
   onSubmitReview: () => void;
 }
 
-const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPreviewPanelProps) => {
+const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
 
   const { reviewData, onSubmitReview } = props;
 
@@ -115,4 +115,4 @@ const ReviewPreviewPanel: React.FC<ReviewPreviewPanelProps> = (props: ReviewPrev
   return renderReviewPreview();
 };
 
-export default ReviewPreviewPanel;
+export default PreviewTab;

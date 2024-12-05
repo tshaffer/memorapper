@@ -6,13 +6,13 @@ import { useState } from 'react';
 import { formatDateToMMDDYYYY } from '../../utilities';
 import PulsingDots from '../../components/PulsingDots';
 
-interface ReviewChatPanelProps {
+interface ChatTabProps {
   reviewData: ReviewData;
   onSendChatMessage: (message: string) => void;
   setReviewData: React.Dispatch<React.SetStateAction<ReviewData>>;
 }
 
-const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelProps) => {
+const ChatTab: React.FC<ChatTabProps> = (props: ChatTabProps) => {
 
   console.log('ReviewChatPanel::props:', props);
 
@@ -163,4 +163,4 @@ const ReviewChatPanel: React.FC<ReviewChatPanelProps> = (props: ReviewChatPanelP
   );
 };
 
-export default ReviewChatPanel;
+export default ChatTab;

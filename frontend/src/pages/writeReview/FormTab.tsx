@@ -5,14 +5,14 @@ import { useEffect, useState } from 'react';
 import { ReviewData, WouldReturn } from '../../types';
 import PulsingDots from '../../components/PulsingDots';
 
-interface ReviewFormPanelProps {
+interface FormTabProps {
   reviewData: ReviewData;
   setReviewData: React.Dispatch<React.SetStateAction<ReviewData>>;
   onSubmitPreview: (formData: Omit<ReviewData, 'chatHistory'>) => void;
   onReceivedPreviewResponse: () => any;
 }
 
-const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelProps) => {
+const FormTab: React.FC<FormTabProps> = (props: FormTabProps) => {
 
   const { reviewData, setReviewData, onSubmitPreview } = props;
 
@@ -53,7 +53,7 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
   };
 
   console.log('ReviewFormPanel reviewData:', reviewData);
-  
+
   return (
 
     <div
@@ -122,4 +122,4 @@ const ReviewFormPanel: React.FC<ReviewFormPanelProps> = (props: ReviewFormPanelP
   );
 };
 
-export default ReviewFormPanel;
+export default FormTab;

@@ -4,7 +4,7 @@ import './App.css';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import Map from './pages/maps/Map';
 import Reviews from './pages/viewReviews/Reviews';
-import MultiPanelReviewForm from './pages/writeReviews/MultiPanelReviewForm';
+import MultiPanelReviewForm from './pages/writeReview/WriteReviewPage';
 
 const App: React.FC = () => {
   return (
