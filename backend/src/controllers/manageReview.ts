@@ -113,8 +113,8 @@ export const chatReviewHandler = async (
         {
           role: "system",
           content: `Please provide:
-          1. The updated structured data based on the full conversation. Please ensure that the updated structured data begins with "Updated Structured Data:".
-          2. An updated review text that incorporates the latest user modifications. Please ensure that the updated review text begins with "Updated Review Text:".
+          1. The updated structured data based on the full conversation. If you cannot generate structured data, explicitly state "No Updated Structured Data available."
+          2. An updated review text that incorporates the latest user modifications. Always provide this, even if the structured data is unavailable. Ensure that the updated review text begins with "Updated Review Text:".
 
           Original Review: "${reviewText}"`,
         },
@@ -131,25 +131,36 @@ export const chatReviewHandler = async (
       return;
     }
 
-    // Adjusted regular expressions to match the response format
+    // Updated parsing logic
     const structuredDataMatch = messageContent.match(/^Updated Structured Data:\s*([\s\S]*?)Updated Review Text:/m);
-    const updatedReviewTextMatch = messageContent.match(/Updated Review Text:\s*"(.*)"/s);
+    const updatedReviewTextMatch = messageContent.match(/Updated Review Text:\s*([\s\S]+)/s);
 
-    if (!structuredDataMatch || !updatedReviewTextMatch) {
-      console.error('Parsing error: Expected structured data and updated review text not found');
-      res.status(500).json({ error: 'Failed to parse updated data.' });
+    const structuredDataText = structuredDataMatch ? structuredDataMatch[1].trim() : "No Updated Structured Data available";
+    const updatedReviewText = updatedReviewTextMatch ? updatedReviewTextMatch[1].trim() : null;
+
+    if (!updatedReviewText) {
+      console.error('Parsing error: Updated Review Text not found');
+      res.status(500).json({ error: 'Failed to parse updated review text.' });
       return;
     }
 
-    const structuredDataText = structuredDataMatch[1].trim();
-    const updatedReviewText = updatedReviewTextMatch[1].trim();
+    let itemReviews: ItemReview[] | null = null;
 
-    const itemReviews: ItemReview[] = extractItemReviews(structuredDataText);
+    if (structuredDataText !== "No Updated Structured Data available") {
+      try {
+        itemReviews = extractItemReviews(structuredDataText);
+      } catch (error) {
+        console.warn('Failed to extract structured data, returning null for structured data');
+        itemReviews = null;
+      }
+    }
 
     const freeformReviewProperties: FreeformReviewProperties = {
       reviewText: updatedReviewText,
-      itemReviews,
-      reviewer: removeSquareBrackets(extractFieldFromResponse(structuredDataText, 'Reviewer name')),
+      itemReviews: itemReviews || [],
+      reviewer: structuredDataText !== "No Updated Structured Data available"
+        ? removeSquareBrackets(extractFieldFromResponse(structuredDataText, 'Reviewer name'))
+        : undefined,
     };
 
     const chatResponse: ChatResponse = {
@@ -176,8 +187,6 @@ export const submitReviewHandler = async (req: Request, res: Response): Promise<
     return res.status(500).json({ error: 'An error occurred while saving the review.' });
   }
 };
-
-
 
 export const submitReview = async (memoRappReview: SubmitReviewBody): Promise<IReview | null> => {
 
