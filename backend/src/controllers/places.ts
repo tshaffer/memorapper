@@ -17,7 +17,6 @@ export const getPlaces = async (request: Request, response: Response, next: any)
   try {
     const mongoPlaces: IMongoPlace[] = await MongoPlace.find({}).exec();
     const googlePlaces: GooglePlace[] = convertMongoPlacesToGooglePlaces(mongoPlaces);
-    console.log('googlePlaces:', googlePlaces);
     response.status(200).json({ googlePlaces });
     return;
   } catch (error) {
