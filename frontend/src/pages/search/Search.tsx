@@ -12,16 +12,22 @@ const ResizableContainer: React.FC<ResizableContainerProps> = ({ initialTopDivHe
   const handleRef = useRef<HTMLDivElement>(null);
 
   const handleDrag = (event: DraggableEvent, ui: { y: number }) => {
-    // const handleHeight: number = handleRef.current!.offsetHeight;
     const containerHeight: number = (event.target as HTMLElement).offsetHeight;
-    const newTopDivHeight: string = `${(ui.y / containerHeight) * 100}%`;
+    const sensitivityFactor = 0.5; // Adjust sensitivity as needed
+
+    const newTopDivHeight = `${Math.min(Math.max(0, ui.y * sensitivityFactor), containerHeight - handleRef.current!.offsetHeight)} / containerHeight * 100}%`;
     setTopDivHeight(newTopDivHeight);
-};
+  };
 
   return (
     <div className="container">
       <div className="top-div" style={{ height: topDivHeight }} />
-      <Draggable axis="y" onDrag={handleDrag} handle=".handle">
+      <Draggable
+        axis="y"
+        onDrag={handleDrag}
+        handle=".handle"
+        position={{ x: 0, y: parseFloat(topDivHeight) }} // Adjust position based on topDivHeight
+      >
         <div ref={handleRef} className="handle">||</div>
       </Draggable>
       <div className="bottom-div" style={{ height: `calc(100% - ${topDivHeight})` }} />
