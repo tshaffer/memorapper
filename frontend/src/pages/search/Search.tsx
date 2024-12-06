@@ -49,7 +49,7 @@ const ResizableContainer: React.FC<ResizableContainerProps> = ({ initialTopDivHe
         axis="y"
         onDrag={handleDrag}
         handle=".handle"
-        position={{ x: 0, y: parseFloat(topDivHeight) }} // Adjust position based on topDivHeight
+        // position={{ x: 0, y: parseFloat(topDivHeight) }} // Adjust position based on topDivHeight
       >
         <div ref={handleRef} className="handle">||</div>
       </Draggable>
