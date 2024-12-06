@@ -6,6 +6,7 @@ import Map from './pages/maps/Map';
 import Reviews from './pages/viewReviews/Reviews';
 import MultiPanelReviewForm from './pages/writeReview/WriteReviewPage';
 import GoogleMapsProvider from './components/GoogleMapsProvider';
+import Search from './pages/search/Search';
 
 const App: React.FC = () => {
   return (
@@ -17,6 +18,7 @@ const App: React.FC = () => {
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 MemoRapp
               </Typography>
+              <Button color="inherit" component={Link} to="/search">Search</Button>
               <Button color="inherit" component={Link} to="/">Reviews</Button>
               <Button color="inherit" component={Link} to="/map">Map</Button>
               <Button color="inherit" component={Link} to="/write-review">Write Review</Button>
@@ -25,6 +27,7 @@ const App: React.FC = () => {
 
           <Box id='mainAppContentArea' sx={{ flexGrow: 1, overflow: 'hidden' }}>
             <Routes>
+              <Route path="/search" element={<Search />} />
               <Route path="/" element={<Reviews />} />
               <Route path="/map" element={<Map />} />
               <Route path="/map/:_id" element={<Map />} />
