@@ -50,6 +50,10 @@ const Search = () => {
     fetchReviews();
   }, []);
 
+  useEffect(() => {
+    console.log('Overlay Height Reset:', overlayHeight);
+  }, [overlayHeight]);
+
   const getReviewsForPlace = (placeId: string): MemoRappReview[] =>
     reviews.filter((review) => review.place_id === placeId);
 
@@ -61,19 +65,30 @@ const Search = () => {
 
   // Adjust overlay height on drag
   const handleDrag = (e: DraggableEvent, data: DraggableData) => {
-    const newHeight = overlayHeight - data.deltaY; // Calculate new height based on drag direction
+    const newHeight = overlayHeight - data.deltaY; // Calculate new height
+    console.log('Current overlayHeight:', overlayHeight);
+    console.log('deltaY:', data.deltaY);
+    console.log('Calculated newHeight:', newHeight);
+
     setOverlayHeight(Math.min(maxHeight, Math.max(minHeight, newHeight))); // Clamp height within bounds
   };
+
+  // const bounds: any = { top: -(overlayHeight - minHeight), bottom: maxHeight - overlayHeight };
+  console.log('Bounds:', {
+    top: -(overlayHeight - minHeight),
+    bottom: maxHeight - overlayHeight,
+  });
 
   return (
     <div style={{ height: '100vh', position: 'relative' }}>
       {/* Map Layer */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}>
-        <MapWithMarkers
-          key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })} // Forces re-render on prop change
+        pizza
+        {/* <MapWithMarkers
+          key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })}
           initialCenter={mapLocation!}
           locations={getExtendedGooglePlaces()}
-        />
+        /> */}
       </div>
 
       {/* Search Area UI */}
