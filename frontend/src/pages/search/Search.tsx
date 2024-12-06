@@ -36,8 +36,8 @@ const ResizableContainer: React.FC<ResizableContainerProps> = ({ initialTopDivHe
     // const finalResult = numerator / denominator;
     // console.log('finalResult', finalResult);
 
-    const newTopDivHeight = `${Math.min(Math.max(0, ui.y * sensitivityFactor), containerHeight - handleRef.current!.offsetHeight)} / containerHeight * 100}%`;
-    setTopDivHeight(newTopDivHeight);
+    // const newTopDivHeight = `${Math.min(Math.max(0, ui.y * sensitivityFactor), containerHeight - handleRef.current!.offsetHeight)} / containerHeight * 100}%`;
+    // setTopDivHeight(newTopDivHeight);
   };
 
   // console.log('topDivHeight', topDivHeight);
