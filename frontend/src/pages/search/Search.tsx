@@ -6,15 +6,15 @@ import { ExtendedGooglePlace, GooglePlace, MemoRappReview } from '../../types';
 
 const Search = () => {
   const [searchArea, setSearchArea] = useState('Current Location');
-  const [overlayHeight, setOverlayHeight] = useState(300); // Initial height of overlayed UI
+  const [overlayHeight, setOverlayHeight] = useState(300); // Initial height of the overlay
 
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [places, setPlaces] = useState<GooglePlace[]>([]);
   const [reviews, setReviews] = useState<MemoRappReview[]>([]);
 
-  // Calculate the bounds for the drag
-  const minHeight = 100; // Minimum height for the overlay
-  const maxHeight = window.innerHeight - 100; // Maximum height (ensures map is still visible)
+  // Define the min and max heights for the overlay
+  const minHeight = 100; // Minimum height of the overlay (collapsed)
+  const maxHeight = window.innerHeight - 100; // Maximum height of the overlay (expanded)
 
   useEffect(() => {
     const fetchCurrentLocation = () => {
@@ -59,9 +59,10 @@ const Search = () => {
       reviews: getReviewsForPlace(place.place_id),
     }));
 
+  // Adjust overlay height on drag
   const handleDrag = (e: DraggableEvent, data: DraggableData) => {
-    const newHeight = overlayHeight - data.deltaY; // Adjust height based on drag
-    setOverlayHeight(Math.min(maxHeight, Math.max(minHeight, newHeight))); // Clamp height
+    const newHeight = overlayHeight - data.deltaY; // Calculate new height based on drag direction
+    setOverlayHeight(Math.min(maxHeight, Math.max(minHeight, newHeight))); // Clamp height within bounds
   };
 
   return (
@@ -101,7 +102,8 @@ const Search = () => {
           borderTopLeftRadius: '16px',
           borderTopRightRadius: '16px',
           overflow: 'hidden',
-          transition: 'height 0.3s ease',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         {/* Drag Handle */}
@@ -126,12 +128,13 @@ const Search = () => {
         </Draggable>
 
         {/* Overlay Content */}
-        <div>
-          {/* Filters */}
-          <div style={{ padding: '16px', borderBottom: '1px solid #ccc' }}>Filters go here</div>
-
-          {/* List of Restaurants */}
-          <div>Restaurant List (Add list items here)</div>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
+          <div>Filters go here</div>
+          <ul>
+            <li>Restaurant 1</li>
+            <li>Restaurant 2</li>
+            <li>Restaurant 3</li>
+          </ul>
         </div>
       </div>
     </div>
