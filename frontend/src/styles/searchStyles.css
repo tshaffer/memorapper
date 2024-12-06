@@ -1,0 +1,16 @@
+.container {
+  height: 300px;
+  width: 300px;
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-div, .bottom-div {
+  background-color: lightgray;
+}
+
+.handle {
+  cursor: grab;
+  user-select: none;
+}
