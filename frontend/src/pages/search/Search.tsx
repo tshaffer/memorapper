@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
+
 import MapWithMarkers from '../../components/MapWIthMarkers';
 import { ExtendedGooglePlace, GooglePlace, MemoRappReview } from '../../types';
 
@@ -9,6 +11,10 @@ const Search = () => {
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [places, setPlaces] = useState<GooglePlace[]>([]);
   const [reviews, setReviews] = useState<MemoRappReview[]>([]);
+
+  // Calculate the bounds for the drag
+  const minHeight = 100; // Minimum height for the overlay
+  const maxHeight = window.innerHeight - 100; // Maximum height (ensures map is still visible)
 
   useEffect(() => {
     const fetchCurrentLocation = () => {
@@ -53,26 +59,9 @@ const Search = () => {
       reviews: getReviewsForPlace(place.place_id),
     }));
 
-  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const startY = event.clientY;
-    const startHeight = overlayHeight;
-
-    const handleMouseMove = (event: MouseEvent) => {
-      const newHeight = startHeight + startY - event.clientY;
-      handleDrag(newHeight);
-    };
-
-    const handleMouseUp = () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-  }
-
-  const handleDrag = (newHeight: number) => {
-    setOverlayHeight(newHeight);
+  const handleDrag = (e: DraggableEvent, data: DraggableData) => {
+    const newHeight = overlayHeight - data.deltaY; // Adjust height based on drag
+    setOverlayHeight(Math.min(maxHeight, Math.max(minHeight, newHeight))); // Clamp height
   };
 
   return (
@@ -90,11 +79,13 @@ const Search = () => {
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 2, background: '#fff', padding: '16px' }}>
         <input
           type="text"
-          value={searchArea}
-          onChange={(e) => setSearchArea(e.target.value)}
+          // value={searchArea}
+          // onChange={(e) => setSearchArea(e.target.value)}
           placeholder="Search area"
+          style={{ width: '100%', padding: '8px', marginBottom: '8px' }}
         />
-        <button onClick={() => setSearchArea('Current Location')}>Current Location</button>
+        {/* <button onClick={() => setSearchArea('Current Location')}>Current Location</button> */}
+        <button onClick={() => console.log('Reset to Current Location')}>Current Location</button>
       </div>
 
       {/* Overlayed UI */}
@@ -113,12 +104,31 @@ const Search = () => {
           transition: 'height 0.3s ease',
         }}
       >
-        <div style={{ height: '40px', cursor: 'grab', textAlign: 'center' }} onMouseDown={handleMouseDown}>
-          <span>•••</span> {/* Drag Handle */}
-        </div>
+        {/* Drag Handle */}
+        <Draggable
+          axis="y"
+          bounds={{ top: -(overlayHeight - minHeight), bottom: maxHeight - overlayHeight }}
+          onDrag={handleDrag}
+        >
+          <div
+            style={{
+              height: '40px',
+              background: '#ddd',
+              cursor: 'ns-resize',
+              textAlign: 'center',
+              lineHeight: '40px',
+              borderTopLeftRadius: '16px',
+              borderTopRightRadius: '16px',
+            }}
+          >
+            •••
+          </div>
+        </Draggable>
+
+        {/* Overlay Content */}
         <div>
           {/* Filters */}
-          <div>Filter Row (Add filters here)</div>
+          <div style={{ padding: '16px', borderBottom: '1px solid #ccc' }}>Filters go here</div>
 
           {/* List of Restaurants */}
           <div>Restaurant List (Add list items here)</div>
