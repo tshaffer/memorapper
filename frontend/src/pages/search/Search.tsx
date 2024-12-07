@@ -54,11 +54,25 @@ const Search: React.FC = () => {
       reviews: getReviewsForPlace(place.place_id),
     }));
 
+  // const handleDrag: DraggableEventHandler = (_, data) => {
+  //   const newHeight = Math.max(50, Math.min(overlayHeight - data.deltaY, containerHeight - 50));
+  //   setOverlayHeight(newHeight);
+  // };
+
   const handleDrag: DraggableEventHandler = (_, data) => {
+
+    console.log('Container height:', containerHeight);
+    console.log('Overlay height:', overlayHeight);
+    console.log('deltaY:', data.deltaY);
+
     const newHeight = Math.max(50, Math.min(overlayHeight - data.deltaY, containerHeight - 50));
+    console.log('newHeight:', newHeight);
+
     setOverlayHeight(newHeight);
   };
 
+  console.log('Render:', overlayHeight);
+  
   return (
     <div
       style={{
