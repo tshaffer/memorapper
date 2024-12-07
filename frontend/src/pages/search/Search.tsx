@@ -73,6 +73,7 @@ const Search: React.FC = () => {
 
   return (
     <div
+      id='searchContainer'
       style={{
         height: `${containerHeight}px`,
         border: '1px solid #ccc',
@@ -83,6 +84,7 @@ const Search: React.FC = () => {
     >
       {/* Map Layer */}
       <div
+        id='mapLayer'
         style={{
           height: `${topHeight}px`,
           background: '#f0f0f0',
@@ -99,6 +101,7 @@ const Search: React.FC = () => {
       {/* Drag Handle */}
       <DraggableCore onDrag={handleDrag}>
         <div
+          id='dragHandle'
           style={{
             height: '10px',
             background: '#ccc',
@@ -109,7 +112,14 @@ const Search: React.FC = () => {
       </DraggableCore>
 
       {/* Overlay Content */}
-      <div>
+      <div
+        id='overlayContent'
+        style={{
+          height: `${bottomHeight}px`,
+          background: '#e0e0e0',
+          overflow: 'auto',
+        }}
+      >
         {/* Filters */}
         <div style={{ padding: '16px', borderBottom: '1px solid #ccc' }}>Filters go here</div>
 
