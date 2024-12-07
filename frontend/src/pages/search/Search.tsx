@@ -11,8 +11,16 @@ const Search: React.FC = () => {
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [places, setPlaces] = useState<GooglePlace[]>([]);
   const [reviews, setReviews] = useState<MemoRappReview[]>([]);
+  const [containerHeight, setContainerHeight] = useState(window.innerHeight); // Full height of the viewport
 
-  const containerHeight = 800; // Total height of the container
+  useEffect(() => {
+    const handleResize = () => {
+      setContainerHeight(window.innerHeight); // Update container height on window resize
+    };
+
+    window.addEventListener('resize', handleResize); // Add listener
+    return () => window.removeEventListener('resize', handleResize); // Cleanup listener on unmount
+  }, []);
 
   useEffect(() => {
     const fetchCurrentLocation = () => {
@@ -57,7 +65,6 @@ const Search: React.FC = () => {
       reviews: getReviewsForPlace(place.place_id),
     }));
 
-
   const handleDrag: DraggableEventHandler = (_, data) => {
     const newTopHeight = Math.max(50, Math.min(topHeight + data.deltaY, containerHeight - 50));
     setTopHeight(newTopHeight);
@@ -74,7 +81,7 @@ const Search: React.FC = () => {
         overflow: 'hidden',
       }}
     >
-      {/* Top Div */}
+      {/* Map Layer */}
       <div
         style={{
           height: `${topHeight}px`,
