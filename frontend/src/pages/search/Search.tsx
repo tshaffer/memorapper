@@ -1,11 +1,62 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DraggableCore, DraggableEventHandler } from 'react-draggable';
 
-const VerticalResizer: React.FC = () => {
+import MapWithMarkers from '../../components/MapWIthMarkers';
+import { ExtendedGooglePlace, GooglePlace, MemoRappReview } from '../../types';
+
+const Search: React.FC = () => {
   const [topHeight, setTopHeight] = useState(200); // Initial height for the top div
   const [bottomHeight, setBottomHeight] = useState(200); // Initial height for the bottom div
 
-  const containerHeight = 400; // Total height of the container
+  const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
+  const [places, setPlaces] = useState<GooglePlace[]>([]);
+  const [reviews, setReviews] = useState<MemoRappReview[]>([]);
+
+  const containerHeight = 800; // Total height of the container
+
+  useEffect(() => {
+    const fetchCurrentLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const location = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            };
+            setMapLocation(location);
+          },
+          (error) => console.error('Error getting current location: ', error),
+          { enableHighAccuracy: true }
+        );
+      }
+    };
+
+    const fetchPlaces = async () => {
+      const response = await fetch('/api/places');
+      const data = await response.json();
+      setPlaces(data.googlePlaces);
+    };
+
+    const fetchReviews = async () => {
+      const response = await fetch('/api/reviews');
+      const data = await response.json();
+      setReviews(data.memoRappReviews);
+    };
+
+    fetchCurrentLocation();
+    fetchPlaces();
+    fetchReviews();
+  }, []);
+
+  const getReviewsForPlace = (placeId: string): MemoRappReview[] =>
+    reviews.filter((review) => review.place_id === placeId);
+
+  const getExtendedGooglePlaces = (): ExtendedGooglePlace[] =>
+    places.map((place) => ({
+      ...place,
+      reviews: getReviewsForPlace(place.place_id),
+    }));
+
 
   const handleDrag: DraggableEventHandler = (_, data) => {
     const newTopHeight = Math.max(50, Math.min(topHeight + data.deltaY, containerHeight - 50));
@@ -31,7 +82,11 @@ const VerticalResizer: React.FC = () => {
           overflow: 'auto',
         }}
       >
-        Top Content
+        <MapWithMarkers
+          key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })} // Forces re-render on prop change
+          initialCenter={mapLocation!}
+          locations={getExtendedGooglePlaces()}
+        />
       </div>
 
       {/* Drag Handle */}
@@ -46,18 +101,16 @@ const VerticalResizer: React.FC = () => {
         />
       </DraggableCore>
 
-      {/* Bottom Div */}
-      <div
-        style={{
-          height: `${bottomHeight}px`,
-          background: '#e0e0e0',
-          overflow: 'auto',
-        }}
-      >
-        Bottom Content
+      {/* Overlay Content */}
+      <div>
+        {/* Filters */}
+        <div style={{ padding: '16px', borderBottom: '1px solid #ccc' }}>Filters go here</div>
+
+        {/* List of Restaurants */}
+        <div>Restaurant List (Add list items here)</div>
       </div>
     </div>
   );
 };
 
-export default VerticalResizer;
+export default Search;
