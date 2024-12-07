@@ -1,52 +1,63 @@
-import React, { useState, useRef } from 'react';
-import Draggable, { DraggableEvent, DraggableData } from 'react-draggable';
+import React, { useState } from 'react';
+import { DraggableCore, DraggableEventHandler } from 'react-draggable';
 
-import '../../styles/searchStyles.css';
+const VerticalResizer: React.FC = () => {
+  const [topHeight, setTopHeight] = useState(200); // Initial height for the top div
+  const [bottomHeight, setBottomHeight] = useState(200); // Initial height for the bottom div
 
-interface ResizableContainerProps {
-  initialTopDivHeight?: number;
-}
+  const containerHeight = 400; // Total height of the container
 
-const ResizableContainer: React.FC<ResizableContainerProps> = ({ initialTopDivHeight = 141 }) => {
-  const [topDivHeight, setTopDivHeight] = useState<number>(initialTopDivHeight);
-  const handleRef = useRef<HTMLDivElement>(null);
-
-  const handleDrag = (event: DraggableEvent, draggableData: DraggableData) => {
-
-    const { y, deltaY, lastY } = draggableData;
-    console.log('DraggableData');
-    console.log(y, deltaY, lastY);
-
-    
-    const topContainerHeight = 300;
-    const handleHeight = handleRef.current!.offsetHeight;
-
-    console.log('calculate new top div height');
-    console.log('topContainerHeight', topContainerHeight);
-    console.log('handleHeight', handleHeight);
-    console.log('y', y);
-    const newTopDivHeight = (topContainerHeight / 2) - (handleHeight / 2) + y ;
-    console.log('newTopDivHeight', newTopDivHeight);
-    setTopDivHeight(newTopDivHeight);
+  const handleDrag: DraggableEventHandler = (_, data) => {
+    const newTopHeight = Math.max(50, Math.min(topHeight + data.deltaY, containerHeight - 50));
+    setTopHeight(newTopHeight);
+    setBottomHeight(containerHeight - newTopHeight); // Adjust bottom height accordingly
   };
 
-  console.log('topDivHeight', topDivHeight);
-  console.log(topDivHeight.toString() + 'px');
-  console.log((300 - 18 - topDivHeight).toString() + 'px')
-
   return (
-    <div id='top-container' className="container">
-      <div id='top-div' className="top-div" style={{ height: topDivHeight.toString() + 'px' }} />
-      <Draggable
-        axis="y"
-        onDrag={handleDrag}
-        handle=".handle"
+    <div
+      style={{
+        height: `${containerHeight}px`,
+        border: '1px solid #ccc',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Top Div */}
+      <div
+        style={{
+          height: `${topHeight}px`,
+          background: '#f0f0f0',
+          overflow: 'auto',
+        }}
       >
-        <div ref={handleRef} className="handle">||</div>
-      </Draggable>
-      <div id='bottom-div' className="bottom-div" style={{ height: (300-18-topDivHeight).toString() + 'px' }} />
+        Top Content
+      </div>
+
+      {/* Drag Handle */}
+      <DraggableCore onDrag={handleDrag}>
+        <div
+          style={{
+            height: '10px',
+            background: '#ccc',
+            cursor: 'row-resize',
+            userSelect: 'none',
+          }}
+        />
+      </DraggableCore>
+
+      {/* Bottom Div */}
+      <div
+        style={{
+          height: `${bottomHeight}px`,
+          background: '#e0e0e0',
+          overflow: 'auto',
+        }}
+      >
+        Bottom Content
+      </div>
     </div>
   );
 };
 
-export default ResizableContainer;
+export default VerticalResizer;
