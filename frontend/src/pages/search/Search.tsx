@@ -5,22 +5,11 @@ import MapWithMarkers from '../../components/MapWIthMarkers';
 import { ExtendedGooglePlace, GooglePlace, MemoRappReview } from '../../types';
 
 const Search: React.FC = () => {
-  const [topHeight, setTopHeight] = useState(200); // Initial height for the top div
-  const [bottomHeight, setBottomHeight] = useState(200); // Initial height for the bottom div
-
+  const [overlayHeight, setOverlayHeight] = useState(200); // Initial height of the overlay UI
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [places, setPlaces] = useState<GooglePlace[]>([]);
   const [reviews, setReviews] = useState<MemoRappReview[]>([]);
-  const [containerHeight, setContainerHeight] = useState(window.innerHeight); // Full height of the viewport
-
-  useEffect(() => {
-    const handleResize = () => {
-      setContainerHeight(window.innerHeight); // Update container height on window resize
-    };
-
-    window.addEventListener('resize', handleResize); // Add listener
-    return () => window.removeEventListener('resize', handleResize); // Cleanup listener on unmount
-  }, []);
+  const containerHeight = window.innerHeight; // Full height of the viewport
 
   useEffect(() => {
     const fetchCurrentLocation = () => {
@@ -66,35 +55,47 @@ const Search: React.FC = () => {
     }));
 
   const handleDrag: DraggableEventHandler = (_, data) => {
-    const newTopHeight = Math.max(50, Math.min(topHeight + data.deltaY, containerHeight - 50));
-    setTopHeight(newTopHeight);
-    setBottomHeight(containerHeight - newTopHeight); // Adjust bottom height accordingly
+    const newHeight = Math.max(50, Math.min(overlayHeight - data.deltaY, containerHeight - 50));
+    setOverlayHeight(newHeight);
   };
 
   return (
     <div
-      id='searchContainer'
       style={{
-        height: `${containerHeight}px`,
-        position: 'relative', // Important for absolutely positioned children
-        border: '1px solid #ccc',
-        display: 'flex',
-        flexDirection: 'column',
+        height: '100vh',
+        position: 'relative',
         overflow: 'hidden',
       }}
     >
-      {/* Search Area UI */}
+      {/* Map Layer */}
       <div
-        id='searchArea'
         style={{
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
-          zIndex: 2,
+          bottom: 0,
+          zIndex: 0, // Map at the bottom layer
+        }}
+      >
+        <MapWithMarkers
+          key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })} // Forces re-render on prop change
+          initialCenter={mapLocation!}
+          locations={getExtendedGooglePlaces()}
+        />
+      </div>
+
+      {/* Search Area UI */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 2, // Above map
           background: '#fff',
           padding: '16px',
-          boxShadow: '0px 2px 4px rgba(0,0,0,0.1)', // Optional shadow for a floating effect
+          boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
         }}
       >
         <input
@@ -123,49 +124,46 @@ const Search: React.FC = () => {
         </button>
       </div>
 
-      {/* Map Layer */}
+      {/* Overlay UI */}
       <div
-        id='mapLayer'
         style={{
-          height: `${topHeight}px`,
-          background: '#f0f0f0',
-          overflow: 'auto',
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: `${overlayHeight}px`,
+          zIndex: 2, // Above map
+          background: '#fff',
+          borderTopLeftRadius: '16px',
+          borderTopRightRadius: '16px',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        <MapWithMarkers
-          key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })} // Forces re-render on prop change
-          initialCenter={mapLocation!}
-          locations={getExtendedGooglePlaces()}
-        />
-      </div>
+        {/* Drag Handle */}
+        <DraggableCore onDrag={handleDrag}>
+          <div
+            style={{
+              height: '10px',
+              background: '#ccc',
+              cursor: 'row-resize',
+              userSelect: 'none',
+              borderTopLeftRadius: '16px',
+              borderTopRightRadius: '16px',
+            }}
+          />
+        </DraggableCore>
 
-      {/* Drag Handle */}
-      <DraggableCore onDrag={handleDrag}>
-        <div
-          id='dragHandle'
-          style={{
-            height: '10px',
-            background: '#ccc',
-            cursor: 'row-resize',
-            userSelect: 'none',
-          }}
-        />
-      </DraggableCore>
-
-      {/* Overlay Content */}
-      <div
-        id='overlayContent'
-        style={{
-          height: `${bottomHeight}px`,
-          background: '#e0e0e0',
-          overflow: 'auto',
-        }}
-      >
-        {/* Filters */}
-        <div style={{ padding: '16px', borderBottom: '1px solid #ccc' }}>Filters go here</div>
-
-        {/* List of Restaurants */}
-        <div>Restaurant List (Add list items here)</div>
+        {/* Overlay Content */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
+          <div>Filters go here</div>
+          <ul>
+            <li>Restaurant 1</li>
+            <li>Restaurant 2</li>
+            <li>Restaurant 3</li>
+          </ul>
+        </div>
       </div>
     </div>
   );
