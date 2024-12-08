@@ -4,7 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 import { GooglePlace } from '../types';
 import { useParams } from 'react-router-dom';
 
-const LocationAutocomplete: React.FC = () => {
+interface LocationAutocompleteProps {
+  onSetMapLocation: (mapLocation: google.maps.LatLngLiteral) => void;
+}
+
+const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: LocationAutocompleteProps) => {
 
   const { _id } = useParams<{ _id: string }>();
 
@@ -71,6 +75,7 @@ const LocationAutocomplete: React.FC = () => {
           lng: geometry.location!.lng(),
         };
         setMapLocation(newCoordinates);
+        props.onSetMapLocation(newCoordinates);
         console.log('Place changed:', place, newCoordinates);
       } else {
         console.error('No place found in handleMapLocationChanged');

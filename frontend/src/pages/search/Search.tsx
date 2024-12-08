@@ -73,9 +73,14 @@ const Search: React.FC = () => {
     setBottomHeight(containerHeight - newTopHeight); // Adjust bottom height accordingly
   };
 
+  const handleSetMapLocation = (location: google.maps.LatLngLiteral): void => {
+    setMapLocation(location);
+  }
+
   const renderSearchAreaUI = (): JSX.Element => {
     return (
-      <LocationAutocomplete />
+      <LocationAutocomplete 
+      onSetMapLocation={(location) => handleSetMapLocation(location)} />
     );
   }
 
@@ -135,7 +140,7 @@ const Search: React.FC = () => {
     >
       {/* Search Area UI */}
       {renderSearchAreaUI()}
-      
+
       {/* Map Layer */}
       <div
         id='mapLayer'
