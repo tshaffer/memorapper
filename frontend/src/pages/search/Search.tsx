@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { DraggableCore, DraggableEventHandler } from 'react-draggable';
 
-import MapWithMarkers from '../../components/MapWIthMarkers';
 import { ExtendedGooglePlace, GooglePlace, MemoRappReview } from '../../types';
+
+import LocationAutocomplete from '../../components/LocationAutocomplete';
+import MapWithMarkers from '../../components/MapWIthMarkers';
 
 const Search: React.FC = () => {
   const [topHeight, setTopHeight] = useState(200); // Initial height for the top div
@@ -71,19 +73,14 @@ const Search: React.FC = () => {
     setBottomHeight(containerHeight - newTopHeight); // Adjust bottom height accordingly
   };
 
-  return (
-    <div
-      id='searchContainer'
-      style={{
-        height: `${containerHeight}px`,
-        position: 'relative', // Important for absolutely positioned children
-        border: '1px solid #ccc',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Search Area UI */}
+  const renderSearchAreaUI = (): JSX.Element => {
+    return (
+      <LocationAutocomplete />
+    );
+  }
+
+  const renderSearchAreaUIOld = (): JSX.Element => {
+    return (
       <div
         id='searchArea'
         style={{
@@ -122,7 +119,23 @@ const Search: React.FC = () => {
           Current Location
         </button>
       </div>
-
+    );
+  }
+  return (
+    <div
+      id='searchContainer'
+      style={{
+        height: `${containerHeight}px`,
+        position: 'relative', // Important for absolutely positioned children
+        border: '1px solid #ccc',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Search Area UI */}
+      {renderSearchAreaUI()}
+      
       {/* Map Layer */}
       <div
         id='mapLayer'
