@@ -7,8 +7,8 @@ import LocationAutocomplete from '../../components/LocationAutocomplete';
 import MapWithMarkers from '../../components/MapWIthMarkers';
 
 const Search: React.FC = () => {
-  const [topHeight, setTopHeight] = useState(200); // Initial height for the top div
-  const [bottomHeight, setBottomHeight] = useState(200); // Initial height for the bottom div
+  const [topHeight, setTopHeight] = useState(window.innerHeight * 0.4); // Initial height for the top div
+  const [bottomHeight, setBottomHeight] = useState(window.innerHeight * 0.6); // Initial height for the bottom div
 
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [places, setPlaces] = useState<GooglePlace[]>([]);

@@ -120,6 +120,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
       <Button
         onClick={handleUseCurrentLocation}
         style={{
+          width: '200px', // Explicit width for the button
           padding: '8px 16px',
           background: '#007bff',
           color: '#fff',
@@ -140,7 +141,8 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
           placeholder="Enter the location"
           onChange={handleAutocompleteInputChange} // Custom input handling
           style={{
-            width: '100%',
+            width: '600px',
+            maxWidth: '600px',
             padding: isMobile ? '8px' : '10px', // Smaller padding for mobile
             boxSizing: 'border-box',
             fontSize: isMobile ? '14px' : '16px', // Adjust font size
