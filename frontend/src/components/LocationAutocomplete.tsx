@@ -15,6 +15,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
+  const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [places, setPlaces] = useState<GooglePlace[]>([]);
 
@@ -31,7 +32,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
               lng: position.coords.longitude,
             };
             if (!_id) {
-              setMapLocation(location);
+              setCurrentLocation(location);
             }
           },
           (error) => console.error('Error getting current location: ', error),
@@ -65,6 +66,10 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
       }
     }
   }, [_id, places]);
+
+  const handleUseCurrentLocation = () => {
+    props.onSetMapLocation(currentLocation!);
+  }
 
   const handleMapLocationChanged = () => {
     if (mapAutocompleteRef.current) {
@@ -113,7 +118,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
       }}
     >
       <Button
-        onClick={() => console.log('Reset to Current Location')}
+        onClick={handleUseCurrentLocation}
         style={{
           padding: '8px 16px',
           background: '#007bff',
@@ -127,13 +132,13 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
       </Button>
 
       <Autocomplete
-        onLoad={(autocomplete) => console.log('Autocomplete loaded', autocomplete)}
-        onPlaceChanged={() => console.log('Place changed')}
+        onLoad={(autocomplete) => (mapAutocompleteRef.current = autocomplete)}
+        onPlaceChanged={handleMapLocationChanged}
       >
         <input
           type="text"
           placeholder="Enter the location"
-          onChange={(e) => console.log('Input changed', e.target.value)}
+          onChange={handleAutocompleteInputChange} // Custom input handling
           style={{
             width: '100%',
             padding: isMobile ? '8px' : '10px', // Smaller padding for mobile
