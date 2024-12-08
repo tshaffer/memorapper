@@ -67,19 +67,10 @@ const Search: React.FC = () => {
 
   const handleDrag: DraggableEventHandler = (_, data) => {
     const newTopHeight = Math.max(50, Math.min(topHeight + data.deltaY, containerHeight - 50));
-
-    // console.log('Container height:', containerHeight);
-    console.log('deltaY:', data.deltaY);
-    console.log('Top height:', topHeight);
-    console.log('New top height:', newTopHeight);
-    console.log('Bottom height:', containerHeight - newTopHeight);
-
     setTopHeight(newTopHeight);
     setBottomHeight(containerHeight - newTopHeight); // Adjust bottom height accordingly
   };
 
-  console.log('Render:', { topHeight, bottomHeight });
-  
   return (
     <div
       id='searchContainer'
