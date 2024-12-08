@@ -1,5 +1,6 @@
+import React from 'react';
 import { Autocomplete } from '@react-google-maps/api';
-import { useMediaQuery } from '@mui/material';
+import { Button, useMediaQuery } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { GooglePlace } from '../types';
 import { useParams } from 'react-router-dom';
@@ -104,22 +105,44 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
   };
 
   return (
-    <Autocomplete
-      onLoad={(autocomplete) => (mapAutocompleteRef.current = autocomplete)}
-      onPlaceChanged={handleMapLocationChanged}
+    <div
+      style={{
+        display: 'flex', // Makes children align horizontally
+        alignItems: 'center', // Aligns items vertically in the center
+        gap: '8px', // Adds space between items
+      }}
     >
-      <input
-        type="text"
-        placeholder="Enter the location"
-        onChange={handleAutocompleteInputChange} // Custom input handling
+      <Button
+        onClick={() => console.log('Reset to Current Location')}
         style={{
-          width: '100%',
-          padding: isMobile ? '8px' : '10px', // Smaller padding for mobile
-          boxSizing: 'border-box',
-          fontSize: isMobile ? '14px' : '16px', // Adjust font size
+          padding: '8px 16px',
+          background: '#007bff',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
         }}
-      />
-    </Autocomplete>
+      >
+        Current Location
+      </Button>
+
+      <Autocomplete
+        onLoad={(autocomplete) => console.log('Autocomplete loaded', autocomplete)}
+        onPlaceChanged={() => console.log('Place changed')}
+      >
+        <input
+          type="text"
+          placeholder="Enter the location"
+          onChange={(e) => console.log('Input changed', e.target.value)}
+          style={{
+            width: '100%',
+            padding: isMobile ? '8px' : '10px', // Smaller padding for mobile
+            boxSizing: 'border-box',
+            fontSize: isMobile ? '14px' : '16px', // Adjust font size
+          }}
+        />
+      </Autocomplete>
+    </div>
   );
 };
 

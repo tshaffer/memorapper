@@ -79,8 +79,8 @@ const Search: React.FC = () => {
 
   const renderSearchAreaUI = (): JSX.Element => {
     return (
-      <LocationAutocomplete 
-      onSetMapLocation={(location) => handleSetMapLocation(location)} />
+      <LocationAutocomplete
+        onSetMapLocation={(location) => handleSetMapLocation(location)} />
     );
   }
 
