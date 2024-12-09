@@ -35,7 +35,7 @@ const SearchFilters = () => {
   const [wouldReturnDropdownVisible, setWouldReturnDropdownVisible] = useState(false);
   const [sortCriteria, setSortCriteria] = useState<'name' | 'distance' | 'reviewer' | 'most recent review'>('distance');
   const [isOpenNowSelected, setIsOpenNowSelected] = useState(false);
-  const [wouldReturnFilters, setWouldReturnFilters] = useState<WouldReturnFilter>(initialWouldReturnFilter);
+  const [wouldReturnFilter, setWouldReturnFilter] = useState<WouldReturnFilter>(initialWouldReturnFilter);
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const wouldReturnDropdownRef = useRef<HTMLDivElement | null>(null);
@@ -149,12 +149,13 @@ const SearchFilters = () => {
         Would Return
       </Typography>
       <Box>
-        <label>
+        <label style={{ color: wouldReturnFilter.enabled ? 'inherit' : '#aaa' }}>
           <input
             type="checkbox"
-            checked={wouldReturnFilters.values.yes}
+            checked={wouldReturnFilter.values.yes}
+            disabled={!wouldReturnFilter.enabled}
             onChange={() =>
-              setWouldReturnFilters((prev) => ({
+              setWouldReturnFilter((prev) => ({
                 ...prev,
                 values: { ...prev.values, yes: !prev.values.yes },
                 enabled: !prev.values.yes || prev.values.no || prev.values.notSure,
@@ -165,12 +166,13 @@ const SearchFilters = () => {
         </label>
       </Box>
       <Box>
-        <label>
+        <label style={{ color: wouldReturnFilter.enabled ? 'inherit' : '#aaa' }}>
           <input
             type="checkbox"
-            checked={wouldReturnFilters.values.no}
+            checked={wouldReturnFilter.values.no}
+            disabled={!wouldReturnFilter.enabled}
             onChange={() =>
-              setWouldReturnFilters((prev) => ({
+              setWouldReturnFilter((prev) => ({
                 ...prev,
                 values: { ...prev.values, no: !prev.values.no },
                 enabled: prev.values.yes || !prev.values.no || prev.values.notSure,
@@ -181,12 +183,13 @@ const SearchFilters = () => {
         </label>
       </Box>
       <Box>
-        <label>
+        <label style={{ color: wouldReturnFilter.enabled ? 'inherit' : '#aaa' }}>
           <input
             type="checkbox"
-            checked={wouldReturnFilters.values.notSure}
+            checked={wouldReturnFilter.values.notSure}
+            disabled={!wouldReturnFilter.enabled}
             onChange={() =>
-              setWouldReturnFilters((prev) => ({
+              setWouldReturnFilter((prev) => ({
                 ...prev,
                 values: { ...prev.values, notSure: !prev.values.notSure },
                 enabled: prev.values.yes || prev.values.no || !prev.values.notSure,
@@ -202,9 +205,9 @@ const SearchFilters = () => {
             Enable
           </Typography>
           <Switch
-            checked={wouldReturnFilters.enabled}
+            checked={wouldReturnFilter.enabled}
             onChange={() =>
-              setWouldReturnFilters((prev) => ({
+              setWouldReturnFilter((prev) => ({
                 ...prev,
                 enabled: !prev.enabled,
               }))
@@ -217,7 +220,7 @@ const SearchFilters = () => {
       </Box>
     </Box>
   );
-
+  
   return (
     <div style={{ paddingTop: '8px', paddingBottom: '4px', paddingLeft: '8px', paddingRight: '8px' }}>
       <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginBottom: '8px' }}>
@@ -236,7 +239,7 @@ const SearchFilters = () => {
           style={filterButtonStyle}
           onClick={handleWouldReturnClick}
         >
-          Would Return {wouldReturnFilters.enabled && <CheckIcon style={{ marginLeft: '4px' }} />}
+          Would Return {wouldReturnFilter.enabled && <CheckIcon style={{ marginLeft: '4px' }} />}
         </Button>
       </div>
       {sortDropdownVisible && renderSortDropdown()}
