@@ -3,9 +3,13 @@ import { Button } from '@mui/material';
 const SearchFilters = () => {
   return (
     <div style={{
-      padding: '8px',
-      background: '#fff',
-      boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)'
+      // padding: '8px',
+      paddingTop: '8px',
+      paddingBottom: '4px',
+      paddingLeft: '8px',
+      paddingRight: '8px',
+      // background: '#fff',
+      // boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)'
     }}>
       {/* Row of Filter Buttons */}
       <div

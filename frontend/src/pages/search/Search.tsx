@@ -181,9 +181,7 @@ const Search: React.FC = () => {
         }}
       >
         {/* Filters */}
-        <div style={{ padding: '16px', borderBottom: '1px solid #ccc' }}>
-          <SearchFilters/>
-        </div>
+        <SearchFilters />
 
         {/* List of Restaurants */}
         <div>Restaurant List (Add list items here)</div>
