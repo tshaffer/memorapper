@@ -5,6 +5,7 @@ import { ExtendedGooglePlace, GooglePlace, MemoRappReview } from '../../types';
 
 import LocationAutocomplete from '../../components/LocationAutocomplete';
 import MapWithMarkers from '../../components/MapWIthMarkers';
+import SearchFilters from './SearchFilters';
 
 const Search: React.FC = () => {
   const [topHeight, setTopHeight] = useState(window.innerHeight * 0.4); // Initial height for the top div
@@ -180,7 +181,9 @@ const Search: React.FC = () => {
         }}
       >
         {/* Filters */}
-        <div style={{ padding: '16px', borderBottom: '1px solid #ccc' }}>Filters go here</div>
+        <div style={{ padding: '16px', borderBottom: '1px solid #ccc' }}>
+          <SearchFilters/>
+        </div>
 
         {/* List of Restaurants */}
         <div>Restaurant List (Add list items here)</div>
