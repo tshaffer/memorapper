@@ -1,6 +1,6 @@
 import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const filterButtonStyle: React.CSSProperties = {
   padding: '8px 8px',
@@ -16,6 +16,7 @@ const SearchFilters = () => {
 
   const [sortDropdownVisible, setSortDropdownVisible] = useState(false);
   const [sortCriteria, setSortCriteria] = useState<'name' | 'distance' | 'reviewer' | 'recentReview'>('name');
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const handleMoreFiltersIcon = () => {
     console.log('More Filters Icon Clicked');
@@ -25,9 +26,43 @@ const SearchFilters = () => {
     setSortDropdownVisible((prev) => !prev); // Toggle visibility of the dropdown
   };
 
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortCriteria(e.target.value as 'name' | 'distance' | 'reviewer' | 'recentReview');
+    setSortDropdownVisible(false); // Close dropdown after selection
+  };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      setSortDropdownVisible(false);
+    }
+  };
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      setSortDropdownVisible(false);
+    }
+  };
+
+  useEffect(() => {
+    if (sortDropdownVisible) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [sortDropdownVisible]);
+
   const renderSortDropdown = (): JSX.Element => {
     return (
       <Box
+      ref={dropdownRef}
+
         sx={{
           position: 'absolute',
           top: '40px',
@@ -44,7 +79,7 @@ const SearchFilters = () => {
         </Typography>
         <select
           value={sortCriteria}
-          onChange={(e) => setSortCriteria(e.target.value as 'name' | 'distance' | 'reviewer' | 'recentReview')}
+          onChange={handleSortChange}
           style={{
             padding: '8px',
             borderRadius: '4px',
@@ -87,15 +122,7 @@ const SearchFilters = () => {
           </IconButton>
         </Tooltip>
         <Button
-          style={{
-            padding: '8px 16px',
-            background: '#f8f8f8',
-            border: '1px solid #ccc',
-            borderRadius: '20px',
-            fontSize: '14px',
-            cursor: 'pointer',
-            position: 'relative',
-          }}
+          style={filterButtonStyle}
           onClick={handleSortButtonClick}
         >
           Sort ▼
