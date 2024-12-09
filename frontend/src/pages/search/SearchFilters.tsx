@@ -12,16 +12,30 @@ const filterButtonStyle: React.CSSProperties = {
   cursor: 'pointer',
 };
 
+interface WouldReturnFilter {
+  enabled: boolean;
+  values: {
+    yes: boolean;
+    no: boolean;
+    notSure: boolean;
+  };
+}
+
+const initialWouldReturnFilter: WouldReturnFilter = {
+  enabled: false,
+  values: {
+    yes: false,
+    no: false,
+    notSure: false,
+  },
+};
+
 const SearchFilters = () => {
   const [sortDropdownVisible, setSortDropdownVisible] = useState(false);
   const [wouldReturnDropdownVisible, setWouldReturnDropdownVisible] = useState(false);
   const [sortCriteria, setSortCriteria] = useState<'name' | 'distance' | 'reviewer' | 'most recent review'>('distance');
-  const [isOpenNowSelected, setIsOpenNowSelected] = useState(false); // Tracks "Open Now" toggle state
-  const [wouldReturnFilters, setWouldReturnFilters] = useState({
-    yes: false,
-    no: false,
-    notSure: false,
-  });
+  const [isOpenNowSelected, setIsOpenNowSelected] = useState(false);
+  const [wouldReturnFilters, setWouldReturnFilters] = useState<WouldReturnFilter>(initialWouldReturnFilter);
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const wouldReturnDropdownRef = useRef<HTMLDivElement | null>(null);
@@ -31,22 +45,22 @@ const SearchFilters = () => {
   };
 
   const handleSortButtonClick = () => {
-    setSortDropdownVisible((prev) => !prev); // Toggle visibility of the sort dropdown
-    setWouldReturnDropdownVisible(false); // Close "Would Return" dropdown if open
+    setSortDropdownVisible((prev) => !prev);
+    setWouldReturnDropdownVisible(false);
   };
 
   const handleOpenNowClick = () => {
-    setIsOpenNowSelected((prev) => !prev); // Toggle "Open Now" state
+    setIsOpenNowSelected((prev) => !prev);
   };
 
   const handleWouldReturnClick = () => {
-    setWouldReturnDropdownVisible((prev) => !prev); // Toggle "Would Return" dropdown
-    setSortDropdownVisible(false); // Close sort dropdown if open
+    setWouldReturnDropdownVisible((prev) => !prev);
+    setSortDropdownVisible(false);
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortCriteria(e.target.value as 'name' | 'distance' | 'reviewer' | 'most recent review');
-    setSortDropdownVisible(false); // Close dropdown after selection
+    setSortDropdownVisible(false);
   };
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -80,117 +94,129 @@ const SearchFilters = () => {
     };
   }, [sortDropdownVisible, wouldReturnDropdownVisible]);
 
-  const renderSortDropdown = (): JSX.Element => {
-    return (
-      <Box
-        ref={dropdownRef}
-        sx={{
-          position: 'relative',
-          left: '48px',
-          background: '#fff',
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-          borderRadius: '8px',
-          zIndex: 10,
-          padding: '10px',
-          display: 'flex',
-          width: '280px',
-          maxWidth: '90%',
+  const renderSortDropdown = (): JSX.Element => (
+    <Box
+      ref={dropdownRef}
+      sx={{
+        position: 'relative',
+        left: '48px',
+        background: '#fff',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        borderRadius: '8px',
+        zIndex: 10,
+        padding: '10px',
+        display: 'flex',
+        width: '280px',
+        maxWidth: '90%',
+      }}
+    >
+      <Typography variant="subtitle1">Sort by:</Typography>
+      <select
+        value={sortCriteria}
+        onChange={handleSortChange}
+        style={{
+          marginLeft: '8px',
+          padding: '8px',
+          borderRadius: '4px',
+          border: '1px solid #ccc',
+          width: '200px',
         }}
       >
-        <Typography variant="subtitle1">Sort by:</Typography>
-        <select
-          value={sortCriteria}
-          onChange={handleSortChange}
-          style={{
-            marginLeft: '8px',
-            padding: '8px',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-            width: '200px',
-          }}
-        >
-          <option value="distance">Distance</option>
-          <option value="name">Name</option>
-          <option value="most recent review">Most Recent Review</option>
-          <option value="reviewer">Reviewer</option>
-        </select>
-      </Box>
-    );
-  };
+        <option value="distance">Distance</option>
+        <option value="name">Name</option>
+        <option value="most recent review">Most Recent Review</option>
+        <option value="reviewer">Reviewer</option>
+      </select>
+    </Box>
+  );
 
-  const renderWouldReturnDropdown = (): JSX.Element => {
-    return (
-      <Box
-        ref={wouldReturnDropdownRef}
-        sx={{
-          position: 'relative',
-          left: '48px',
-          background: '#fff',
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-          borderRadius: '8px',
-          zIndex: 10,
-          padding: '10px',
-          width: '280px',
-          maxWidth: '90%',
-        }}
-      >
-        <Typography variant="subtitle1" sx={{ marginBottom: '8px' }}>
-          Would Return
-        </Typography>
-        <Box>
-          <label>
-            <input
-              type="checkbox"
-              checked={wouldReturnFilters.yes}
-              onChange={() =>
-                setWouldReturnFilters((prev) => ({ ...prev, yes: !prev.yes }))
-              }
-            />
-            Yes
-          </label>
-        </Box>
-        <Box>
-          <label>
-            <input
-              type="checkbox"
-              checked={wouldReturnFilters.no}
-              onChange={() =>
-                setWouldReturnFilters((prev) => ({ ...prev, no: !prev.no }))
-              }
-            />
-            No
-          </label>
-        </Box>
-        <Box>
-          <label>
-            <input
-              type="checkbox"
-              checked={wouldReturnFilters.notSure}
-              onChange={() =>
-                setWouldReturnFilters((prev) => ({
-                  ...prev,
-                  notSure: !prev.notSure,
-                }))
-              }
-            />
-            Not Sure
-          </label>
-        </Box>
+  const renderWouldReturnDropdown = (): JSX.Element => (
+    <Box
+      ref={wouldReturnDropdownRef}
+      sx={{
+        position: 'relative',
+        left: '48px',
+        background: '#fff',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        borderRadius: '8px',
+        zIndex: 10,
+        padding: '10px',
+        width: '280px',
+        maxWidth: '90%',
+      }}
+    >
+      <Typography variant="subtitle1" sx={{ marginBottom: '8px' }}>
+        Would Return
+      </Typography>
+      <Box>
+        <label>
+          <input
+            type="checkbox"
+            checked={wouldReturnFilters.values.yes}
+            onChange={() =>
+              setWouldReturnFilters((prev) => ({
+                ...prev,
+                values: { ...prev.values, yes: !prev.values.yes },
+                enabled: !prev.values.yes || prev.values.no || prev.values.notSure,
+              }))
+            }
+          />
+          Yes
+        </label>
       </Box>
-    );
-  };
+      <Box>
+        <label>
+          <input
+            type="checkbox"
+            checked={wouldReturnFilters.values.no}
+            onChange={() =>
+              setWouldReturnFilters((prev) => ({
+                ...prev,
+                values: { ...prev.values, no: !prev.values.no },
+                enabled: prev.values.yes || !prev.values.no || prev.values.notSure,
+              }))
+            }
+          />
+          No
+        </label>
+      </Box>
+      <Box>
+        <label>
+          <input
+            type="checkbox"
+            checked={wouldReturnFilters.values.notSure}
+            onChange={() =>
+              setWouldReturnFilters((prev) => ({
+                ...prev,
+                values: { ...prev.values, notSure: !prev.values.notSure },
+                enabled: prev.values.yes || prev.values.no || !prev.values.notSure,
+              }))
+            }
+          />
+          Not Sure
+        </label>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px' }}>
+        <Button
+          onClick={() => {
+            setWouldReturnFilters(initialWouldReturnFilter);
+            setWouldReturnDropdownVisible(false);
+          }}
+          variant="text"
+          color="error"
+        >
+          Disable
+        </Button>
+        <Button onClick={() => setWouldReturnDropdownVisible(false)} variant="contained">
+          Close
+        </Button>
+      </Box>
+    </Box>
+  );
 
   return (
     <div style={{ paddingTop: '8px', paddingBottom: '4px', paddingLeft: '8px', paddingRight: '8px' }}>
-      {/* Row of Filter Buttons */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '6px',
-          alignItems: 'center',
-          marginBottom: '8px',
-        }}
-      >
+      <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginBottom: '8px' }}>
         <Tooltip title="More Filters">
           <IconButton style={filterButtonStyle} onClick={handleMoreFiltersIcon}>
             <MoreVertIcon />
@@ -202,8 +228,11 @@ const SearchFilters = () => {
         <Button style={filterButtonStyle} onClick={handleOpenNowClick}>
           Open Now {isOpenNowSelected && <CheckIcon style={{ marginLeft: '4px' }} />}
         </Button>
-        <Button style={filterButtonStyle} onClick={handleWouldReturnClick}>
-          Would Return ▼
+        <Button
+          style={filterButtonStyle}
+          onClick={handleWouldReturnClick}
+        >
+          Would Return {wouldReturnFilters.enabled && <CheckIcon style={{ marginLeft: '4px' }} />}
         </Button>
       </div>
       {sortDropdownVisible && renderSortDropdown()}
