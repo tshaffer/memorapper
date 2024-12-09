@@ -1,6 +1,12 @@
-import { Button } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 const SearchFilters = () => {
+
+  const handleMoreFiltersIcon = () => {
+    console.log('More Filters Icon Clicked');
+  };
+  
   return (
     <div style={{
       // padding: '8px',
@@ -15,11 +21,15 @@ const SearchFilters = () => {
       <div
         style={{
           display: 'flex',
-          justifyContent: 'space-between',
+          gap: '6px',
           alignItems: 'center',
           marginBottom: '8px',
         }}
       >
+        <IconButton onClick={handleMoreFiltersIcon} aria-label="Query">
+          <MoreVertIcon />
+        </IconButton>
+
         <Button
           style={{
             padding: '8px 8px',
