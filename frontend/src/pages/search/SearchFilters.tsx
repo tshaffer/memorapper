@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
+import { Box, Button, IconButton, Switch, Tooltip, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CheckIcon from '@mui/icons-material/Check';
 import { useEffect, useRef, useState } from 'react';
@@ -196,17 +196,21 @@ const SearchFilters = () => {
           Not Sure
         </label>
       </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px' }}>
-        <Button
-          onClick={() => {
-            setWouldReturnFilters(initialWouldReturnFilter);
-            setWouldReturnDropdownVisible(false);
-          }}
-          variant="text"
-          color="error"
-        >
-          Disable
-        </Button>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px' }}>
+        <Box>
+          <Typography variant="body2" sx={{ display: 'inline', marginRight: '8px' }}>
+            Enable
+          </Typography>
+          <Switch
+            checked={wouldReturnFilters.enabled}
+            onChange={() =>
+              setWouldReturnFilters((prev) => ({
+                ...prev,
+                enabled: !prev.enabled,
+              }))
+            }
+          />
+        </Box>
         <Button onClick={() => setWouldReturnDropdownVisible(false)} variant="contained">
           Close
         </Button>
