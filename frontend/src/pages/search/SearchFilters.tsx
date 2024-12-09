@@ -1,5 +1,6 @@
 import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import CheckIcon from '@mui/icons-material/Check';
 import { useEffect, useRef, useState } from 'react';
 
 const filterButtonStyle: React.CSSProperties = {
@@ -11,11 +12,12 @@ const filterButtonStyle: React.CSSProperties = {
   cursor: 'pointer',
 };
 
-
 const SearchFilters = () => {
 
   const [sortDropdownVisible, setSortDropdownVisible] = useState(false);
   const [sortCriteria, setSortCriteria] = useState<'name' | 'distance' | 'reviewer' | 'recentReview'>('name');
+  const [isOpenNowSelected, setIsOpenNowSelected] = useState(false); // Tracks "Open Now" toggle state
+
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const handleMoreFiltersIcon = () => {
@@ -24,6 +26,10 @@ const SearchFilters = () => {
 
   const handleSortButtonClick = () => {
     setSortDropdownVisible((prev) => !prev); // Toggle visibility of the dropdown
+  };
+
+  const handleOpenNowClick = () => {
+    setIsOpenNowSelected((prev) => !prev); // Toggle "Open Now" state
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -64,19 +70,15 @@ const SearchFilters = () => {
         ref={dropdownRef}
         sx={{
           position: 'relative',
-          // top: '-55px',
           left: '48px',
           background: '#fff',
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
           borderRadius: '8px',
           zIndex: 10,
           padding: '10px',
-          display: 'flex', // Prevents stretching to full width
-          width: '200px', // Explicit width for the dropdown
-          maxWidth: '90%', // Prevent it from exceeding the viewport on small screens
-          // display: 'flex',
-          // alignItems: 'center',
-          // gap: 2,
+          display: 'flex',
+          width: '200px',
+          maxWidth: '90%',
         }}
       >
         <Typography variant="subtitle1">Sort by:</Typography>
@@ -102,7 +104,6 @@ const SearchFilters = () => {
 
   return (
     <div style={{
-      // padding: '8px',
       paddingTop: '8px',
       paddingBottom: '4px',
       paddingLeft: '8px',
@@ -131,12 +132,12 @@ const SearchFilters = () => {
         >
           Sort ▼
         </Button>
-
         <Button
           style={filterButtonStyle}
+          onClick={handleOpenNowClick}
         >
-          Open Now
-        </Button>
+          Open Now {isOpenNowSelected && <CheckIcon style={{ marginLeft: '4px' }} />}
+          </Button>
         <Button
           style={filterButtonStyle}
         >
