@@ -1,12 +1,66 @@
-import { Button, IconButton } from '@mui/material';
+import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { useState } from 'react';
+
+const filterButtonStyle: React.CSSProperties = {
+  padding: '8px 8px',
+  background: '#f8f8f8',
+  border: '1px solid #ccc',
+  borderRadius: '20px',
+  fontSize: '14px',
+  cursor: 'pointer',
+};
+
 
 const SearchFilters = () => {
+
+  const [sortDropdownVisible, setSortDropdownVisible] = useState(false);
+  const [sortCriteria, setSortCriteria] = useState<'name' | 'distance' | 'reviewer' | 'recentReview'>('name');
 
   const handleMoreFiltersIcon = () => {
     console.log('More Filters Icon Clicked');
   };
-  
+
+  const handleSortButtonClick = () => {
+    setSortDropdownVisible((prev) => !prev); // Toggle visibility of the dropdown
+  };
+
+  const renderSortDropdown = (): JSX.Element => {
+    return (
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '40px',
+          left: '0',
+          background: '#fff',
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+          borderRadius: '8px',
+          zIndex: 10,
+          padding: 2,
+        }}
+      >
+        <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+          Sort by:
+        </Typography>
+        <select
+          value={sortCriteria}
+          onChange={(e) => setSortCriteria(e.target.value as 'name' | 'distance' | 'reviewer' | 'recentReview')}
+          style={{
+            padding: '8px',
+            borderRadius: '4px',
+            border: '1px solid #ccc',
+            width: '100%',
+          }}
+        >
+          <option value="name">Place Name</option>
+          <option value="distance">Distance</option>
+          <option value="reviewer">Reviewer</option>
+          <option value="recentReview">Most Recent Review</option>
+        </select>
+      </Box>
+    );
+  };
+
   return (
     <div style={{
       // padding: '8px',
@@ -14,8 +68,6 @@ const SearchFilters = () => {
       paddingBottom: '4px',
       paddingLeft: '8px',
       paddingRight: '8px',
-      // background: '#fff',
-      // boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)'
     }}>
       {/* Row of Filter Buttons */}
       <div
@@ -26,43 +78,38 @@ const SearchFilters = () => {
           marginBottom: '8px',
         }}
       >
-        <IconButton onClick={handleMoreFiltersIcon} aria-label="Query">
-          <MoreVertIcon />
-        </IconButton>
+        <Tooltip title="More Filters">
+          <IconButton
+            style={filterButtonStyle}
+            onClick={handleMoreFiltersIcon}
+          >
+            <MoreVertIcon />
+          </IconButton>
+        </Tooltip>
+        <Button
+          style={{
+            padding: '8px 16px',
+            background: '#f8f8f8',
+            border: '1px solid #ccc',
+            borderRadius: '20px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            position: 'relative',
+          }}
+          onClick={handleSortButtonClick}
+        >
+          Sort ▼
+        </Button>
+
+        {sortDropdownVisible && renderSortDropdown()}
 
         <Button
-          style={{
-            padding: '8px 8px',
-            background: '#f8f8f8',
-            border: '1px solid #ccc',
-            borderRadius: '20px',
-            fontSize: '14px',
-            cursor: 'pointer',
-          }}
-        >
-          Sort
-        </Button>
-        <Button
-          style={{
-            padding: '8px 8px',
-            background: '#f8f8f8',
-            border: '1px solid #ccc',
-            borderRadius: '20px',
-            fontSize: '14px',
-            cursor: 'pointer',
-          }}
+          style={filterButtonStyle}
         >
           Open Now
         </Button>
         <Button
-          style={{
-            padding: '8px 8px',
-            background: '#f8f8f8',
-            border: '1px solid #ccc',
-            borderRadius: '20px',
-            fontSize: '14px',
-            cursor: 'pointer',
-          }}
+          style={filterButtonStyle}
         >
           Price
         </Button>
