@@ -15,7 +15,7 @@ const filterButtonStyle: React.CSSProperties = {
 const SearchFilters = () => {
 
   const [sortDropdownVisible, setSortDropdownVisible] = useState(false);
-  const [sortCriteria, setSortCriteria] = useState<'name' | 'distance' | 'reviewer' | 'recentReview'>('name');
+  const [sortCriteria, setSortCriteria] = useState<'name' | 'distance' | 'reviewer' | 'most recent review'>('distance');
   const [isOpenNowSelected, setIsOpenNowSelected] = useState(false); // Tracks "Open Now" toggle state
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -33,7 +33,7 @@ const SearchFilters = () => {
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSortCriteria(e.target.value as 'name' | 'distance' | 'reviewer' | 'recentReview');
+    setSortCriteria(e.target.value as 'name' | 'distance' | 'reviewer' | 'most recent review');
     setSortDropdownVisible(false); // Close dropdown after selection
   };
 
@@ -77,7 +77,7 @@ const SearchFilters = () => {
           zIndex: 10,
           padding: '10px',
           display: 'flex',
-          width: '200px',
+          width: '280px',
           maxWidth: '90%',
         }}
       >
@@ -90,13 +90,13 @@ const SearchFilters = () => {
             padding: '8px',
             borderRadius: '4px',
             border: '1px solid #ccc',
-            width: '120px',
+            width: '200px',
           }}
         >
-          <option value="name">Place Name</option>
           <option value="distance">Distance</option>
+          <option value="name">Name</option>
+          <option value="most recent review">Most Recent Review</option>
           <option value="reviewer">Reviewer</option>
-          <option value="recentReview">Most Recent Review</option>
         </select>
       </Box>
     );
@@ -130,7 +130,7 @@ const SearchFilters = () => {
           style={filterButtonStyle}
           onClick={handleSortButtonClick}
         >
-          Sort ▼
+          Sort: {sortCriteria} ▼
         </Button>
         <Button
           style={filterButtonStyle}
