@@ -13,23 +13,35 @@ const filterButtonStyle: React.CSSProperties = {
 };
 
 const SearchFilters = () => {
-
   const [sortDropdownVisible, setSortDropdownVisible] = useState(false);
+  const [wouldReturnDropdownVisible, setWouldReturnDropdownVisible] = useState(false);
   const [sortCriteria, setSortCriteria] = useState<'name' | 'distance' | 'reviewer' | 'most recent review'>('distance');
   const [isOpenNowSelected, setIsOpenNowSelected] = useState(false); // Tracks "Open Now" toggle state
+  const [wouldReturnFilters, setWouldReturnFilters] = useState({
+    yes: false,
+    no: false,
+    notSure: false,
+  });
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const wouldReturnDropdownRef = useRef<HTMLDivElement | null>(null);
 
   const handleMoreFiltersIcon = () => {
     console.log('More Filters Icon Clicked');
   };
 
   const handleSortButtonClick = () => {
-    setSortDropdownVisible((prev) => !prev); // Toggle visibility of the dropdown
+    setSortDropdownVisible((prev) => !prev); // Toggle visibility of the sort dropdown
+    setWouldReturnDropdownVisible(false); // Close "Would Return" dropdown if open
   };
 
   const handleOpenNowClick = () => {
     setIsOpenNowSelected((prev) => !prev); // Toggle "Open Now" state
+  };
+
+  const handleWouldReturnClick = () => {
+    setWouldReturnDropdownVisible((prev) => !prev); // Toggle "Would Return" dropdown
+    setSortDropdownVisible(false); // Close sort dropdown if open
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -41,16 +53,20 @@ const SearchFilters = () => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
       setSortDropdownVisible(false);
     }
+    if (wouldReturnDropdownRef.current && !wouldReturnDropdownRef.current.contains(event.target as Node)) {
+      setWouldReturnDropdownVisible(false);
+    }
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
       setSortDropdownVisible(false);
+      setWouldReturnDropdownVisible(false);
     }
   };
 
   useEffect(() => {
-    if (sortDropdownVisible) {
+    if (sortDropdownVisible || wouldReturnDropdownVisible) {
       document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('keydown', handleKeyDown);
     } else {
@@ -62,7 +78,7 @@ const SearchFilters = () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [sortDropdownVisible]);
+  }, [sortDropdownVisible, wouldReturnDropdownVisible]);
 
   const renderSortDropdown = (): JSX.Element => {
     return (
@@ -102,13 +118,70 @@ const SearchFilters = () => {
     );
   };
 
+  const renderWouldReturnDropdown = (): JSX.Element => {
+    return (
+      <Box
+        ref={wouldReturnDropdownRef}
+        sx={{
+          position: 'relative',
+          left: '48px',
+          background: '#fff',
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+          borderRadius: '8px',
+          zIndex: 10,
+          padding: '10px',
+          width: '280px',
+          maxWidth: '90%',
+        }}
+      >
+        <Typography variant="subtitle1" sx={{ marginBottom: '8px' }}>
+          Would Return
+        </Typography>
+        <Box>
+          <label>
+            <input
+              type="checkbox"
+              checked={wouldReturnFilters.yes}
+              onChange={() =>
+                setWouldReturnFilters((prev) => ({ ...prev, yes: !prev.yes }))
+              }
+            />
+            Yes
+          </label>
+        </Box>
+        <Box>
+          <label>
+            <input
+              type="checkbox"
+              checked={wouldReturnFilters.no}
+              onChange={() =>
+                setWouldReturnFilters((prev) => ({ ...prev, no: !prev.no }))
+              }
+            />
+            No
+          </label>
+        </Box>
+        <Box>
+          <label>
+            <input
+              type="checkbox"
+              checked={wouldReturnFilters.notSure}
+              onChange={() =>
+                setWouldReturnFilters((prev) => ({
+                  ...prev,
+                  notSure: !prev.notSure,
+                }))
+              }
+            />
+            Not Sure
+          </label>
+        </Box>
+      </Box>
+    );
+  };
+
   return (
-    <div style={{
-      paddingTop: '8px',
-      paddingBottom: '4px',
-      paddingLeft: '8px',
-      paddingRight: '8px',
-    }}>
+    <div style={{ paddingTop: '8px', paddingBottom: '4px', paddingLeft: '8px', paddingRight: '8px' }}>
       {/* Row of Filter Buttons */}
       <div
         style={{
@@ -119,34 +192,22 @@ const SearchFilters = () => {
         }}
       >
         <Tooltip title="More Filters">
-          <IconButton
-            style={filterButtonStyle}
-            onClick={handleMoreFiltersIcon}
-          >
+          <IconButton style={filterButtonStyle} onClick={handleMoreFiltersIcon}>
             <MoreVertIcon />
           </IconButton>
         </Tooltip>
-        <Button
-          style={filterButtonStyle}
-          onClick={handleSortButtonClick}
-        >
+        <Button style={filterButtonStyle} onClick={handleSortButtonClick}>
           Sort: {sortCriteria} ▼
         </Button>
-        <Button
-          style={filterButtonStyle}
-          onClick={handleOpenNowClick}
-        >
+        <Button style={filterButtonStyle} onClick={handleOpenNowClick}>
           Open Now {isOpenNowSelected && <CheckIcon style={{ marginLeft: '4px' }} />}
-          </Button>
-        <Button
-          style={filterButtonStyle}
-        >
-          Price
+        </Button>
+        <Button style={filterButtonStyle} onClick={handleWouldReturnClick}>
+          Would Return ▼
         </Button>
       </div>
-
       {sortDropdownVisible && renderSortDropdown()}
-
+      {wouldReturnDropdownVisible && renderWouldReturnDropdown()}
     </div>
   );
 };
