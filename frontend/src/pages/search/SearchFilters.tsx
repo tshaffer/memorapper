@@ -61,7 +61,7 @@ const SearchFilters = () => {
   const renderSortDropdown = (): JSX.Element => {
     return (
       <Box
-      ref={dropdownRef}
+        ref={dropdownRef}
         sx={{
           position: 'relative',
           top: '0px',
@@ -70,10 +70,13 @@ const SearchFilters = () => {
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
           borderRadius: '8px',
           zIndex: 10,
-          padding: 2,
+          padding: '10px',
+          display: 'flex',
+          alignItems: 'center', // Aligns content vertically in the center
+          gap: 2, // Adds spacing between label and select
         }}
       >
-        <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+        <Typography variant="subtitle1">
           Sort by:
         </Typography>
         <select
@@ -83,7 +86,7 @@ const SearchFilters = () => {
             padding: '8px',
             borderRadius: '4px',
             border: '1px solid #ccc',
-            width: '100%',
+            width: '120px', // Set a fixed width for the select dropdown
           }}
         >
           <option value="name">Place Name</option>
