@@ -64,29 +64,31 @@ const SearchFilters = () => {
         ref={dropdownRef}
         sx={{
           position: 'relative',
-          top: '0px',
-          left: '-76px',
+          // top: '-55px',
+          left: '48px',
           background: '#fff',
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
           borderRadius: '8px',
           zIndex: 10,
           padding: '10px',
-          display: 'flex',
-          alignItems: 'center', // Aligns content vertically in the center
-          gap: 2, // Adds spacing between label and select
+          display: 'flex', // Prevents stretching to full width
+          width: '200px', // Explicit width for the dropdown
+          maxWidth: '90%', // Prevent it from exceeding the viewport on small screens
+          // display: 'flex',
+          // alignItems: 'center',
+          // gap: 2,
         }}
       >
-        <Typography variant="subtitle1">
-          Sort by:
-        </Typography>
+        <Typography variant="subtitle1">Sort by:</Typography>
         <select
           value={sortCriteria}
           onChange={handleSortChange}
           style={{
+            marginLeft: '8px',
             padding: '8px',
             borderRadius: '4px',
             border: '1px solid #ccc',
-            width: '120px', // Set a fixed width for the select dropdown
+            width: '120px',
           }}
         >
           <option value="name">Place Name</option>
@@ -130,8 +132,6 @@ const SearchFilters = () => {
           Sort ▼
         </Button>
 
-        {sortDropdownVisible && renderSortDropdown()}
-
         <Button
           style={filterButtonStyle}
         >
@@ -143,6 +143,8 @@ const SearchFilters = () => {
           Price
         </Button>
       </div>
+
+      {sortDropdownVisible && renderSortDropdown()}
 
     </div>
   );
