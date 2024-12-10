@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { DraggableCore, DraggableEventHandler } from 'react-draggable';
 
-import { ExtendedGooglePlace, GooglePlace, MemoRappReview } from '../../types';
+import { ExtendedGooglePlace, GooglePlace, MemoRappReview, SearchUIFilters } from '../../types';
 
 import PulsingDots from '../../components/PulsingDots';
 
@@ -117,6 +117,10 @@ const Search: React.FC = () => {
 
   }
 
+  const handleExecuteFilter = (filter: SearchUIFilters): void => {
+    console.log('handleExecuteFilter:', filter);
+  }
+
   const renderPulsingDots = (): JSX.Element | null => {
     if (!isLoading) {
       return null;
@@ -187,6 +191,7 @@ const Search: React.FC = () => {
         {/* Filters */}
         <SearchFilters
           onExecuteQuery={(query: string) => handleExecuteQuery(query)}
+          onExecuteFilter={(filter: SearchUIFilters) => handleExecuteFilter(filter)}
         />
 
         {renderPulsingDots()}

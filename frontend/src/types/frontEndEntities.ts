@@ -1,5 +1,5 @@
 import { ItemReview, MemoRappReview } from "./entities";
-import { WouldReturn } from "./enums";
+import { SearchDistanceFilter, WouldReturn } from "./enums";
 import { GooglePlace } from "./googlePlace";
 
 export interface EditableReview {
@@ -42,4 +42,10 @@ export interface ReviewUIFilters {
   distanceFilter: DistanceFilter;
   wouldReturnFilter: WouldReturnFilter;
   itemsOrderedFilter: ItemsOrderedFilter;
+}
+
+export interface SearchUIFilters {
+  distanceAwayFilter: SearchDistanceFilter;
+  openNowFilter: boolean;
+  wouldReturnFilter: WouldReturnFilter;
 }

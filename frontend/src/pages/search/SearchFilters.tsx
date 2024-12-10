@@ -3,7 +3,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CheckIcon from '@mui/icons-material/Check';
 import { useEffect, useRef, useState } from 'react';
 
-import { SearchDistanceFilter } from '../../types';
+import { DistanceFilter, SearchDistanceFilter, SearchUIFilters } from '../../types';
 const filterButtonStyle: React.CSSProperties = {
   padding: '8px 8px',
   background: '#f8f8f8',
@@ -22,6 +22,8 @@ interface WouldReturnFilter {
   };
 }
 
+const initialDistanceAwayFilter: SearchDistanceFilter = SearchDistanceFilter.FiveMiles;
+const initialIsOpenNowFilterEnabled: boolean = false;
 const initialWouldReturnFilter: WouldReturnFilter = {
   enabled: false,
   values: {
@@ -33,6 +35,7 @@ const initialWouldReturnFilter: WouldReturnFilter = {
 
 interface SearchFiltersProps {
   onExecuteQuery: (query: string) => void;
+  onExecuteFilter: (filter: SearchUIFilters) => void;
 }
 
 const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) => {
@@ -40,8 +43,10 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
   const [distanceAwayDropdownVisible, setDistanceAwayDropdownVisible] = useState(false);
   const [wouldReturnDropdownVisible, setWouldReturnDropdownVisible] = useState(false);
   const [sortCriteria, setSortCriteria] = useState<'name' | 'distance' | 'reviewer' | 'most recent review'>('distance');
-  const [isOpenNowSelected, setIsOpenNowSelected] = useState(false);
+
+  const [distanceAwayFilter, setDistanceAwayFilter] = useState<number>(initialDistanceAwayFilter);
   const [wouldReturnFilter, setWouldReturnFilter] = useState<WouldReturnFilter>(initialWouldReturnFilter);
+  const [isOpenNowFilterEnabled, setIsOpenNowFilterEnabled] = useState(initialIsOpenNowFilterEnabled);
 
   const [query, setQuery] = useState('');
   const [executedQuery, setExecutedQuery] = useState<string | null>(null); // Stores the executed query
@@ -50,7 +55,17 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
   const distanceDropdownRef = useRef<HTMLDivElement | null>(null);
   const wouldReturnDropdownRef = useRef<HTMLDivElement | null>(null);
 
-  const [distanceAway, setDistanceAway] = useState<number>(SearchDistanceFilter.FiveMiles);
+  const invokeExecuteFilter = (
+    distanceAwayFilter: SearchDistanceFilter,
+    openNowFilter: boolean,
+    wouldReturnFilter: WouldReturnFilter) => {
+    const filter: SearchUIFilters = {
+      distanceAwayFilter,
+      openNowFilter,
+      wouldReturnFilter,
+    };
+    props.onExecuteFilter(filter);
+  }
 
   const handleMoreFiltersIcon = () => {
     console.log('More Filters Icon Clicked');
@@ -68,13 +83,6 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
     setWouldReturnDropdownVisible(false);
   }
 
-  const handleOpenNowClick = () => {
-    setSortDropdownVisible(false);
-    setDistanceAwayDropdownVisible(false);
-    setWouldReturnDropdownVisible(false);
-    setIsOpenNowSelected((prev) => !prev);
-  };
-
   const handleWouldReturnClick = () => {
     setWouldReturnDropdownVisible((prev) => !prev);
     setSortDropdownVisible(false);
@@ -89,10 +97,36 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
   const handleDistanceAwayChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     console.log('handleDistanceAwayChange', e.target.value);
     console.log(e.target.value as unknown as SearchDistanceFilter);
-    console.log(typeof(e.target.value));
-    setDistanceAway(Number(e.target.value as unknown as SearchDistanceFilter));
+    console.log(typeof (e.target.value));
+    const distanceAwayFilter = Number(e.target.value as unknown as SearchDistanceFilter);
+    setDistanceAwayFilter(distanceAwayFilter);
     setDistanceAwayDropdownVisible(false);
+    invokeExecuteFilter(distanceAwayFilter, isOpenNowFilterEnabled, wouldReturnFilter);
   };
+
+  const handleOpenNowClick = () => {
+    setSortDropdownVisible(false);
+    setDistanceAwayDropdownVisible(false);
+    setWouldReturnDropdownVisible(false);
+    const newOpenNowFilterEnabled = !isOpenNowFilterEnabled;  
+    setIsOpenNowFilterEnabled(newOpenNowFilterEnabled);
+    invokeExecuteFilter(distanceAwayFilter, newOpenNowFilterEnabled, wouldReturnFilter);
+  };
+
+  const handleWouldReturnChange = (updatedValues: any) => {
+    console.log('handleWouldReturnChange, on entry wouldReturnFilter:', wouldReturnFilter);
+    console.log('handleWouldReturnChange updatedValues: ', updatedValues);
+    const values = { ...wouldReturnFilter.values, ...updatedValues };
+    console.log('handleWouldReturnChange values: ', values);
+    const newWouldReturnFilter = {
+      ...wouldReturnFilter,
+      values,
+    };
+    console.log('newWouldReturnFilter:', newWouldReturnFilter);
+    setWouldReturnFilter(newWouldReturnFilter);
+    console.log('handleWouldReturnChange, after update wouldReturnFilter:', wouldReturnFilter);
+    invokeExecuteFilter(distanceAwayFilter, isOpenNowFilterEnabled, newWouldReturnFilter);
+  }
 
   const handleQueryExecute = () => {
     setExecutedQuery(query);
@@ -211,7 +245,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
     >
       <Typography variant="subtitle1">Distance away:</Typography>
       <select
-        value={distanceAway}
+        value={distanceAwayFilter}
         onChange={handleDistanceAwayChange}
         style={{
           marginLeft: '8px',
@@ -255,11 +289,12 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
             checked={wouldReturnFilter.values.yes}
             disabled={!wouldReturnFilter.enabled}
             onChange={() =>
-              setWouldReturnFilter((prev) => ({
-                ...prev,
-                values: { ...prev.values, yes: !prev.values.yes },
-                enabled: !prev.values.yes || prev.values.no || prev.values.notSure,
-              }))
+              handleWouldReturnChange({ yes: !wouldReturnFilter.values.yes })
+              // setWouldReturnFilter((prev) => ({
+              //   ...prev,
+              //   values: { ...prev.values, yes: !prev.values.yes },
+              //   enabled: !prev.values.yes || prev.values.no || prev.values.notSure,
+              // }))
             }
           />
           Yes
@@ -272,11 +307,12 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
             checked={wouldReturnFilter.values.no}
             disabled={!wouldReturnFilter.enabled}
             onChange={() =>
-              setWouldReturnFilter((prev) => ({
-                ...prev,
-                values: { ...prev.values, no: !prev.values.no },
-                enabled: prev.values.yes || !prev.values.no || prev.values.notSure,
-              }))
+              handleWouldReturnChange({ no: !wouldReturnFilter.values.no })
+              // setWouldReturnFilter((prev) => ({
+              //   ...prev,
+              //   values: { ...prev.values, no: !prev.values.no },
+              //   enabled: prev.values.yes || !prev.values.no || prev.values.notSure,
+              // }))
             }
           />
           No
@@ -289,11 +325,12 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
             checked={wouldReturnFilter.values.notSure}
             disabled={!wouldReturnFilter.enabled}
             onChange={() =>
-              setWouldReturnFilter((prev) => ({
-                ...prev,
-                values: { ...prev.values, notSure: !prev.values.notSure },
-                enabled: prev.values.yes || prev.values.no || !prev.values.notSure,
-              }))
+              handleWouldReturnChange({ notSure: !wouldReturnFilter.values.notSure })
+              // setWouldReturnFilter((prev) => ({
+              //   ...prev,
+              //   values: { ...prev.values, notSure: !prev.values.notSure },
+              //   enabled: prev.values.yes || prev.values.no || !prev.values.notSure,
+              // }))
             }
           />
           Not Sure
@@ -320,7 +357,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
       </Box>
     </Box>
   );
-  
+
   return (
     <div style={{ paddingTop: '8px', paddingBottom: '4px', paddingLeft: '8px', paddingRight: '8px' }}>
       {/* Query Input */}
@@ -352,10 +389,10 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
           Sort: {sortCriteria} ▼
         </Button>
         <Button style={filterButtonStyle} onClick={handleDistanceClick}>
-          Distance Away: {getDistanceAwayLabelFromDistanceAway(distanceAway)} ▼
+          Distance Away: {getDistanceAwayLabelFromDistanceAway(distanceAwayFilter)} ▼
         </Button>
         <Button style={filterButtonStyle} onClick={handleOpenNowClick}>
-          Open Now {isOpenNowSelected && <CheckIcon style={{ marginLeft: '4px' }} />}
+          Open Now {isOpenNowFilterEnabled && <CheckIcon style={{ marginLeft: '4px' }} />}
         </Button>
         <Button
           style={filterButtonStyle}
