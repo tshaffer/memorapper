@@ -85,48 +85,6 @@ const Search: React.FC = () => {
     );
   }
 
-  const renderSearchAreaUIOld = (): JSX.Element => {
-    return (
-      <div
-        id='searchArea'
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 2,
-          background: '#fff',
-          padding: '16px',
-          boxShadow: '0px 2px 4px rgba(0,0,0,0.1)', // Optional shadow for a floating effect
-        }}
-      >
-        <input
-          type="text"
-          placeholder="Search area"
-          style={{
-            width: '100%',
-            padding: '8px',
-            marginBottom: '8px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-          }}
-        />
-        <button
-          onClick={() => console.log('Reset to Current Location')}
-          style={{
-            padding: '8px 16px',
-            background: '#007bff',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Current Location
-        </button>
-      </div>
-    );
-  }
   return (
     <div
       id='searchContainer'
