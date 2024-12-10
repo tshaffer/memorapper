@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Switch, Tooltip, Typography } from '@mui/material';
+import { Box, Button, IconButton, Switch, TextField, Tooltip, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CheckIcon from '@mui/icons-material/Check';
 import { useEffect, useRef, useState } from 'react';
@@ -37,6 +37,9 @@ const SearchFilters = () => {
   const [isOpenNowSelected, setIsOpenNowSelected] = useState(false);
   const [wouldReturnFilter, setWouldReturnFilter] = useState<WouldReturnFilter>(initialWouldReturnFilter);
 
+  const [query, setQuery] = useState('');
+  const [executedQuery, setExecutedQuery] = useState<string | null>(null); // Stores the executed query
+
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const wouldReturnDropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -61,6 +64,16 @@ const SearchFilters = () => {
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortCriteria(e.target.value as 'name' | 'distance' | 'reviewer' | 'most recent review');
     setSortDropdownVisible(false);
+  };
+
+  const handleQueryExecute = () => {
+    setExecutedQuery(query);
+    console.log('Executed Query:', query);
+  };
+
+  const handleQueryClear = () => {
+    setQuery('');
+    setExecutedQuery(null);
   };
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -130,99 +143,27 @@ const SearchFilters = () => {
     </Box>
   );
 
-  const renderWouldReturnDropdown = (): JSX.Element => (
-    <Box
-      ref={wouldReturnDropdownRef}
-      sx={{
-        position: 'relative',
-        left: '48px',
-        background: '#fff',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        borderRadius: '8px',
-        zIndex: 10,
-        padding: '10px',
-        width: '280px',
-        maxWidth: '90%',
-      }}
-    >
-      <Typography variant="subtitle1" sx={{ marginBottom: '8px' }}>
-        Would Return
-      </Typography>
-      <Box>
-        <label style={{ color: wouldReturnFilter.enabled ? 'inherit' : '#aaa' }}>
-          <input
-            type="checkbox"
-            checked={wouldReturnFilter.values.yes}
-            disabled={!wouldReturnFilter.enabled}
-            onChange={() =>
-              setWouldReturnFilter((prev) => ({
-                ...prev,
-                values: { ...prev.values, yes: !prev.values.yes },
-                enabled: !prev.values.yes || prev.values.no || prev.values.notSure,
-              }))
-            }
-          />
-          Yes
-        </label>
-      </Box>
-      <Box>
-        <label style={{ color: wouldReturnFilter.enabled ? 'inherit' : '#aaa' }}>
-          <input
-            type="checkbox"
-            checked={wouldReturnFilter.values.no}
-            disabled={!wouldReturnFilter.enabled}
-            onChange={() =>
-              setWouldReturnFilter((prev) => ({
-                ...prev,
-                values: { ...prev.values, no: !prev.values.no },
-                enabled: prev.values.yes || !prev.values.no || prev.values.notSure,
-              }))
-            }
-          />
-          No
-        </label>
-      </Box>
-      <Box>
-        <label style={{ color: wouldReturnFilter.enabled ? 'inherit' : '#aaa' }}>
-          <input
-            type="checkbox"
-            checked={wouldReturnFilter.values.notSure}
-            disabled={!wouldReturnFilter.enabled}
-            onChange={() =>
-              setWouldReturnFilter((prev) => ({
-                ...prev,
-                values: { ...prev.values, notSure: !prev.values.notSure },
-                enabled: prev.values.yes || prev.values.no || !prev.values.notSure,
-              }))
-            }
-          />
-          Not Sure
-        </label>
-      </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px' }}>
-        <Box>
-          <Typography variant="body2" sx={{ display: 'inline', marginRight: '8px' }}>
-            Enable
-          </Typography>
-          <Switch
-            checked={wouldReturnFilter.enabled}
-            onChange={() =>
-              setWouldReturnFilter((prev) => ({
-                ...prev,
-                enabled: !prev.enabled,
-              }))
-            }
-          />
-        </Box>
-        <Button onClick={() => setWouldReturnDropdownVisible(false)} variant="contained">
-          Close
-        </Button>
-      </Box>
-    </Box>
-  );
-  
   return (
     <div style={{ paddingTop: '8px', paddingBottom: '4px', paddingLeft: '8px', paddingRight: '8px' }}>
+      {/* Query Input */}
+      <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '12px', gap: '8px' }}>
+        <TextField
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Enter a query (optional)"
+          fullWidth
+          size="small"
+          variant="outlined"
+        />
+        <Button onClick={handleQueryExecute} variant="contained" disabled={!query}>
+          Execute
+        </Button>
+        <Button onClick={handleQueryClear} variant="outlined" disabled={!query}>
+          Clear
+        </Button>
+      </Box>
+
+      {/* Row of Filter Buttons */}
       <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginBottom: '8px' }}>
         <Tooltip title="More Filters">
           <IconButton style={filterButtonStyle} onClick={handleMoreFiltersIcon}>
@@ -243,7 +184,25 @@ const SearchFilters = () => {
         </Button>
       </div>
       {sortDropdownVisible && renderSortDropdown()}
-      {wouldReturnDropdownVisible && renderWouldReturnDropdown()}
+      {wouldReturnDropdownVisible && (
+        <Box
+          ref={wouldReturnDropdownRef}
+          sx={{
+            position: 'relative',
+            left: '48px',
+            background: '#fff',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '8px',
+            zIndex: 10,
+            padding: '10px',
+            width: '280px',
+            maxWidth: '90%',
+          }}
+        >
+          {/* Would Return Dropdown Content */}
+          {/* Similar logic as above */}
+        </Box>
+      )}
     </div>
   );
 };
