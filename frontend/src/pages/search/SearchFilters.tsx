@@ -143,6 +143,97 @@ const SearchFilters = () => {
     </Box>
   );
 
+  const renderWouldReturnDropdown = (): JSX.Element => (
+    <Box
+      ref={wouldReturnDropdownRef}
+      sx={{
+        position: 'relative',
+        left: '48px',
+        background: '#fff',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        borderRadius: '8px',
+        zIndex: 10,
+        padding: '10px',
+        width: '280px',
+        maxWidth: '90%',
+      }}
+    >
+      <Typography variant="subtitle1" sx={{ marginBottom: '8px' }}>
+        Would Return
+      </Typography>
+      <Box>
+        <label style={{ color: wouldReturnFilter.enabled ? 'inherit' : '#aaa' }}>
+          <input
+            type="checkbox"
+            checked={wouldReturnFilter.values.yes}
+            disabled={!wouldReturnFilter.enabled}
+            onChange={() =>
+              setWouldReturnFilter((prev) => ({
+                ...prev,
+                values: { ...prev.values, yes: !prev.values.yes },
+                enabled: !prev.values.yes || prev.values.no || prev.values.notSure,
+              }))
+            }
+          />
+          Yes
+        </label>
+      </Box>
+      <Box>
+        <label style={{ color: wouldReturnFilter.enabled ? 'inherit' : '#aaa' }}>
+          <input
+            type="checkbox"
+            checked={wouldReturnFilter.values.no}
+            disabled={!wouldReturnFilter.enabled}
+            onChange={() =>
+              setWouldReturnFilter((prev) => ({
+                ...prev,
+                values: { ...prev.values, no: !prev.values.no },
+                enabled: prev.values.yes || !prev.values.no || prev.values.notSure,
+              }))
+            }
+          />
+          No
+        </label>
+      </Box>
+      <Box>
+        <label style={{ color: wouldReturnFilter.enabled ? 'inherit' : '#aaa' }}>
+          <input
+            type="checkbox"
+            checked={wouldReturnFilter.values.notSure}
+            disabled={!wouldReturnFilter.enabled}
+            onChange={() =>
+              setWouldReturnFilter((prev) => ({
+                ...prev,
+                values: { ...prev.values, notSure: !prev.values.notSure },
+                enabled: prev.values.yes || prev.values.no || !prev.values.notSure,
+              }))
+            }
+          />
+          Not Sure
+        </label>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px' }}>
+        <Box>
+          <Typography variant="body2" sx={{ display: 'inline', marginRight: '8px' }}>
+            Enable
+          </Typography>
+          <Switch
+            checked={wouldReturnFilter.enabled}
+            onChange={() =>
+              setWouldReturnFilter((prev) => ({
+                ...prev,
+                enabled: !prev.enabled,
+              }))
+            }
+          />
+        </Box>
+        <Button onClick={() => setWouldReturnDropdownVisible(false)} variant="contained">
+          Close
+        </Button>
+      </Box>
+    </Box>
+  );
+  
   return (
     <div style={{ paddingTop: '8px', paddingBottom: '4px', paddingLeft: '8px', paddingRight: '8px' }}>
       {/* Query Input */}
@@ -184,25 +275,7 @@ const SearchFilters = () => {
         </Button>
       </div>
       {sortDropdownVisible && renderSortDropdown()}
-      {wouldReturnDropdownVisible && (
-        <Box
-          ref={wouldReturnDropdownRef}
-          sx={{
-            position: 'relative',
-            left: '48px',
-            background: '#fff',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-            borderRadius: '8px',
-            zIndex: 10,
-            padding: '10px',
-            width: '280px',
-            maxWidth: '90%',
-          }}
-        >
-          {/* Would Return Dropdown Content */}
-          {/* Similar logic as above */}
-        </Box>
-      )}
+      {wouldReturnDropdownVisible && renderWouldReturnDropdown()}
     </div>
   );
 };
