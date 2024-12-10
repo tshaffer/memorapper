@@ -80,3 +80,7 @@ export interface ParsedQuery {
   queryParameters: QueryParameters;
 }
 
+export interface SearchResponse {
+  places: GooglePlace[];
+  reviews: MemoRappReview[];
+}

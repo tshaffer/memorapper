@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { IMongoPlace, IReview } from "../models";
 import MongoPlace from "../models/MongoPlace";
 import Review from "../models/Review";
-import { QueryResponse, GooglePlace, MemoRappReview, PlacesReviewsCollection, ParsedQuery, StructuredQueryParams, FilterResultsParams, FilterQueryParams, DistanceAwayQuery, WouldReturnQuery, WouldReturn, SearchDistanceFilter } from "../types";
+import { QueryResponse, GooglePlace, MemoRappReview, PlacesReviewsCollection, ParsedQuery, StructuredQueryParams, FilterResultsParams, FilterQueryParams, DistanceAwayQuery, WouldReturnQuery, WouldReturn, SearchDistanceFilter, SearchResponse } from "../types";
 import { convertMongoPlacesToGooglePlaces } from "../utilities";
 import { buildStructuredQueryParamsFromParsedQuery, parseQueryWithChatGPT, performHybridQuery, performNaturalLanguageQuery, performStructuredQuery } from './naturalLanguageQuery';
 import { getFilteredPlacesAndReviews } from './filterQuery';
@@ -95,22 +95,43 @@ export interface FilterResultsParams {
 const findMyStuff = async (
   filter: FilterResultsParams,
   places: GooglePlace[],
-  initialReviews: MemoRappReview[],
+  reviews: MemoRappReview[],
   mapLocation: google.maps.LatLngLiteral,
-): Promise<QueryResponse> => {
+): Promise<SearchResponse> => {
 
   const { distanceAwayFilter, openNowFilter, wouldReturnFilter }: FilterResultsParams = filter;
 
   // const distanceAwayFilterInMiles: number = getDistanceAwayFilterInMiles(distanceAwayFilter);
-  const filteredPlaces = places.filter((place: GooglePlace) => {
+  const filteredPlaces: GooglePlace[] = places.filter((place: GooglePlace) => {
     if (!place.geometry || !place.geometry.location) return false;
     const distanceInMiles = haversineDistance(mapLocation, place.geometry.location);
     return distanceInMiles <= distanceAwayFilter;
   });
 
-  console.log('filteredPlaces:', filteredPlaces);
+  // Extract the filtered place IDs for review filtering
+  const filteredPlaceIds = new Set(filteredPlaces.map((place) => place.place_id));
 
-  return { places: [], reviews: [] };
+  // Filter reviews based on filtered places and wouldReturnFilter
+  const filteredReviews = reviews.filter((review) => {
+    // Check if the review belongs to a filtered place
+    if (!filteredPlaceIds.has(review.place_id)) return false;
+
+    // Apply wouldReturnFilter if enabled
+    if (wouldReturnFilter.enabled) {
+      const wouldReturn: WouldReturn | null = review.structuredReviewProperties.wouldReturn;
+      if (!wouldReturn) return false;
+
+      return (
+        (wouldReturnFilter.values.yes && wouldReturn === WouldReturn.Yes) ||
+        (wouldReturnFilter.values.no && wouldReturn === WouldReturn.No) ||
+        (wouldReturnFilter.values.notSure && wouldReturn === WouldReturn.NotSure)
+      );
+    }
+
+    return true; // If wouldReturnFilter is not enabled, include the review
+  });
+
+  return { places: filteredPlaces, reviews: filteredReviews };
 
   // // Step 0: Initialize queries
   // let placeQuery: any = {};
