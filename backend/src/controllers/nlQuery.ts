@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { IMongoPlace, IReview } from "../models";
 import MongoPlace from "../models/MongoPlace";
 import Review from "../models/Review";
-import { QueryResponse, GooglePlace, MemoRappReview, PlacesReviewsCollection, ParsedQuery, StructuredQueryParams } from "../types";
+import { QueryResponse, GooglePlace, MemoRappReview, PlacesReviewsCollection, ParsedQuery, StructuredQueryParams, FilterResultsParams } from "../types";
 import { convertMongoPlacesToGooglePlaces } from "../utilities";
 import { buildStructuredQueryParamsFromParsedQuery, parseQueryWithChatGPT, performHybridQuery, performNaturalLanguageQuery, performStructuredQuery } from './naturalLanguageQuery';
 
@@ -67,3 +67,31 @@ export const nlQueryHandler = async (
 
   }
 }
+
+export const filterResultsHandler = async (
+  req: Request<{}, {}, { filter: FilterResultsParams }>,
+  res: Response
+): Promise<void> => {
+  const { filter } = req.body;
+  const { distanceAwayFilter, openNowFilter, wouldReturnFilter } = filter;
+  console.log('filterResultsHandler:', distanceAwayFilter, openNowFilter, wouldReturnFilter);
+
+  res.sendStatus(200);
+}
+
+
+export const filterResults = async (
+  queryParams: FilterResultsParams,
+  initialPlaces: IMongoPlace[],
+  initialReviews: IReview[]
+): Promise<QueryResponse> => {
+  try {
+    let places = initialPlaces;
+    let reviews = initialReviews;
+
+    return { places, reviews };
+  } catch (error) {
+    console.error('Error retrieving filtered places and reviews:', error);
+    throw new Error('Failed to retrieve filtered data.');
+  }
+};
