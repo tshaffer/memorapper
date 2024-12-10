@@ -97,7 +97,8 @@ const Search: React.FC = () => {
       const { places, reviews } = data;
       console.log('nl query results:', places, reviews);
 
-      // setPlaces(places);
+      setPlaces(places);
+      setReviews(reviews);
       // setFilteredPlaces(places);
       // setFilteredReviews(reviews);
     } catch (error) {
@@ -118,7 +119,7 @@ const Search: React.FC = () => {
   }
 
   const executeFilter = async (filter: SearchUIFilters): Promise<void> => {
-    const requestBody = { filter };
+    const requestBody = { filter, places, reviews, mapLocation };
 
     try {
       const apiResponse = await fetch('/api/reviews/filterResults', {
