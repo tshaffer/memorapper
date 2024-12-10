@@ -3,6 +3,8 @@ import { DraggableCore, DraggableEventHandler } from 'react-draggable';
 
 import { ExtendedGooglePlace, GooglePlace, MemoRappReview } from '../../types';
 
+import PulsingDots from '../../components/PulsingDots';
+
 import LocationAutocomplete from '../../components/LocationAutocomplete';
 import MapWithMarkers from '../../components/MapWIthMarkers';
 import SearchFilters from './SearchFilters';
@@ -15,6 +17,8 @@ const Search: React.FC = () => {
   const [places, setPlaces] = useState<GooglePlace[]>([]);
   const [reviews, setReviews] = useState<MemoRappReview[]>([]);
   const [containerHeight, setContainerHeight] = useState(window.innerHeight); // Full height of the viewport
+
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -78,6 +82,48 @@ const Search: React.FC = () => {
     setMapLocation(location);
   }
 
+  const executeQuery = async (query: string): Promise<void> => {
+    const requestBody = { query };
+
+    try {
+      const apiResponse = await fetch('/api/reviews/nlQuery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody),
+      });
+
+      const data: any = await apiResponse.json();
+      console.log('nlQuery:', data);
+      const { places, reviews } = data;
+      console.log('nl query results:', places, reviews);
+
+      // setPlaces(places);
+      // setFilteredPlaces(places);
+      // setFilteredReviews(reviews);
+    } catch (error) {
+      console.error('Error executing nl query:', error);
+    }
+  }
+
+  const handleExecuteQuery = async (query: string): Promise<void> => {
+
+    console.log('handleExecuteQuery:', query);
+
+    setIsLoading(true);
+
+    await executeQuery(query);
+
+    setIsLoading(false);
+
+  }
+
+  const renderPulsingDots = (): JSX.Element | null => {
+    if (!isLoading) {
+      return null;
+    }
+    return (<PulsingDots />);
+  };
+
   const renderSearchAreaUI = (): JSX.Element => {
     return (
       <LocationAutocomplete
@@ -139,7 +185,11 @@ const Search: React.FC = () => {
         }}
       >
         {/* Filters */}
-        <SearchFilters />
+        <SearchFilters
+          onExecuteQuery={(query: string) => handleExecuteQuery(query)}
+        />
+
+        {renderPulsingDots()}
 
         {/* List of Restaurants */}
         <div>Restaurant List (Add list items here)</div>

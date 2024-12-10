@@ -30,7 +30,11 @@ const initialWouldReturnFilter: WouldReturnFilter = {
   },
 };
 
-const SearchFilters = () => {
+interface SearchFiltersProps {
+  onExecuteQuery: (query: string) => void;
+}
+
+const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) => {
   const [sortDropdownVisible, setSortDropdownVisible] = useState(false);
   const [wouldReturnDropdownVisible, setWouldReturnDropdownVisible] = useState(false);
   const [sortCriteria, setSortCriteria] = useState<'name' | 'distance' | 'reviewer' | 'most recent review'>('distance');
@@ -68,6 +72,7 @@ const SearchFilters = () => {
 
   const handleQueryExecute = () => {
     setExecutedQuery(query);
+    props.onExecuteQuery(query);
     console.log('Executed Query:', query);
   };
 
