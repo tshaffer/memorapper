@@ -128,6 +128,15 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
     invokeExecuteFilter(distanceAwayFilter, isOpenNowFilterEnabled, newWouldReturnFilter);
   }
 
+  const handleWouldReturnToggleEnabled = () => {
+    const newWouldReturnFilter = {
+      ...wouldReturnFilter,
+      enabled: !wouldReturnFilter.enabled,
+    };
+    setWouldReturnFilter(newWouldReturnFilter);
+    invokeExecuteFilter(distanceAwayFilter, isOpenNowFilterEnabled, newWouldReturnFilter);
+  }
+
   const handleQueryExecute = () => {
     setExecutedQuery(query);
     props.onExecuteQuery(query);
@@ -290,11 +299,6 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
             disabled={!wouldReturnFilter.enabled}
             onChange={() =>
               handleWouldReturnChange({ yes: !wouldReturnFilter.values.yes })
-              // setWouldReturnFilter((prev) => ({
-              //   ...prev,
-              //   values: { ...prev.values, yes: !prev.values.yes },
-              //   enabled: !prev.values.yes || prev.values.no || prev.values.notSure,
-              // }))
             }
           />
           Yes
@@ -308,11 +312,6 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
             disabled={!wouldReturnFilter.enabled}
             onChange={() =>
               handleWouldReturnChange({ no: !wouldReturnFilter.values.no })
-              // setWouldReturnFilter((prev) => ({
-              //   ...prev,
-              //   values: { ...prev.values, no: !prev.values.no },
-              //   enabled: prev.values.yes || !prev.values.no || prev.values.notSure,
-              // }))
             }
           />
           No
@@ -326,11 +325,6 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
             disabled={!wouldReturnFilter.enabled}
             onChange={() =>
               handleWouldReturnChange({ notSure: !wouldReturnFilter.values.notSure })
-              // setWouldReturnFilter((prev) => ({
-              //   ...prev,
-              //   values: { ...prev.values, notSure: !prev.values.notSure },
-              //   enabled: prev.values.yes || prev.values.no || !prev.values.notSure,
-              // }))
             }
           />
           Not Sure
@@ -344,10 +338,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
           <Switch
             checked={wouldReturnFilter.enabled}
             onChange={() =>
-              setWouldReturnFilter((prev) => ({
-                ...prev,
-                enabled: !prev.enabled,
-              }))
+              handleWouldReturnToggleEnabled()
             }
           />
         </Box>
