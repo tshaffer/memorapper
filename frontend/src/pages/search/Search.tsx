@@ -8,14 +8,19 @@ import PulsingDots from '../../components/PulsingDots';
 import LocationAutocomplete from '../../components/LocationAutocomplete';
 import MapWithMarkers from '../../components/MapWIthMarkers';
 import SearchFilters from './SearchFilters';
+import RestaurantsTable from './RestaurantsTable';
 
 const Search: React.FC = () => {
   const [topHeight, setTopHeight] = useState(window.innerHeight * 0.4); // Initial height for the top div
   const [bottomHeight, setBottomHeight] = useState(window.innerHeight * 0.6); // Initial height for the bottom div
 
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
+
   const [places, setPlaces] = useState<GooglePlace[]>([]);
+  const [filteredPlaces, setFilteredPlaces] = useState<GooglePlace[]>([]);
   const [reviews, setReviews] = useState<MemoRappReview[]>([]);
+  const [filteredReviews, setFilteredReviews] = useState<MemoRappReview[]>([]);
+
   const [containerHeight, setContainerHeight] = useState(window.innerHeight); // Full height of the viewport
 
   const [isLoading, setIsLoading] = useState(false);
@@ -50,12 +55,14 @@ const Search: React.FC = () => {
       const response = await fetch('/api/places');
       const data = await response.json();
       setPlaces(data.googlePlaces);
+      setFilteredPlaces(data.googlePlaces);
     };
 
     const fetchReviews = async () => {
       const response = await fetch('/api/reviews');
       const data = await response.json();
       setReviews(data.memoRappReviews);
+      setFilteredReviews(data.memoRappReviews);
     };
 
     fetchCurrentLocation();
@@ -99,8 +106,8 @@ const Search: React.FC = () => {
 
       setPlaces(places);
       setReviews(reviews);
-      // setFilteredPlaces(places);
-      // setFilteredReviews(reviews);
+      setFilteredPlaces(places);
+      setFilteredReviews(reviews);
     } catch (error) {
       console.error('Error executing nl query:', error);
     }
@@ -133,9 +140,8 @@ const Search: React.FC = () => {
       const { places, reviews } = data;
       console.log('filter query results:', places, reviews);
 
-      // setPlaces(places);
-      // setFilteredPlaces(places);
-      // setFilteredReviews(reviews);
+      setFilteredPlaces(places);
+      setFilteredReviews(reviews);
     } catch (error) {
       console.error('Error executing filter query:', error);
     }
@@ -228,6 +234,10 @@ const Search: React.FC = () => {
 
         {/* List of Restaurants */}
         <div>Restaurant List (Add list items here)</div>
+        <RestaurantsTable
+          currentLocation={null}
+          filteredPlaces={filteredPlaces}
+        />
       </div>
     </div>
   );
