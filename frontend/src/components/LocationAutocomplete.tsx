@@ -2,7 +2,6 @@ import React from 'react';
 import { Autocomplete } from '@react-google-maps/api';
 import { Button, useMediaQuery } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
-import { GooglePlace } from '../types';
 import { useParams } from 'react-router-dom';
 
 interface LocationAutocompleteProps {
@@ -16,8 +15,6 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
   const isMobile = useMediaQuery('(max-width:768px)');
 
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
-  const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
-  const [places, setPlaces] = useState<GooglePlace[]>([]);
 
   const mapAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
@@ -41,31 +38,8 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
       }
     };
 
-    const fetchPlaces = async () => {
-      const response = await fetch('/api/places');
-      const data = await response.json();
-      setPlaces(data.googlePlaces);
-    };
-
     fetchCurrentLocation();
-    fetchPlaces();
   }, [_id]);
-
-  // Update map location based on the provided placeId (_id)
-  useEffect(() => {
-    if (_id && places.length > 0) {
-      const googlePlace = places.find((place) => place.place_id === _id);
-      if (googlePlace && googlePlace.geometry) {
-        const location = {
-          lat: googlePlace.geometry.location.lat,
-          lng: googlePlace.geometry.location.lng,
-        };
-        setMapLocation(location);
-      } else {
-        console.warn('Place not found or missing geometry for placeId:', _id);
-      }
-    }
-  }, [_id, places]);
 
   const handleUseCurrentLocation = () => {
     props.onSetMapLocation(currentLocation!);
@@ -80,31 +54,10 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
           lat: geometry.location!.lat(),
           lng: geometry.location!.lng(),
         };
-        setMapLocation(newCoordinates);
         props.onSetMapLocation(newCoordinates);
         console.log('Place changed:', place, newCoordinates);
       } else {
         console.error('No place found in handleMapLocationChanged');
-      }
-    }
-  };
-
-  const handleAutocompleteInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('handleAutocompleteInputChange');
-    const inputValue = event.target.value.trim().toLowerCase();
-    if (inputValue === 'current location') {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            const location = { lat: latitude, lng: longitude };
-            setMapLocation(location);
-            console.log('Current Location google.maps.LatLngLiteral:', location);
-          },
-          (error) => console.error('Error retrieving current location:', error)
-        );
-      } else {
-        console.error('Geolocation is not supported by this browser.');
       }
     }
   };
@@ -139,7 +92,6 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
         <input
           type="text"
           placeholder="Enter the location"
-          onChange={handleAutocompleteInputChange} // Custom input handling
           style={{
             width: '600px',
             maxWidth: '600px',
