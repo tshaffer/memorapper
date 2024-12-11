@@ -7,6 +7,11 @@ export interface EditableReview {
   review: MemoRappReview;
 }
 
+export interface RestaurantDetailsProps {
+  place: GooglePlace;
+  filteredReviews: MemoRappReview[];
+}
+
 export interface ReviewEntity {
   googlePlace: GooglePlace;
   dateOfVisit: string;

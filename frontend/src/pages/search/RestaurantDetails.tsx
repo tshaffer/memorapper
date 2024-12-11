@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Paper, IconButton, Typography, Tooltip, Box } from '@mui/material';
 
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -7,16 +7,14 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import '../../App.css';
 
-import { GooglePlace, ItemReview, MemoRappReview } from '../../types';
+import { ItemReview, MemoRappReview, RestaurantDetailsProps } from '../../types';
 
-interface RestaurantDetailsProps {
-  place: GooglePlace;
-  filteredReviews: MemoRappReview[];
-}
+const RestaurantDetails: React.FC = () => {
 
-const RestaurantDetails: React.FC<RestaurantDetailsProps> = (props: RestaurantDetailsProps) => {
+  const location = useLocation();
+  const restaurantDetailsProps: RestaurantDetailsProps = location.state as RestaurantDetailsProps;
 
-  const { place, filteredReviews } = props;
+  const { place, filteredReviews } = restaurantDetailsProps;
 
   const navigate = useNavigate();
 

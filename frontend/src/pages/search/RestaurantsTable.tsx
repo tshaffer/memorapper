@@ -78,6 +78,15 @@ const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTab
   const handlePlaceClick = (place: GooglePlace) => {
     setSelectedPlaceId(place.place_id); // Update selected place ID
     setSelectedPlace(place);
+    navigate(`/restaurantDetails`, { state: { place, filteredReviews } });
+    /*
+    const place: GooglePlace | undefined = getPlaceById(review.place_id);
+    if (!place) {
+      console.error('Place not found for review:', review);
+      return;
+    }
+    navigate(`/write-review/${review._id}`, { state: { place, review } });
+    */
   };
 
   const handleShowMap = (placeId: string) => {

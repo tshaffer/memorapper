@@ -7,6 +7,7 @@ import Reviews from './pages/viewReviews/Reviews';
 import MultiPanelReviewForm from './pages/writeReview/WriteReviewPage';
 import GoogleMapsProvider from './components/GoogleMapsProvider';
 import Search from './pages/search/Search';
+import RestaurantDetails from './pages/search/RestaurantDetails';
 
 const App: React.FC = () => {
   return (
@@ -27,8 +28,9 @@ const App: React.FC = () => {
 
           <Box id='mainAppContentArea' sx={{ flexGrow: 1, overflow: 'hidden' }}>
             <Routes>
-              <Route path="/search" element={<Search />} />
               <Route path="/" element={<Reviews />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/restaurantDetails" element={<RestaurantDetails />} />
               <Route path="/map" element={<Map />} />
               <Route path="/map/:_id" element={<Map />} />
               <Route path="/write-review" element={<MultiPanelReviewForm />} />
