@@ -98,9 +98,8 @@ const filterResults = async (
     if (distanceInMiles > distanceAwayFilter) return false;
 
     // Filter by open now
-    if (openNowFilter && place.opening_hours) {
-      const isOpenNow = place.opening_hours.isOpen(); // Check if the place is currently open
-      if (!isOpenNow) return false;
+    if (openNowFilter && !isPlaceOpenNow(place.opening_hours)) {
+      return false;
     }
 
     return true;
@@ -153,4 +152,23 @@ function haversineDistance(
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }
+
+const isPlaceOpenNow = (openingHours?: google.maps.places.PlaceOpeningHours): boolean => {
+  if (!openingHours || !openingHours.periods) return false;
+
+  const now = new Date();
+  const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const currentTime = now.getHours() * 100 + now.getMinutes(); // Convert current time to HHMM format
+
+  // Find the period matching the current day
+  const todayPeriod = openingHours.periods.find((period) => period.open?.day === currentDay);
+
+  if (!todayPeriod || !todayPeriod.open?.time) return false;
+
+  const openingTime = parseInt(todayPeriod.open.time, 10); // Convert opening time to HHMM
+  const closingTime = todayPeriod.close ? parseInt(todayPeriod.close.time, 10) : 2400; // Default close to midnight
+
+  return currentTime >= openingTime && currentTime < closingTime;
+};
+
 
