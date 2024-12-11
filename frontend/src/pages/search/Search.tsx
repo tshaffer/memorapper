@@ -201,6 +201,7 @@ const Search: React.FC = () => {
           key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })} // Forces re-render on prop change
           initialCenter={mapLocation!}
           locations={getExtendedGooglePlaces()}
+          blueDotLocation={mapLocation!}
         />
       </div>
 

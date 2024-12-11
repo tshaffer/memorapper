@@ -80,6 +80,7 @@ const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTab
   };
 
   const handlePlaceClick = (place: GooglePlace) => {
+    console.log('handlePlaceClick place: ', place);
     setSelectedPlaceId(place.place_id); // Update selected place ID
     setSelectedPlace(place);
     const reviews: MemoRappReview[] = getReviewsForPlace(place.place_id);
@@ -87,6 +88,7 @@ const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTab
   };
 
   const handleShowMap = (placeId: string) => {
+    console.log('handleShowMap placeId: ', placeId);
     navigate(`/map/${placeId}`);
   };
 
@@ -146,12 +148,19 @@ const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTab
                     }}
                   >
                     <TableCell align="right" className="dimmed" style={smallColumnStyle}>
-                      <IconButton onClick={() => handleShowMap(place.place_id)}>
+                      <IconButton onClick={(event) => {
+                        event.stopPropagation();
+                        handleShowMap(place.place_id)
+                      }}
+                      >
                         <MapIcon />
                       </IconButton>
                     </TableCell>
                     <TableCell align="right" className="dimmed" style={smallColumnStyle}>
-                      <IconButton onClick={() => handleShowDirections(place.place_id)}>
+                      <IconButton onClick={(event) => {
+                        event.stopPropagation();
+                        handleShowDirections(place.place_id)
+                      }}>
                         <DirectionsIcon />
                       </IconButton>
                     </TableCell>

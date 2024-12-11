@@ -35,9 +35,10 @@ const textStyle: React.CSSProperties = {
 interface MapWithMarkersProps {
   initialCenter: google.maps.LatLngLiteral;
   locations: ExtendedGooglePlace[];
+  blueDotLocation?: google.maps.LatLngLiteral;
 }
 
-const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, locations }) => {
+const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, locations, blueDotLocation }) => {
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
@@ -200,6 +201,14 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
 
   const locationMarkers: JSX.Element[] = renderMarkers();
 
+  const getBlueDotLocation = (): google.maps.LatLngLiteral | null => {
+    if (blueDotLocation) {
+      return blueDotLocation;
+    } else {
+      return currentLocation;
+    }
+  }
+
   return (
     <APIProvider
       apiKey={googleMapsApiKey}
@@ -219,7 +228,7 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
       >
         {locationMarkers}
         {currentLocation && (
-          <AdvancedMarker position={currentLocation}>
+          <AdvancedMarker position={getBlueDotLocation()}>
             <CustomBlueDot />
           </AdvancedMarker>
         )}
