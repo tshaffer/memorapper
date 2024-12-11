@@ -233,9 +233,8 @@ const Search: React.FC = () => {
         {renderPulsingDots()}
 
         {/* List of Restaurants */}
-        <div>Restaurant List (Add list items here)</div>
         <RestaurantsTable
-          currentLocation={null}
+          currentLocation={mapLocation}
           filteredPlaces={filteredPlaces}
         />
       </div>
