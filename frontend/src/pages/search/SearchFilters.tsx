@@ -5,7 +5,7 @@ import CheckIcon from '@mui/icons-material/Check';
 
 import { SortCriteria } from '../../types';
 
-import { DistanceFilter, SearchDistanceFilter, SearchUIFilters } from '../../types';
+import { SearchDistanceFilter, SearchUIFilters } from '../../types';
 const filterButtonStyle: React.CSSProperties = {
   padding: '8px 8px',
   background: '#f8f8f8',
@@ -80,12 +80,6 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
     console.log('More Filters Icon Clicked');
   };
 
-  const handleDistanceClick = () => {
-    setSortDropdownVisible(false);
-    setDistanceAwayDropdownVisible((prev) => !prev);
-    setWouldReturnDropdownVisible(false);
-  }
-
   const handleWouldReturnClick = () => {
     setWouldReturnDropdownVisible((prev) => !prev);
     setSortDropdownVisible(false);
@@ -118,17 +112,12 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
   };
 
   const handleWouldReturnChange = (updatedValues: any) => {
-    console.log('handleWouldReturnChange, on entry wouldReturnFilter:', wouldReturnFilter);
-    console.log('handleWouldReturnChange updatedValues: ', updatedValues);
     const values = { ...wouldReturnFilter.values, ...updatedValues };
-    console.log('handleWouldReturnChange values: ', values);
     const newWouldReturnFilter = {
       ...wouldReturnFilter,
       values,
     };
-    console.log('newWouldReturnFilter:', newWouldReturnFilter);
     setWouldReturnFilter(newWouldReturnFilter);
-    console.log('handleWouldReturnChange, after update wouldReturnFilter:', wouldReturnFilter);
     invokeExecuteFilter(distanceAwayFilter, isOpenNowFilterEnabled, newWouldReturnFilter);
   }
 
@@ -187,56 +176,83 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
     };
   }, [sortDropdownVisible, distanceAwayDropdownVisible, wouldReturnDropdownVisible]);
 
-  const getDistanceAwayLabelFromDistanceAway = (distanceAway: SearchDistanceFilter): string => {
-    switch (distanceAway) {
-      case SearchDistanceFilter.HalfMile:
-        return 'Half mile';
-      case SearchDistanceFilter.OneMile:
-        return '1 mile';
-      case SearchDistanceFilter.FiveMiles:
-        return '5 miles';
-      case SearchDistanceFilter.TenMiles:
-        return '10 miles';
-      case SearchDistanceFilter.AnyDistance:
-        return 'Any distance';
-      default:
-        return '5 miles';
-    }
-  }
-
-  const renderDistanceDropdown = (): JSX.Element => (
+  const renderSortBy = (): JSX.Element => (
     <Box
-      ref={distanceDropdownRef}
       sx={{
-        position: 'relative',
-        left: '48px',
-        background: '#fff',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        borderRadius: '8px',
-        zIndex: 10,
-        padding: '10px',
         display: 'flex',
-        width: '325px',
-        maxWidth: '90%',
+        alignItems: 'center',
+        gap: '8px',
+        padding: '8px 8px',
+        background: '#f8f8f8',
+        border: '1px solid #ccc',
+        borderRadius: '20px',
+        cursor: 'pointer',
       }}
     >
-      <Typography variant="subtitle1">Distance away:</Typography>
+      <Typography
+        variant="subtitle1"
+        style={myButtonStyle}
+      >
+        SORT BY:
+      </Typography>
+      <select
+        value={sortCriteria}
+        onChange={handleSortChange}
+        style={{
+          color: '#1976D2',
+          fontWeight: 500,
+          fontSize: '14px',
+          background: 'transparent',
+          border: 'none',
+          outline: 'none',
+          cursor: 'pointer',
+        }}
+      >
+        <option value="distance">DISTANCE</option>
+        <option value="name">NAME</option>
+        <option value="most recent review">MOST RECENT REVIEW</option>
+        <option value="reviewer">REVIEWER</option>
+      </select>
+    </Box>
+  );
+
+  const renderDistanceAway = (): JSX.Element => (
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        padding: '8px 8px',
+        background: '#f8f8f8',
+        border: '1px solid #ccc',
+        borderRadius: '20px',
+        cursor: 'pointer',
+      }}
+    >
+      <Typography
+        variant="subtitle1"
+        style={myButtonStyle}
+      >
+        DISTANCE AWAY:
+      </Typography>
       <select
         value={distanceAwayFilter}
         onChange={handleDistanceAwayChange}
         style={{
-          marginLeft: '8px',
-          padding: '8px',
-          borderRadius: '4px',
-          border: '1px solid #ccc',
-          width: '200px',
+          color: '#1976D2',
+          fontWeight: 500,
+          fontSize: '14px',
+          background: 'transparent',
+          border: 'none',
+          outline: 'none',
+          cursor: 'pointer',
         }}
       >
-        <option value={SearchDistanceFilter.HalfMile}>Half mile</option>
-        <option value={SearchDistanceFilter.OneMile}>1 mile</option>
-        <option value={SearchDistanceFilter.FiveMiles}>5 miles</option>
-        <option value={SearchDistanceFilter.TenMiles}>10 miles</option>
-        <option value={SearchDistanceFilter.AnyDistance}>Any distance</option>
+        <option value={SearchDistanceFilter.HalfMile}>HALF MILE</option>
+        <option value={SearchDistanceFilter.OneMile}>1 MILE</option>
+        <option value={SearchDistanceFilter.FiveMiles}>5 MILES</option>
+        <option value={SearchDistanceFilter.TenMiles}>10 MILES</option>
+        <option value={SearchDistanceFilter.AnyDistance}>ANY DISTANCE</option>
       </select>
     </Box>
   );
@@ -345,49 +361,9 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
           </IconButton>
         </Tooltip>
 
+        {renderSortBy()}
+        {renderDistanceAway()}
 
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '8px 8px',
-            background: '#f8f8f8',
-            border: '1px solid #ccc',
-            borderRadius: '20px',
-            cursor: 'pointer',
-          }}
-        >
-          <Typography
-            variant="subtitle1"
-            style={myButtonStyle}
-          >
-            SORT BY:
-          </Typography>
-          <select
-            value={sortCriteria}
-            onChange={handleSortChange}
-            style={{
-              color: '#1976D2',
-              fontWeight: 500,
-              fontSize: '14px',
-              background: 'transparent',
-              border: 'none',
-              outline: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            <option value="distance">DISTANCE</option>
-            <option value="name">NAME</option>
-            <option value="most recent review">MOST RECENT REVIEW</option>
-            <option value="reviewer">REVIEWER</option>
-          </select>
-        </Box>
-
-
-        <Button style={filterButtonStyle} onClick={handleDistanceClick}>
-          Distance Away: {getDistanceAwayLabelFromDistanceAway(distanceAwayFilter)} ▼
-        </Button>
         <Button style={filterButtonStyle} onClick={handleOpenNowClick}>
           Open Now {isOpenNowFilterEnabled && <CheckIcon style={{ marginLeft: '4px' }} />}
         </Button>
@@ -398,7 +374,6 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
           Would Return {wouldReturnFilter.enabled && <CheckIcon style={{ marginLeft: '4px' }} />}
         </Button>
       </div>
-      {distanceAwayDropdownVisible && renderDistanceDropdown()}
       {wouldReturnDropdownVisible && renderWouldReturnDropdown()}
     </div>
   );
