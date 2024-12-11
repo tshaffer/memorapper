@@ -1,6 +1,6 @@
 import React from 'react';
 import { Autocomplete } from '@react-google-maps/api';
-import { Button, useMediaQuery } from '@mui/material';
+import { Button, useMediaQuery, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -10,13 +10,14 @@ interface LocationAutocompleteProps {
 
 const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: LocationAutocompleteProps) => {
   const { _id } = useParams<{ _id: string }>();
+
   const isMobile = useMediaQuery('(max-width:768px)');
+
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
   const mapAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // Fetch current location and places/reviews on mount
   useEffect(() => {
     const fetchCurrentLocation = () => {
       if (navigator.geolocation) {
@@ -70,7 +71,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
       style={{
         display: 'flex', // Makes children align horizontally
         alignItems: 'center', // Aligns items vertically in the center
-        gap: '8px', // Adds space between items
+        gap: '20px', // Adds space between items
       }}
     >
       <Button
@@ -83,10 +84,21 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
           border: 'none',
           borderRadius: '4px',
           cursor: 'pointer',
+          marginRight: '40px',
         }}
       >
         Current Location
       </Button>
+
+      <Typography
+        variant="body1"
+        style={{
+          marginRight: '0px',
+          whiteSpace: 'nowrap', // Prevents wrapping of the text
+        }}
+      >
+        Specify location:
+      </Typography>
 
       <Autocomplete
         onLoad={(autocomplete) => (mapAutocompleteRef.current = autocomplete)}
@@ -99,7 +111,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
           style={{
             width: '600px',
             maxWidth: '600px',
-            padding: isMobile ? '8px' : '10px', // Smaller padding for mobile
+            padding: isMobile ? '8px' : '4px', // Smaller padding for mobile
             boxSizing: 'border-box',
             fontSize: isMobile ? '14px' : '16px', // Adjust font size
           }}
