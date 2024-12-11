@@ -112,7 +112,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
     setSortDropdownVisible(false);
     setDistanceAwayDropdownVisible(false);
     setWouldReturnDropdownVisible(false);
-    const newOpenNowFilterEnabled = !isOpenNowFilterEnabled;  
+    const newOpenNowFilterEnabled = !isOpenNowFilterEnabled;
     setIsOpenNowFilterEnabled(newOpenNowFilterEnabled);
     invokeExecuteFilter(distanceAwayFilter, newOpenNowFilterEnabled, wouldReturnFilter);
   };
@@ -380,9 +380,34 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
             <MoreVertIcon />
           </IconButton>
         </Tooltip>
-        <Button style={filterButtonStyle} onClick={handleSortButtonClick}>
-          Sort: {sortCriteria} ▼
-        </Button>
+
+
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          <Typography variant="subtitle1">Sort by:</Typography>
+          <select
+            value={sortCriteria}
+            onChange={handleSortChange}
+            style={{
+              padding: '8px',
+              borderRadius: '4px',
+              border: '1px solid #ccc',
+              width: '200px',
+            }}
+          >
+            <option value="distance">Distance</option>
+            <option value="name">Name</option>
+            <option value="most recent review">Most Recent Review</option>
+            <option value="reviewer">Reviewer</option>
+          </select>
+        </Box>
+
+
         <Button style={filterButtonStyle} onClick={handleDistanceClick}>
           Distance Away: {getDistanceAwayLabelFromDistanceAway(distanceAwayFilter)} ▼
         </Button>
