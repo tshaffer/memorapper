@@ -75,18 +75,15 @@ const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTab
   };
 
 
+  const getReviewsForPlace = (placeId: string): MemoRappReview[] => {
+    return filteredReviews.filter((memoRappReview: MemoRappReview) => memoRappReview.place_id === placeId);
+  };
+
   const handlePlaceClick = (place: GooglePlace) => {
     setSelectedPlaceId(place.place_id); // Update selected place ID
     setSelectedPlace(place);
-    navigate(`/restaurantDetails`, { state: { place, filteredReviews } });
-    /*
-    const place: GooglePlace | undefined = getPlaceById(review.place_id);
-    if (!place) {
-      console.error('Place not found for review:', review);
-      return;
-    }
-    navigate(`/write-review/${review._id}`, { state: { place, review } });
-    */
+    const reviews: MemoRappReview[] = getReviewsForPlace(place.place_id);
+    navigate(`/restaurantDetails`, { state: { place, reviews } });
   };
 
   const handleShowMap = (placeId: string) => {

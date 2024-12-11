@@ -14,13 +14,9 @@ const RestaurantDetails: React.FC = () => {
   const location = useLocation();
   const restaurantDetailsProps: RestaurantDetailsProps = location.state as RestaurantDetailsProps;
 
-  const { place, filteredReviews } = restaurantDetailsProps;
+  const { place, reviews } = restaurantDetailsProps;
 
   const navigate = useNavigate();
-
-  const getFilteredReviewsForPlace = (placeId: string): MemoRappReview[] => {
-    return filteredReviews.filter((memoRappReview: MemoRappReview) => memoRappReview.place_id === placeId);
-  };
 
   const handleEditReview = (review: MemoRappReview) => {
     navigate(`/write-review/${review._id}`, { state: { place, review } });
@@ -46,8 +42,7 @@ const RestaurantDetails: React.FC = () => {
   }
 
   const renderReviewDetailsForSelectedPlace = (): JSX.Element | null => {
-    const reviewsForSelectedPlace: MemoRappReview[] = getFilteredReviewsForPlace(place.place_id);
-    const reviewDetails = reviewsForSelectedPlace.map((review: MemoRappReview) => {
+    const reviewDetails = reviews.map((review: MemoRappReview) => {
       return renderReviewDetails(review);
     });
 

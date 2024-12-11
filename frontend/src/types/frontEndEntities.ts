@@ -9,7 +9,7 @@ export interface EditableReview {
 
 export interface RestaurantDetailsProps {
   place: GooglePlace;
-  filteredReviews: MemoRappReview[];
+  reviews: MemoRappReview[];
 }
 
 export interface ReviewEntity {
