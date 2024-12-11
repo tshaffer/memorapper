@@ -9,14 +9,12 @@ interface LocationAutocompleteProps {
 }
 
 const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: LocationAutocompleteProps) => {
-
   const { _id } = useParams<{ _id: string }>();
-
   const isMobile = useMediaQuery('(max-width:768px)');
-
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
   const mapAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   // Fetch current location and places/reviews on mount
   useEffect(() => {
@@ -43,7 +41,12 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
 
   const handleUseCurrentLocation = () => {
     props.onSetMapLocation(currentLocation!);
-  }
+
+    // Clear the Autocomplete input field
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
+  };
 
   const handleMapLocationChanged = () => {
     if (mapAutocompleteRef.current) {
@@ -90,6 +93,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
         onPlaceChanged={handleMapLocationChanged}
       >
         <input
+          ref={inputRef}
           type="text"
           placeholder="Enter the location"
           style={{
