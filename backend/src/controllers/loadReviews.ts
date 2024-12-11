@@ -165,6 +165,9 @@ const pickGooglePlaceProperties = (googlePlaceDetails: GooglePlaceDetails): Goog
       },
     },
     website: googlePlaceDetails.website || '',
+    opening_hours: googlePlaceDetails.opening_hours,
+    price_level: googlePlaceDetails.price_level,
+    vicinity: googlePlaceDetails.vicinity,
   };
   return googlePlace;
 }

@@ -38,10 +38,12 @@ export interface GooglePlaceDetails {
   photos?: PlacePhoto[];
   place_id?: string;
   rating?: number;
-  reviews?: PlaceReview[];
+  reviews?: google.maps.places.PlaceReview[];
   types?: string[];
   url?: string;
   user_ratings_total?: number;
   website?: string;
-  // Additional fields can be added as needed
+  opening_hours?: google.maps.places.PlaceOpeningHours;
+  price_level?: number;
+  vicinity?: string;
 }

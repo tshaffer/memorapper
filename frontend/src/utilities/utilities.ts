@@ -48,6 +48,10 @@ export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.
       },
     },
     website: googlePlaceResult.website || '',
+    opening_hours: googlePlaceResult.opening_hours,
+    price_level: googlePlaceResult.price_level,
+    vicinity: googlePlaceResult.vicinity,
+  
   };
   return googlePlace;
 

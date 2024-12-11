@@ -28,12 +28,31 @@ const MongoGeometrySchema: Schema = new Schema({
   viewport: MongoViewportSchema
 });
 
+const OpeningHoursPeriodSchema: Schema = new Schema({
+  open: {
+    day: { type: Number, required: true }, // Day of the week (0 = Sunday, 6 = Saturday)
+    time: { type: String, required: true }, // HHMM format (e.g., "0900" for 9:00 AM)
+  },
+  close: {
+    day: { type: Number }, // Optional closing day
+    time: { type: String }, // Optional closing time
+  },
+});
+
+const OpeningHoursSchema: Schema = new Schema({
+  periods: { type: [OpeningHoursPeriodSchema] }, // Array of opening/closing times
+  weekday_text: { type: [String] }, // Optional human-readable opening hours
+});
+
 const MongoPlaceSchema: Schema = new Schema({
   place_id: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   address_components: { type: Array },
   formatted_address: { type: String, required: true },
   website: { type: String },
+  opening_hours: { type: OpeningHoursSchema }, // Added opening hours field
+  price_level: { type: Number },
+  vicinity: { type: String },
   geometry: MongoGeometrySchema
 }, { collection: "mongoPlaces" });
 

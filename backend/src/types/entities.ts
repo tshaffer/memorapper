@@ -57,6 +57,9 @@ export interface MemoRappPlace {
   address_components?: AddressComponent[];
   formatted_address: string;
   website: string;
+  opening_hours?: google.maps.places.PlaceOpeningHours;
+  price_level?: number;
+  vicinity?: string;
 }
 
 export interface QueryRequestBody {
