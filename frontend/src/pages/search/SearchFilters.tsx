@@ -80,12 +80,6 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
     console.log('More Filters Icon Clicked');
   };
 
-  const handleSortButtonClick = () => {
-    setSortDropdownVisible((prev) => !prev);
-    setDistanceAwayDropdownVisible(false);
-    setWouldReturnDropdownVisible(false);
-  };
-
   const handleDistanceClick = () => {
     setSortDropdownVisible(false);
     setDistanceAwayDropdownVisible((prev) => !prev);
@@ -192,42 +186,6 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [sortDropdownVisible, distanceAwayDropdownVisible, wouldReturnDropdownVisible]);
-
-  const renderSortDropdown = (): JSX.Element => (
-    <Box
-      ref={dropdownRef}
-      sx={{
-        position: 'relative',
-        left: '48px',
-        background: '#fff',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        borderRadius: '8px',
-        zIndex: 10,
-        padding: '10px',
-        display: 'flex',
-        width: '280px',
-        maxWidth: '90%',
-      }}
-    >
-      <Typography variant="subtitle1">Sort by:</Typography>
-      <select
-        value={sortCriteria}
-        onChange={handleSortChange}
-        style={{
-          marginLeft: '8px',
-          padding: '8px',
-          borderRadius: '4px',
-          border: '1px solid #ccc',
-          width: '200px',
-        }}
-      >
-        <option value="distance">Distance</option>
-        <option value="name">Name</option>
-        <option value="most recent review">Most Recent Review</option>
-        <option value="reviewer">Reviewer</option>
-      </select>
-    </Box>
-  );
 
   const getDistanceAwayLabelFromDistanceAway = (distanceAway: SearchDistanceFilter): string => {
     switch (distanceAway) {
@@ -419,10 +377,10 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
               cursor: 'pointer',
             }}
           >
-            <option value="distance">Distance</option>
-            <option value="name">Name</option>
+            <option value="distance">DISTANCE</option>
+            <option value="name">NAME</option>
             <option value="most recent review">MOST RECENT REVIEW</option>
-            <option value="reviewer">Reviewer</option>
+            <option value="reviewer">REVIEWER</option>
           </select>
         </Box>
 
@@ -440,7 +398,6 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
           Would Return {wouldReturnFilter.enabled && <CheckIcon style={{ marginLeft: '4px' }} />}
         </Button>
       </div>
-      {sortDropdownVisible && renderSortDropdown()}
       {distanceAwayDropdownVisible && renderDistanceDropdown()}
       {wouldReturnDropdownVisible && renderWouldReturnDropdown()}
     </div>
