@@ -1,7 +1,9 @@
+import { useEffect, useRef, useState } from 'react';
 import { Box, Button, IconButton, Switch, TextField, Tooltip, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CheckIcon from '@mui/icons-material/Check';
-import { useEffect, useRef, useState } from 'react';
+
+import { SortCriteria } from '../../types';
 
 import { DistanceFilter, SearchDistanceFilter, SearchUIFilters } from '../../types';
 const filterButtonStyle: React.CSSProperties = {
@@ -36,13 +38,14 @@ const initialWouldReturnFilter: WouldReturnFilter = {
 interface SearchFiltersProps {
   onExecuteQuery: (query: string) => void;
   onExecuteFilter: (filter: SearchUIFilters) => void;
+  onSetSortCriteria: (sortCriteria: SortCriteria) => void;
 }
 
 const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) => {
   const [sortDropdownVisible, setSortDropdownVisible] = useState(false);
   const [distanceAwayDropdownVisible, setDistanceAwayDropdownVisible] = useState(false);
   const [wouldReturnDropdownVisible, setWouldReturnDropdownVisible] = useState(false);
-  const [sortCriteria, setSortCriteria] = useState<'name' | 'distance' | 'reviewer' | 'most recent review'>('distance');
+  const [sortCriteria, setSortCriteria] = useState<SortCriteria>(SortCriteria.Distance);
 
   const [distanceAwayFilter, setDistanceAwayFilter] = useState<number>(initialDistanceAwayFilter);
   const [wouldReturnFilter, setWouldReturnFilter] = useState<WouldReturnFilter>(initialWouldReturnFilter);
@@ -90,7 +93,8 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSortCriteria(e.target.value as 'name' | 'distance' | 'reviewer' | 'most recent review');
+    setSortCriteria(e.target.value as SortCriteria);
+    props.onSetSortCriteria(e.target.value as SortCriteria);
     setSortDropdownVisible(false);
   };
 

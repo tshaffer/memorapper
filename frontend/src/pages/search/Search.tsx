@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { DraggableCore, DraggableEventHandler } from 'react-draggable';
 
-import { ExtendedGooglePlace, GooglePlace, MemoRappReview, SearchUIFilters } from '../../types';
+import { ExtendedGooglePlace, GooglePlace, MemoRappReview, SearchUIFilters, SortCriteria } from '../../types';
 
 import PulsingDots from '../../components/PulsingDots';
 
@@ -20,6 +20,7 @@ const Search: React.FC = () => {
   const [filteredPlaces, setFilteredPlaces] = useState<GooglePlace[]>([]);
   const [reviews, setReviews] = useState<MemoRappReview[]>([]);
   const [filteredReviews, setFilteredReviews] = useState<MemoRappReview[]>([]);
+  const [sortCriteria, setSortCriteria] = useState<SortCriteria>(SortCriteria.Distance);
 
   const [containerHeight, setContainerHeight] = useState(window.innerHeight); // Full height of the viewport
 
@@ -147,14 +148,15 @@ const Search: React.FC = () => {
     }
   }
   const handleExecuteFilter = async (filter: SearchUIFilters): Promise<void> => {
-
     console.log('handleExecuteFilter:', filter);
-
     setIsLoading(true);
-
     await executeFilter(filter);
-
     setIsLoading(false);
+  }
+
+  const handleSetSortCriteria = (sortCriteria: SortCriteria): void => {
+    console.log('handleSetSortCriteria:', sortCriteria);
+    setSortCriteria(sortCriteria as SortCriteria);
   }
 
   const renderPulsingDots = (): JSX.Element | null => {
@@ -228,6 +230,7 @@ const Search: React.FC = () => {
         <SearchFilters
           onExecuteQuery={(query: string) => handleExecuteQuery(query)}
           onExecuteFilter={(filter: SearchUIFilters) => handleExecuteFilter(filter)}
+          onSetSortCriteria={(sortCriteria: SortCriteria) => handleSetSortCriteria(sortCriteria)}
         />
 
         {renderPulsingDots()}
@@ -236,6 +239,8 @@ const Search: React.FC = () => {
         <RestaurantsTable
           currentLocation={mapLocation}
           filteredPlaces={filteredPlaces}
+          filteredReviews={filteredReviews}
+          sortCriteria={sortCriteria}
         />
       </div>
     </div>

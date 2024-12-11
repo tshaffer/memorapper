@@ -7,7 +7,7 @@ import MapIcon from '@mui/icons-material/Map';
 
 import '../../App.css';
 
-import { GooglePlace } from '../../types';
+import { GooglePlace, MemoRappReview, SortCriteria } from '../../types';
 import { getCityNameFromPlace } from '../../utilities';
 
 const smallColumnStyle: React.CSSProperties = {
@@ -20,16 +20,60 @@ const smallColumnStyle: React.CSSProperties = {
 interface RestaurantsTableProps {
   currentLocation: google.maps.LatLngLiteral | null;
   filteredPlaces: GooglePlace[];
+  filteredReviews: MemoRappReview[];
+  sortCriteria: SortCriteria;
 }
 
 const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTableProps) => {
 
-  const { currentLocation, filteredPlaces } = props;
+  const { currentLocation, filteredPlaces, filteredReviews, sortCriteria } = props;
 
   const [selectedPlace, setSelectedPlace] = useState<GooglePlace | null>(null);
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
 
   const navigate = useNavigate();
+
+  const getSortedPlaces = (): GooglePlace[] => {
+
+    const sortedPlaces = [...filteredPlaces]; // Clone the array to avoid mutating state
+
+    switch (sortCriteria) {
+      case SortCriteria.Name:
+        return sortedPlaces.sort((a, b) => a.name.localeCompare(b.name));
+      case SortCriteria.Distance:
+        if (!currentLocation) return sortedPlaces;
+        return sortedPlaces.sort((a, b) => {
+          const distanceA = Math.hypot(
+            (a.geometry?.location.lat || 0) - currentLocation.lat,
+            (a.geometry?.location.lng || 0) - currentLocation.lng
+          );
+          const distanceB = Math.hypot(
+            (b.geometry?.location.lat || 0) - currentLocation.lat,
+            (b.geometry?.location.lng || 0) - currentLocation.lng
+          );
+          return distanceA - distanceB;
+        });
+      case SortCriteria.Reviewer:
+        return sortedPlaces.sort((a, b) => {
+          const reviewerA = filteredReviews.find((r) => r.place_id === a.place_id)?.freeformReviewProperties.reviewer || '';
+          const reviewerB = filteredReviews.find((r) => r.place_id === b.place_id)?.freeformReviewProperties.reviewer || '';
+          return reviewerA.localeCompare(reviewerB);
+        });
+      case SortCriteria.MostRecentReview:
+        return sortedPlaces.sort((a, b) => {
+          const recentDateA = filteredReviews
+            .filter((r) => r.place_id === a.place_id)
+            .reduce((latest, r) => Math.max(latest, new Date(r.structuredReviewProperties.dateOfVisit).getTime()), 0);
+          const recentDateB = filteredReviews
+            .filter((r) => r.place_id === b.place_id)
+            .reduce((latest, r) => Math.max(latest, new Date(r.structuredReviewProperties.dateOfVisit).getTime()), 0);
+          return recentDateB - recentDateA;
+        });
+      default:
+        return sortedPlaces;
+    }
+  };
+
 
   const handlePlaceClick = (place: GooglePlace) => {
     setSelectedPlaceId(place.place_id); // Update selected place ID
@@ -51,6 +95,9 @@ const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTab
   };
 
   const renderPlacesTable = (): JSX.Element | null => {
+
+    const sortedPlaces = getSortedPlaces(); // Get the sorted places
+
     return (
       <Box
         id='placesTableContainer'
@@ -81,7 +128,7 @@ const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTab
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredPlaces.map((place: GooglePlace) => (
+              {sortedPlaces.map((place: GooglePlace) => (
                 <React.Fragment key={place.place_id}>
                   <TableRow
                     className="table-row-hover"

@@ -18,3 +18,10 @@ export enum SearchDistanceFilter {
   TenMiles = 10,
   AnyDistance = 1000000,
 }
+
+export enum SortCriteria {
+  Distance = "distance",
+  MostRecentReview = "mostRecentReview",
+  Name = "name",
+  Reviewer = "reviewer",
+}
