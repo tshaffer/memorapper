@@ -15,6 +15,12 @@ const filterButtonStyle: React.CSSProperties = {
   cursor: 'pointer',
 };
 
+const myButtonStyle: React.CSSProperties = {
+  color: '#1976D2',
+  fontWeight: 500,
+  fontSize: '14px',
+};
+
 interface WouldReturnFilter {
   enabled: boolean;
   values: {
@@ -387,22 +393,35 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
+            padding: '8px 8px',
+            background: '#f8f8f8',
+            border: '1px solid #ccc',
+            borderRadius: '20px',
+            cursor: 'pointer',
           }}
         >
-          <Typography variant="subtitle1">Sort by:</Typography>
+          <Typography
+            variant="subtitle1"
+            style={myButtonStyle}
+          >
+            SORT BY:
+          </Typography>
           <select
             value={sortCriteria}
             onChange={handleSortChange}
             style={{
-              padding: '8px',
-              borderRadius: '4px',
-              border: '1px solid #ccc',
-              width: '200px',
+              color: '#1976D2',
+              fontWeight: 500,
+              fontSize: '14px',
+              background: 'transparent',
+              border: 'none',
+              outline: 'none',
+              cursor: 'pointer',
             }}
           >
             <option value="distance">Distance</option>
             <option value="name">Name</option>
-            <option value="most recent review">Most Recent Review</option>
+            <option value="most recent review">MOST RECENT REVIEW</option>
             <option value="reviewer">Reviewer</option>
           </select>
         </Box>
