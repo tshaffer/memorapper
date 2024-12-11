@@ -75,7 +75,7 @@ export const addReviewsFromFileHandler = async (
     const reviews: TestReview[] = JSON.parse(data);
 
     for (const review of reviews) {
-      const { restaurantName, reviewText, dateOfVisit, wouldReturn } = review;
+      const { restaurantName, reviewText, dateOfVisit, wouldReturn }: TestReview = review;
       await addTestReview(restaurantName, dateOfVisit, wouldReturn, reviewText);
       console.log('review added for ' + restaurantName);
     }

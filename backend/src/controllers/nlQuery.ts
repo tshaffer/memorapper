@@ -88,13 +88,22 @@ const filterResults = async (
   reviews: MemoRappReview[],
   mapLocation: google.maps.LatLngLiteral,
 ): Promise<SearchResponse> => {
-
   const { distanceAwayFilter, openNowFilter, wouldReturnFilter }: FilterResultsParams = filter;
 
   const filteredPlaces: GooglePlace[] = places.filter((place: GooglePlace) => {
     if (!place.geometry || !place.geometry.location) return false;
+
+    // Filter by distance
     const distanceInMiles = haversineDistance(mapLocation, place.geometry.location);
-    return distanceInMiles <= distanceAwayFilter;
+    if (distanceInMiles > distanceAwayFilter) return false;
+
+    // Filter by open now
+    if (openNowFilter && place.opening_hours) {
+      const isOpenNow = place.opening_hours.isOpen(); // Check if the place is currently open
+      if (!isOpenNow) return false;
+    }
+
+    return true;
   });
 
   // Extract the filtered place IDs for review filtering
@@ -121,7 +130,7 @@ const filterResults = async (
   });
 
   return { places: filteredPlaces, reviews: filteredReviews };
-}
+};
 
 // Helper function to calculate distance between two coordinates
 function haversineDistance(
