@@ -10,7 +10,7 @@ import MultiPanelReviewForm from './pages/writeReview/WriteReviewPage';
 import GoogleMapsProvider from './components/GoogleMapsProvider';
 // import Search from './pages/search/Search';
 import RestaurantDetails from './pages/search/RestaurantDetails';
-import DndProto from './pages/dnd/DndProto';
+import DndTouchProto from './pages/dndTouch/DndTouchProto';
 
 const App: React.FC = () => {
   const isMobile = useMediaQuery('(max-width:768px)');
@@ -59,7 +59,7 @@ const App: React.FC = () => {
 
           <Box id='mainAppContentArea' sx={{ flexGrow: 1, overflow: 'hidden' }}>
             <Routes>
-              <Route path="/" element={<DndProto />} />
+              <Route path="/" element={<DndTouchProto />} />
               {/* <Route path="/" element={<Search />} />
               <Route path="/search" element={<Search />} /> */}
               <Route path="/restaurantDetails" element={<RestaurantDetails />} />
