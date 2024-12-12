@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { DraggableCore, DraggableEventHandler } from 'react-draggable';
+import Draggable, { DraggableEventHandler } from 'react-draggable';
 
 import { ExtendedGooglePlace, GooglePlace, MemoRappReview, SearchUIFilters, SortCriteria } from '../../types';
 
@@ -206,7 +206,7 @@ const Search: React.FC = () => {
       </div>
 
       {/* Drag Handle */}
-      <DraggableCore onDrag={handleDrag}>
+      <Draggable onDrag={handleDrag}>
         <div
           id='dragHandle'
           style={{
@@ -216,7 +216,7 @@ const Search: React.FC = () => {
             userSelect: 'none',
           }}
         />
-      </DraggableCore>
+      </Draggable>
 
       {/* Overlay Content */}
       <div
