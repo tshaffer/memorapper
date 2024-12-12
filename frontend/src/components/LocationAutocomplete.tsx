@@ -1,6 +1,7 @@
 import React from 'react';
 import { Autocomplete } from '@react-google-maps/api';
-import { Button, useMediaQuery, Typography, Box } from '@mui/material';
+import { IconButton, useMediaQuery, Typography, Box } from '@mui/material';
+import MyLocationIcon from '@mui/icons-material/MyLocation';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -70,69 +71,54 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
     <Box
       sx={{
         display: 'flex',
-        flexDirection: { xs: 'column', sm: 'row' }, // Stack on mobile, row on desktop
-        alignItems: { xs: 'flex-start', sm: 'center' }, // Align based on screen size
+        alignItems: 'center',
         gap: 2,
         width: '100%',
       }}
     >
-      <Button
+      {/* Current Location Icon */}
+      <IconButton
         onClick={handleUseCurrentLocation}
         sx={{
-          width: { xs: '100%', sm: '200px' }, // Full width on mobile, fixed width on desktop
-          padding: '8px 16px',
-          background: '#007bff',
+          backgroundColor: '#007bff',
           color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
           '&:hover': {
-            background: '#0056b3',
+            backgroundColor: '#0056b3',
           },
         }}
       >
-        Current Location
-      </Button>
+        <MyLocationIcon />
+      </IconButton>
 
-      <Box
+      {/* Label */}
+      <Typography
+        variant="body1"
         sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', sm: 'row' }, // Stack label and input on mobile
-          alignItems: { xs: 'flex-start', sm: 'center' },
-          gap: 2,
-          width: '100%',
+          whiteSpace: 'nowrap',
         }}
       >
-        <Typography
-          variant="body1"
-          sx={{
-            whiteSpace: 'nowrap', // Prevent wrapping of text
-            marginBottom: { xs: 1, sm: 0 }, // Add spacing below label on mobile
-          }}
-        >
-          Specify location:
-        </Typography>
+        Specify location:
+      </Typography>
 
-        <Autocomplete
-          onLoad={(autocomplete) => (mapAutocompleteRef.current = autocomplete)}
-          onPlaceChanged={handleMapLocationChanged}
-        >
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder="Enter the location"
-            style={{
-              width: '100%',
-              maxWidth: '600px',
-              padding: '8px',
-              boxSizing: 'border-box',
-              fontSize: isMobile ? '14px' : '16px', // Adjust font size for mobile
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-            }}
-          />
-        </Autocomplete>
-      </Box>
+      {/* Autocomplete Input */}
+      <Autocomplete
+        onLoad={(autocomplete) => (mapAutocompleteRef.current = autocomplete)}
+        onPlaceChanged={handleMapLocationChanged}
+      >
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Enter the location"
+          style={{
+            flex: 1,
+            padding: isMobile ? '8px' : '10px',
+            boxSizing: 'border-box',
+            fontSize: isMobile ? '14px' : '16px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+          }}
+        />
+      </Autocomplete>
     </Box>
   );
 };
