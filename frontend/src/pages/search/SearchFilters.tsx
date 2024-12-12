@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Box, Button, IconButton, Switch, TextField, Tooltip, Typography } from '@mui/material';
+import { Box, Button, IconButton, Switch, TextField, Tooltip, Typography, useMediaQuery } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CheckIcon from '@mui/icons-material/Check';
 
@@ -48,6 +48,9 @@ interface SearchFiltersProps {
 }
 
 const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) => {
+
+  const isMobile = useMediaQuery('(max-width:768px)');
+
   const [sortDropdownVisible, setSortDropdownVisible] = useState(false);
   const [distanceAwayDropdownVisible, setDistanceAwayDropdownVisible] = useState(false);
   const [wouldReturnDropdownVisible, setWouldReturnDropdownVisible] = useState(false);
@@ -182,17 +185,14 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
         display: 'flex',
         alignItems: 'center',
         gap: '8px',
-        padding: '8px 8px',
+        padding: '8px 12px',
         background: '#f8f8f8',
         border: '1px solid #ccc',
         borderRadius: '20px',
-        cursor: 'pointer',
+        width: isMobile ? '100%' : 'auto',
       }}
     >
-      <Typography
-        variant="subtitle1"
-        style={myButtonStyle}
-      >
+      <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
         SORT BY:
       </Typography>
       <select
@@ -333,49 +333,59 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
     </Box>
   );
 
+  const renderQueryInput = (): JSX.Element => (
+    <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '8px', marginBottom: '12px' }}>
+      <TextField
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Enter a query (optional)"
+        fullWidth
+        size="small"
+        variant="outlined"
+      />
+      <Button onClick={handleQueryExecute} variant="contained" disabled={!query}>
+        Execute
+      </Button>
+      <Button onClick={handleQueryClear} variant="outlined" disabled={!query}>
+        Clear
+      </Button>
+    </Box>
+
+  );
+
+  const renderFiltersRow = (): JSX.Element => (
+    <Box
+      sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '8px',
+        justifyContent: isMobile ? 'center' : 'flex-start',
+        marginBottom: '12px',
+      }}
+    >
+      {renderSortBy()}
+      {renderDistanceAway()}
+      <Button style={filterButtonStyle} onClick={handleOpenNowClick}>
+        Open Now {isOpenNowFilterEnabled && <CheckIcon style={{ marginLeft: '4px' }} />}
+      </Button>
+      <Button
+        style={filterButtonStyle}
+        onClick={handleWouldReturnClick}
+      >
+        Would Return {wouldReturnFilter.enabled && <CheckIcon style={{ marginLeft: '4px' }} />}
+      </Button>
+    </Box>
+  );
+
   return (
-    <div style={{ paddingTop: '8px', paddingBottom: '4px', paddingLeft: '8px', paddingRight: '8px' }}>
+    <Box sx={{ padding: '8px', overflowY: 'auto' }}>
       {/* Query Input */}
-      <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '12px', gap: '8px' }}>
-        <TextField
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Enter a query (optional)"
-          fullWidth
-          size="small"
-          variant="outlined"
-        />
-        <Button onClick={handleQueryExecute} variant="contained" disabled={!query}>
-          Execute
-        </Button>
-        <Button onClick={handleQueryClear} variant="outlined" disabled={!query}>
-          Clear
-        </Button>
-      </Box>
+      {renderQueryInput()}
 
       {/* Row of Filter Buttons */}
-      <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginBottom: '8px' }}>
-        <Tooltip title="More Filters">
-          <IconButton style={filterButtonStyle} onClick={handleMoreFiltersIcon}>
-            <MoreVertIcon />
-          </IconButton>
-        </Tooltip>
-
-        {renderSortBy()}
-        {renderDistanceAway()}
-
-        <Button style={filterButtonStyle} onClick={handleOpenNowClick}>
-          Open Now {isOpenNowFilterEnabled && <CheckIcon style={{ marginLeft: '4px' }} />}
-        </Button>
-        <Button
-          style={filterButtonStyle}
-          onClick={handleWouldReturnClick}
-        >
-          Would Return {wouldReturnFilter.enabled && <CheckIcon style={{ marginLeft: '4px' }} />}
-        </Button>
-      </div>
+      {renderFiltersRow()}
       {wouldReturnDropdownVisible && renderWouldReturnDropdown()}
-    </div>
+    </Box>
   );
 };
 
