@@ -111,9 +111,7 @@ const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTab
         id='placesTableContainer'
         sx={{
           flexShrink: 0,
-          width: { xs: '100%', sm: '30%' },
-          minWidth: { sm: '300px' },
-          maxWidth: { sm: '50%' },
+          width: { xs: '100%', sm: '100%' },
           overflowY: 'auto',
           borderRight: { sm: '1px solid #ccc' },
           borderBottom: { xs: '1px solid #ccc', sm: 'none' },
