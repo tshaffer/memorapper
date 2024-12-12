@@ -24,6 +24,8 @@ const Search: React.FC = () => {
 
   const [containerHeight, setContainerHeight] = useState(window.innerHeight); // Full height of the viewport
 
+  const [flibbert, setFlibbert] = useState({ x: 0, y: 0 });
+
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -81,9 +83,11 @@ const Search: React.FC = () => {
     }));
 
   const handleDrag: DraggableEventHandler = (_, data) => {
+    console.log('handleDrag:', data);
     const newTopHeight = Math.max(50, Math.min(topHeight + data.deltaY, containerHeight - 50));
     setTopHeight(newTopHeight);
     setBottomHeight(containerHeight - newTopHeight); // Adjust bottom height accordingly
+    setFlibbert({ x: 0, y: data.deltaY }); //
   };
 
   const handleSetMapLocation = (location: google.maps.LatLngLiteral): void => {
@@ -206,7 +210,13 @@ const Search: React.FC = () => {
       </div>
 
       {/* Drag Handle */}
-      <Draggable onDrag={handleDrag}>
+      <Draggable
+        position={flibbert}
+        onDrag={handleDrag}
+        onMouseDown={(e) => console.log('onMouseDown:', e)}
+        onStart={(e) => console.log('onStart:', e)}
+        onStop={(e: any) => console.log('onStop:', e)}
+      >
         <div
           id='dragHandle'
           style={{
