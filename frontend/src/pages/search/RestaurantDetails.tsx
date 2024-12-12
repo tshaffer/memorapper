@@ -161,6 +161,7 @@ const RestaurantDetails: React.FC = () => {
           </Tooltip>
         </div>
         <Typography><strong>Date of Visit:</strong> {review.structuredReviewProperties.dateOfVisit}</Typography>
+        <Typography><strong>Reviewer:</strong> {review.freeformReviewProperties.reviewer}</Typography>
         <Typography><strong>Would Return:</strong> {review.structuredReviewProperties.wouldReturn === null ? 'Unspecified' : review.structuredReviewProperties.wouldReturn ? 'Yes' : 'No'}</Typography>
         <Typography><strong>Items Ordered:</strong></Typography>
         <ul>
