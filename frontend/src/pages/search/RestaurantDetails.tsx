@@ -77,11 +77,11 @@ const RestaurantDetails: React.FC = () => {
 
   const renderReview = (review: MemoRappReview): JSX.Element => (
     <Paper elevation={1} sx={{ padding: 2, marginBottom: 2 }}>
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Typography variant="body1">
-          <strong>Reviewer:</strong> {review.freeformReviewProperties.reviewer || 'Anonymous'}
+      <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+        <Typography variant="body1" sx={{ flex: 1, wordBreak: 'break-word' }}>
+          <strong>Reviewer:</strong> {review.freeformReviewProperties.reviewer || 'Not mentioned in the review'}
         </Typography>
-        <Box>
+        <Box sx={{ display: 'flex', gap: '0px' }}>
           <Tooltip title="Edit Review">
             <IconButton onClick={() => handleEditReview(review)} size="small">
               <EditIcon fontSize="small" />
