@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { DraggableCore, DraggableEventHandler } from 'react-draggable';
+// import { DraggableCore, DraggableEventHandler } from 'react-draggable';
 
 import { ExtendedGooglePlace, GooglePlace, MemoRappReview, SearchUIFilters, SortCriteria } from '../../types';
 
@@ -80,11 +80,11 @@ const Search: React.FC = () => {
       reviews: getReviewsForPlace(place.place_id),
     }));
 
-  const handleDrag: DraggableEventHandler = (_, data) => {
-    const newTopHeight = Math.max(50, Math.min(topHeight + data.deltaY, containerHeight - 50));
-    setTopHeight(newTopHeight);
-    setBottomHeight(containerHeight - newTopHeight); // Adjust bottom height accordingly
-  };
+  // const handleDrag: DraggableEventHandler = (_, data) => {
+  //   const newTopHeight = Math.max(50, Math.min(topHeight + data.deltaY, containerHeight - 50));
+  //   setTopHeight(newTopHeight);
+  //   setBottomHeight(containerHeight - newTopHeight); // Adjust bottom height accordingly
+  // };
 
   const handleSetMapLocation = (location: google.maps.LatLngLiteral): void => {
     setMapLocation(location);
@@ -206,7 +206,7 @@ const Search: React.FC = () => {
       </div>
 
       {/* Drag Handle */}
-      <DraggableCore onDrag={handleDrag}>
+      {/* <DraggableCore onDrag={handleDrag}>
         <div
           id='dragHandle'
           style={{
@@ -216,7 +216,7 @@ const Search: React.FC = () => {
             userSelect: 'none',
           }}
         />
-      </DraggableCore>
+      </DraggableCore> */}
 
       {/* Overlay Content */}
       <div
