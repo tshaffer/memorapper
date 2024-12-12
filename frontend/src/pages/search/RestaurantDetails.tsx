@@ -37,6 +37,7 @@ const RestaurantDetails: React.FC = () => {
           width: { xs: '100%', sm: 'auto' },
         }}
       >
+        <Typography variant="h5">Reviews</Typography>
         {renderReviewDetailsForSelectedPlace()}
       </Box>
     );
