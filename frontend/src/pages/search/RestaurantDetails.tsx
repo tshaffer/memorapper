@@ -34,7 +34,7 @@ const RestaurantDetails: React.FC = () => {
   };
 
   const renderOpeningHours = (): JSX.Element => {
-    if (!place.opening_hours?.weekday_text) {
+    if (!place.opening_hours || !place.opening_hours.weekday_text) {
       return (
         <Typography variant="body2" color="textSecondary">
           Opening hours not available
@@ -47,14 +47,32 @@ const RestaurantDetails: React.FC = () => {
         <Typography variant="h6" gutterBottom>
           Opening Hours
         </Typography>
-        <List>
+        <List
+          sx={{
+            padding: 0,
+            '& .MuiListItem-root': {
+              padding: 0,
+              marginBottom: { xs: '0px', sm: '8px' }, // Reduce spacing between lines on mobile
+              marginTop: { xs: '0px', sm: '8px' }, // Reduce spacing between lines on mobile
+            },
+          }}
+        >
           {place.opening_hours.weekday_text.map((day, index) => (
-            <ListItem key={index} sx={{ padding: 0 }}>
-              <ListItemText primary={day} />
+            <ListItem
+              key={index}
+            >
+              <ListItemText
+                primary={day}
+                sx={{
+                  padding: 0,
+                  marginBottom: { xs: '0px', sm: '8px' }, // Reduce spacing between lines on mobile
+                  marginTop: { xs: '0px', sm: '8px' }, // Reduce spacing between lines on mobile
+                }}
+              />
             </ListItem>
           ))}
         </List>
-      </Paper>
+      </Paper >
     );
   };
 
@@ -105,14 +123,39 @@ const RestaurantDetails: React.FC = () => {
             ? 'Yes'
             : 'No'}
       </Typography>
-      <Typography>
+      <Typography
+        sx={{
+          marginBottom: 1, // Default spacing
+          fontSize: { xs: '1rem', sm: '1rem' }, // Slightly smaller font size on mobile
+        }}
+      >
         <strong>Items Ordered:</strong>
       </Typography>
-      <List>
+      <List
+        sx={{
+          padding: 0,
+          marginBottom: 2,
+          '& .MuiListItem-root': {
+            padding: 0,
+            marginBottom: { xs: '0px', sm: '8px' }, // Reduce spacing between items on mobile
+            marginTop: { xs: '0px', sm: '8px' }, // Reduce spacing between items on mobile
+          },
+        }}
+      >
         {review.freeformReviewProperties.itemReviews.map((itemReview, idx) => (
-          <ListItem key={idx} sx={{ padding: 0 }}>
+          <ListItem key={idx}>
             <ListItemText
-              primary={`${itemReview.item} - ${itemReview.review || 'No rating provided'}`}
+              primary={
+                <React.Fragment>
+                  <strong>{itemReview.item}</strong>
+                  {' - '}
+                  <span style={{ fontWeight: 400 }}>{itemReview.review || 'No rating provided'}</span>
+                </React.Fragment>
+              } sx={{
+                padding: 0,
+                marginBottom: { xs: '0px', sm: '8px' }, // Reduce spacing between lines on mobile
+                marginTop: { xs: '0px', sm: '8px' }, // Reduce spacing between lines on mobile
+              }}
             />
           </ListItem>
         ))}
