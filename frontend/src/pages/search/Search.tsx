@@ -206,7 +206,12 @@ const Search: React.FC = () => {
       </div>
 
       {/* Drag Handle */}
-      <DraggableCore onDrag={handleDrag}>
+      <DraggableCore
+        onDrag={handleDrag}
+        handle="#dragHandle"
+        enableUserSelectHack={false} // Prevents issues with touch selection
+        allowAnyClick // Allows touch interactions
+      >
         <div
           id='dragHandle'
           style={{
@@ -214,6 +219,7 @@ const Search: React.FC = () => {
             background: '#ccc',
             cursor: 'row-resize',
             userSelect: 'none',
+            touchAction: 'none', // Prevents touch scrolling on the drag handle
           }}
         />
       </DraggableCore>
