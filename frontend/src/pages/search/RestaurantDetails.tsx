@@ -1,20 +1,21 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Paper, IconButton, Typography, Tooltip, Box } from '@mui/material';
+import { Paper, IconButton, Typography, Tooltip, Box, List, ListItem, ListItemText } from '@mui/material';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
 import '../../App.css';
 
-import { ItemReview, MemoRappReview, RestaurantDetailsProps } from '../../types';
+import { GooglePlace, ItemReview, MemoRappReview, RestaurantDetailsProps } from '../../types';
 
 const RestaurantDetails: React.FC = () => {
 
   const location = useLocation();
   const restaurantDetailsProps: RestaurantDetailsProps = location.state as RestaurantDetailsProps;
 
-  const { place, reviews } = restaurantDetailsProps;
+  // const { place, reviews }: RestaurantDetailsProps = restaurantDetailsProps;
+  const { place, reviews }: { place: GooglePlace; reviews: MemoRappReview[] } = restaurantDetailsProps;
 
   const navigate = useNavigate();
 
@@ -42,6 +43,7 @@ const RestaurantDetails: React.FC = () => {
   }
 
   const renderReviewDetailsForSelectedPlace = (): JSX.Element | null => {
+
     const reviewDetails = reviews.map((review: MemoRappReview) => {
       return renderReviewDetails(review);
     });
@@ -58,6 +60,81 @@ const RestaurantDetails: React.FC = () => {
       </Paper>
     );
   };
+
+  const renderOpeningHours = (openingHours: google.maps.places.PlaceOpeningHours | undefined | null): JSX.Element => {
+
+    if (!openingHours || !openingHours.weekday_text) {
+      return (
+        <Typography variant="body2" color="textSecondary">
+          Opening hours not available
+        </Typography>
+      );
+    }
+
+    return (
+      <Paper elevation={3} sx={{ padding: 2, marginTop: 2 }}>
+        <Typography variant="h6" gutterBottom>
+          Opening Hours
+        </Typography>
+        <List>
+          {openingHours.weekday_text.map((day, index) => (
+            <ListItem key={index} sx={{ padding: 0 }}>
+              <ListItemText primary={day} />
+            </ListItem>
+          ))}
+        </List>
+      </Paper>
+    );
+  };
+
+  const getPriceLevelLabel = (priceLevel: number): string => {
+    switch (priceLevel) {
+      case 0:
+        return 'Free';
+      case 1:
+        return 'Inexpensive';
+      case 2:
+        return 'Moderate';
+      case 3:
+        return 'Expensive';
+      case 4:
+        return 'Very Expensive';
+      default:
+        return 'Price level not available';
+    }
+  }
+
+  const renderPriceLevel = (priceLevel: number | undefined): JSX.Element => {
+    if (!priceLevel) {
+      return (
+        <Typography variant="body2" color="textSecondary">
+          Price level not available
+        </Typography>
+      );
+    }
+
+    return (
+      <Typography variant="body2" color="textSecondary">
+        Price level: {getPriceLevelLabel(priceLevel)}
+      </Typography>
+    );
+  }
+
+  const renderRestaurantOverview = (): JSX.Element => {
+    return (
+      <Box>
+        <Typography variant="h4">{place.name}</Typography>
+        <Typography>{place.vicinity}</Typography>
+        <Typography>{renderPriceLevel(place.price_level)}</Typography>
+        <Typography>
+          <a href={place.website} target="_blank" rel="noreferrer">
+            {place.website}
+          </a>
+        </Typography>
+        {renderOpeningHours(place.opening_hours)}
+      </Box>
+    );
+  }
 
   const renderReviewDetails = (review: MemoRappReview): JSX.Element => {
     return (
@@ -99,6 +176,7 @@ const RestaurantDetails: React.FC = () => {
 
   return (
     <React.Fragment>
+      {renderRestaurantOverview()}
       {renderReviewsContainer()}
     </React.Fragment>
   );
