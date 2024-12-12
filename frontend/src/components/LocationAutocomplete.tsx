@@ -1,6 +1,6 @@
 import React from 'react';
 import { Autocomplete } from '@react-google-maps/api';
-import { IconButton, useMediaQuery, Typography, Box } from '@mui/material';
+import { IconButton, useMediaQuery, Typography, Box, Tooltip } from '@mui/material';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -77,18 +77,20 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
       }}
     >
       {/* Current Location Icon */}
-      <IconButton
-        onClick={handleUseCurrentLocation}
-        sx={{
-          backgroundColor: '#007bff',
-          color: '#fff',
-          '&:hover': {
-            backgroundColor: '#0056b3',
-          },
-        }}
-      >
-        <MyLocationIcon />
-      </IconButton>
+      <Tooltip title="Current Location">
+        <IconButton
+          onClick={handleUseCurrentLocation}
+          sx={{
+            backgroundColor: '#007bff',
+            color: '#fff',
+            '&:hover': {
+              backgroundColor: '#0056b3',
+            },
+          }}
+        >
+          <MyLocationIcon />
+        </IconButton>
+      </Tooltip>
 
       {/* Label */}
       <Typography
