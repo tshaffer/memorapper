@@ -115,10 +115,12 @@ const Search: React.FC = () => {
   };
 
   const DraggableHandle: React.FC = () => {
-    const { attributes, listeners, setNodeRef } = useDraggable({
+    const { attributes, listeners, setNodeRef, transform } = useDraggable({
       id: 'draggable-handle',
     });
 
+    const positionY = topHeight - 5; // Position the draggable handle at the bottom of the top div
+    
     return (
       <div
         ref={setNodeRef}
@@ -131,6 +133,13 @@ const Search: React.FC = () => {
           textAlign: 'center',
           lineHeight: '10px',
           userSelect: 'none',
+          // width: '100%',
+          transform: transform ? `translateY(${transform.y}px)` : undefined,
+          position: 'absolute',
+          left: '50%',
+          top: `${positionY}px`,
+          width: '100%', // width of the draggable handle - failure to include this breaks it
+      
         }}
       />
     );
