@@ -4,7 +4,6 @@ import {
   useDraggable,
   useSensor,
   useSensors,
-  PointerSensor,
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
@@ -13,18 +12,15 @@ import {
   DragPendingEvent,
   DragEndEvent,
 } from '@dnd-kit/core';
-// import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 
 import { ExtendedGooglePlace, GooglePlace, MemoRappReview, SearchUIFilters, SortCriteria } from '../../types';
 
-// import DragHandle from '../../components/DragHandle';
 import PulsingDots from '../../components/PulsingDots';
 
 import LocationAutocomplete from '../../components/LocationAutocomplete';
 import MapWithMarkers from '../../components/MapWIthMarkers';
 import SearchFilters from './SearchFilters';
 import RestaurantsTable from './RestaurantsTable';
-import Draggable from '../dndTouch/DndTouchDraggable';
 
 const Search: React.FC = () => {
   const [startingDragHandlePosition, setStartingDragHandlePosition] = useState(0);
@@ -98,19 +94,6 @@ const Search: React.FC = () => {
       ...place,
       reviews: getReviewsForPlace(place.place_id),
     }));
-
-  // const handleDrag = (deltaY: number) => {
-  //   const containerHeight = window.innerHeight;
-  //   const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
-  //   setTopHeight(newTopHeight);
-  //   setBottomHeight(containerHeight - newTopHeight);
-  // };
-
-  // const handleDrag: DraggableEventHandler = (_, data) => {
-  //   const newTopHeight = Math.max(50, Math.min(topHeight + data.deltaY, containerHeight - 50));
-  //   setTopHeight(newTopHeight);
-  //   setBottomHeight(containerHeight - newTopHeight); // Adjust bottom height accordingly
-  // };
 
   const handleDragPending = (event: DragPendingEvent) => {
     debugger;
