@@ -89,7 +89,7 @@ const Search: React.FC = () => {
 
   // Handle vertical dragging
   const handleDragMove = (event: any) => {
-    console.log('handleDragMove');
+    // console.log('handleDragMove');
     const deltaY = event.delta.y;
     const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
     setTopHeight(newTopHeight);
@@ -101,11 +101,28 @@ const Search: React.FC = () => {
       id: 'draggable-handle',
     });
 
+    const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+      const touch = event.touches[0];
+      console.log('Touch Start:', { x: touch.clientX, y: touch.clientY });
+    };
+  
+    const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+      const touch = event.touches[0];
+      console.log('Touch Move:', { x: touch.clientX, y: touch.clientY });
+      event.preventDefault(); // Prevents the browser from interpreting the touch as a scroll
+    };
+  
+    const handleTouchEnd = () => {
+      console.log('Touch End');
+    };
     return (
       <div
         ref={setNodeRef}
         {...listeners}
         {...attributes}
+        onTouchStart={(event) => handleTouchStart(event)}
+        onTouchMove={(event) => handleTouchMove(event)}
+        onTouchEnd={handleTouchEnd}
         style={{
           height: '10px',
           backgroundColor: '#ccc',
@@ -209,7 +226,7 @@ const Search: React.FC = () => {
 
   const sensors = useSensors(
     useSensor(PointerSensor),
-    useSensor(TouchSensor, { activationConstraint: { delay: 0, tolerance: 10 } })
+    useSensor(TouchSensor, { activationConstraint: { delay: 0, tolerance: 1 } })
   );
 
   return (
