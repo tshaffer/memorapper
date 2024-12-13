@@ -49,7 +49,7 @@ const Draggable = function Draggable({ id }: DraggableProps) {
           {...listeners}
           {...attributes}
       >
-          Draggable {id}
+          {/* Draggable {id} */}
       </div>
   )
 }

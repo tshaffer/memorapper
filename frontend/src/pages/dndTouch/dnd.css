@@ -4,10 +4,11 @@
   cursor: 'row-resize';
   user-select: 'none';
   touch-action: 'none'; */
-
-  background-color: red;
-  color: white;
-  height: 100px;
-  width: 100px;
+  background: '#ccc';
+  /* background-color: '#bbb'; */
+  background-color: darkgray;
+  color: #bbb;
+  height: 10px;
+  width: 100%;
   margin: 0.5rem;
 }
