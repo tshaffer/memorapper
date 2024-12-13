@@ -8,6 +8,7 @@ import {
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
+  DragMoveEvent,
 } from '@dnd-kit/core';
 // import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 
@@ -106,12 +107,15 @@ const Search: React.FC = () => {
   // };
 
   // Handle vertical dragging
-  const handleDragMove = (event: any) => {
+  const handleDragMove = (event: DragMoveEvent) => {
+    
     console.log('handleDragMove');
     const deltaY = event.delta.y;
-    const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
-    setTopHeight(newTopHeight);
-    setBottomHeight(containerHeight - newTopHeight);
+    console.log('deltaY:', deltaY);
+
+    // const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
+    // setTopHeight(newTopHeight);
+    // setBottomHeight(containerHeight - newTopHeight);
   };
 
   const DraggableHandle: React.FC = () => {
@@ -119,7 +123,7 @@ const Search: React.FC = () => {
       id: 'draggable-handle',
     });
 
-    const positionY = 100;
+    const positionY = 0;
 
     const style: React.CSSProperties = {
       height: '10px',
@@ -236,15 +240,7 @@ const Search: React.FC = () => {
   const mouseSensor = useSensor(MouseSensor)
   const touchSensor = useSensor(TouchSensor)
   const keyboardSensor = useSensor(KeyboardSensor)
-  // const pointerSensor = useSensor(PointerSensor)
-  // const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor, pointerSensor);
   const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor)
-
-  //   return (
-  //     <DndContext sensors={sensors}>
-  //         <Draggable id="1" />
-  //     </DndContext>
-  // )
 
   return (
     <DndContext sensors={sensors} onDragMove={handleDragMove}>
