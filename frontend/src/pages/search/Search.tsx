@@ -5,22 +5,17 @@ import {
   useSensor,
   useSensors,
   PointerSensor,
-  KeyboardSensor,
-  MouseSensor,
   TouchSensor,
 } from '@dnd-kit/core';
-// import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 
 import { ExtendedGooglePlace, GooglePlace, MemoRappReview, SearchUIFilters, SortCriteria } from '../../types';
 
-// import DragHandle from '../../components/DragHandle';
 import PulsingDots from '../../components/PulsingDots';
 
 import LocationAutocomplete from '../../components/LocationAutocomplete';
 import MapWithMarkers from '../../components/MapWIthMarkers';
 import SearchFilters from './SearchFilters';
 import RestaurantsTable from './RestaurantsTable';
-import Draggable from '../dndTouch/DndTouchDraggable';
 
 const Search: React.FC = () => {
   const [topHeight, setTopHeight] = useState(window.innerHeight * 0.4); // Initial height for the top div
@@ -118,6 +113,7 @@ const Search: React.FC = () => {
           textAlign: 'center',
           lineHeight: '10px',
           userSelect: 'none',
+          touchAction: 'none', // Prevents scroll interference on touch devices
         }}
       />
     );
@@ -211,8 +207,13 @@ const Search: React.FC = () => {
     );
   }
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(TouchSensor, { activationConstraint: { delay: 0, tolerance: 10 } })
+  );
+
   return (
-    <DndContext sensors={useSensors(useSensor(PointerSensor))} onDragMove={handleDragMove}>
+    <DndContext sensors={sensors} onDragMove={handleDragMove}>
       <div
         id='searchContainer'
         style={{
@@ -246,21 +247,6 @@ const Search: React.FC = () => {
 
         {/* Draggable Handle */}
         <DraggableHandle />
-
-        {/* Drag Handle */}
-        {/* <DragHandle onDrag={handleDrag} /> */}
-        {/* <Draggable id="1" /> */}
-        {/* <DraggableCore onDrag={handleDrag}>
-        <div
-          id='dragHandle'
-          style={{
-            height: '10px',
-            background: '#ccc',
-            cursor: 'row-resize',
-            userSelect: 'none',
-          }}
-        />
-      </DraggableCore> */}
 
         {/* Overlay Content */}
         <div
