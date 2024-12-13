@@ -131,9 +131,9 @@ const Search: React.FC = () => {
 
       transform: transform ? `translateY(${transform.y}px)` : undefined,
       position: 'absolute',
-      left: '50%',
+      left: '0%',
       top: `${positionY}px`,
-      width: '200px', // width of the draggable handle - failure to include this breaks it
+      width: '100%',
     };
 
     return (
@@ -280,21 +280,6 @@ const Search: React.FC = () => {
         </div>
 
         <DraggableHandle />
-
-        {/* Drag Handle */}
-        {/* <DragHandle onDrag={handleDrag} /> */}
-        {/* <Draggable id="1" /> */}
-        {/* <DraggableCore onDrag={handleDrag}>
-        <div
-          id='dragHandle'
-          style={{
-            height: '10px',
-            background: '#ccc',
-            cursor: 'row-resize',
-            userSelect: 'none',
-          }}
-        />
-      </DraggableCore> */}
 
         {/* Overlay Content */}
         <div
