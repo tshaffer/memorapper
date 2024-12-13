@@ -114,9 +114,9 @@ const Search: React.FC = () => {
     setBottomHeight(containerHeight - newTopHeight);
   };
 
-  const Draggable: React.FC = () => {
+  const DraggableHandle: React.FC = () => {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
-      id: 'draggable-item',
+      id: 'draggable-handle',
     });
 
     const positionY = 100;
@@ -142,8 +142,7 @@ const Search: React.FC = () => {
         style={style}
         {...listeners}
         {...attributes}
-      >
-      </div>
+      />
     );
   };
 
@@ -237,7 +236,8 @@ const Search: React.FC = () => {
   const mouseSensor = useSensor(MouseSensor)
   const touchSensor = useSensor(TouchSensor)
   const keyboardSensor = useSensor(KeyboardSensor)
-
+  // const pointerSensor = useSensor(PointerSensor)
+  // const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor, pointerSensor);
   const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor)
 
   //   return (
@@ -279,7 +279,7 @@ const Search: React.FC = () => {
           />
         </div>
 
-        <Draggable/>
+        <DraggableHandle />
 
         {/* Drag Handle */}
         {/* <DragHandle onDrag={handleDrag} /> */}
