@@ -56,11 +56,12 @@ const Draggable: React.FC = () => {
     textAlign: 'center',
     lineHeight: '10px',
     userSelect: 'none',
+
     transform: transform ? `translateY(${transform.y}px)` : undefined,
     position: 'absolute',
     left: '50%',
     top: `${positionY}px`,
-    width: '200px',
+    width: '200px', // width of the draggable handle - failure to include this breaks it
   };
 
   //       Drag Me Vertically
