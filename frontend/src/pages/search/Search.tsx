@@ -11,6 +11,7 @@ import {
   DragMoveEvent,
   DragStartEvent,
   DragPendingEvent,
+  DragEndEvent,
 } from '@dnd-kit/core';
 // import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 
@@ -112,6 +113,7 @@ const Search: React.FC = () => {
   // };
 
   const handleDragPending = (event: DragPendingEvent) => {
+    debugger;
     console.log('handleDragPending');
     console.log('event:', event);
   }
@@ -121,28 +123,38 @@ const Search: React.FC = () => {
     console.log('event:', event);
   }
 
-  // Handle vertical dragging
   const handleDragMove = (event: DragMoveEvent) => {
-    
-    console.log('handleDragMove');
+
+    // console.log(event);
+    // console.log('handleDragMove');
     const deltaY = event.delta.y;
-    console.log('deltaY:', deltaY);
+    // console.log('deltaY:', deltaY);
 
     // const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
     // setTopHeight(newTopHeight);
     // setBottomHeight(containerHeight - newTopHeight);
 
-    const newDragHandlePosition = Math.max(0, Math.min(startingDragHandlePosition + deltaY, containerHeight - 10));
-    setDragHandlePosition(newDragHandlePosition);
+    // const newDragHandlePosition = Math.max(0, Math.min(startingDragHandlePosition + deltaY, containerHeight - 10));
+    const newDragHandlePosition = startingDragHandlePosition + deltaY;
+    console.log('startingDragHandlePosition:', startingDragHandlePosition);
+    console.log('dragHandlePosition:', dragHandlePosition);
+    console.log('deltaY:', deltaY);
     console.log('newDragHandlePosition:', newDragHandlePosition);
+    setDragHandlePosition(newDragHandlePosition);
   };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    console.log('handleDragEnd');
+    console.log('event:', event);
+    setStartingDragHandlePosition(dragHandlePosition);
+  }
 
   const DraggableHandle: React.FC = () => {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
       id: 'draggable-handle',
     });
 
-    const positionY = 0;
+    const positionY = dragHandlePosition;
 
     // console.log('transform:', transform);
 
@@ -157,7 +169,7 @@ const Search: React.FC = () => {
       transform: transform ? `translateY(${transform.y}px)` : undefined,
       position: 'absolute',
       left: '0%',
-      top: `${positionY}px`,
+      // top: `${positionY}px`,
       width: '100%',
     };
 
@@ -264,7 +276,13 @@ const Search: React.FC = () => {
   const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor)
 
   return (
-    <DndContext sensors={sensors} onDragPending={handleDragPending} onDragStart={handleDragStart} onDragMove={handleDragMove}>
+    <DndContext
+      sensors={sensors}
+      onDragPending={handleDragPending}
+      onDragStart={handleDragStart}
+      onDragMove={handleDragMove}
+      onDragEnd={handleDragEnd}
+    >
       <div
         id='searchContainer'
         style={{
