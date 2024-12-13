@@ -18,6 +18,7 @@ import SearchFilters from './SearchFilters';
 import RestaurantsTable from './RestaurantsTable';
 
 const Search: React.FC = () => {
+
   const [topHeight, setTopHeight] = useState(window.innerHeight * 0.4); // Initial height for the top div
   const [bottomHeight, setBottomHeight] = useState(window.innerHeight * 0.6); // Initial height for the bottom div
 
@@ -87,7 +88,6 @@ const Search: React.FC = () => {
       reviews: getReviewsForPlace(place.place_id),
     }));
 
-  // Handle vertical dragging
   const handleDragMove = (event: any) => {
     // console.log('handleDragMove');
     const deltaY = event.delta.y;
@@ -97,45 +97,31 @@ const Search: React.FC = () => {
   };
 
   const DraggableHandle: React.FC = () => {
-    const { attributes, listeners, setNodeRef } = useDraggable({
+    const { attributes, listeners, setNodeRef, transform } = useDraggable({
       id: 'draggable-handle',
     });
 
-    const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
-      const touch = event.touches[0];
-      console.log('Touch Start:', { x: touch.clientX, y: touch.clientY });
+    // const positionY = dragHandlePosition;
+
+    const style: React.CSSProperties = {
+      height: '20px',
+      backgroundColor: '#ccc',
+      cursor: 'row-resize',
+      textAlign: 'center',
+      lineHeight: '10px',
+      userSelect: 'none',
+      touchAction: 'none', // Prevents scroll interference on touch devices
     };
-  
-    const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
-      const touch = event.touches[0];
-      console.log('Touch Move:', { x: touch.clientX, y: touch.clientY });
-      event.preventDefault(); // Prevents the browser from interpreting the touch as a scroll
-    };
-  
-    const handleTouchEnd = () => {
-      console.log('Touch End');
-    };
+
     return (
       <div
         ref={setNodeRef}
+        style={style}
         {...listeners}
         {...attributes}
-        onTouchStart={(event) => handleTouchStart(event)}
-        onTouchMove={(event) => handleTouchMove(event)}
-        onTouchEnd={handleTouchEnd}
-        style={{
-          height: '10px',
-          backgroundColor: '#ccc',
-          cursor: 'row-resize',
-          textAlign: 'center',
-          lineHeight: '10px',
-          userSelect: 'none',
-          touchAction: 'none', // Prevents scroll interference on touch devices
-        }}
       />
     );
   };
-
 
   const handleSetMapLocation = (location: google.maps.LatLngLiteral): void => {
     setMapLocation(location);
@@ -230,7 +216,10 @@ const Search: React.FC = () => {
   );
 
   return (
-    <DndContext sensors={sensors} onDragMove={handleDragMove}>
+    <DndContext
+      sensors={sensors}
+      onDragMove={handleDragMove}
+    >
       <div
         id='searchContainer'
         style={{
@@ -262,7 +251,6 @@ const Search: React.FC = () => {
           />
         </div>
 
-        {/* Draggable Handle */}
         <DraggableHandle />
 
         {/* Overlay Content */}
