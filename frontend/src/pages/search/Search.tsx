@@ -7,10 +7,6 @@ import {
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
-  DragMoveEvent,
-  DragStartEvent,
-  DragPendingEvent,
-  DragEndEvent,
 } from '@dnd-kit/core';
 
 import { ExtendedGooglePlace, GooglePlace, MemoRappReview, SearchUIFilters, SortCriteria } from '../../types';
@@ -23,8 +19,6 @@ import SearchFilters from './SearchFilters';
 import RestaurantsTable from './RestaurantsTable';
 
 const Search: React.FC = () => {
-  const [startingDragHandlePosition, setStartingDragHandlePosition] = useState(0);
-  const [dragHandlePosition, setDragHandlePosition] = useState(0);
 
   const [topHeight, setTopHeight] = useState(window.innerHeight * 0.4); // Initial height for the top div
   const [bottomHeight, setBottomHeight] = useState(window.innerHeight * 0.6); // Initial height for the bottom div
@@ -95,54 +89,20 @@ const Search: React.FC = () => {
       reviews: getReviewsForPlace(place.place_id),
     }));
 
-  const handleDragPending = (event: DragPendingEvent) => {
-    debugger;
-    console.log('handleDragPending');
-    console.log('event:', event);
-  }
-
-  const handleDragStart = (event: DragStartEvent) => {
-    console.log('handleDragStart');
-    console.log('event:', event);
-  }
-
-  const handleDragMove = (event: DragMoveEvent) => {
-
-    // console.log(event);
-    // console.log('handleDragMove');
-    const deltaY = event.delta.y;
-    // console.log('deltaY:', deltaY);
-
-    // const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
-    // setTopHeight(newTopHeight);
-    // setBottomHeight(containerHeight - newTopHeight);
-
-    // const newDragHandlePosition = Math.max(0, Math.min(startingDragHandlePosition + deltaY, containerHeight - 10));
-    const newDragHandlePosition = startingDragHandlePosition + deltaY;
-    console.log('startingDragHandlePosition:', startingDragHandlePosition);
-    console.log('dragHandlePosition:', dragHandlePosition);
-    console.log('deltaY:', deltaY);
-    console.log('newDragHandlePosition:', newDragHandlePosition);
-    setDragHandlePosition(newDragHandlePosition);
-
-    const newTopHeight = Math.max(50, Math.min(containerHeight / 2 + startingDragHandlePosition + deltaY, containerHeight - 50));
-    setTopHeight(newTopHeight);
-    setBottomHeight(containerHeight - newTopHeight);
-
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    console.log('handleDragEnd');
-    console.log('event:', event);
-    setStartingDragHandlePosition(dragHandlePosition);
-  }
-
+    const handleDragMove = (event: any) => {
+      // console.log('handleDragMove');
+      const deltaY = event.delta.y;
+      const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
+      setTopHeight(newTopHeight);
+      setBottomHeight(containerHeight - newTopHeight);
+    };
+  
   const DraggableHandle: React.FC = () => {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
       id: 'draggable-handle',
     });
 
-    const positionY = dragHandlePosition;
+    // const positionY = dragHandlePosition;
 
     const style: React.CSSProperties = {
       height: '10px',
@@ -264,10 +224,7 @@ const Search: React.FC = () => {
   return (
     <DndContext
       sensors={sensors}
-      onDragPending={handleDragPending}
-      onDragStart={handleDragStart}
       onDragMove={handleDragMove}
-      onDragEnd={handleDragEnd}
     >
       <div
         id='searchContainer'
