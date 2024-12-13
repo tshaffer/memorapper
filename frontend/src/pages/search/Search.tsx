@@ -104,7 +104,7 @@ const Search: React.FC = () => {
     // const positionY = dragHandlePosition;
 
     const style: React.CSSProperties = {
-      height: '20px',
+      height: '40px',
       backgroundColor: '#ccc',
       cursor: 'row-resize',
       textAlign: 'center',
