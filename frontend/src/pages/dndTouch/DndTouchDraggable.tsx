@@ -55,6 +55,7 @@ const Draggable: React.FC = () => {
     cursor: 'row-resize',
     textAlign: 'center',
     lineHeight: '10px',
+    userSelect: 'none',
     transform: transform ? `translateY(${transform.y}px)` : undefined,
     position: 'absolute',
     left: '50%',
