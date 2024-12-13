@@ -1,4 +1,10 @@
 .draggable {
+  /* height: '10px';
+  background: '#ccc';
+  cursor: 'row-resize';
+  user-select: 'none';
+  touch-action: 'none'; */
+
   background-color: red;
   color: white;
   height: 100px;

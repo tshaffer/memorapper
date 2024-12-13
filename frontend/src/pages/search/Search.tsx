@@ -189,88 +189,92 @@ const Search: React.FC = () => {
 
   const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor)
 
+  //   return (
+  //     <DndContext sensors={sensors}>
+  //         <Draggable id="1" />
+  //     </DndContext>
+  // )
+
   return (
     <DndContext sensors={sensors}>
+      <div
+        id='searchContainer'
+        style={{
+          height: `${containerHeight}px`,
+          position: 'relative', // Important for absolutely positioned children
+          border: '1px solid #ccc',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Search Area UI */}
+        {renderSearchAreaUI()}
+
+        {/* Map Layer */}
+        <div
+          id='mapLayer'
+          style={{
+            height: `${topHeight}px`,
+            background: '#f0f0f0',
+            overflow: 'auto',
+          }}
+        >
+          <MapWithMarkers
+            key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })} // Forces re-render on prop change
+            initialCenter={mapLocation!}
+            locations={getExtendedGooglePlaces()}
+            blueDotLocation={mapLocation!}
+          />
+        </div>
+
+        {/* Drag Handle */}
+        {/* <DragHandle onDrag={handleDrag} /> */}
         <Draggable id="1" />
+        {/* <DraggableCore onDrag={handleDrag}>
+        <div
+          id='dragHandle'
+          style={{
+            height: '10px',
+            background: '#ccc',
+            cursor: 'row-resize',
+            userSelect: 'none',
+          }}
+        />
+      </DraggableCore> */}
+
+        {/* Overlay Content */}
+        <div
+          id='overlayContent'
+          style={{
+            height: `${bottomHeight}px`,
+            background: '#e0e0e0',
+            overflow: 'auto',
+          }}
+        >
+          {/* Filters */}
+          <SearchFilters
+            onExecuteQuery={(query: string) => handleExecuteQuery(query)}
+            onExecuteFilter={(filter: SearchUIFilters) => handleExecuteFilter(filter)}
+            onSetSortCriteria={(sortCriteria: SortCriteria) => handleSetSortCriteria(sortCriteria)}
+          />
+
+          {renderPulsingDots()}
+
+          {/* List of Restaurants */}
+          <RestaurantsTable
+            currentLocation={mapLocation}
+            filteredPlaces={filteredPlaces}
+            filteredReviews={filteredReviews}
+            sortCriteria={sortCriteria}
+          />
+        </div>
+      </div>
     </DndContext>
-)
+  );
 
-  // return (
-  //   <DndContext sensors={sensors}>
-  //     <div
-  //       id='searchContainer'
-  //       style={{
-  //         height: `${containerHeight}px`,
-  //         position: 'relative', // Important for absolutely positioned children
-  //         border: '1px solid #ccc',
-  //         display: 'flex',
-  //         flexDirection: 'column',
-  //         overflow: 'hidden',
-  //       }}
-  //     >
-  //       {/* Search Area UI */}
-  //       {renderSearchAreaUI()}
 
-  //       {/* Map Layer */}
-  //       <div
-  //         id='mapLayer'
-  //         style={{
-  //           height: `${topHeight}px`,
-  //           background: '#f0f0f0',
-  //           overflow: 'auto',
-  //         }}
-  //       >
-  //         <MapWithMarkers
-  //           key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })} // Forces re-render on prop change
-  //           initialCenter={mapLocation!}
-  //           locations={getExtendedGooglePlaces()}
-  //           blueDotLocation={mapLocation!}
-  //         />
-  //       </div>
 
-  //       {/* Drag Handle */}
-  //       <DragHandle onDrag={handleDrag} />
-  //       {/* <DraggableCore onDrag={handleDrag}>
-  //       <div
-  //         id='dragHandle'
-  //         style={{
-  //           height: '10px',
-  //           background: '#ccc',
-  //           cursor: 'row-resize',
-  //           userSelect: 'none',
-  //         }}
-  //       />
-  //     </DraggableCore> */}
-
-  //       {/* Overlay Content */}
-  //       <div
-  //         id='overlayContent'
-  //         style={{
-  //           height: `${bottomHeight}px`,
-  //           background: '#e0e0e0',
-  //           overflow: 'auto',
-  //         }}
-  //       >
-  //         {/* Filters */}
-  //         <SearchFilters
-  //           onExecuteQuery={(query: string) => handleExecuteQuery(query)}
-  //           onExecuteFilter={(filter: SearchUIFilters) => handleExecuteFilter(filter)}
-  //           onSetSortCriteria={(sortCriteria: SortCriteria) => handleSetSortCriteria(sortCriteria)}
-  //         />
-
-  //         {renderPulsingDots()}
-
-  //         {/* List of Restaurants */}
-  //         <RestaurantsTable
-  //           currentLocation={mapLocation}
-  //           filteredPlaces={filteredPlaces}
-  //           filteredReviews={filteredReviews}
-  //           sortCriteria={sortCriteria}
-  //         />
-  //       </div>
-  //     </div>
-  //   </DndContext>
-  // );
 };
 
 export default Search;
