@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
-// import { DraggableCore, DraggableEventHandler } from 'react-draggable';
-
 import { ExtendedGooglePlace, GooglePlace, MemoRappReview, SearchUIFilters, SortCriteria } from '../../types';
-
-import DragHandle from '../../components/DragHandle';
 import PulsingDots from '../../components/PulsingDots';
-
 import LocationAutocomplete from '../../components/LocationAutocomplete';
 import MapWithMarkers from '../../components/MapWIthMarkers';
 import SearchFilters from './SearchFilters';
 import RestaurantsTable from './RestaurantsTable';
-import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
-import Draggable from '../dndTouch/DndTouchDraggable';
+
+
+
+
+import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useDraggable, useSensor, useSensors } from '@dnd-kit/core';
+// import Draggable from '../dndTouch/DndTouchDraggable';
+
+
+
+
 
 const Search: React.FC = () => {
   const [topHeight, setTopHeight] = useState(window.innerHeight * 0.4); // Initial height for the top div
@@ -83,12 +86,12 @@ const Search: React.FC = () => {
       reviews: getReviewsForPlace(place.place_id),
     }));
 
-  const handleDrag = (deltaY: number) => {
-    const containerHeight = window.innerHeight;
-    const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
-    setTopHeight(newTopHeight);
-    setBottomHeight(containerHeight - newTopHeight);
-  };
+  // const handleDrag = (deltaY: number) => {
+  //   const containerHeight = window.innerHeight;
+  //   const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
+  //   setTopHeight(newTopHeight);
+  //   setBottomHeight(containerHeight - newTopHeight);
+  // };
 
   // const handleDrag: DraggableEventHandler = (_, data) => {
   //   const newTopHeight = Math.max(50, Math.min(topHeight + data.deltaY, containerHeight - 50));
@@ -183,6 +186,47 @@ const Search: React.FC = () => {
     );
   }
 
+  const handleDragMove = (event: any) => {
+    console.log('handleDragMove');
+    // const deltaY = event.delta.y;
+    // const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
+    // setTopHeight(newTopHeight);
+    // setBottomHeight(containerHeight - newTopHeight);
+  };
+
+  const Draggable: React.FC = () => {
+    const { attributes, listeners, setNodeRef, transform } = useDraggable({
+      id: 'draggable-item',
+    });
+
+    const positionY = 100;
+
+    const style: React.CSSProperties = {
+      height: '10px',
+      backgroundColor: '#ccc',
+      cursor: 'row-resize',
+      textAlign: 'center',
+      lineHeight: '10px',
+      userSelect: 'none',
+
+      transform: transform ? `translateY(${transform.y}px)` : undefined,
+      position: 'absolute',
+      left: '50%',
+      top: `${positionY}px`,
+      width: '200px', // width of the draggable handle - failure to include this breaks it
+    };
+
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        {...listeners}
+        {...attributes}
+      >
+      </div>
+    );
+  };
+
   const mouseSensor = useSensor(MouseSensor)
   const touchSensor = useSensor(TouchSensor)
   const keyboardSensor = useSensor(KeyboardSensor)
@@ -196,7 +240,7 @@ const Search: React.FC = () => {
   // )
 
   return (
-    <DndContext sensors={sensors}>
+    <DndContext sensors={sensors} onDragMove={handleDragMove}>
       <div
         id='searchContainer'
         style={{
@@ -228,9 +272,11 @@ const Search: React.FC = () => {
           />
         </div>
 
+        <Draggable/>
+
         {/* Drag Handle */}
         {/* <DragHandle onDrag={handleDrag} /> */}
-        <Draggable id="1" />
+        {/* <Draggable id="1" /> */}
         {/* <DraggableCore onDrag={handleDrag}>
         <div
           id='dragHandle'
