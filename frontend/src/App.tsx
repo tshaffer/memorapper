@@ -8,7 +8,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Map from './pages/maps/Map';
 import MultiPanelReviewForm from './pages/writeReview/WriteReviewPage';
 import GoogleMapsProvider from './components/GoogleMapsProvider';
-// import Search from './pages/search/Search';
+import Search from './pages/search/Search';
 import RestaurantDetails from './pages/search/RestaurantDetails';
 import DndTouchProto from './pages/dndTouch/DndTouchProto';
 
@@ -49,7 +49,7 @@ const App: React.FC = () => {
               ) : (
                 // Render labels for desktop
                 <>
-                  {/* <Button color="inherit" component={Link} to="/search">Search</Button> */}
+                  <Button color="inherit" component={Link} to="/search">Search</Button>
                   <Button color="inherit" component={Link} to="/map">Map</Button>
                   <Button color="inherit" component={Link} to="/write-review">Write Review</Button>
                 </>
@@ -59,9 +59,9 @@ const App: React.FC = () => {
 
           <Box id='mainAppContentArea' sx={{ flexGrow: 1, overflow: 'hidden' }}>
             <Routes>
-              <Route path="/" element={<DndTouchProto />} />
-              {/* <Route path="/" element={<Search />} />
-              <Route path="/search" element={<Search />} /> */}
+              {/* <Route path="/" element={<DndTouchProto />} /> */}
+              <Route path="/" element={<Search />} />
+              <Route path="/search" element={<Search />} />
               <Route path="/restaurantDetails" element={<RestaurantDetails />} />
               <Route path="/map" element={<Map />} />
               <Route path="/map/:_id" element={<Map />} />
