@@ -1,16 +1,25 @@
 import React, { useEffect, useState } from 'react';
-// import { DraggableCore, DraggableEventHandler } from 'react-draggable';
+import {
+  DndContext,
+  useDraggable,
+  useSensor,
+  useSensors,
+  PointerSensor,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+} from '@dnd-kit/core';
+// import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 
 import { ExtendedGooglePlace, GooglePlace, MemoRappReview, SearchUIFilters, SortCriteria } from '../../types';
 
-import DragHandle from '../../components/DragHandle';
+// import DragHandle from '../../components/DragHandle';
 import PulsingDots from '../../components/PulsingDots';
 
 import LocationAutocomplete from '../../components/LocationAutocomplete';
 import MapWithMarkers from '../../components/MapWIthMarkers';
 import SearchFilters from './SearchFilters';
 import RestaurantsTable from './RestaurantsTable';
-import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import Draggable from '../dndTouch/DndTouchDraggable';
 
 const Search: React.FC = () => {
@@ -83,18 +92,50 @@ const Search: React.FC = () => {
       reviews: getReviewsForPlace(place.place_id),
     }));
 
-  const handleDrag = (deltaY: number) => {
-    const containerHeight = window.innerHeight;
-    const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
-    setTopHeight(newTopHeight);
-    setBottomHeight(containerHeight - newTopHeight);
-  };
+  // const handleDrag = (deltaY: number) => {
+  //   const containerHeight = window.innerHeight;
+  //   const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
+  //   setTopHeight(newTopHeight);
+  //   setBottomHeight(containerHeight - newTopHeight);
+  // };
 
   // const handleDrag: DraggableEventHandler = (_, data) => {
   //   const newTopHeight = Math.max(50, Math.min(topHeight + data.deltaY, containerHeight - 50));
   //   setTopHeight(newTopHeight);
   //   setBottomHeight(containerHeight - newTopHeight); // Adjust bottom height accordingly
   // };
+
+  // Handle vertical dragging
+  const handleDragMove = (event: any) => {
+    console.log('handleDragMove');
+    const deltaY = event.delta.y;
+    const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
+    setTopHeight(newTopHeight);
+    setBottomHeight(containerHeight - newTopHeight);
+  };
+
+  const DraggableHandle: React.FC = () => {
+    const { attributes, listeners, setNodeRef } = useDraggable({
+      id: 'draggable-handle',
+    });
+
+    return (
+      <div
+        ref={setNodeRef}
+        {...listeners}
+        {...attributes}
+        style={{
+          height: '10px',
+          backgroundColor: '#ccc',
+          cursor: 'row-resize',
+          textAlign: 'center',
+          lineHeight: '10px',
+          userSelect: 'none',
+        }}
+      />
+    );
+  };
+
 
   const handleSetMapLocation = (location: google.maps.LatLngLiteral): void => {
     setMapLocation(location);
@@ -186,8 +227,8 @@ const Search: React.FC = () => {
   const mouseSensor = useSensor(MouseSensor)
   const touchSensor = useSensor(TouchSensor)
   const keyboardSensor = useSensor(KeyboardSensor)
-
-  const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor)
+  const pointerSensor = useSensor(PointerSensor)
+  const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor, pointerSensor);
 
   //   return (
   //     <DndContext sensors={sensors}>
@@ -195,8 +236,10 @@ const Search: React.FC = () => {
   //     </DndContext>
   // )
 
+      // <DndContext sensors={useSensors(useSensor(PointerSensor))} onDragMove={handleDragMove}>
+
   return (
-    <DndContext sensors={sensors}>
+    <DndContext sensors={sensors} onDragMove={handleDragMove}>
       <div
         id='searchContainer'
         style={{
@@ -228,9 +271,12 @@ const Search: React.FC = () => {
           />
         </div>
 
+        {/* Draggable Handle */}
+        <DraggableHandle />
+
         {/* Drag Handle */}
         {/* <DragHandle onDrag={handleDrag} /> */}
-        <Draggable id="1" />
+        {/* <Draggable id="1" /> */}
         {/* <DraggableCore onDrag={handleDrag}>
         <div
           id='dragHandle'
