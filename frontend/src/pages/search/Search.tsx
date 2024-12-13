@@ -9,6 +9,8 @@ import {
   MouseSensor,
   TouchSensor,
   DragMoveEvent,
+  DragStartEvent,
+  DragPendingEvent,
 } from '@dnd-kit/core';
 // import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 
@@ -24,6 +26,8 @@ import RestaurantsTable from './RestaurantsTable';
 import Draggable from '../dndTouch/DndTouchDraggable';
 
 const Search: React.FC = () => {
+  const [dragHandlePosition, setDragHandlePosition] = useState(0);
+
   const [topHeight, setTopHeight] = useState(window.innerHeight * 0.4); // Initial height for the top div
   const [bottomHeight, setBottomHeight] = useState(window.innerHeight * 0.6); // Initial height for the bottom div
 
@@ -106,6 +110,16 @@ const Search: React.FC = () => {
   //   setBottomHeight(containerHeight - newTopHeight); // Adjust bottom height accordingly
   // };
 
+  const handleDragPending = (event: DragPendingEvent) => {
+    console.log('handleDragPending');
+    console.log('event:', event);
+  }
+
+  const handleDragStart = (event: DragStartEvent) => {
+    console.log('handleDragStart');
+    console.log('event:', event);
+  }
+
   // Handle vertical dragging
   const handleDragMove = (event: DragMoveEvent) => {
     
@@ -116,6 +130,10 @@ const Search: React.FC = () => {
     // const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
     // setTopHeight(newTopHeight);
     // setBottomHeight(containerHeight - newTopHeight);
+
+    const newDragHandlePosition = Math.max(0, Math.min(dragHandlePosition + deltaY, containerHeight - 10));
+    setDragHandlePosition(newDragHandlePosition);
+    console.log('newDragHandlePosition:', newDragHandlePosition);
   };
 
   const DraggableHandle: React.FC = () => {
@@ -124,6 +142,8 @@ const Search: React.FC = () => {
     });
 
     const positionY = 0;
+
+    // console.log('transform:', transform);
 
     const style: React.CSSProperties = {
       height: '10px',
@@ -243,7 +263,7 @@ const Search: React.FC = () => {
   const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor)
 
   return (
-    <DndContext sensors={sensors} onDragMove={handleDragMove}>
+    <DndContext sensors={sensors} onDragPending={handleDragPending} onDragStart={handleDragStart} onDragMove={handleDragMove}>
       <div
         id='searchContainer'
         style={{
