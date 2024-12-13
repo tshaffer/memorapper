@@ -92,19 +92,6 @@ const Search: React.FC = () => {
       reviews: getReviewsForPlace(place.place_id),
     }));
 
-  // const handleDrag = (deltaY: number) => {
-  //   const containerHeight = window.innerHeight;
-  //   const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
-  //   setTopHeight(newTopHeight);
-  //   setBottomHeight(containerHeight - newTopHeight);
-  // };
-
-  // const handleDrag: DraggableEventHandler = (_, data) => {
-  //   const newTopHeight = Math.max(50, Math.min(topHeight + data.deltaY, containerHeight - 50));
-  //   setTopHeight(newTopHeight);
-  //   setBottomHeight(containerHeight - newTopHeight); // Adjust bottom height accordingly
-  // };
-
   // Handle vertical dragging
   const handleDragMove = (event: any) => {
     console.log('handleDragMove');
@@ -224,22 +211,8 @@ const Search: React.FC = () => {
     );
   }
 
-  const mouseSensor = useSensor(MouseSensor)
-  const touchSensor = useSensor(TouchSensor)
-  const keyboardSensor = useSensor(KeyboardSensor)
-  const pointerSensor = useSensor(PointerSensor)
-  const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor, pointerSensor);
-
-  //   return (
-  //     <DndContext sensors={sensors}>
-  //         <Draggable id="1" />
-  //     </DndContext>
-  // )
-
-      // <DndContext sensors={useSensors(useSensor(PointerSensor))} onDragMove={handleDragMove}>
-
   return (
-    <DndContext sensors={sensors} onDragMove={handleDragMove}>
+    <DndContext sensors={useSensors(useSensor(PointerSensor))} onDragMove={handleDragMove}>
       <div
         id='searchContainer'
         style={{
