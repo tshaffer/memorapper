@@ -26,6 +26,7 @@ import RestaurantsTable from './RestaurantsTable';
 import Draggable from '../dndTouch/DndTouchDraggable';
 
 const Search: React.FC = () => {
+  const [startingDragHandlePosition, setStartingDragHandlePosition] = useState(0);
   const [dragHandlePosition, setDragHandlePosition] = useState(0);
 
   const [topHeight, setTopHeight] = useState(window.innerHeight * 0.4); // Initial height for the top div
@@ -131,7 +132,7 @@ const Search: React.FC = () => {
     // setTopHeight(newTopHeight);
     // setBottomHeight(containerHeight - newTopHeight);
 
-    const newDragHandlePosition = Math.max(0, Math.min(dragHandlePosition + deltaY, containerHeight - 10));
+    const newDragHandlePosition = Math.max(0, Math.min(startingDragHandlePosition + deltaY, containerHeight - 10));
     setDragHandlePosition(newDragHandlePosition);
     console.log('newDragHandlePosition:', newDragHandlePosition);
   };
