@@ -89,14 +89,14 @@ const Search: React.FC = () => {
       reviews: getReviewsForPlace(place.place_id),
     }));
 
-    const handleDragMove = (event: any) => {
-      // console.log('handleDragMove');
-      const deltaY = event.delta.y;
-      const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
-      setTopHeight(newTopHeight);
-      setBottomHeight(containerHeight - newTopHeight);
-    };
-  
+  const handleDragMove = (event: any) => {
+    // console.log('handleDragMove');
+    const deltaY = event.delta.y;
+    const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
+    setTopHeight(newTopHeight);
+    setBottomHeight(containerHeight - newTopHeight);
+  };
+
   const DraggableHandle: React.FC = () => {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
       id: 'draggable-handle',
