@@ -53,13 +53,13 @@ const Draggable: React.FC = () => {
     height: '10px',
     backgroundColor: '#ccc',
     cursor: 'row-resize',
+    textAlign: 'center',
+    lineHeight: '10px',
     transform: transform ? `translateY(${transform.y}px)` : undefined,
     position: 'absolute',
     left: '50%',
     top: `${positionY}px`,
     width: '200px',
-    textAlign: 'center',
-    lineHeight: '50px',
   };
 
   //       Drag Me Vertically
