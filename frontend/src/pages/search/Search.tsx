@@ -141,6 +141,11 @@ const Search: React.FC = () => {
     console.log('deltaY:', deltaY);
     console.log('newDragHandlePosition:', newDragHandlePosition);
     setDragHandlePosition(newDragHandlePosition);
+
+    const newTopHeight = Math.max(50, Math.min(containerHeight / 2 + startingDragHandlePosition + deltaY, containerHeight - 50));
+    setTopHeight(newTopHeight);
+    setBottomHeight(containerHeight - newTopHeight);
+
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -155,8 +160,6 @@ const Search: React.FC = () => {
     });
 
     const positionY = dragHandlePosition;
-
-    // console.log('transform:', transform);
 
     const style: React.CSSProperties = {
       height: '10px',
