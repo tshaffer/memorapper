@@ -91,7 +91,7 @@ const Search: React.FC = () => {
 
   const handleDragMove = (event: any) => {
     debugger;
-    // console.log('handleDragMove');
+    console.log('handleDragMove');
     const deltaY = event.delta.y;
     const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
     setTopHeight(newTopHeight);
@@ -274,7 +274,13 @@ const Search: React.FC = () => {
 
 
     return (
-      <button ref={setNodeRef} style={draggableStyle} {...listeners} {...attributes}>
+      <button
+        ref={setNodeRef}
+        style={draggableStyle}
+        {...listeners}
+        {...attributes}
+        onDrag={handleDragMove} // Handle dynamic resizing
+      >
         {renderOverlayContent()}
       </button>
     );
