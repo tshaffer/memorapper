@@ -255,10 +255,26 @@ const Search: React.FC = () => {
     const style = transform ? {
       transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
     } : undefined;
+    const draggableStyle = {
+      top: `${topHeight}px`,
+      left: '0',
+      width: '100%',
+      height: `${containerHeight - topHeight}px`, // Dynamically adjust based on topHeight
+      position: 'absolute' as const, // Keep it positioned above mapLayer
+      backgroundColor: '#fff',
+      border: '1px solid #ccc',
+      boxShadow: '0px -2px 8px rgba(0,0,0,0.2)',
+      overflow: 'auto',
+      zIndex: 10, // Ensure it overlays mapLayer
+      cursor: 'row-resize',
+      transform: transform
+        ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+        : undefined,
+    };
 
 
     return (
-      <button ref={setNodeRef} style={style} {...listeners} {...attributes}>
+      <button ref={setNodeRef} style={draggableStyle} {...listeners} {...attributes}>
         {renderOverlayContent()}
       </button>
     );
