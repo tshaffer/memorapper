@@ -16,6 +16,7 @@ import LocationAutocomplete from '../../components/LocationAutocomplete';
 import MapWithMarkers from '../../components/MapWIthMarkers';
 import SearchFilters from './SearchFilters';
 import RestaurantsTable from './RestaurantsTable';
+import { render } from 'react-dom';
 
 const Search: React.FC = () => {
 
@@ -213,22 +214,14 @@ const Search: React.FC = () => {
 
   const renderOverlayContent = (): JSX.Element => {
 
-    const { attributes, listeners, setNodeRef, transform } = useDraggable({
-      id: 'draggable',
-    });
-    const style = transform ? {
-      transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-    } : undefined;
-
     return (
       <div
-        ref={setNodeRef} style={style} {...listeners} {...attributes}
         id='overlayContent'
-        // style={{
-        //   height: `${bottomHeight}px`,
-        //   background: '#e0e0e0',
-        //   overflow: 'auto',
-        // }}
+        style={{
+          height: `${bottomHeight}px`,
+          background: '#e0e0e0',
+          overflow: 'auto',
+        }}
       >
         {/* Filters */}
         <SearchFilters
@@ -255,48 +248,70 @@ const Search: React.FC = () => {
   //   useSensor(TouchSensor, { activationConstraint: { delay: 0, tolerance: 1 } })
   // );
 
-  return (
-    <DndContext
-      // sensors={sensors}
-      // onDragMove={handleDragMove}
-    >
-      <div
-        id='searchContainer'
-        style={{
-          height: `${containerHeight}px`,
-          position: 'relative', // Important for absolutely positioned children
-          border: '1px solid #ccc',
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Search Area UI */}
-        {renderSearchAreaUI()}
-
-        {/* Map Layer */}
-        <div
-          id='mapLayer'
-          style={{
-            height: `${topHeight}px`,
-            background: '#f0f0f0',
-            overflow: 'auto',
-          }}
-        >
-          <MapWithMarkers
-            key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })} // Forces re-render on prop change
-            initialCenter={mapLocation!}
-            locations={getExtendedGooglePlaces()}
-            blueDotLocation={mapLocation!}
-          />
-        </div>
-
-        {/* <DraggableHandle /> */}
-
+  function Draggable() {
+    const {attributes, listeners, setNodeRef, transform} = useDraggable({
+      id: 'draggable',
+    });
+    const style = transform ? {
+      transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+    } : undefined;
+  
+    
+    return (
+      <button ref={setNodeRef} style={style} {...listeners} {...attributes}>
         {renderOverlayContent()}
-      </div>
+      </button>
+    );
+  }
+
+  return (
+    <DndContext>
+      <Draggable />
     </DndContext>
   );
+
+  // return (
+  //   <DndContext
+  //     // sensors={sensors}
+  //     // onDragMove={handleDragMove}
+  //   >
+  //     <div
+  //       id='searchContainer'
+  //       style={{
+  //         height: `${containerHeight}px`,
+  //         position: 'relative', // Important for absolutely positioned children
+  //         border: '1px solid #ccc',
+  //         display: 'flex',
+  //         flexDirection: 'column',
+  //         overflow: 'hidden',
+  //       }}
+  //     >
+  //       {/* Search Area UI */}
+  //       {renderSearchAreaUI()}
+
+  //       {/* Map Layer */}
+  //       <div
+  //         id='mapLayer'
+  //         style={{
+  //           height: `${topHeight}px`,
+  //           background: '#f0f0f0',
+  //           overflow: 'auto',
+  //         }}
+  //       >
+  //         <MapWithMarkers
+  //           key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })} // Forces re-render on prop change
+  //           initialCenter={mapLocation!}
+  //           locations={getExtendedGooglePlaces()}
+  //           blueDotLocation={mapLocation!}
+  //         />
+  //       </div>
+
+  //       {/* <DraggableHandle /> */}
+
+  //       {renderOverlayContent()}
+  //     </div>
+  //   </DndContext>
+  // );
 
 
 
