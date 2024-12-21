@@ -20,8 +20,11 @@ import { render } from 'react-dom';
 
 const Search: React.FC = () => {
 
-  const [topHeight, setTopHeight] = useState(window.innerHeight * 0.4); // Initial height for the top div
-  const [bottomHeight, setBottomHeight] = useState(window.innerHeight * 0.6); // Initial height for the bottom div
+  const [topHeight, setTopHeight] = useState(window.innerHeight / 2); // Initial position for the draggable component
+  const containerHeight = window.innerHeight;
+
+  // const [topHeight, setTopHeight] = useState(window.innerHeight * 0.4); // Initial height for the top div
+  // const [bottomHeight, setBottomHeight] = useState(window.innerHeight * 0.6); // Initial height for the bottom div
 
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
@@ -31,18 +34,18 @@ const Search: React.FC = () => {
   const [filteredReviews, setFilteredReviews] = useState<MemoRappReview[]>([]);
   const [sortCriteria, setSortCriteria] = useState<SortCriteria>(SortCriteria.Distance);
 
-  const [containerHeight, setContainerHeight] = useState(window.innerHeight); // Full height of the viewport
+  // const [containerHeight, setContainerHeight] = useState(window.innerHeight); // Full height of the viewport
 
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setContainerHeight(window.innerHeight); // Update container height on window resize
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     setContainerHeight(window.innerHeight); // Update container height on window resize
+  //   };
 
-    window.addEventListener('resize', handleResize); // Add listener
-    return () => window.removeEventListener('resize', handleResize); // Cleanup listener on unmount
-  }, []);
+  //   window.addEventListener('resize', handleResize); // Add listener
+  //   return () => window.removeEventListener('resize', handleResize); // Cleanup listener on unmount
+  // }, []);
 
   useEffect(() => {
     const fetchCurrentLocation = () => {
@@ -94,7 +97,7 @@ const Search: React.FC = () => {
     const deltaY = event.delta.y;
     const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
     setTopHeight(newTopHeight);
-    setBottomHeight(containerHeight - newTopHeight);
+    // setBottomHeight(containerHeight - newTopHeight);
   };
 
   // const DraggableHandle: React.FC = () => {
@@ -217,7 +220,7 @@ const Search: React.FC = () => {
       <div
         id='overlayContent'
         style={{
-          height: `${bottomHeight}px`,
+          // height: `${bottomHeight}px`,
           background: '#e0e0e0',
           overflow: 'auto',
         }}
@@ -242,18 +245,10 @@ const Search: React.FC = () => {
     );
   }
 
-  // const sensors = useSensors(
-  //   useSensor(PointerSensor),
-  //   useSensor(TouchSensor, { activationConstraint: { delay: 0, tolerance: 1 } })
-  // );
-
   function Draggable() {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
       id: 'draggable',
     });
-    const style = transform ? {
-      transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-    } : undefined;
     const draggableStyle = {
       top: `${topHeight}px`,
       left: '0',
