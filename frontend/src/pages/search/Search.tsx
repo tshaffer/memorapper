@@ -249,14 +249,14 @@ const Search: React.FC = () => {
   // );
 
   function Draggable() {
-    const {attributes, listeners, setNodeRef, transform} = useDraggable({
+    const { attributes, listeners, setNodeRef, transform } = useDraggable({
       id: 'draggable',
     });
     const style = transform ? {
       transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
     } : undefined;
-  
-    
+
+
     return (
       <button ref={setNodeRef} style={style} {...listeners} {...attributes}>
         {renderOverlayContent()}
@@ -264,9 +264,46 @@ const Search: React.FC = () => {
     );
   }
 
+  const renderSearchContainer = (): JSX.Element => {
+    return (
+      <div
+        id='searchContainer'
+        style={{
+          height: `${containerHeight}px`,
+          position: 'relative', // Important for absolutely positioned children
+          border: '1px solid #ccc',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Search Area UI */}
+        {renderSearchAreaUI()}
+
+        {/* Map Layer */}
+        <div
+          id='mapLayer'
+          style={{
+            height: `${topHeight}px`,
+            background: '#f0f0f0',
+            overflow: 'auto',
+          }}
+        >
+          <MapWithMarkers
+            key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })} // Forces re-render on prop change
+            initialCenter={mapLocation!}
+            locations={getExtendedGooglePlaces()}
+            blueDotLocation={mapLocation!}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <DndContext>
       <Draggable />
+      {renderSearchContainer()}
     </DndContext>
   );
 
