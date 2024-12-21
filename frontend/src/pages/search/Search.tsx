@@ -90,7 +90,6 @@ const Search: React.FC = () => {
     }));
 
   const handleDragMove = (event: any) => {
-    debugger;
     console.log('handleDragMove');
     const deltaY = event.delta.y;
     const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
@@ -329,7 +328,9 @@ const Search: React.FC = () => {
   }
 
   return (
-    <DndContext>
+    <DndContext
+      onDragMove={handleDragMove}
+    >
       <Draggable />
       {renderSearchContainer()}
     </DndContext>
