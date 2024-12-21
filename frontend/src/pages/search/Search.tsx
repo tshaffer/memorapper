@@ -20,7 +20,10 @@ import { render } from 'react-dom';
 
 const Search: React.FC = () => {
 
-  const [topHeight, setTopHeight] = useState(window.innerHeight * 0.4); // Initial height for the top div
+  const [topHeight, setTopHeight] = useState(window.innerHeight / 2); // Initial position for the draggable component
+  const containerHeight = window.innerHeight;
+
+  // const [topHeight, setTopHeight] = useState(window.innerHeight * 0.4); // Initial height for the top div
   const [bottomHeight, setBottomHeight] = useState(window.innerHeight * 0.6); // Initial height for the bottom div
 
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
@@ -31,18 +34,18 @@ const Search: React.FC = () => {
   const [filteredReviews, setFilteredReviews] = useState<MemoRappReview[]>([]);
   const [sortCriteria, setSortCriteria] = useState<SortCriteria>(SortCriteria.Distance);
 
-  const [containerHeight, setContainerHeight] = useState(window.innerHeight); // Full height of the viewport
+  // const [containerHeight, setContainerHeight] = useState(window.innerHeight); // Full height of the viewport
 
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setContainerHeight(window.innerHeight); // Update container height on window resize
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     setContainerHeight(window.innerHeight); // Update container height on window resize
+  //   };
 
-    window.addEventListener('resize', handleResize); // Add listener
-    return () => window.removeEventListener('resize', handleResize); // Cleanup listener on unmount
-  }, []);
+  //   window.addEventListener('resize', handleResize); // Add listener
+  //   return () => window.removeEventListener('resize', handleResize); // Cleanup listener on unmount
+  // }, []);
 
   useEffect(() => {
     const fetchCurrentLocation = () => {
@@ -248,6 +251,14 @@ const Search: React.FC = () => {
   //   useSensor(TouchSensor, { activationConstraint: { delay: 0, tolerance: 1 } })
   // );
 
+  const handleDrag = (event: any) => {
+    console.log('handleDrag');
+    const deltaY = event.delta.y;
+    const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
+    setTopHeight(newTopHeight);
+  };
+
+  /*
   function Draggable() {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
       id: 'draggable',
@@ -261,6 +272,44 @@ const Search: React.FC = () => {
       <button ref={setNodeRef} style={style} {...listeners} {...attributes}>
         {renderOverlayContent()}
       </button>
+    );
+  }
+  */
+  function Draggable() {
+    const { attributes, listeners, setNodeRef, transform } = useDraggable({
+      id: 'draggable',
+    });
+
+    const draggableStyle = {
+      top: `${topHeight}px`,
+      left: '0',
+      width: '100%',
+      height: `${containerHeight - topHeight}px`, // Dynamically adjust based on topHeight
+      position: 'absolute' as const, // Keep it positioned above mapLayer
+      backgroundColor: '#fff',
+      border: '1px solid #ccc',
+      boxShadow: '0px -2px 8px rgba(0,0,0,0.2)',
+      overflow: 'auto',
+      zIndex: 10, // Ensure it overlays mapLayer
+      cursor: 'row-resize',
+      transform: transform
+        ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+        : undefined,
+    };
+
+    return (
+      <div
+        ref={setNodeRef}
+        style={draggableStyle}
+        {...listeners}
+        {...attributes}
+        onDrag={handleDrag} // Handle dynamic resizing
+      >
+        <div style={{ padding: '16px' }}>
+          <h2>Overlay Content</h2>
+          <p>This is where your overlay content goes.</p>
+        </div>
+      </div>
     );
   }
 
@@ -300,12 +349,46 @@ const Search: React.FC = () => {
     );
   }
 
+
   return (
-    <DndContext>
+    <div
+      id="searchContainer"
+      style={{
+        height: `${containerHeight}px`,
+        position: 'relative',
+        border: '1px solid #ccc',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Map Layer */}
+      <div
+        id="mapLayer"
+        style={{
+          height: '100%', // Fill container height
+          position: 'absolute', // Ensure it stays at the bottom
+          top: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: '#e0e0e0',
+          zIndex: 0, // Ensure it's below the draggable content
+        }}
+      >
+        <h1>Map Content Here</h1>
+      </div>
+
+      {/* Draggable Overlay */}
       <Draggable />
-      {renderSearchContainer()}
-    </DndContext>
+    </div>
   );
+
+  // return (
+  //   <DndContext>
+  //     <Draggable />
+  //     {renderSearchContainer()}
+  //   </DndContext>
+  // );
 
   // return (
   //   <DndContext
