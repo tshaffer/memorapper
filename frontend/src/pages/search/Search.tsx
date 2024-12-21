@@ -264,6 +264,26 @@ const Search: React.FC = () => {
     );
   }
 
+  const renderMapLayer = (): JSX.Element => {
+    return (
+      <div
+        id='mapLayer'
+        style={{
+          height: `${topHeight}px`,
+          background: '#f0f0f0',
+          overflow: 'auto',
+        }}
+      >
+        <MapWithMarkers
+          key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })} // Forces re-render on prop change
+          initialCenter={mapLocation!}
+          locations={getExtendedGooglePlaces()}
+          blueDotLocation={mapLocation!}
+        />
+      </div>
+    );
+  }
+
   const renderSearchContainer = (): JSX.Element => {
     return (
       <div
@@ -281,21 +301,7 @@ const Search: React.FC = () => {
         {renderSearchAreaUI()}
 
         {/* Map Layer */}
-        <div
-          id='mapLayer'
-          style={{
-            height: `${topHeight}px`,
-            background: '#f0f0f0',
-            overflow: 'auto',
-          }}
-        >
-          <MapWithMarkers
-            key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })} // Forces re-render on prop change
-            initialCenter={mapLocation!}
-            locations={getExtendedGooglePlaces()}
-            blueDotLocation={mapLocation!}
-          />
-        </div>
+        {renderMapLayer()}
       </div>
     );
   }
