@@ -89,6 +89,7 @@ const Search: React.FC = () => {
     }));
 
   const handleDragMove = (event: any) => {
+    debugger;
     // console.log('handleDragMove');
     const deltaY = event.delta.y;
     const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
@@ -96,32 +97,32 @@ const Search: React.FC = () => {
     setBottomHeight(containerHeight - newTopHeight);
   };
 
-  const DraggableHandle: React.FC = () => {
-    const { attributes, listeners, setNodeRef, transform } = useDraggable({
-      id: 'draggable-handle',
-    });
+  // const DraggableHandle: React.FC = () => {
+  //   const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  //     id: 'draggable-handle',
+  //   });
 
-    // const positionY = dragHandlePosition;
+  //   // const positionY = dragHandlePosition;
 
-    const style: React.CSSProperties = {
-      height: '40px',
-      backgroundColor: '#ccc',
-      cursor: 'row-resize',
-      textAlign: 'center',
-      lineHeight: '10px',
-      userSelect: 'none',
-      touchAction: 'none', // Prevents scroll interference on touch devices
-    };
+  //   const style: React.CSSProperties = {
+  //     height: '40px',
+  //     backgroundColor: '#ccc',
+  //     cursor: 'row-resize',
+  //     textAlign: 'center',
+  //     lineHeight: '10px',
+  //     userSelect: 'none',
+  //     touchAction: 'none', // Prevents scroll interference on touch devices
+  //   };
 
-    return (
-      <div
-        ref={setNodeRef}
-        style={style}
-        {...listeners}
-        {...attributes}
-      />
-    );
-  };
+  //   return (
+  //     <div
+  //       ref={setNodeRef}
+  //       style={style}
+  //       {...listeners}
+  //       {...attributes}
+  //     />
+  //   );
+  // };
 
   const handleSetMapLocation = (location: google.maps.LatLngLiteral): void => {
     setMapLocation(location);
@@ -211,14 +212,23 @@ const Search: React.FC = () => {
   }
 
   const renderOverlayContent = (): JSX.Element => {
+
+    const { attributes, listeners, setNodeRef, transform } = useDraggable({
+      id: 'draggable',
+    });
+    const style = transform ? {
+      transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+    } : undefined;
+
     return (
       <div
+        ref={setNodeRef} style={style} {...listeners} {...attributes}
         id='overlayContent'
-        style={{
-          height: `${bottomHeight}px`,
-          background: '#e0e0e0',
-          overflow: 'auto',
-        }}
+        // style={{
+        //   height: `${bottomHeight}px`,
+        //   background: '#e0e0e0',
+        //   overflow: 'auto',
+        // }}
       >
         {/* Filters */}
         <SearchFilters
@@ -240,15 +250,15 @@ const Search: React.FC = () => {
     );
   }
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(TouchSensor, { activationConstraint: { delay: 0, tolerance: 1 } })
-  );
+  // const sensors = useSensors(
+  //   useSensor(PointerSensor),
+  //   useSensor(TouchSensor, { activationConstraint: { delay: 0, tolerance: 1 } })
+  // );
 
   return (
     <DndContext
-      sensors={sensors}
-      onDragMove={handleDragMove}
+      // sensors={sensors}
+      // onDragMove={handleDragMove}
     >
       <div
         id='searchContainer'
@@ -281,7 +291,7 @@ const Search: React.FC = () => {
           />
         </div>
 
-        <DraggableHandle />
+        {/* <DraggableHandle /> */}
 
         {renderOverlayContent()}
       </div>
