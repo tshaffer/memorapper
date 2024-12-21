@@ -210,6 +210,36 @@ const Search: React.FC = () => {
     );
   }
 
+  const renderOverlayContent = (): JSX.Element => {
+    return (
+      <div
+        id='overlayContent'
+        style={{
+          height: `${bottomHeight}px`,
+          background: '#e0e0e0',
+          overflow: 'auto',
+        }}
+      >
+        {/* Filters */}
+        <SearchFilters
+          onExecuteQuery={(query: string) => handleExecuteQuery(query)}
+          onExecuteFilter={(filter: SearchUIFilters) => handleExecuteFilter(filter)}
+          onSetSortCriteria={(sortCriteria: SortCriteria) => handleSetSortCriteria(sortCriteria)}
+        />
+
+        {renderPulsingDots()}
+
+        {/* List of Restaurants */}
+        <RestaurantsTable
+          currentLocation={mapLocation}
+          filteredPlaces={filteredPlaces}
+          filteredReviews={filteredReviews}
+          sortCriteria={sortCriteria}
+        />
+      </div>
+    );
+  }
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(TouchSensor, { activationConstraint: { delay: 0, tolerance: 1 } })
@@ -253,32 +283,7 @@ const Search: React.FC = () => {
 
         <DraggableHandle />
 
-        {/* Overlay Content */}
-        <div
-          id='overlayContent'
-          style={{
-            height: `${bottomHeight}px`,
-            background: '#e0e0e0',
-            overflow: 'auto',
-          }}
-        >
-          {/* Filters */}
-          <SearchFilters
-            onExecuteQuery={(query: string) => handleExecuteQuery(query)}
-            onExecuteFilter={(filter: SearchUIFilters) => handleExecuteFilter(filter)}
-            onSetSortCriteria={(sortCriteria: SortCriteria) => handleSetSortCriteria(sortCriteria)}
-          />
-
-          {renderPulsingDots()}
-
-          {/* List of Restaurants */}
-          <RestaurantsTable
-            currentLocation={mapLocation}
-            filteredPlaces={filteredPlaces}
-            filteredReviews={filteredReviews}
-            sortCriteria={sortCriteria}
-          />
-        </div>
+        {renderOverlayContent()}
       </div>
     </DndContext>
   );
