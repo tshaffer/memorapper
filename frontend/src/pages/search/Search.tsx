@@ -19,8 +19,10 @@ import RestaurantsTable from './RestaurantsTable';
 
 const Search: React.FC = () => {
 
-  const [topHeight, setTopHeight] = useState(window.innerHeight * 0.4); // Initial height for the top div
-  const [bottomHeight, setBottomHeight] = useState(window.innerHeight * 0.6); // Initial height for the bottom div
+  const [topHeight, setTopHeight] = useState(window.innerHeight / 2); // Initial position for the draggable component
+  const [containerHeight, setContainerHeight] = useState(window.innerHeight); // Full height of the viewport
+  const [dragging, setDragging] = useState(false); // Track dragging state
+  const [tempTransform, setTempTransform] = useState<number | null>(null); // Temporary transform for smooth feedback
 
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
@@ -29,8 +31,6 @@ const Search: React.FC = () => {
   const [reviews, setReviews] = useState<MemoRappReview[]>([]);
   const [filteredReviews, setFilteredReviews] = useState<MemoRappReview[]>([]);
   const [sortCriteria, setSortCriteria] = useState<SortCriteria>(SortCriteria.Distance);
-
-  const [containerHeight, setContainerHeight] = useState(window.innerHeight); // Full height of the viewport
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -88,39 +88,31 @@ const Search: React.FC = () => {
       reviews: getReviewsForPlace(place.place_id),
     }));
 
-  const handleDragMove = (event: any) => {
-    // console.log('handleDragMove');
-    const deltaY = event.delta.y;
-    const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
-    setTopHeight(newTopHeight);
-    setBottomHeight(containerHeight - newTopHeight);
+  const handleDragStart = () => {
+    // console.log('handleDragStart');
+    setDragging(true); // Indicate dragging has started
   };
 
-  const DraggableHandle: React.FC = () => {
-    const { attributes, listeners, setNodeRef, transform } = useDraggable({
-      id: 'draggable-handle',
-    });
+  const handleDragMove = (event: any) => {
+    if (event.delta.y) {
+      const newTransformY = Math.max(
+        0,
+        Math.min(topHeight + (tempTransform ?? 0) + event.delta.y, containerHeight - 50)
+      );
+      setTempTransform(newTransformY - topHeight); // Store temporary offset
+    }
+  };
 
-    // const positionY = dragHandlePosition;
-
-    const style: React.CSSProperties = {
-      height: '40px',
-      backgroundColor: '#ccc',
-      cursor: 'row-resize',
-      textAlign: 'center',
-      lineHeight: '10px',
-      userSelect: 'none',
-      touchAction: 'none', // Prevents scroll interference on touch devices
-    };
-
-    return (
-      <div
-        ref={setNodeRef}
-        style={style}
-        {...listeners}
-        {...attributes}
-      />
-    );
+  const handleDragEnd = () => {
+    setDragging(false);
+    if (tempTransform !== null) {
+      const newTopHeight = Math.max(
+        50,
+        Math.min(topHeight + tempTransform, containerHeight - 50)
+      );
+      setTopHeight(newTopHeight); // Update the actual state
+      setTempTransform(null); // Clear temporary transform
+    }
   };
 
   const handleSetMapLocation = (location: google.maps.LatLngLiteral): void => {
@@ -210,16 +202,93 @@ const Search: React.FC = () => {
     );
   }
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(TouchSensor, { activationConstraint: { delay: 0, tolerance: 1 } })
-  );
+  const renderOverlayContent = (): JSX.Element => {
 
-  return (
-    <DndContext
-      sensors={sensors}
-      onDragMove={handleDragMove}
-    >
+    return (
+      <div
+        id='overlayContent'
+        style={{
+          background: '#e0e0e0',
+          overflow: 'auto',
+        }}
+      >
+        {/* Filters */}
+        <SearchFilters
+          onExecuteQuery={(query: string) => handleExecuteQuery(query)}
+          onExecuteFilter={(filter: SearchUIFilters) => handleExecuteFilter(filter)}
+          onSetSortCriteria={(sortCriteria: SortCriteria) => handleSetSortCriteria(sortCriteria)}
+        />
+
+        {renderPulsingDots()}
+
+        {/* List of Restaurants */}
+        <RestaurantsTable
+          currentLocation={mapLocation}
+          filteredPlaces={filteredPlaces}
+          filteredReviews={filteredReviews}
+          sortCriteria={sortCriteria}
+        />
+      </div>
+    );
+  }
+
+  function Draggable() {
+
+    const { attributes, listeners, setNodeRef } = useDraggable({
+      id: 'draggable',
+    });
+
+    const draggableStyle = {
+      top: `${topHeight + (tempTransform ?? 0)}px`, // Use tempTransform during dragging
+      left: '0',
+      width: '100%',
+      height: `${containerHeight - topHeight - (tempTransform ?? 0)}px`,
+      position: 'absolute' as const, // Keep it positioned above mapLayer
+      backgroundColor: '#fff',
+      border: '1px solid #ccc',
+      boxShadow: '0px -2px 8px rgba(0,0,0,0.2)',
+      overflow: 'auto',
+      zIndex: 10, // Ensure it overlays mapLayer
+      cursor: 'row-resize',
+      touchAction: 'none', // Prevents scroll interference on touch devices
+      transition: dragging ? 'none' : 'top 0.2s ease', // Disable smooth transition while dragging
+    };
+
+
+    return (
+      <button
+        ref={setNodeRef}
+        style={draggableStyle}
+        {...listeners}
+        {...attributes}
+      >
+        {renderOverlayContent()}
+      </button>
+    );
+  }
+
+  const renderMapLayer = (): JSX.Element => {
+    return (
+      <div
+        id='mapLayer'
+        style={{
+          height: `${topHeight}px`,
+          background: '#f0f0f0',
+          overflow: 'auto',
+        }}
+      >
+        <MapWithMarkers
+          key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })} // Forces re-render on prop change
+          initialCenter={mapLocation!}
+          locations={getExtendedGooglePlaces()}
+          blueDotLocation={mapLocation!}
+        />
+      </div>
+    );
+  }
+
+  const renderSearchContainer = (): JSX.Element => {
+    return (
       <div
         id='searchContainer'
         style={{
@@ -231,59 +300,28 @@ const Search: React.FC = () => {
           overflow: 'hidden',
         }}
       >
-        {/* Search Area UI */}
         {renderSearchAreaUI()}
-
-        {/* Map Layer */}
-        <div
-          id='mapLayer'
-          style={{
-            height: `${topHeight}px`,
-            background: '#f0f0f0',
-            overflow: 'auto',
-          }}
-        >
-          <MapWithMarkers
-            key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })} // Forces re-render on prop change
-            initialCenter={mapLocation!}
-            locations={getExtendedGooglePlaces()}
-            blueDotLocation={mapLocation!}
-          />
-        </div>
-
-        <DraggableHandle />
-
-        {/* Overlay Content */}
-        <div
-          id='overlayContent'
-          style={{
-            height: `${bottomHeight}px`,
-            background: '#e0e0e0',
-            overflow: 'auto',
-          }}
-        >
-          {/* Filters */}
-          <SearchFilters
-            onExecuteQuery={(query: string) => handleExecuteQuery(query)}
-            onExecuteFilter={(filter: SearchUIFilters) => handleExecuteFilter(filter)}
-            onSetSortCriteria={(sortCriteria: SortCriteria) => handleSetSortCriteria(sortCriteria)}
-          />
-
-          {renderPulsingDots()}
-
-          {/* List of Restaurants */}
-          <RestaurantsTable
-            currentLocation={mapLocation}
-            filteredPlaces={filteredPlaces}
-            filteredReviews={filteredReviews}
-            sortCriteria={sortCriteria}
-          />
-        </div>
+        {renderMapLayer()}
       </div>
-    </DndContext>
+    );
+  }
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(TouchSensor, { activationConstraint: { delay: 0, tolerance: 1 } })
   );
 
-
+  return (
+    <DndContext
+      sensors={sensors}
+      onDragMove={handleDragMove}
+      onDragStart={handleDragStart} // Track drag start
+      onDragEnd={handleDragEnd} // Track drag end
+  >
+      <Draggable />
+      {renderSearchContainer()}
+    </DndContext>
+  );
 
 };
 
