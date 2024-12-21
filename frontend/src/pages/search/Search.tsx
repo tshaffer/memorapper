@@ -20,7 +20,6 @@ import RestaurantsTable from './RestaurantsTable';
 const Search: React.FC = () => {
 
   const [topHeight, setTopHeight] = useState(window.innerHeight / 2); // Initial position for the draggable component
-  // const containerHeight = window.innerHeight;
   const [containerHeight, setContainerHeight] = useState(window.innerHeight); // Full height of the viewport
 
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
@@ -94,27 +93,6 @@ const Search: React.FC = () => {
     const newTopHeight = Math.max(50, Math.min(topHeight + deltaY, containerHeight - 50));
     setTopHeight(newTopHeight);
   };
-
-  // const DraggableHandle: React.FC = () => {
-  //   const style: React.CSSProperties = {
-  //     height: '40px',
-  //     backgroundColor: '#ccc',
-  //     cursor: 'row-resize',
-  //     textAlign: 'center',
-  //     lineHeight: '10px',
-  //     userSelect: 'none',
-  //     touchAction: 'none', // Prevents scroll interference on touch devices
-  //   };
-
-  //   return (
-  //     <div
-  //       ref={setNodeRef}
-  //       style={style}
-  //       {...listeners}
-  //       {...attributes}
-  //     />
-  //   );
-  // };
 
   const handleSetMapLocation = (location: google.maps.LatLngLiteral): void => {
     setMapLocation(location);
@@ -312,59 +290,20 @@ const Search: React.FC = () => {
     );
   }
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(TouchSensor, { activationConstraint: { delay: 0, tolerance: 1 } })
+  );
+
   return (
     <DndContext
+      sensors={sensors}
       onDragMove={handleDragMove}
     >
       <Draggable />
       {renderSearchContainer()}
     </DndContext>
   );
-
-  // return (
-  //   <DndContext
-  //     // sensors={sensors}
-  //     // onDragMove={handleDragMove}
-  //   >
-  //     <div
-  //       id='searchContainer'
-  //       style={{
-  //         height: `${containerHeight}px`,
-  //         position: 'relative', // Important for absolutely positioned children
-  //         border: '1px solid #ccc',
-  //         display: 'flex',
-  //         flexDirection: 'column',
-  //         overflow: 'hidden',
-  //       }}
-  //     >
-  //       {/* Search Area UI */}
-  //       {renderSearchAreaUI()}
-
-  //       {/* Map Layer */}
-  //       <div
-  //         id='mapLayer'
-  //         style={{
-  //           height: `${topHeight}px`,
-  //           background: '#f0f0f0',
-  //           overflow: 'auto',
-  //         }}
-  //       >
-  //         <MapWithMarkers
-  //           key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })} // Forces re-render on prop change
-  //           initialCenter={mapLocation!}
-  //           locations={getExtendedGooglePlaces()}
-  //           blueDotLocation={mapLocation!}
-  //         />
-  //       </div>
-
-  //       {/* <DraggableHandle /> */}
-
-  //       {renderOverlayContent()}
-  //     </div>
-  //   </DndContext>
-  // );
-
-
 
 };
 
