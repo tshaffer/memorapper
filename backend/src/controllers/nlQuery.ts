@@ -18,16 +18,17 @@ export const nlQueryHandler = async (
     let nlReviews: IReview[] = [];
 
     // Step 1: Perform natural language query
-    const parsedQuery: ParsedQuery = await parseQueryWithChatGPT(query);
-    const { queryType } = parsedQuery;
+    // const parsedQuery: ParsedQuery = await parseQueryWithChatGPT(query);
+    // const { queryType } = parsedQuery;
+    // const queryType = 'full-text';
 
     let naturalLanguageResponse: QueryResponse = { places: [], reviews: [] };
 
-    if (queryType === 'structured') {
-      const structuredQueryParams: StructuredQueryParams =
-        buildStructuredQueryParamsFromParsedQuery(parsedQuery);
-      naturalLanguageResponse = await performStructuredQuery(structuredQueryParams);
-    } else if (queryType === 'full-text') {
+    // if (queryType === 'structured') {
+    //   const structuredQueryParams: StructuredQueryParams =
+    //     buildStructuredQueryParamsFromParsedQuery(parsedQuery);
+    //   naturalLanguageResponse = await performStructuredQuery(structuredQueryParams);
+    // } else if (queryType === 'full-text') {
       const places = await MongoPlace.find({});
       const reviews = await Review.find({});
       naturalLanguageResponse = await performNaturalLanguageQuery(
@@ -35,14 +36,14 @@ export const nlQueryHandler = async (
         places,
         reviews
       );
-    } else {
-      const structuredQueryParams: StructuredQueryParams =
-        buildStructuredQueryParamsFromParsedQuery(parsedQuery);
-      naturalLanguageResponse = await performHybridQuery(
-        query,
-        structuredQueryParams
-      );
-    }
+    // } else {
+    //   const structuredQueryParams: StructuredQueryParams =
+    //     buildStructuredQueryParamsFromParsedQuery(parsedQuery);
+    //   naturalLanguageResponse = await performHybridQuery(
+    //     query,
+    //     structuredQueryParams
+    //   );
+    // }
 
     nlPlaces = naturalLanguageResponse.places;
     nlReviews = naturalLanguageResponse.reviews;
