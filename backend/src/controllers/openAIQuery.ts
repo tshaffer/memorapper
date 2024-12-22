@@ -1,5 +1,9 @@
-import openai from '../services/openai';
+import { ChatOpenAI } from '@langchain/openai';
 import { GeoJSONPoint, WouldReturn } from '../types';
+import { createToolCallingAgent } from "langchain/agents";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { AgentExecutor } from "langchain/agents";
+import { GetOpenForLunchTool } from "../tools/openForLunchTool";
 
 interface PlaceData {
   id: string;
@@ -18,39 +22,37 @@ interface ReviewData {
 export const performOpenAIQuery = async (
   query: string,
   placeData: PlaceData[],
-  reviewData: ReviewData[],
+  reviewData: ReviewData[]
 ): Promise<any> => {
+  // Step 1: Set up ChatGPT with LangChain agent
+  const model = new ChatOpenAI({ model: "gpt-4" });
+  const getOpenForLunchTool = new GetOpenForLunchTool();
+  const tools = [getOpenForLunchTool]; // Include the tool
+  const prompt = ChatPromptTemplate.fromMessages([
+    ["system", "You are a helpful assistant that retrieves relevant places and reviews based on a natural language query."],
+    ["placeholder", "{chat_history}"],
+    ["human", "{input}"],
+    ["placeholder", "{agent_scratchpad}"],
+  ]);
 
-  // Step 2: Call OpenAI API
-  const response: any = await openai.chat.completions.create({
-    model: "gpt-4",
-    messages: [
-      {
-        role: "system",
-        content: `You are a helpful assistant that retrieves relevant places and reviews based on a natural language query. Respond with JSON data only, without additional commentary.`,
-      },
-      {
-        role: "user",
-        content: `Find relevant places and reviews for the query: "${query}". 
-        The places are: ${JSON.stringify(placeData)}. 
-        The reviews are: ${JSON.stringify(reviewData)}.
-
-        Return the results in the following JSON format:
-        {
-          "places": [
-            { "id": "place_id_1" },
-            { "id": "place_id_2" },
-            ...
-          ],
-          "reviews": [
-            { "id": "review_id_1" },
-            { "id": "review_id_2" },
-            ...
-          ]
-        }`,
-      },
-    ],
+  const agent = await createToolCallingAgent({
+    llm: model,
+    tools,
+    prompt,
   });
 
-  return response;
+  const agentExecutor = new AgentExecutor({
+    agent,
+    tools,
+  });
+
+  // Step 2: Handle the query using the agent
+  const agentResults = await agentExecutor.invoke({
+    input: query,
+  });
+
+  // Step 3: Return results
+  return agentResults;
 };
+
+
