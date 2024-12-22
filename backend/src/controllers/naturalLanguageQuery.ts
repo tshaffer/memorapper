@@ -226,8 +226,8 @@ export const performNaturalLanguageQuery = async (
   const relevantReviewIds = result.reviews?.map((review: { id: string }) => review.id) || [];
 
   // Step 4: Filter places and reviews based on IDs
-  const filteredPlaces = places.filter(place => relevantPlaceIds.includes(place.place_id));
-  const filteredReviews = reviews.filter(review => relevantReviewIds.includes(review._id!.toString()));
+  const filteredPlaces: IMongoPlace[] = places.filter(place => relevantPlaceIds.includes(place.place_id));
+  const filteredReviews: IReview[] = reviews.filter(review => relevantReviewIds.includes(review._id!.toString()));
 
   // Step 5: Return the filtered data
   return {

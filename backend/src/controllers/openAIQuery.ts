@@ -1,7 +1,7 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { createToolCallingAgent, AgentExecutor } from "langchain/agents";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { GetOpenForLunchTool } from "../tools";
+import { GetOpenForBreakfastTool, GetOpenForLunchTool } from "../tools";
 import { GeoJSONPoint, WouldReturn } from "../types";
 
 interface PlaceData {
@@ -28,7 +28,7 @@ export const performOpenAIQuery = async (
   const model = new ChatOpenAI({ model: "gpt-4" });
 
   // Define the tools
-  const tools = [new GetOpenForLunchTool()];
+  const tools = [new GetOpenForBreakfastTool()];
 
   // Define the prompt
   const prompt = ChatPromptTemplate.fromMessages([

@@ -1,62 +1,90 @@
 import { Tool } from "langchain/tools";
-import { MongoClient } from "mongodb";
 import MongoPlace, { IMongoPlace } from "../models/MongoPlace";
 import { MongoPlaceEntity } from "../types";
 
-// MongoDB client setup
-// const mongoClient = new MongoClient(process.env.MONGO_URI!);
+const filterPlacesByTime = (
+  places: IMongoPlace[],
+  startTime: string,
+  endTime: string
+): string[] => {
+  console.log('filterPlacesByTime');
+  return places
+    .filter((place) => {
+      const mongoPlaceEntity: MongoPlaceEntity = place.toObject();
+
+      console.log(mongoPlaceEntity.name);
+
+      const openingHours: google.maps.places.PlaceOpeningHours | undefined = mongoPlaceEntity.opening_hours;
+
+      if (!openingHours) return false;
+
+      const periods: google.maps.places.PlaceOpeningHoursPeriod[] | undefined = openingHours.periods;
+
+      if (!periods) return false;
+
+      // Check if any period covers the specified time range
+      return periods.some((period) => {
+        if (!period.open || !period.close) return false;
+
+        const openTime: google.maps.places.PlaceOpeningHoursTime = period.open;
+        const closeTime: google.maps.places.PlaceOpeningHoursTime = period.close;
+
+        const openDuringTimeRange = openTime.time <= endTime && closeTime.time >= startTime;
+        console.log('openDuringTimeRange', openDuringTimeRange);
+        
+        return openTime.time <= endTime && closeTime.time >= startTime;
+      });
+    })
+    .map((place) => place.name); // Return names of matching places
+};
 
 export class GetOpenForLunchTool extends Tool {
-  // Define the tool's name and description
   name = "GetOpenForLunch";
   description = "Finds restaurants open for lunch based on their opening hours.";
 
-  // Implement the method to handle tool execution
   async _call(input: string): Promise<string> {
     try {
-
-      // Fetch all places from MongoDB
       const places: IMongoPlace[] = await MongoPlace.find({});
-      console.log("places:", places);
-  
-      // Filter places open for lunch
-      const lunchPlaces = places.filter((place) => {
-        const mongoPlaceEntity: MongoPlaceEntity = place.toObject();
-        const openingHours: google.maps.places.PlaceOpeningHours | undefined = mongoPlaceEntity.opening_hours;
-  
-        if (!openingHours) return false;
-  
-        const periods: google.maps.places.PlaceOpeningHoursPeriod[] | undefined = openingHours.periods;
-  
-        if (!periods) return false;
-  
-        // Check if any period covers lunch time
-        const hasLunchPeriod = periods.some((period) => {
-          if (!period.open || !period.close) return false;
-  
-          const openTime: google.maps.places.PlaceOpeningHoursTime = period.open;
-          const closeTime: google.maps.places.PlaceOpeningHoursTime = period.close;
-  
-          // Lunch is assumed to fall within the 11:00 AM - 1:00 PM window
-          return openTime.time <= "1300" && closeTime.time >= "1100";
-        });
-  
-        return hasLunchPeriod;
-      });
-  
-      // Extract names of places open for lunch
-      const lunchPlaceNames = lunchPlaces.map((place) => place.name);
-  
+      console.log("GetOpenForLunchTool");
+
+      // Filter places open for lunch (11:00 AM to 1:00 PM)
+      const lunchPlaceNames = filterPlacesByTime(places, "1100", "1300");
+
       if (lunchPlaceNames.length === 0) {
         return "No restaurants found open for lunch.";
       }
-  
-      // Return the names as a JSON string
+
+      console.log(JSON.stringify(lunchPlaceNames))
       return JSON.stringify(lunchPlaceNames);
     } catch (error) {
       console.error("Error querying MongoDB:", error);
       return "An error occurred while retrieving lunch data.";
     }
   }
-  
+}
+
+export class GetOpenForBreakfastTool extends Tool {
+  name = "GetOpenForBreakfast";
+  description = "Finds restaurants open for breakfast based on their opening hours.";
+
+  async _call(input: string): Promise<string> {
+    try {
+      const places: IMongoPlace[] = await MongoPlace.find({});
+      console.log("GetOpenForBreakfast");
+
+      // Filter places open for breakfast (6:00 AM to 10:00 AM)
+      const breakfastPlaceNames = filterPlacesByTime(places, "0600", "1000");
+
+      if (breakfastPlaceNames.length === 0) {
+        return "No restaurants found open for breakfast.";
+      }
+
+      console.log(JSON.stringify(breakfastPlaceNames))
+
+      return JSON.stringify(breakfastPlaceNames);
+    } catch (error) {
+      console.error("Error querying MongoDB:", error);
+      return "An error occurred while retrieving breakfast data.";
+    }
+  }
 }

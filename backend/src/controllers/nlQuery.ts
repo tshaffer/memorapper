@@ -59,6 +59,8 @@ export const nlQueryHandler = async (
       reviews: memoRappReviews,
     };
 
+    console.log('NL Query result:', result);
+    
     res.status(200).json(result);
 
   } catch (error) {
