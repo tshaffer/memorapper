@@ -35,7 +35,7 @@ export const performOpenAIQuery = async (
     [
       "system",
       `You are a helpful assistant that retrieves relevant places and reviews based on a natural language query.
-      You also use external tools when necessary to provide accurate results. Always respond with JSON data only.`,
+      Use external tools when necessary. Always respond with JSON data only.`,
     ],
     ["user", "{input}"],
     ["placeholder", "{agent_scratchpad}"],
@@ -85,27 +85,25 @@ export const performOpenAIQuery = async (
     await new GetOpenForBreakfastTool()._call("")
   );
 
-  // Step 4: Filter reviews mentioning shrimp
-  const shrimpReviews = reviewData.filter((review) =>
-    review.text.toLowerCase().includes("shrimp")
+  // Step 4: Filter reviews based on OpenAI results
+  const agentReviews = JSON.parse(agentResults.output).reviews;
+  const openAIReviews = reviewData.filter((review) =>
+    agentReviews.some((r: any) => r.id === review.id.toString())
   );
 
-  // Step 5: Filter places for breakfast and intersect with shrimp reviews
-  const filteredReviews = shrimpReviews.filter((review) =>
-    breakfastPlaceNames.some((name) => {
-      const place = placeData.find((p) => p.id === review.place_id);
-      return place && place.name === name;
-    })
-  );
-
+  // Step 5: Intersect OpenAI results with breakfast places
   const filteredPlaces = placeData.filter((place) =>
     breakfastPlaceNames.includes(place.name) &&
-    filteredReviews.some((review) => review.place_id === place.id)
+    openAIReviews.some((review) => review.place_id === place.id)
+  );
+
+  const filteredReviews = openAIReviews.filter((review) =>
+    filteredPlaces.some((place) => place.id === review.place_id)
   );
 
   // Step 6: Combine results
   return {
-    agent: agentResults.output, // Optional: Include agent's reasoning if needed
+    agent: agentResults.output, // Optional: Include agent's reasoning
     places: filteredPlaces,
     reviews: filteredReviews,
   };

@@ -221,13 +221,12 @@ export const performNaturalLanguageQuery = async (
   const response = await performOpenAIQuery(query, placeData, reviewData);
   
   // Step 3: Parse the JSON response
-  console.log("performOpenAIQuery result:", JSON.parse(response.agent));
+  console.log("performOpenAIQuery result:");
+  console.log(response.places);
+  console.log(response.reviews);
 
-  const agentPlaceIds = JSON.parse(response.agent).places;
-  const agentReviewIds = JSON.parse(response.agent).reviews;
-
-  const relevantPlaceIds = agentPlaceIds.map((obj: any) => obj.id);
-  const relevantReviewIds = agentReviewIds.map((obj: any) => obj.id);
+  const relevantPlaceIds = response.places.map((obj: any) => obj.id);
+  const relevantReviewIds = response.reviews.map((obj: any) => obj.id.toString());
 
   // Step 4: Filter places and reviews based on IDs
   const filteredPlaces: IMongoPlace[] = places.filter(place => relevantPlaceIds.includes(place.place_id));
