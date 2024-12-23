@@ -16,6 +16,7 @@ import LocationAutocomplete from '../../components/LocationAutocomplete';
 import MapWithMarkers from '../../components/MapWIthMarkers';
 import SearchFilters from './SearchFilters';
 import RestaurantsTable from './RestaurantsTable';
+import { Button } from '@mui/material';
 
 const Search: React.FC = () => {
 
@@ -240,14 +241,14 @@ const Search: React.FC = () => {
     };
   
     return (
-      <div
+      <button
         ref={setNodeRef}
         style={draggableStyle}
         {...listeners}
         {...attributes}
       >
         {renderOverlayContent()}
-      </div>
+      </button>
     );
   }
   
