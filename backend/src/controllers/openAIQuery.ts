@@ -55,31 +55,39 @@ export const performOpenAIQuery = async (
 
   // Combine user query with internal data
   const userInput = `
-    Find relevant places and reviews for the query: "${query}". 
-    The places are: ${JSON.stringify(placeData)}. 
-    The reviews are: ${JSON.stringify(reviewData)}.
+  Find relevant places and reviews for the query: "${query}". 
+  The places are: ${JSON.stringify(placeData)}. 
+  The reviews are: ${JSON.stringify(reviewData)}.
 
-    You can call external tools if you need additional information, like restaurant opening hours.
-    Return the results in the following JSON format:
-    {
-      "places": [
-        { "id": "place_id_1" },
-        { "id": "place_id_2" },
-        ...
-      ],
-      "reviews": [
-        { "id": "review_id_1" },
-        { "id": "review_id_2" },
-        ...
-      ],
-      "tool": "GetOpenForBreakfastTool" // or null if no tool is required
-    }
-  `;
+  You have access to the following tools:
+  - GetOpenForBreakfastTool: Finds restaurants open for breakfast (e.g., 6:00 AM to 10:00 AM).
+  - GetOpenForLunchTool: Finds restaurants open for lunch (e.g., 11:00 AM to 2:00 PM).
+
+  Use the correct tool based on the context of the query.
+  If the query specifies a time that overlaps with breakfast or lunch hours, select the appropriate tool.
+  If no tool is required, return "tool": null.
+
+  Return the results in the following JSON format:
+  {
+    "places": [
+      { "id": "place_id_1" },
+      { "id": "place_id_2" },
+      ...
+    ],
+    "reviews": [
+      { "id": "review_id_1" },
+      { "id": "review_id_2" },
+      ...
+    ],
+    "tool": "GetOpenForBreakfastTool" | "GetOpenForLunchTool" | null
+  }
+`;
 
   // Step 2: Execute the agent with the combined input
   const agentResults = await agentExecutor.invoke({
     input: userInput,
   });
+  console.log("Agent Output:", agentResults.output);
 
   // Step 3: Parse agent results
   const parsedResults = JSON.parse(agentResults.output);
@@ -92,7 +100,6 @@ export const performOpenAIQuery = async (
   if (toolToInvoke === "GetOpenForBreakfastTool") {
     toolResults = JSON.parse(await new GetOpenForBreakfastTool()._call(""));
   } else if (toolToInvoke === "GetOpenForLunchTool") {
-    // Example: If you later add a lunch tool
     toolResults = JSON.parse(await new GetOpenForLunchTool()._call(""));
   }
 
