@@ -21,8 +21,6 @@ const Search: React.FC = () => {
 
   const [topHeight, setTopHeight] = useState(window.innerHeight / 2); // Initial position for the draggable component
   const [containerHeight, setContainerHeight] = useState(window.innerHeight); // Full height of the viewport
-  const [dragging, setDragging] = useState(false); // Track dragging state
-  const [tempTransform, setTempTransform] = useState<number | null>(null); // Temporary transform for smooth feedback
 
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
@@ -88,33 +86,20 @@ const Search: React.FC = () => {
       reviews: getReviewsForPlace(place.place_id),
     }));
 
-  const handleDragStart = () => {
-    // console.log('handleDragStart');
-    setDragging(true); // Indicate dragging has started
-  };
-
   const handleDragMove = (event: any) => {
-    if (event.delta.y) {
-      const newTransformY = Math.max(
-        0,
-        Math.min(topHeight + (tempTransform ?? 0) + event.delta.y, containerHeight - 50)
-      );
-      setTempTransform(newTransformY - topHeight); // Store temporary offset
-    }
+    // No state update during dragging; rely on `transform` for smooth UI feedback
   };
-
-  const handleDragEnd = () => {
-    setDragging(false);
-    if (tempTransform !== null) {
+  
+  const handleDragEnd = (event: any) => {
+    if (event.delta.y) {
       const newTopHeight = Math.max(
         50,
-        Math.min(topHeight + tempTransform, containerHeight - 50)
+        Math.min(topHeight + event.delta.y, containerHeight - 50)
       );
-      setTopHeight(newTopHeight); // Update the actual state
-      setTempTransform(null); // Clear temporary transform
+      setTopHeight(newTopHeight); // Update state only at the end of the drag
     }
   };
-
+  
   const handleSetMapLocation = (location: google.maps.LatLngLiteral): void => {
     setMapLocation(location);
   }
@@ -233,16 +218,15 @@ const Search: React.FC = () => {
   }
 
   function Draggable() {
-
-    const { attributes, listeners, setNodeRef } = useDraggable({
+    const { attributes, listeners, setNodeRef, transform } = useDraggable({
       id: 'draggable',
     });
-
+  
     const draggableStyle = {
-      top: `${topHeight + (tempTransform ?? 0)}px`, // Use tempTransform during dragging
+      top: `${topHeight}px`, // Use topHeight for initial positioning
       left: '0',
       width: '100%',
-      height: `${containerHeight - topHeight - (tempTransform ?? 0)}px`,
+      height: `${containerHeight - topHeight}px`,
       position: 'absolute' as const, // Keep it positioned above mapLayer
       backgroundColor: '#fff',
       border: '1px solid #ccc',
@@ -251,22 +235,22 @@ const Search: React.FC = () => {
       zIndex: 10, // Ensure it overlays mapLayer
       cursor: 'row-resize',
       touchAction: 'none', // Prevents scroll interference on touch devices
-      transition: dragging ? 'none' : 'top 0.2s ease', // Disable smooth transition while dragging
+      transform: transform ? `translateY(${transform.y}px)` : undefined, // Inline transform for smooth drag
+      transition: transform ? 'none' : 'top 0.2s ease', // Disable smooth transition while dragging
     };
-
-
+  
     return (
-      <button
+      <div
         ref={setNodeRef}
         style={draggableStyle}
         {...listeners}
         {...attributes}
       >
         {renderOverlayContent()}
-      </button>
+      </div>
     );
   }
-
+  
   const renderMapLayer = (): JSX.Element => {
     return (
       <div
@@ -315,7 +299,6 @@ const Search: React.FC = () => {
     <DndContext
       sensors={sensors}
       onDragMove={handleDragMove}
-      onDragStart={handleDragStart} // Track drag start
       onDragEnd={handleDragEnd} // Track drag end
   >
       <Draggable />
