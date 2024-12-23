@@ -60,12 +60,21 @@ export const performOpenAIQuery = async (
   The reviews are: ${JSON.stringify(reviewData)}.
 
   You have access to the following tools:
-  - GetOpenForBreakfastTool: Finds restaurants open for breakfast (e.g., 6:00 AM to 10:00 AM).
-  - GetOpenForLunchTool: Finds restaurants open for lunch (e.g., 11:00 AM to 2:00 PM).
+  - GetOpenForBreakfastTool: Finds restaurants open for breakfast. Use this tool for queries related to breakfast (e.g., "breakfast", "early morning", "6:00 AM to 10:00 AM").
+  - GetOpenForLunchTool: Finds restaurants open for lunch. Use this tool for queries related to lunch (e.g., "lunch", "midday", "11:00 AM to 2:00 PM").
 
-  Use the correct tool based on the context of the query.
-  If the query specifies a time that overlaps with breakfast or lunch hours, select the appropriate tool.
-  If no tool is required, return "tool": null.
+  Select the correct tool based on the query context:
+  - If the query mentions breakfast, morning, or similar terms, select GetOpenForBreakfastTool.
+  - If the query mentions lunch, midday, or similar terms, select GetOpenForLunchTool.
+  - If no time-related terms are mentioned or no tool is required, return "tool": null.
+
+  Example Queries:
+  - Query: "Show me restaurants open for breakfast."
+    Response: "tool": "GetOpenForBreakfastTool"
+  - Query: "Show me reviews where I mentioned shrimp that are open for lunch."
+    Response: "tool": "GetOpenForLunchTool"
+  - Query: "Show me reviews where I mentioned shrimp."
+    Response: "tool": null
 
   Return the results in the following JSON format:
   {
@@ -87,14 +96,34 @@ export const performOpenAIQuery = async (
   const agentResults = await agentExecutor.invoke({
     input: userInput,
   });
-  console.log("Agent Output:", agentResults.output);
 
   // Step 3: Parse agent results
   const parsedResults = JSON.parse(agentResults.output);
-  const toolToInvoke = parsedResults.tool; // Get the tool recommended by the agent
   const agentReviews = parsedResults.reviews;
+  let toolToInvoke = parsedResults.tool;
 
+  // Validate tool selection
+  if (query.toLowerCase().includes("lunch") && toolToInvoke !== "GetOpenForLunchTool") {
+    console.warn(
+      `Agent selected the wrong tool (${toolToInvoke}). Overriding to use GetOpenForLunchTool.`
+    );
+    toolToInvoke = "GetOpenForLunchTool";
+  }
+
+  if (query.toLowerCase().includes("breakfast") && toolToInvoke !== "GetOpenForBreakfastTool") {
+    console.warn(
+      `Agent selected the wrong tool (${toolToInvoke}). Overriding to use GetOpenForBreakfastTool.`
+    );
+    toolToInvoke = "GetOpenForBreakfastTool";
+  }
+
+  // Proceed with tool invocation
   let toolResults: string[] = [];
+  if (toolToInvoke === "GetOpenForBreakfastTool") {
+    toolResults = JSON.parse(await new GetOpenForBreakfastTool()._call(""));
+  } else if (toolToInvoke === "GetOpenForLunchTool") {
+    toolResults = JSON.parse(await new GetOpenForLunchTool()._call(""));
+  }
 
   // Step 4: Conditionally invoke the tool
   if (toolToInvoke === "GetOpenForBreakfastTool") {
@@ -102,6 +131,12 @@ export const performOpenAIQuery = async (
   } else if (toolToInvoke === "GetOpenForLunchTool") {
     toolResults = JSON.parse(await new GetOpenForLunchTool()._call(""));
   }
+
+  // Log the results
+  console.log("User Query:", query);
+  console.log("Agent Output:", agentResults.output);
+  console.log("Selected Tool:", toolToInvoke);
+  console.log("Invoking Tool...");
 
   // Step 5: Filter reviews based on OpenAI results
   const openAIReviews = reviewData.filter((review) =>
