@@ -28,7 +28,7 @@ export const performOpenAIQuery = async (
   const model = new ChatOpenAI({ model: "gpt-4" });
 
   // Define the tools
-  const tools = [new GetOpenForBreakfastTool()];
+  const tools = [new GetOpenForBreakfastTool(), new GetOpenForLunchTool()];
 
   // Define the prompt
   const prompt = ChatPromptTemplate.fromMessages([

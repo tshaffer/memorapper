@@ -7,12 +7,9 @@ const filterPlacesByTime = (
   startTime: string,
   endTime: string
 ): string[] => {
-  console.log('filterPlacesByTime');
   return places
     .filter((place) => {
       const mongoPlaceEntity: MongoPlaceEntity = place.toObject();
-
-      console.log(mongoPlaceEntity.name);
 
       const openingHours: google.maps.places.PlaceOpeningHours | undefined = mongoPlaceEntity.opening_hours;
 
@@ -28,9 +25,6 @@ const filterPlacesByTime = (
 
         const openTime: google.maps.places.PlaceOpeningHoursTime = period.open;
         const closeTime: google.maps.places.PlaceOpeningHoursTime = period.close;
-
-        const openDuringTimeRange = openTime.time <= endTime && closeTime.time >= startTime;
-        console.log('openDuringTimeRange', openDuringTimeRange);
         
         return openTime.time <= endTime && closeTime.time >= startTime;
       });
@@ -45,7 +39,7 @@ export class GetOpenForLunchTool extends Tool {
   async _call(input: string): Promise<string> {
     try {
       const places: IMongoPlace[] = await MongoPlace.find({});
-      console.log("GetOpenForLunchTool");
+      console.log("GetOpenForLunchTool invoked");
 
       // Filter places open for lunch (11:00 AM to 1:00 PM)
       const lunchPlaceNames = filterPlacesByTime(places, "1100", "1300");
@@ -53,8 +47,6 @@ export class GetOpenForLunchTool extends Tool {
       if (lunchPlaceNames.length === 0) {
         return "No restaurants found open for lunch.";
       }
-
-      console.log(JSON.stringify(lunchPlaceNames))
       return JSON.stringify(lunchPlaceNames);
     } catch (error) {
       console.error("Error querying MongoDB:", error);
@@ -69,8 +61,8 @@ export class GetOpenForBreakfastTool extends Tool {
 
   async _call(input: string): Promise<string> {
     try {
+      console.log("GetOpenForBreakfast invoked");
       const places: IMongoPlace[] = await MongoPlace.find({});
-      console.log("GetOpenForBreakfast");
 
       // Filter places open for breakfast (6:00 AM to 10:00 AM)
       const breakfastPlaceNames = filterPlacesByTime(places, "0600", "1000");
@@ -78,8 +70,6 @@ export class GetOpenForBreakfastTool extends Tool {
       if (breakfastPlaceNames.length === 0) {
         return "No restaurants found open for breakfast.";
       }
-
-      console.log(JSON.stringify(breakfastPlaceNames))
 
       return JSON.stringify(breakfastPlaceNames);
     } catch (error) {
