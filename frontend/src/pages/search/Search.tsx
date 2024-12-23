@@ -89,7 +89,7 @@ const Search: React.FC = () => {
   const handleDragMove = (event: any) => {
     // No state update during dragging; rely on `transform` for smooth UI feedback
   };
-  
+
   const handleDragEnd = (event: any) => {
     if (event.delta.y) {
       const newTopHeight = Math.max(
@@ -99,7 +99,7 @@ const Search: React.FC = () => {
       setTopHeight(newTopHeight); // Update state only at the end of the drag
     }
   };
-  
+
   const handleSetMapLocation = (location: google.maps.LatLngLiteral): void => {
     setMapLocation(location);
   }
@@ -221,7 +221,7 @@ const Search: React.FC = () => {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
       id: 'draggable',
     });
-  
+
     const draggableStyle = {
       top: `${topHeight}px`, // Use topHeight for initial positioning
       left: '0',
@@ -238,19 +238,27 @@ const Search: React.FC = () => {
       transform: transform ? `translateY(${transform.y}px)` : undefined, // Inline transform for smooth drag
       transition: transform ? 'none' : 'top 0.2s ease', // Disable smooth transition while dragging
     };
-  
+
+    // attributes.role = undefined;
+    const noRoleAttributes: any = {
+      ...attributes,
+      role: undefined,
+    };
+
+
+    console.log('attributes.role', attributes.role);
     return (
-      <div
+      <button
         ref={setNodeRef}
         style={draggableStyle}
         {...listeners}
-        {...attributes}
+        {...noRoleAttributes}
       >
         {renderOverlayContent()}
-      </div>
+      </button>
     );
   }
-  
+
   const renderMapLayer = (): JSX.Element => {
     return (
       <div
@@ -300,7 +308,7 @@ const Search: React.FC = () => {
       sensors={sensors}
       onDragMove={handleDragMove}
       onDragEnd={handleDragEnd} // Track drag end
-  >
+    >
       <Draggable />
       {renderSearchContainer()}
     </DndContext>
