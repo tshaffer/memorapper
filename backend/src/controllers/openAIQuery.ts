@@ -28,7 +28,7 @@ export const performOpenAIQuery = async (
   const model = new ChatOpenAI({ model: "gpt-4" });
 
   // Define the tools
-  const tools = [new GetOpenForBreakfastTool(), new GetOpenForLunchTool()];
+  const tools = [new GetOpenForBreakfastTool()];
 
   // Define the prompt
   const prompt = ChatPromptTemplate.fromMessages([
@@ -71,7 +71,8 @@ export const performOpenAIQuery = async (
         { "id": "review_id_1" },
         { "id": "review_id_2" },
         ...
-      ]
+      ],
+      "tool": "GetOpenForBreakfastTool" // or null if no tool is required
     }
   `;
 
@@ -80,20 +81,29 @@ export const performOpenAIQuery = async (
     input: userInput,
   });
 
-  // Step 3: Retrieve restaurants open for breakfast
-  const breakfastPlaceNames: string[] = JSON.parse(
-    await new GetOpenForBreakfastTool()._call("")
-  );
+  // Step 3: Parse agent results
+  const parsedResults = JSON.parse(agentResults.output);
+  const toolToInvoke = parsedResults.tool; // Get the tool recommended by the agent
+  const agentReviews = parsedResults.reviews;
 
-  // Step 4: Filter reviews based on OpenAI results
-  const agentReviews = JSON.parse(agentResults.output).reviews;
+  let toolResults: string[] = [];
+
+  // Step 4: Conditionally invoke the tool
+  if (toolToInvoke === "GetOpenForBreakfastTool") {
+    toolResults = JSON.parse(await new GetOpenForBreakfastTool()._call(""));
+  } else if (toolToInvoke === "GetOpenForLunchTool") {
+    // Example: If you later add a lunch tool
+    toolResults = JSON.parse(await new GetOpenForLunchTool()._call(""));
+  }
+
+  // Step 5: Filter reviews based on OpenAI results
   const openAIReviews = reviewData.filter((review) =>
     agentReviews.some((r: any) => r.id === review.id.toString())
   );
 
-  // Step 5: Intersect OpenAI results with breakfast places
+  // Step 6: Intersect OpenAI results with tool results
   const filteredPlaces = placeData.filter((place) =>
-    breakfastPlaceNames.includes(place.name) &&
+    toolResults.includes(place.name) &&
     openAIReviews.some((review) => review.place_id === place.id)
   );
 
@@ -101,9 +111,9 @@ export const performOpenAIQuery = async (
     filteredPlaces.some((place) => place.id === review.place_id)
   );
 
-  // Step 6: Combine results
+  // Step 7: Combine results
   return {
-    agent: agentResults.output, // Optional: Include agent's reasoning
+    agent: parsedResults, // Include agent's reasoning if needed
     places: filteredPlaces,
     reviews: filteredReviews,
   };
