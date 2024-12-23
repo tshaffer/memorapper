@@ -80,6 +80,28 @@ export const performOpenAIQuery = async (
     input: userInput,
   });
 
-  // Step 3: Return results
-  return agentResults;
+  // Step 3: Retrieve the list of breakfast restaurants
+  const breakfastPlaceNames: string[] = JSON.parse(
+    await new GetOpenForBreakfastTool()._call("")
+  );
+
+  // Step 4: Filter the reviews by breakfast restaurants
+  const filteredReviews = reviewData.filter((review) =>
+    breakfastPlaceNames.some((name) => {
+      const place = placeData.find((p) => p.id === review.place_id);
+      return place && place.name === name;
+    })
+  );
+
+  // Step 5: Combine results with agent reasoning (if needed)
+  const combinedResults = {
+    agent: agentResults.output, // Include raw agent reasoning if useful
+    places: breakfastPlaceNames.map((name) =>
+      placeData.find((place) => place.name === name)
+    ),
+    reviews: filteredReviews,
+  };
+
+  // Step 6: Return the combined results
+  return combinedResults;
 };

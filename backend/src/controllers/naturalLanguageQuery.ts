@@ -221,7 +221,13 @@ export const performNaturalLanguageQuery = async (
   const response = await performOpenAIQuery(query, placeData, reviewData);
   
   // Step 3: Parse the JSON response
-  const result = JSON.parse(response.output)
+  // const result = JSON.parse(response.output)
+
+  const agentPlaceIds = JSON.parse(response.agent).places;
+  const agentReviewIds = JSON.parse(response.agent).reviews;
+
+  console.log("performOpenAIQuery result:", result);
+
   const relevantPlaceIds = result.places?.map((place: { id: string }) => place.id) || [];
   const relevantReviewIds = result.reviews?.map((review: { id: string }) => review.id) || [];
 
