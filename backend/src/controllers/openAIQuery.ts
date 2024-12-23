@@ -80,28 +80,33 @@ export const performOpenAIQuery = async (
     input: userInput,
   });
 
-  // Step 3: Retrieve the list of breakfast restaurants
+  // Step 3: Retrieve restaurants open for breakfast
   const breakfastPlaceNames: string[] = JSON.parse(
     await new GetOpenForBreakfastTool()._call("")
   );
 
-  // Step 4: Filter the reviews by breakfast restaurants
-  const filteredReviews = reviewData.filter((review) =>
+  // Step 4: Filter reviews mentioning shrimp
+  const shrimpReviews = reviewData.filter((review) =>
+    review.text.toLowerCase().includes("shrimp")
+  );
+
+  // Step 5: Filter places for breakfast and intersect with shrimp reviews
+  const filteredReviews = shrimpReviews.filter((review) =>
     breakfastPlaceNames.some((name) => {
       const place = placeData.find((p) => p.id === review.place_id);
       return place && place.name === name;
     })
   );
 
-  // Step 5: Combine results with agent reasoning (if needed)
-  const combinedResults = {
-    agent: agentResults.output, // Include raw agent reasoning if useful
-    places: breakfastPlaceNames.map((name) =>
-      placeData.find((place) => place.name === name)
-    ),
+  const filteredPlaces = placeData.filter((place) =>
+    breakfastPlaceNames.includes(place.name) &&
+    filteredReviews.some((review) => review.place_id === place.id)
+  );
+
+  // Step 6: Combine results
+  return {
+    agent: agentResults.output, // Optional: Include agent's reasoning if needed
+    places: filteredPlaces,
     reviews: filteredReviews,
   };
-
-  // Step 6: Return the combined results
-  return combinedResults;
 };
