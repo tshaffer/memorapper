@@ -41,26 +41,26 @@ const MapPage: React.FC = () => {
         overflow: 'hidden',
       }}
     >
+
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
-          gap: 2,
+          gap: 1,
           marginBottom: 2,
           width: '100%',
         }}
       >
-        {/* Location Autocomplete */}
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
           <LocationAutocomplete onSetMapLocation={(location) => console.log('Set Map Location:', location)} />
         </Box>
-
-        {/* Filters Button */}
         <IconButton
           onClick={handleOpenFiltersDialog}
           sx={{
             backgroundColor: '#007bff',
             color: '#fff',
+            padding: isMobile ? '6px' : '8px',
+            fontSize: isMobile ? '18px' : '24px',
             '&:hover': { backgroundColor: '#0056b3' },
           }}
         >
