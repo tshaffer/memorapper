@@ -44,20 +44,19 @@ const MapPage: React.FC = () => {
     >
 
       <Box
-        id='map-page-header'
+        id="map-page-header"
         sx={{
           display: 'flex',
           alignItems: 'center',
           gap: 1,
           marginBottom: 2,
           width: '100%',
-          flexWrap: 'wrap', // Allow wrapping to avoid overlap
         }}
       >
         {/* LocationAutocomplete */}
         <Box
-          id='map-page-locationAutocomplete-container'
-          sx={{ flex: 1, minWidth: 0 }}
+          id="map-page-locationAutocomplete-container"
+          sx={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 0 }}
         >
           <LocationAutocomplete onSetMapLocation={(location) => console.log('Set Map Location:', location)} />
         </Box>
@@ -65,9 +64,7 @@ const MapPage: React.FC = () => {
         {/* Filters Button */}
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            // marginTop: isMobile ? 1 : 0, // Add margin to handle wrapping on mobile
+            flexShrink: 0, // Prevent shrinking of the button
           }}
         >
           <IconButton

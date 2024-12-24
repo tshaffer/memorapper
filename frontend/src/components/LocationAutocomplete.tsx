@@ -69,14 +69,14 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
 
   return (
     <Box
-      id='location-autocomplete-container'
+      id="location-autocomplete-container"
       sx={{
         display: 'flex',
         alignItems: 'center',
-        gap: isMobile ? '4px' : 2, // Direct conditional styling
+        gap: isMobile ? '4px' : 2,
         width: '100%',
+        minWidth: 0, // Ensures proper flex shrinking when needed
       }}
-
     >
       {/* Current Location Icon */}
       <Tooltip title="Current Location">
@@ -105,24 +105,31 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
       </Typography>
 
       {/* Autocomplete Input */}
-      <Autocomplete
-        onLoad={(autocomplete) => (mapAutocompleteRef.current = autocomplete)}
-        onPlaceChanged={handleMapLocationChanged}
+      <Box
+        sx={{
+          flex: 1, // Take remaining space after the label
+          minWidth: 0, // Prevent layout issues with shrinking
+        }}
       >
-        <input
-          ref={inputRef}
-          type="text"
-          placeholder="Enter the location"
-          style={{
-            width: '100%', // Ensure the input spans the available space
-            padding: isMobile ? '8px' : '10px',
-            boxSizing: 'border-box',
-            fontSize: isMobile ? '14px' : '16px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-          }}
-        />
-      </Autocomplete>
+        <Autocomplete
+          onLoad={(autocomplete) => (mapAutocompleteRef.current = autocomplete)}
+          onPlaceChanged={handleMapLocationChanged}
+        >
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder="Enter the location"
+            style={{
+              width: '100%', // Fill available space
+              padding: isMobile ? '8px' : '10px',
+              boxSizing: 'border-box',
+              fontSize: isMobile ? '14px' : '16px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+            }}
+          />
+        </Autocomplete>
+      </Box>
     </Box>
   );
 };
