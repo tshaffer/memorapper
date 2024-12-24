@@ -69,12 +69,14 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
 
   return (
     <Box
+      id='location-autocomplete-container'
       sx={{
         display: 'flex',
         alignItems: 'center',
-        gap: 2,
+        gap: isMobile ? '4px' : 2, // Direct conditional styling
         width: '100%',
       }}
+
     >
       {/* Current Location Icon */}
       <Tooltip title="Current Location">

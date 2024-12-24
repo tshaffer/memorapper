@@ -18,7 +18,13 @@ const App: React.FC = () => {
     <GoogleMapsProvider>
       <Router>
         <Box id='mainLayoutContainer' sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-          <AppBar id='appBar' position="static">
+          <AppBar
+            id='memoRapperAppBar'
+            position="static"
+            style={{
+              marginBottom: isMobile ? '4px' : undefined, // Apply marginBottom only for mobile
+            }}
+          >
             <Toolbar id='toolBar'>
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 MemoRapp

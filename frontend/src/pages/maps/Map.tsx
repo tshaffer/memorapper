@@ -32,10 +32,11 @@ const MapPage: React.FC = () => {
 
   return (
     <Paper
+      id="map-page"
       style={{
         display: 'flex',
         flexDirection: 'column',
-        padding: isMobile ? '12px' : '24px',
+        padding: isMobile ? '2px' : '24px',
         minHeight: '100%',
         height: '100%',
         overflow: 'hidden',
@@ -43,6 +44,7 @@ const MapPage: React.FC = () => {
     >
 
       <Box
+        id='map-page-header'
         sx={{
           display: 'flex',
           alignItems: 'center',
@@ -53,7 +55,10 @@ const MapPage: React.FC = () => {
         }}
       >
         {/* LocationAutocomplete */}
-        <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Box
+          id='map-page-locationAutocomplete-container'
+          sx={{ flex: 1, minWidth: 0 }}
+        >
           <LocationAutocomplete onSetMapLocation={(location) => console.log('Set Map Location:', location)} />
         </Box>
 
@@ -62,7 +67,7 @@ const MapPage: React.FC = () => {
           sx={{
             display: 'flex',
             justifyContent: 'flex-end',
-            marginTop: isMobile ? 1 : 0, // Add margin to handle wrapping on mobile
+            // marginTop: isMobile ? 1 : 0, // Add margin to handle wrapping on mobile
           }}
         >
           <IconButton
