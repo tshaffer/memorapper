@@ -60,7 +60,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
           lng: geometry.location!.lng(),
         };
         props.onSetMapLocation(newCoordinates);
-        console.log('Place changed:', place, newCoordinates);
+        // console.log('Place changed:', place, newCoordinates);
       } else {
         console.error('No place found in handleMapLocationChanged');
       }
