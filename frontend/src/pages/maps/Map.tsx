@@ -49,23 +49,35 @@ const MapPage: React.FC = () => {
           gap: 1,
           marginBottom: 2,
           width: '100%',
+          flexWrap: 'wrap', // Allow wrapping to avoid overlap
         }}
       >
+        {/* LocationAutocomplete */}
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <LocationAutocomplete onSetMapLocation={(location) => console.log('Set Map Location:', location)} />
         </Box>
-        <IconButton
-          onClick={handleOpenFiltersDialog}
+
+        {/* Filters Button */}
+        <Box
           sx={{
-            backgroundColor: '#007bff',
-            color: '#fff',
-            padding: isMobile ? '6px' : '8px',
-            fontSize: isMobile ? '18px' : '24px',
-            '&:hover': { backgroundColor: '#0056b3' },
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginTop: isMobile ? 1 : 0, // Add margin to handle wrapping on mobile
           }}
         >
-          <SearchIcon />
-        </IconButton>
+          <IconButton
+            onClick={handleOpenFiltersDialog}
+            sx={{
+              backgroundColor: '#007bff',
+              color: '#fff',
+              padding: isMobile ? '6px' : '8px',
+              fontSize: isMobile ? '18px' : '24px',
+              '&:hover': { backgroundColor: '#0056b3' },
+            }}
+          >
+            <SearchIcon />
+          </IconButton>
+        </Box>
       </Box>
 
       {/* Map Display */}

@@ -112,7 +112,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
           type="text"
           placeholder="Enter the location"
           style={{
-            flex: 1,
+            width: '100%', // Ensure the input spans the available space
             padding: isMobile ? '8px' : '10px',
             boxSizing: 'border-box',
             fontSize: isMobile ? '14px' : '16px',
