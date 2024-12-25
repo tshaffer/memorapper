@@ -17,7 +17,7 @@ export interface StructuredReviewProperties {
 export interface FreeformReviewProperties {
   reviewText: string;
   itemReviews: ItemReview[];
-  reviewer?: string;
+  reviewerId: string;
 }
 
 export interface ItemReview {

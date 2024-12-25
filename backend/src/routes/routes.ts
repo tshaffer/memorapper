@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { addReviewsFromFileHandler, chatReviewHandler, checkTextSimilarityHandler, filterResultsHandler, getPlaces, getReviews, getStandardizedNames, healthHandler, nlQueryHandler, previewReviewHandler, submitReviewHandler, testHandler } from '../controllers';
-import { unifiedQueryHandler } from '../controllers/unifiedQuery';
+import { getUsers, unifiedQueryHandler } from '../controllers';
 
 const router = Router();
 
@@ -9,6 +9,8 @@ router.get('/health', healthHandler);
 router.get('/test', testHandler);
 router.get('/places', getPlaces);
 router.get('/reviews', getReviews);
+router.get('/users', getUsers);
+
 router.get('/standardizedNames', getStandardizedNames);
 router.post('/reviews/preview', previewReviewHandler);
 router.post('/reviews/chat', chatReviewHandler);

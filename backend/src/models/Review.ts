@@ -24,7 +24,7 @@ const ItemReviewSchema: Schema = new Schema({
 const FreeformReviewPropertiesSchema: Schema = new Schema({
   reviewText: { type: String, required: true },
   itemReviews: [ItemReviewSchema],
-  reviewer: { type: String }
+  reviewerId: { type: String, required: true }
 });
 
 const ReviewSchema: Schema = new Schema({

@@ -17,7 +17,7 @@ export interface StructuredReviewProperties {
 export interface FreeformReviewProperties {
   reviewText: string;
   itemReviews: ItemReview[];
-  reviewer?: string;
+  reviewer: string;
 }
 
 export interface ItemOrdered {
@@ -73,5 +73,12 @@ export interface PreviewResponse {
 export interface ChatResponse {
   freeformReviewProperties: FreeformReviewProperties;
   updatedReviewText: string;
+}
+
+export interface UserEntity {
+  id: string;
+  userName: string;
+  password: string;
+  email: string;
 }
 

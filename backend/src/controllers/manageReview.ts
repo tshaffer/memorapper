@@ -160,7 +160,7 @@ export const chatReviewHandler = async (
       itemReviews: itemReviews || [],
       reviewer: structuredDataText !== "No Updated Structured Data available"
         ? removeSquareBrackets(extractFieldFromResponse(structuredDataText, 'Reviewer name'))
-        : undefined,
+        : '',
     };
 
     const chatResponse: ChatResponse = {

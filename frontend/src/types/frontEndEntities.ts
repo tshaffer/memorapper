@@ -17,7 +17,7 @@ export interface ReviewEntity {
   dateOfVisit: string;
   wouldReturn: WouldReturn | null;
   itemReviews: ItemReview[];
-  reviewer: string;
+  reviewerId: string;
   reviewText: string;
 }
 
