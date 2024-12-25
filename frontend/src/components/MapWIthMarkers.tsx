@@ -5,6 +5,9 @@ import { getLatLngFromPlace } from '../utilities';
 import '../App.css';
 import { Button, useMediaQuery } from '@mui/material';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
+import { Icon } from '@iconify/react';
+import pizzaIcon from '@iconify/icons-emojione/pizza';
+
 
 const DEFAULT_ZOOM = 14;
 
@@ -15,7 +18,7 @@ const iconContainerStyle: React.CSSProperties = {
   transform: 'translate(-50%, -50%)', // Center the icon
   width: '24px', // Set a fixed size for the icon background
   height: '24px',
-  backgroundColor: 'red', // Black circle background
+  backgroundColor: 'lightgray', // Black circle background
   borderRadius: '50%', // Make it a circle
   display: 'flex', // Center the icon inside the circle
   justifyContent: 'center',
@@ -29,7 +32,7 @@ const iconStyle: React.CSSProperties = {
 
 const textStyle: React.CSSProperties = {
   position: 'absolute',
-  right: '18px', // Adjust to position text to the left of the icon
+  right: '12px', // Adjust to position text to the left of the icon
   transform: 'translateY(-150%)', // Align text vertically with the icon
   whiteSpace: 'nowrap', // Prevent text wrapping
   color: 'red', // Adjust text color
@@ -136,7 +139,8 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
         <div style={{ position: 'relative' }}>
           <div style={textStyle}>{location.name}</div>
           <div style={iconContainerStyle}>
-            <RestaurantIcon style={iconStyle} />
+            {/* <Icon icon={pizzaIcon} style={{ fontSize: '24px', color: 'red' }} /> */}
+            <Icon icon={pizzaIcon} style={{ fontSize: '18px' }} />
           </div>
         </div>
       </AdvancedMarker>
