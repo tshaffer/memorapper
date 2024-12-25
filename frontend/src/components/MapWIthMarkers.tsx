@@ -30,14 +30,18 @@ const iconStyle: React.CSSProperties = {
 const textStyle: React.CSSProperties = {
   position: 'absolute',
   right: '18px', // Adjust to position text to the left of the icon
-  transform: 'translateY(-128%)', // Align text vertically with the icon
+  transform: 'translateY(-150%)', // Align text vertically with the icon
   whiteSpace: 'nowrap', // Prevent text wrapping
   color: 'red', // Adjust text color
   fontSize: '14px', // Adjust font size as needed
-  backgroundColor: 'white', // Solid background to block the map
-  padding: '2px 6px', // Add padding for better readability
-  borderRadius: '4px', // Optional: Rounded corners for aesthetics
-  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)', // Optional: Shadow for a floating effect
+  fontWeight: '500',
+  backgroundColor: 'transparent', // Transparent background
+  textShadow: `
+    1px 1px 0 white,
+    -1px 1px 0 white,
+    1px -1px 0 white,
+    -1px -1px 0 white
+  `, // Creates a solid outline around the text
 };
 
 interface MapWithMarkersProps {
