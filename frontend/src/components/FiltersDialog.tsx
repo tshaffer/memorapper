@@ -1,10 +1,10 @@
+import { Dialog, DialogTitle, DialogContent, DialogActions, Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 import { useEffect, useRef, useState } from 'react';
-import { Box, Button, IconButton, Switch, TextField, Tooltip, Typography, useMediaQuery } from '@mui/material';
+import { Box, Button, Switch, TextField, Tooltip, Typography, useMediaQuery } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 
-import { SortCriteria } from '../../types';
-
-import { SearchDistanceFilter, SearchUIFilters } from '../../types';
+import { SearchDistanceFilter } from '../types';
 const filterButtonStyle: React.CSSProperties = {
   padding: '8px 8px',
   background: '#f8f8f8',
@@ -40,77 +40,52 @@ const initialWouldReturnFilter: WouldReturnFilter = {
   },
 };
 
-interface SearchFiltersProps {
-  onExecuteQuery: (query: string) => void;
-  onExecuteFilter: (filter: SearchUIFilters) => void;
-  onSetSortCriteria: (sortCriteria: SortCriteria) => void;
+export interface FiltersDialogPropsFromParent {
+  open: boolean;
+  onClose: () => void;
+  onSetFilters: (
+    query: string,
+    distanceAway: number,
+    isOpenNow: boolean,
+    wouldReturn: WouldReturnFilter,
+  ) => void;
 }
 
-const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) => {
+export interface FiltersDialogProps extends FiltersDialogPropsFromParent {
+}
+
+const FiltersDialog: React.FC<FiltersDialogProps> = (props: FiltersDialogProps) => {
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
-  const [sortDropdownVisible, setSortDropdownVisible] = useState(false);
   const [distanceAwayDropdownVisible, setDistanceAwayDropdownVisible] = useState(false);
   const [wouldReturnDropdownVisible, setWouldReturnDropdownVisible] = useState(false);
-  const [sortCriteria, setSortCriteria] = useState<SortCriteria>(SortCriteria.Distance);
 
   const [distanceAwayFilter, setDistanceAwayFilter] = useState<number>(initialDistanceAwayFilter);
   const [wouldReturnFilter, setWouldReturnFilter] = useState<WouldReturnFilter>(initialWouldReturnFilter);
   const [isOpenNowFilterEnabled, setIsOpenNowFilterEnabled] = useState(initialIsOpenNowFilterEnabled);
 
   const [query, setQuery] = useState('');
-  const [executedQuery, setExecutedQuery] = useState<string | null>(null); // Stores the executed query
 
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
   const distanceDropdownRef = useRef<HTMLDivElement | null>(null);
   const wouldReturnDropdownRef = useRef<HTMLDivElement | null>(null);
 
-  const invokeExecuteFilter = (
-    distanceAwayFilter: SearchDistanceFilter,
-    openNowFilter: boolean,
-    wouldReturnFilter: WouldReturnFilter) => {
-    const filter: SearchUIFilters = {
-      distanceAwayFilter,
-      openNowFilter,
-      wouldReturnFilter,
-    };
-    props.onExecuteFilter(filter);
-  }
-
-  const handleMoreFiltersIcon = () => {
-    console.log('More Filters Icon Clicked');
-  };
-
   const handleWouldReturnClick = () => {
     setWouldReturnDropdownVisible((prev) => !prev);
-    setSortDropdownVisible(false);
     setDistanceAwayDropdownVisible(false);
-  };
-
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSortCriteria(e.target.value as SortCriteria);
-    props.onSetSortCriteria(e.target.value as SortCriteria);
-    setSortDropdownVisible(false);
   };
 
   const handleDistanceAwayChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log('handleDistanceAwayChange', e.target.value);
-    console.log(e.target.value as unknown as SearchDistanceFilter);
-    console.log(typeof (e.target.value));
     const distanceAwayFilter = Number(e.target.value as unknown as SearchDistanceFilter);
     setDistanceAwayFilter(distanceAwayFilter);
     setDistanceAwayDropdownVisible(false);
-    invokeExecuteFilter(distanceAwayFilter, isOpenNowFilterEnabled, wouldReturnFilter);
   };
 
   const handleOpenNowClick = () => {
-    setSortDropdownVisible(false);
     setDistanceAwayDropdownVisible(false);
     setWouldReturnDropdownVisible(false);
     const newOpenNowFilterEnabled = !isOpenNowFilterEnabled;
     setIsOpenNowFilterEnabled(newOpenNowFilterEnabled);
-    invokeExecuteFilter(distanceAwayFilter, newOpenNowFilterEnabled, wouldReturnFilter);
   };
 
   const handleWouldReturnChange = (updatedValues: any) => {
@@ -120,7 +95,6 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
       values,
     };
     setWouldReturnFilter(newWouldReturnFilter);
-    invokeExecuteFilter(distanceAwayFilter, isOpenNowFilterEnabled, newWouldReturnFilter);
   }
 
   const handleWouldReturnToggleEnabled = () => {
@@ -129,24 +103,9 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
       enabled: !wouldReturnFilter.enabled,
     };
     setWouldReturnFilter(newWouldReturnFilter);
-    invokeExecuteFilter(distanceAwayFilter, isOpenNowFilterEnabled, newWouldReturnFilter);
   }
 
-  const handleQueryExecute = () => {
-    setExecutedQuery(query);
-    props.onExecuteQuery(query);
-    console.log('Executed Query:', query);
-  };
-
-  const handleQueryClear = () => {
-    setQuery('');
-    setExecutedQuery(null);
-  };
-
   const handleClickOutside = (event: MouseEvent) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-      setSortDropdownVisible(false);
-    }
     if (distanceDropdownRef.current && !distanceDropdownRef.current.contains(event.target as Node)) {
       setDistanceAwayDropdownVisible(false);
     }
@@ -157,14 +116,28 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
-      setSortDropdownVisible(false);
       setDistanceAwayDropdownVisible(false);
       setWouldReturnDropdownVisible(false);
     }
   };
 
-  useEffect(() => {
-    if (sortDropdownVisible || distanceAwayDropdownVisible || wouldReturnDropdownVisible) {
+  function handleSetFilters(): void {
+    props.onSetFilters(query, distanceAwayFilter, isOpenNowFilterEnabled, wouldReturnFilter);
+    props.onClose();
+  }
+
+  const handleClose = () => {
+    setDistanceAwayDropdownVisible(false);
+    setWouldReturnDropdownVisible(false);
+    props.onClose();
+  }
+
+  const handleCloseWouldReturnDropdown = () => {
+    setWouldReturnDropdownVisible(false);
+  }
+
+  useEffect(() => {    
+    if (distanceAwayDropdownVisible || wouldReturnDropdownVisible) {
       document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('keydown', handleKeyDown);
     } else {
@@ -176,44 +149,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [sortDropdownVisible, distanceAwayDropdownVisible, wouldReturnDropdownVisible]);
-
-  const renderSortBy = (): JSX.Element => (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        padding: '8px 12px',
-        background: '#f8f8f8',
-        border: '1px solid #ccc',
-        borderRadius: '20px',
-        width: isMobile ? '100%' : 'auto',
-      }}
-    >
-      <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
-        SORT BY:
-      </Typography>
-      <select
-        value={sortCriteria}
-        onChange={handleSortChange}
-        style={{
-          color: '#1976D2',
-          fontWeight: 500,
-          fontSize: '14px',
-          background: 'transparent',
-          border: 'none',
-          outline: 'none',
-          cursor: 'pointer',
-        }}
-      >
-        <option value="distance">DISTANCE</option>
-        <option value="name">NAME</option>
-        <option value="most recent review">MOST RECENT REVIEW</option>
-        <option value="reviewer">REVIEWER</option>
-      </select>
-    </Box>
-  );
+  }, [distanceAwayDropdownVisible, wouldReturnDropdownVisible]);
 
   const renderDistanceAway = (): JSX.Element => (
     <Box
@@ -232,7 +168,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
         variant="subtitle1"
         style={myButtonStyle}
       >
-        DISTANCE AWAY:
+        {isMobile ? 'DISTANCE' : 'DISTANCE AWAY'}
       </Typography>
       <select
         value={distanceAwayFilter}
@@ -266,74 +202,83 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
         borderRadius: '8px',
         zIndex: 10,
-        padding: '10px',
-        width: '280px',
+        padding: '16px',
+        width: '215px',
         maxWidth: '90%',
       }}
     >
-      <Typography variant="subtitle1" sx={{ marginBottom: '8px' }}>
+      <Typography variant="subtitle1" sx={{ marginBottom: '12px' }}>
         Would Return
       </Typography>
-      <Box>
-        <label style={{ color: wouldReturnFilter.enabled ? 'inherit' : '#aaa' }}>
-          <input
-            type="checkbox"
-            checked={wouldReturnFilter.values.yes}
-            disabled={!wouldReturnFilter.enabled}
-            onChange={() =>
-              handleWouldReturnChange({ yes: !wouldReturnFilter.values.yes })
-            }
-          />
-          Yes
-        </label>
-      </Box>
-      <Box>
-        <label style={{ color: wouldReturnFilter.enabled ? 'inherit' : '#aaa' }}>
-          <input
-            type="checkbox"
-            checked={wouldReturnFilter.values.no}
-            disabled={!wouldReturnFilter.enabled}
-            onChange={() =>
-              handleWouldReturnChange({ no: !wouldReturnFilter.values.no })
-            }
-          />
-          No
-        </label>
-      </Box>
-      <Box>
-        <label style={{ color: wouldReturnFilter.enabled ? 'inherit' : '#aaa' }}>
-          <input
-            type="checkbox"
-            checked={wouldReturnFilter.values.notSure}
-            disabled={!wouldReturnFilter.enabled}
-            onChange={() =>
-              handleWouldReturnChange({ notSure: !wouldReturnFilter.values.notSure })
-            }
-          />
-          Not Sure
-        </label>
-      </Box>
+      <FormGroup>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={wouldReturnFilter.values.yes}
+              disabled={!wouldReturnFilter.enabled}
+              onChange={() =>
+                handleWouldReturnChange({ yes: !wouldReturnFilter.values.yes })
+              }
+            />
+          }
+          label="Yes"
+          sx={{ color: wouldReturnFilter.enabled ? 'inherit' : '#aaa' }}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={wouldReturnFilter.values.no}
+              disabled={!wouldReturnFilter.enabled}
+              onChange={() =>
+                handleWouldReturnChange({ no: !wouldReturnFilter.values.no })
+              }
+            />
+          }
+          label="No"
+          sx={{ color: wouldReturnFilter.enabled ? 'inherit' : '#aaa' }}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={wouldReturnFilter.values.notSure}
+              disabled={!wouldReturnFilter.enabled}
+              onChange={() =>
+                handleWouldReturnChange({ notSure: !wouldReturnFilter.values.notSure })
+              }
+            />
+          }
+          label="Not Sure"
+          sx={{ color: wouldReturnFilter.enabled ? 'inherit' : '#aaa' }}
+        />
+      </FormGroup>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px' }}>
         <Box>
           <Typography variant="body2" sx={{ display: 'inline', marginRight: '8px' }}>
-            Enable
+            Enable Filter
           </Typography>
           <Switch
             checked={wouldReturnFilter.enabled}
-            onChange={() =>
-              handleWouldReturnToggleEnabled()
-            }
+            onChange={handleWouldReturnToggleEnabled}
           />
         </Box>
-        <Button onClick={() => setWouldReturnDropdownVisible(false)} variant="contained">
-          Close
+        <Button onClick={handleCloseWouldReturnDropdown} aria-label="Close">
+          <CloseIcon />
         </Button>
       </Box>
     </Box>
   );
 
   const renderQueryInput = (): JSX.Element => (
-    <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '8px', marginBottom: '12px' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: isMobile ? 'column' : 'row', // Stack vertically on mobile, horizontally otherwise
+        alignItems: 'center', // Align items vertically in the center for horizontal layout
+        gap: '8px',
+        marginBottom: '12px',
+      }}
+    >
+      <Typography sx={{ minWidth: '60px' }}>Query:</Typography> {/* Label with consistent width */}
       <TextField
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -342,12 +287,6 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
         size="small"
         variant="outlined"
       />
-      <Button onClick={handleQueryExecute} variant="contained" disabled={!query}>
-        Execute
-      </Button>
-      <Button onClick={handleQueryClear} variant="outlined" disabled={!query}>
-        Clear
-      </Button>
     </Box>
 
   );
@@ -362,30 +301,56 @@ const SearchFilters: React.FC<SearchFiltersProps> = (props: SearchFiltersProps) 
         marginBottom: '12px',
       }}
     >
-      {renderSortBy()}
       {renderDistanceAway()}
       <Button style={filterButtonStyle} onClick={handleOpenNowClick}>
-        Open Now {isOpenNowFilterEnabled && <CheckIcon style={{ marginLeft: '4px' }} />}
+        Open Now
+        <CheckIcon
+          style={{
+            marginLeft: '4px',
+            visibility: isOpenNowFilterEnabled ? 'visible' : 'hidden',
+          }}
+        />
       </Button>
       <Button
         style={filterButtonStyle}
         onClick={handleWouldReturnClick}
       >
-        Would Return {wouldReturnFilter.enabled && <CheckIcon style={{ marginLeft: '4px' }} />}
+        Would Return
+        <CheckIcon
+          style={{
+            marginLeft: '4px',
+            visibility: wouldReturnFilter.enabled ? 'visible' : 'hidden',
+          }}
+        />
       </Button>
     </Box>
   );
 
   return (
-    <Box sx={{ padding: '8px', overflowY: 'auto' }}>
-      {/* Query Input */}
-      {renderQueryInput()}
-
-      {/* Row of Filter Buttons */}
-      {renderFiltersRow()}
-      {wouldReturnDropdownVisible && renderWouldReturnDropdown()}
-    </Box>
+    <Dialog onClose={props.onClose} open={props.open}>
+      <DialogTitle>Filters</DialogTitle>
+      <DialogContent style={{ paddingBottom: '0px' }}>
+        <Box sx={{ padding: '8px', overflowY: 'auto' }}>
+          {renderQueryInput()}
+          {renderFiltersRow()}
+          {wouldReturnDropdownVisible && renderWouldReturnDropdown()}
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Cancel</Button>
+        <Tooltip title="Press Enter to set the filters" arrow>
+          <Button
+            onClick={handleSetFilters}
+            autoFocus
+            variant="contained"
+            color="primary"
+          >
+            OK
+          </Button>
+        </Tooltip>
+      </DialogActions>
+    </Dialog>
   );
 };
 
-export default SearchFilters;
+export default FiltersDialog;

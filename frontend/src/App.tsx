@@ -64,7 +64,7 @@ const App: React.FC = () => {
 
           <Box id='mainAppContentArea' sx={{ flexGrow: 1, overflow: 'hidden' }}>
             <Routes>
-              <Route path="/" element={<Search />} />
+              <Route path="/" element={<Map />} />
               <Route path="/search" element={<Search />} />
               <Route path="/restaurantDetails" element={<RestaurantDetails />} />
               <Route path="/map" element={<Map />} />

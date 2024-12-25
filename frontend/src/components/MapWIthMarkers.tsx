@@ -100,8 +100,8 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
   };
 
   const handleZoomChanged = (event: MapCameraChangedEvent) => {
-    console.log('handleZoomChanged event: ', event);
-    console.log('event.detail.zoom: ', event.detail.zoom);
+    // console.log('handleZoomChanged event: ', event);
+    // console.log('event.detail.zoom: ', event.detail.zoom);
     setZoom(event.detail.zoom);
   };
 
@@ -208,6 +208,10 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
       return currentLocation;
     }
   }
+
+  // console.log('MapWithMarkers render:', initialCenter, locations, currentLocation, selectedLocation, zoom);
+  console.log('MapWithMarkers render:');
+  console.log(locations);
 
   return (
     <APIProvider
