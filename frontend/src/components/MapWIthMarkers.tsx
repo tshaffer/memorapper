@@ -4,6 +4,7 @@ import { AdvancedMarker, APIProvider, InfoWindow, Map, MapCameraChangedEvent } f
 import { getLatLngFromPlace } from '../utilities';
 import '../App.css';
 import { Button, useMediaQuery } from '@mui/material';
+import RestaurantIcon from '@mui/icons-material/Restaurant';
 
 const DEFAULT_ZOOM = 14;
 
@@ -19,6 +20,15 @@ const pinStyle: React.CSSProperties = {
   transform: 'translate(-50%, -100%)' /* Adjust as needed */
 };
 
+const iconStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: '-20px', // Adjust to align the icon with the marker's position
+  left: '50%',
+  transform: 'translate(-50%, -100%)', // Center the icon
+  fontSize: '32px', // Adjust icon size as needed
+  color: 'red', // Adjust color as needed
+};
+
 const textStyle: React.CSSProperties = {
   position: 'absolute',
   top: '-18px', // Move the text slightly up to align with the triangle's tip
@@ -29,7 +39,7 @@ const textStyle: React.CSSProperties = {
   padding: '2px 4px', // Optional: Add padding
   borderRadius: '4px', // Optional: Round the corners of the background
   fontSize: '14px', // Adjust font size as needed
-  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)' // Optional: Add shadow for a floating effect
+  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)', // Optional: Add shadow for a floating effect
 };
 
 interface MapWithMarkersProps {
@@ -122,7 +132,7 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
         onClick={() => handleMarkerClick(location)}
       >
         <div style={{ position: 'relative' }}>
-          <div style={pinStyle}></div>
+          <RestaurantIcon style={iconStyle} />
           <div style={textStyle}>{location.name}</div>
         </div>
       </AdvancedMarker>
@@ -234,7 +244,7 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
         streetViewControl={false}
         rotateControl={false}
         scaleControl={false}
-      
+
       >
         {locationMarkers}
         {currentLocation && (
