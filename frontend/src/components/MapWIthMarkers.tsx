@@ -8,38 +8,36 @@ import RestaurantIcon from '@mui/icons-material/Restaurant';
 
 const DEFAULT_ZOOM = 14;
 
-const pinStyle: React.CSSProperties = {
-  width: '0',
-  height: '0',
-  borderLeft: '10px solid transparent',
-  borderRight: '10px solid transparent',
-  borderBottom: '20px solid red', /* Change color as needed */
+const iconContainerStyle: React.CSSProperties = {
   position: 'absolute',
-  top: '50%',
+  top: '-16px', // Adjust to align the icon and text vertically
   left: '50%',
-  transform: 'translate(-50%, -100%)' /* Adjust as needed */
+  transform: 'translate(-50%, -50%)', // Center the icon
+  width: '24px', // Set a fixed size for the icon background
+  height: '24px',
+  backgroundColor: 'red', // Black circle background
+  borderRadius: '50%', // Make it a circle
+  display: 'flex', // Center the icon inside the circle
+  justifyContent: 'center',
+  alignItems: 'center',
 };
 
 const iconStyle: React.CSSProperties = {
-  position: 'absolute',
-  top: '-20px', // Adjust to align the icon with the marker's position
-  left: '50%',
-  transform: 'translate(-50%, -100%)', // Center the icon
-  fontSize: '32px', // Adjust icon size as needed
-  color: 'red', // Adjust color as needed
+  fontSize: '16px', // Reduce icon size
+  color: 'white', // White icon color for contrast
 };
 
 const textStyle: React.CSSProperties = {
   position: 'absolute',
-  top: '-18px', // Move the text slightly up to align with the triangle's tip
-  left: '6px', // Position to the right of the triangle
+  right: '18px', // Adjust to position text to the left of the icon
+  transform: 'translateY(-128%)', // Align text vertically with the icon
   whiteSpace: 'nowrap', // Prevent text wrapping
-  color: 'red',
-  background: 'transparent', // Optional: Add background for better readability
-  padding: '2px 4px', // Optional: Add padding
-  borderRadius: '4px', // Optional: Round the corners of the background
+  color: 'red', // Adjust text color
   fontSize: '14px', // Adjust font size as needed
-  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)', // Optional: Add shadow for a floating effect
+  backgroundColor: 'white', // Solid background to block the map
+  padding: '2px 6px', // Add padding for better readability
+  borderRadius: '4px', // Optional: Rounded corners for aesthetics
+  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)', // Optional: Shadow for a floating effect
 };
 
 interface MapWithMarkersProps {
@@ -132,8 +130,10 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
         onClick={() => handleMarkerClick(location)}
       >
         <div style={{ position: 'relative' }}>
-          <RestaurantIcon style={iconStyle} />
           <div style={textStyle}>{location.name}</div>
+          <div style={iconContainerStyle}>
+            <RestaurantIcon style={iconStyle} />
+          </div>
         </div>
       </AdvancedMarker>
     );
