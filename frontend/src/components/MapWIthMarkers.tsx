@@ -210,8 +210,8 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
   }
 
   // console.log('MapWithMarkers render:', initialCenter, locations, currentLocation, selectedLocation, zoom);
-  console.log('MapWithMarkers render:');
-  console.log(locations);
+  // console.log('MapWithMarkers render:');
+  // console.log(locations);
 
   return (
     <APIProvider

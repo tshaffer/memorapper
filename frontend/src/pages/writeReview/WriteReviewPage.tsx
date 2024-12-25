@@ -11,7 +11,7 @@ import { useLocation, useParams } from "react-router-dom";
 const MultiPanelReviewForm = () => {
 
   const { _id } = useParams<{ _id: string }>();
-  console.log('MultiPanelReviewForm _id:', _id);
+  // console.log('MultiPanelReviewForm _id:', _id);
   const location = useLocation();
   const editableReview = location.state as EditableReview | null;
 
@@ -89,7 +89,7 @@ const MultiPanelReviewForm = () => {
       reviewText: reviewData.reviewText!,
       sessionId: reviewData.sessionId!,
     };
-    console.log('submitBody:', submitBody);
+    // console.log('submitBody:', submitBody);
 
     try {
       const response = await fetch('/api/reviews/submit', {
@@ -100,7 +100,7 @@ const MultiPanelReviewForm = () => {
         }),
       });
       const data = await response.json();
-      console.log('Review submitted:', data);
+      // console.log('Review submitted:', data);
 
       resetReviewData();
 

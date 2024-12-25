@@ -99,7 +99,7 @@ const MapPage: React.FC = () => {
 
     const filter: SearchUIFilters = { distanceAwayFilter: distanceAway, openNowFilter: isOpenNow, wouldReturnFilter: wouldReturn };
 
-    console.log('executeFilter:', filter);
+    // console.log('executeFilter:', filter);
 
     const requestBody = { filter, places, reviews, mapLocation };
 
@@ -111,7 +111,7 @@ const MapPage: React.FC = () => {
       });
 
       const data: any = await apiResponse.json();
-      console.log('filter query results:', data.places, data.reviews);
+      // console.log('filter query results:', data.places, data.reviews);
 
       setFilteredPlaces(data.places);
       // setFilteredReviews(reviews);
@@ -127,7 +127,7 @@ const MapPage: React.FC = () => {
     wouldReturn: WouldReturnFilter,
   ) => {
 
-    console.log('handleSetFilters:', query, distanceAway, isOpenNow, wouldReturn);
+    // console.log('handleSetFilters:', query, distanceAway, isOpenNow, wouldReturn);
 
     handleCloseFiltersDialog();
 
@@ -143,7 +143,7 @@ const MapPage: React.FC = () => {
   };
 
   const handleExecuteQuery = (query: string) => {
-    console.log('Executed Query:', query);
+    // console.log('Executed Query:', query);
     handleCloseFiltersDialog();
   };
 
@@ -153,7 +153,7 @@ const MapPage: React.FC = () => {
 
   const renderMap = () => {
 
-    console.log('renderMap:', mapLocation, filteredPlaces);
+    // console.log('renderMap:', mapLocation, filteredPlaces);
 
     if (!mapLocation) {
       return null;

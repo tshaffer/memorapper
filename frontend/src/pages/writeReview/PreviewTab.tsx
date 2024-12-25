@@ -20,7 +20,7 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
 
   const { reviewData, onSubmitReview } = props;
 
-  console.log('ReviewPreviewPanel reviewData:', reviewData);
+  // console.log('ReviewPreviewPanel reviewData:', reviewData);
 
   const { place, wouldReturn, dateOfVisit, reviewText, itemReviews } = reviewData;
 
@@ -73,7 +73,7 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
 
   const renderReviewPreview = () => {
 
-    console.log('renderReviewPreview isLoading:', isLoading);
+    // console.log('renderReviewPreview isLoading:', isLoading);
 
     if (!place || !reviewText || reviewText === '') return (
       <div id="preview" className="tab-panel active">

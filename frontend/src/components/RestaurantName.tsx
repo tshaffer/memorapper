@@ -24,6 +24,10 @@ const RestaurantName: React.FC<RestaurantNameProps> = (props: RestaurantNameProp
       const place: google.maps.places.PlaceResult = autocompleteRef.current.getPlace();
       try {
         const googlePlace: GooglePlace = pickGooglePlaceProperties(place);
+        console.log('Place name: ', place.name);
+        console.log('Place types:', place.types);
+        console.log('Reviews:', place.reviews);
+
         props.onSetGooglePlace(googlePlace);
         handleChange('restaurantName', googlePlace.name);
       } catch (error) {
@@ -38,7 +42,7 @@ const RestaurantName: React.FC<RestaurantNameProps> = (props: RestaurantNameProp
     }
   };
 
-  console.log('RestaurantName reviewData:', reviewData);
+  // console.log('RestaurantName reviewData:', reviewData);
 
   return (
     <Box>

@@ -52,7 +52,7 @@ const FormTab: React.FC<FormTabProps> = (props: FormTabProps) => {
     return (<PulsingDots />);
   };
 
-  console.log('ReviewFormPanel reviewData:', reviewData);
+  // console.log('ReviewFormPanel reviewData:', reviewData);
 
   return (
 
