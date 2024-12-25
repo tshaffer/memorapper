@@ -229,6 +229,12 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
         zoomControl={true}
         gestureHandling={'greedy'}
         scrollwheel={true}
+
+        mapTypeControl={false}
+        streetViewControl={false}
+        rotateControl={false}
+        scaleControl={false}
+      
       >
         {locationMarkers}
         {currentLocation && (
