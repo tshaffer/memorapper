@@ -23,6 +23,9 @@ export const addReview = async (memoRappReview: MemoRappReview): Promise<IReview
 
   const newReview: IReview = new Review(memoRappReview);
 
+  console.log('memoRappReview:', memoRappReview);
+  console.log('newReview:', newReview);
+
   try {
     const savedReview: IReview | null = await newReview.save();
     return savedReview;

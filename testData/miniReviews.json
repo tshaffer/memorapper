@@ -6,7 +6,7 @@
     "wouldReturn": 0,
     "reviewText": "The Chicken Pesto sandwich is tasty. Order it without the roasted red peppers (as they're slimy) and ask for 'Light on the mayo'. I'm not that crazy about their lattes. Outdoor seating it nice.",
     "restaurantType": 0,
-    "reviewerId": "0"
+    "reviewerId": "1"
   },
   {
     "restaurantName": "Capelo's Barbecue",
@@ -24,7 +24,7 @@
     "wouldReturn": 0,
     "reviewText": "Items ordered: Mochiko Chicken; Kale Salad; Garlic Shrimp; Fat Chow Fun; Garlic Noodles",
     "restaurantType": 0,
-    "reviewerId": "0"
+    "reviewerId": "1"
   },
   {
     "restaurantName": "Monkeypod Kitchen",
@@ -32,26 +32,26 @@
     "dateOfVisit": "2024-10-08",
     "wouldReturn": 0,
     "reviewText": "Monkeypod Mai Tai - delicious. I had two. Cast Iron Shrimp - very good. Margarita Pizza - good. Very nice atmosphere. Sat at the bar at happy hour. No wait to sit at the bar. Happy hour - discounts on the Mai Tai and the Pizza, but not on any seafood.",
-    "restaurantType": 0,
+    "restaurantType": 2,
     "reviewerId": "0"
   },
   {
     "restaurantName": "Fred's Mexican Cafe",
     "location": "Maui",
     "dateOfVisit": "2024-10-08",
-    "wouldReturn": "not sure",
+    "wouldReturn": 2,
     "reviewText": "Arrived for dinner at about 5 pm and were able to get a table outside with a view of the water. Shrimp diablo was really good and the margaritas were really good. I did not like the chips.",
-    "restaurantType": 0,
+    "restaurantType": 4,
     "reviewerId": "0"
   },
   {
     "restaurantName": "South Maui Fish Company",
     "location": "Maui",
     "dateOfVisit": "2024-10-05",
-    "wouldReturn": "not sure",
+    "wouldReturn": 2,
     "reviewText": "Lori and I both ordered fish tacos. The fish was fresh. The pieces were big and thick but the tacos were not all that flavorful. Lori was disappointed that there was no beer either here or in the surrounding shops.",
     "restaurantType": 0,
-    "reviewerId": "0"
+    "reviewerId": "1"
   },
   {
     "restaurantName": "Joey's Kitchen",
@@ -69,7 +69,7 @@
     "wouldReturn": 0,
     "reviewText": "Went straight from the airport to get lunch. Drove a few blocks away and ate it in the car in the shade under a tree. Items ordered: Mochiko Chicken; Kale Salad; Garlic Shrimp; Fat Chow Fun; Garlic Noodles. We had enough leftovers for dinner. I'd like to do the same thing next time we go to Maui.",
     "restaurantType": 0,
-    "reviewerId": "0"
+    "reviewerId": "1"
   },
   {
     "restaurantName": "Leoda's Kitchen and Pie Shop",
@@ -77,7 +77,7 @@
     "dateOfVisit": "2024-10-02",
     "wouldReturn": 0,
     "reviewText": "Loved the key lime pie. Lori liked hers as well, though I can't remember what she ordered.",
-    "restaurantType": 0,
+    "restaurantType": 7,
     "reviewerId": "0"
   },
   {
@@ -85,15 +85,15 @@
     "dateOfVisit": "2024-10-31",
     "wouldReturn": 0,
     "reviewText": "We ordered a Doppio Zero pizza. The toppings for this pizza are burrata, prosciutto, and arugula. It was my favorite. I enjoy it more than the comparable one from Terun. We also ordered a Mortadella pizza. Its toppings included both mortadella and crumbled pistachio. It was good but not as good as the equivalent we had in Italy. The pistachio was too crunchy.",
-    "restaurantType": 0,
-    "reviewerId": "0"
+    "restaurantType": 5,
+    "reviewerId": "1"
   },
   {
     "restaurantName": "Terun",
     "dateOfVisit": "2024-8-30",
     "wouldReturn": 0,
     "reviewText": "We ordered a Margherita pizza. It was good but not as good as the one from Doppio Zero. We also ordered a Diavola pizza. It was very good - nice and spicy.",
-    "restaurantType": 0,
+    "restaurantType": 6,
     "reviewerId": "0"
   }
 ]

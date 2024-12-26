@@ -27,4 +27,5 @@ export enum RestaurantType {
   Taqueria = 4,
   PizzaPlace = 5,
   ItalianRestaurant = 6,
+  DessertShop = 7,
 }
