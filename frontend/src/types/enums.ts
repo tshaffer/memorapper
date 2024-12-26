@@ -25,3 +25,13 @@ export enum SortCriteria {
   Name = "name",
   Reviewer = "reviewer",
 }
+
+export enum RestaurantType {
+  Generic = 0,
+  CoffeeShop = 1,
+  Bar = 2,
+  Bakery = 3,
+  Taqueria = 4,
+  PizzaPlace = 5,
+  ItalianRestaurant = 6,
+}

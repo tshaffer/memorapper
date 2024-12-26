@@ -1,9 +1,10 @@
-import { Box, Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField, useMediaQuery } from '@mui/material';
+import { Box, Button, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, TextField, useMediaQuery } from '@mui/material';
 import RestaurantName from '../../components/RestaurantName';
 import '../../styles/multiPanelStyles.css';
 import { useEffect, useState } from 'react';
-import { ReviewData, WouldReturn } from '../../types';
+import { RestaurantType, ReviewData, WouldReturn } from '../../types';
 import PulsingDots from '../../components/PulsingDots';
+import React from 'react';
 
 interface FormTabProps {
   reviewData: ReviewData;
@@ -19,6 +20,11 @@ const FormTab: React.FC<FormTabProps> = (props: FormTabProps) => {
   const isMobile = useMediaQuery('(max-width:768px)');
 
   const [isLoading, setIsLoading] = useState(false);
+  const [restaurantType, setRestaurantType] = React.useState<RestaurantType>(RestaurantType.Generic);
+
+  const handleRestaurantTypeChange = (event: SelectChangeEvent) => {
+    setRestaurantType(parseInt(event.target.value));
+  };
 
   const handleChange = (field: keyof ReviewData, value: any) => {
     setReviewData((prev) => ({ ...prev, [field]: value }));
@@ -70,6 +76,23 @@ const FormTab: React.FC<FormTabProps> = (props: FormTabProps) => {
           setReviewData={setReviewData}
           onSetGooglePlace={(place) => handleChange('place', place)}
         />
+
+        <label>Restaurant Type (Required):</label>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={restaurantType.toString()}
+          // label="Age"
+          onChange={handleRestaurantTypeChange}
+        >
+          <MenuItem value={RestaurantType.Generic}>Restaurant</MenuItem>
+          <MenuItem value={RestaurantType.CoffeeShop}>Coffee Shop</MenuItem>
+          <MenuItem value={RestaurantType.Bar}>Bar</MenuItem>
+          <MenuItem value={RestaurantType.Bakery}>Bakery</MenuItem>
+          <MenuItem value={RestaurantType.Taqueria}>Taqueria</MenuItem>
+          <MenuItem value={RestaurantType.PizzaPlace}>Pizza</MenuItem>
+          <MenuItem value={RestaurantType.ItalianRestaurant}>Italian</MenuItem>
+        </Select>
 
         <label>Review Text (Required):</label>
         <TextField
