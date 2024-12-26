@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, TextField, useMediaQuery } from '@mui/material';
+import { Box, Button, FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, TextField, useMediaQuery } from '@mui/material';
 import RestaurantName from '../../components/RestaurantName';
 import '../../styles/multiPanelStyles.css';
 import { useEffect, useState } from 'react';
@@ -20,11 +20,6 @@ const FormTab: React.FC<FormTabProps> = (props: FormTabProps) => {
   const isMobile = useMediaQuery('(max-width:768px)');
 
   const [isLoading, setIsLoading] = useState(false);
-  const [restaurantType, setRestaurantType] = React.useState<RestaurantType>(RestaurantType.Generic);
-
-  const handleRestaurantTypeChange = (event: SelectChangeEvent) => {
-    setRestaurantType(parseInt(event.target.value));
-  };
 
   const handleChange = (field: keyof ReviewData, value: any) => {
     setReviewData((prev) => ({ ...prev, [field]: value }));
@@ -81,9 +76,8 @@ const FormTab: React.FC<FormTabProps> = (props: FormTabProps) => {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={restaurantType.toString()}
-          // label="Age"
-          onChange={handleRestaurantTypeChange}
+          value={reviewData.restaurantType.toString()}
+          onChange={(restaurantType) => handleChange('restaurantType', parseInt(restaurantType.target.value))}
         >
           <MenuItem value={RestaurantType.Generic}>Restaurant</MenuItem>
           <MenuItem value={RestaurantType.CoffeeShop}>Coffee Shop</MenuItem>
