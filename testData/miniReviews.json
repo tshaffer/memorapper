@@ -3,75 +3,97 @@
     "restaurantName": "Cafe Iveta Westside",
     "location": "Santa Cruz",
     "dateOfVisit": "2024-08-30",
-    "wouldReturn": "yes",
-    "reviewText": "The Chicken Pesto sandwich is tasty. Order it without the roasted red peppers (as they're slimy) and ask for 'Light on the mayo'. I'm not that crazy about their lattes. Outdoor seating it nice."
+    "wouldReturn": 0,
+    "reviewText": "The Chicken Pesto sandwich is tasty. Order it without the roasted red peppers (as they're slimy) and ask for 'Light on the mayo'. I'm not that crazy about their lattes. Outdoor seating it nice.",
+    "restaurantType": 0,
+    "reviewerId": "0"
   },
   {
     "restaurantName": "Capelo's Barbecue",
     "location": "Redwood City",
     "dateOfVisit": "2024-11-01",
-    "wouldReturn": "no",
-    "reviewText": "Disappointing - I don't think we'll return. I ordered the brisket. The brisket was dry. Lori ordered a pulled pork sandwich which was also disappointing. The mac and cheese was tolerable. The cornbread was dry but had good flavor. The BBQ sauce was too sweet. The outdoor seating is nice. Nice vibe. Lori enjoyed her beer."
+    "wouldReturn": 1,
+    "reviewText": "Disappointing - I don't think we'll return. I ordered the brisket. The brisket was dry. Lori ordered a pulled pork sandwich which was also disappointing. The mac and cheese was tolerable. The cornbread was dry but had good flavor. The BBQ sauce was too sweet. The outdoor seating is nice. Nice vibe. Lori enjoyed her beer.",
+    "restaurantType": 0,
+    "reviewerId": "0"
   },
   {
     "restaurantName": "Tin Roof Maui",
     "location": "Maui",
     "dateOfVisit": "2024-10-10",
-    "wouldReturn": "yes",
-    "reviewText": "Items ordered: Mochiko Chicken; Kale Salad; Garlic Shrimp; Fat Chow Fun; Garlic Noodles"
+    "wouldReturn": 0,
+    "reviewText": "Items ordered: Mochiko Chicken; Kale Salad; Garlic Shrimp; Fat Chow Fun; Garlic Noodles",
+    "restaurantType": 0,
+    "reviewerId": "0"
   },
   {
     "restaurantName": "Monkeypod Kitchen",
     "location": "Maui",
     "dateOfVisit": "2024-10-08",
-    "wouldReturn": "yes",
-    "reviewText": "Monkeypod Mai Tai - delicious. I had two. Cast Iron Shrimp - very good. Margarita Pizza - good. Very nice atmosphere. Sat at the bar at happy hour. No wait to sit at the bar. Happy hour - discounts on the Mai Tai and the Pizza, but not on any seafood."
+    "wouldReturn": 0,
+    "reviewText": "Monkeypod Mai Tai - delicious. I had two. Cast Iron Shrimp - very good. Margarita Pizza - good. Very nice atmosphere. Sat at the bar at happy hour. No wait to sit at the bar. Happy hour - discounts on the Mai Tai and the Pizza, but not on any seafood.",
+    "restaurantType": 0,
+    "reviewerId": "0"
   },
   {
     "restaurantName": "Fred's Mexican Cafe",
     "location": "Maui",
     "dateOfVisit": "2024-10-08",
     "wouldReturn": "not sure",
-    "reviewText": "Arrived for dinner at about 5 pm and were able to get a table outside with a view of the water. Shrimp diablo was really good and the margaritas were really good. I did not like the chips."
+    "reviewText": "Arrived for dinner at about 5 pm and were able to get a table outside with a view of the water. Shrimp diablo was really good and the margaritas were really good. I did not like the chips.",
+    "restaurantType": 0,
+    "reviewerId": "0"
   },
   {
     "restaurantName": "South Maui Fish Company",
     "location": "Maui",
     "dateOfVisit": "2024-10-05",
     "wouldReturn": "not sure",
-    "reviewText": "Lori and I both ordered fish tacos. The fish was fresh. The pieces were big and thick but the tacos were not all that flavorful. Lori was disappointed that there was no beer either here or in the surrounding shops."
+    "reviewText": "Lori and I both ordered fish tacos. The fish was fresh. The pieces were big and thick but the tacos were not all that flavorful. Lori was disappointed that there was no beer either here or in the surrounding shops.",
+    "restaurantType": 0,
+    "reviewerId": "0"
   },
   {
     "restaurantName": "Joey's Kitchen",
     "location": "Maui",
     "dateOfVisit": "2024-10-03",
-    "wouldReturn": "yes",
-    "reviewText": "Great garlic chicken; shrimp were disgusting."
+    "wouldReturn": 0,
+    "reviewText": "Great garlic chicken; shrimp were disgusting.",
+    "restaurantType": 0,
+    "reviewerId": "0"
   },
   {
     "restaurantName": "Tin Roof Maui",
     "location": "Maui",
     "dateOfVisit": "2024-10-03",
-    "wouldReturn": "yes",
-    "reviewText": "Went straight from the airport to get lunch. Drove a few blocks away and ate it in the car in the shade under a tree. Items ordered: Mochiko Chicken; Kale Salad; Garlic Shrimp; Fat Chow Fun; Garlic Noodles. We had enough leftovers for dinner. I'd like to do the same thing next time we go to Maui."
+    "wouldReturn": 0,
+    "reviewText": "Went straight from the airport to get lunch. Drove a few blocks away and ate it in the car in the shade under a tree. Items ordered: Mochiko Chicken; Kale Salad; Garlic Shrimp; Fat Chow Fun; Garlic Noodles. We had enough leftovers for dinner. I'd like to do the same thing next time we go to Maui.",
+    "restaurantType": 0,
+    "reviewerId": "0"
   },
   {
     "restaurantName": "Leoda's Kitchen and Pie Shop",
     "location": "Maui",
     "dateOfVisit": "2024-10-02",
-    "wouldReturn": "yes",
-    "reviewText": "Loved the key lime pie. Lori liked hers as well, though I can't remember what she ordered."
+    "wouldReturn": 0,
+    "reviewText": "Loved the key lime pie. Lori liked hers as well, though I can't remember what she ordered.",
+    "restaurantType": 0,
+    "reviewerId": "0"
   },
   {
     "restaurantName": "Doppio Zero Mountain View",
     "dateOfVisit": "2024-10-31",
-    "wouldReturn": "yes",
-    "reviewText": "We ordered a Doppio Zero pizza. The toppings for this pizza are burrata, prosciutto, and arugula. It was my favorite. I enjoy it more than the comparable one from Terun. We also ordered a Mortadella pizza. Its toppings included both mortadella and crumbled pistachio. It was good but not as good as the equivalent we had in Italy. The pistachio was too crunchy."
+    "wouldReturn": 0,
+    "reviewText": "We ordered a Doppio Zero pizza. The toppings for this pizza are burrata, prosciutto, and arugula. It was my favorite. I enjoy it more than the comparable one from Terun. We also ordered a Mortadella pizza. Its toppings included both mortadella and crumbled pistachio. It was good but not as good as the equivalent we had in Italy. The pistachio was too crunchy.",
+    "restaurantType": 0,
+    "reviewerId": "0"
   },
   {
     "restaurantName": "Terun",
     "dateOfVisit": "2024-8-30",
-    "wouldReturn": "yes",
-    "reviewText": "We ordered a Margherita pizza. It was good but not as good as the one from Doppio Zero. We also ordered a Diavola pizza. It was very good - nice and spicy."
+    "wouldReturn": 0,
+    "reviewText": "We ordered a Margherita pizza. It was good but not as good as the one from Doppio Zero. We also ordered a Diavola pizza. It was very good - nice and spicy.",
+    "restaurantType": 0,
+    "reviewerId": "0"
   }
 ]

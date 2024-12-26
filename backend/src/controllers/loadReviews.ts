@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
 import { Request, Response } from 'express';
-import { FreeformReviewProperties, GooglePlaceDetails, GooglePlaceDetailsResponse, GooglePlace, GooglePlacesResponse, MemoRappReview, StructuredReviewProperties, WouldReturn } from '../types';
+import { FreeformReviewProperties, GooglePlaceDetails, GooglePlaceDetailsResponse, GooglePlace, GooglePlacesResponse, MemoRappReview, StructuredReviewProperties, WouldReturn, RestaurantType } from '../types';
 import { parsePreview } from './manageReview';
 import { addPlace } from './places';
 import { IMongoPlace, IReview } from '../models';
@@ -16,30 +16,41 @@ interface TestReview {
   dateOfVisit: string;
   wouldReturn: WouldReturn | null;
   reviewText: string;
+  restaurantType: RestaurantType;
+  reviewerId: string;
 };
 
 const generateSessionId = () => Math.random().toString(36).substring(2) + Date.now().toString(36);
 
-const addTestReview = async (restaurantName: string, dateOfVisit: string, wouldReturn: WouldReturn | null, reviewText: string): Promise<void> => {
+const addTestReview = async (
+  restaurantName: string,
+  dateOfVisit: string,
+  wouldReturn: WouldReturn | null,
+  reviewText: string,
+  restaurantType: RestaurantType,
+  reviewerId: string
+): Promise<void> => {
   const sessionId: string = generateSessionId();
 
   const freeformReviewProperties: FreeformReviewProperties = await parsePreview(sessionId, reviewText);
 
   const place: GooglePlace = await getRestaurantProperties(restaurantName);
+  place.restaurantType = restaurantType;
 
   const newMongoPlace: IMongoPlace | null = await addPlace(place);
 
   const placeId: string = place.place_id;
-  // const addReviewBody: MemoRappReview = {
-  //   place_id: placeId,
-  //   structuredReviewProperties: {
-  //     dateOfVisit,
-  //     wouldReturn,
-  //   },
-  //   freeformReviewProperties: freeformReviewProperties,
-  // };
-  // const newReview: IReview | null = await addReview(addReviewBody);
-  // console.log('newReview:', newReview?.toObject());
+  const addReviewBody: MemoRappReview = {
+    place_id: placeId,
+    structuredReviewProperties: {
+      dateOfVisit,
+      wouldReturn,
+      reviewerId,
+    },
+    freeformReviewProperties: freeformReviewProperties,
+  };
+  const newReview: IReview | null = await addReview(addReviewBody);
+  console.log('newReview:', newReview?.toObject());
 
   return Promise.resolve();
 }
@@ -63,8 +74,8 @@ export const addReviewsFromFileHandler = async (
     const reviews: TestReview[] = JSON.parse(data);
 
     for (const review of reviews) {
-      const { restaurantName, reviewText, dateOfVisit, wouldReturn }: TestReview = review;
-      await addTestReview(restaurantName, dateOfVisit, wouldReturn, reviewText);
+      const { restaurantName, reviewText, dateOfVisit, wouldReturn, restaurantType, reviewerId }: TestReview = review;
+      await addTestReview(restaurantName, dateOfVisit, wouldReturn, reviewText, restaurantType, reviewerId);
       console.log('review added for ' + restaurantName);
     }
     console.log('All reviews loaded:');
@@ -75,7 +86,7 @@ export const addReviewsFromFileHandler = async (
   }
 }
 
-export const getRestaurantProperties = async (restaurantName: string): Promise<GooglePlace> => {
+const getRestaurantProperties = async (restaurantName: string): Promise<GooglePlace> => {
 
   const location = '';
   const query = `${restaurantName} ${location}`;
