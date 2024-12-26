@@ -32,7 +32,6 @@ export interface SubmitReviewBody {
   freeformReviewProperties: FreeformReviewProperties;
   reviewText: string;
   sessionId: string;
-  restaurantType: RestaurantType;
 }
 
 export interface PreviewRequestBody {
@@ -49,6 +48,7 @@ export interface ChatRequestBody {
 export interface MemoRappPlace {
   place_id: string;
   name: string;
+  restaurantType: RestaurantType;
   address_components?: AddressComponent[];
   formatted_address: string;
   website: string;

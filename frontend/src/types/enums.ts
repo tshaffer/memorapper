@@ -5,10 +5,10 @@ export enum ReviewFormDisplayTabs {
 }
 
 export enum WouldReturn {
-  Yes = "yes",
-  No = "no",
-  NotSure = "not sure",
-  Undefined = "undefined",
+  Yes = 0,
+  No = 1,
+  NotSure = 2,
+  Undefined = 3,
 }
 
 export enum SearchDistanceFilter {

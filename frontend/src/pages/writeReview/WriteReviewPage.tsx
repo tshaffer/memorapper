@@ -5,7 +5,7 @@ import FormTab from "./FormTab";
 import PreviewTab from "./PreviewTab";
 import ChatTab from "./ChatTab";
 import { Box, Button } from "@mui/material";
-import { ChatMessage, ChatRequestBody, ChatResponse, EditableReview, GooglePlace, MemoRappReview, PreviewRequestBody, PreviewResponse, RestaurantType, ReviewData, StructuredReviewProperties, SubmitReviewBody } from "../../types";
+import { ChatMessage, ChatRequestBody, ChatResponse, EditableReview, GooglePlace, MemoRappReview, PreviewRequestBody, PreviewResponse, ReviewData, StructuredReviewProperties, SubmitReviewBody } from "../../types";
 import { getFormattedDate } from "../../utilities";
 
 const MultiPanelReviewForm = () => {
@@ -33,7 +33,6 @@ const MultiPanelReviewForm = () => {
     reviewerId: review ? review.structuredReviewProperties.reviewerId : '0',
     sessionId: '',
     chatHistory: [],
-    restaurantType: RestaurantType.Generic,
   };
 
   const [reviewData, setReviewData] = useState<ReviewData>(initialReviewData);
@@ -91,9 +90,8 @@ const MultiPanelReviewForm = () => {
       },
       reviewText: reviewData.reviewText!,
       sessionId: reviewData.sessionId!,
-      restaurantType: reviewData.restaurantType,
     };
-    // console.log('submitBody:', submitBody);
+    console.log('submitBody:', submitBody);
 
     try {
       const response = await fetch('/api/reviews/submit', {
@@ -104,7 +102,7 @@ const MultiPanelReviewForm = () => {
         }),
       });
       const data = await response.json();
-      // console.log('Review submitted:', data);
+      console.log('Review submitted:', data);
 
       resetReviewData();
 

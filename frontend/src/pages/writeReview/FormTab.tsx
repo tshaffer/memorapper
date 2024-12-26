@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, TextField, useMediaQuery } from '@mui/material';
+import { Box, Button, FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, Select, TextField, useMediaQuery } from '@mui/material';
 import RestaurantName from '../../components/RestaurantName';
 import '../../styles/multiPanelStyles.css';
 import { useEffect, useState } from 'react';
@@ -24,6 +24,10 @@ const FormTab: React.FC<FormTabProps> = (props: FormTabProps) => {
   const handleChange = (field: keyof ReviewData, value: any) => {
     setReviewData((prev) => ({ ...prev, [field]: value }));
   };
+
+  const handleRestaurantTypeChange = (value: RestaurantType) => {
+    setReviewData((prev) => ({ ...prev, place: { ...prev.place!, restaurantType: value  } }));
+  }
 
   const generateSessionId = (): string => Math.random().toString(36).substring(2) + Date.now().toString(36);
 
@@ -55,6 +59,7 @@ const FormTab: React.FC<FormTabProps> = (props: FormTabProps) => {
 
   // console.log('ReviewFormPanel reviewData:', reviewData);
 
+
   return (
 
     <div
@@ -76,8 +81,8 @@ const FormTab: React.FC<FormTabProps> = (props: FormTabProps) => {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={reviewData.restaurantType.toString()}
-          onChange={(restaurantType) => handleChange('restaurantType', parseInt(restaurantType.target.value))}
+          value={reviewData.place ? reviewData.place!.restaurantType.toString() : 0}
+          onChange={(event) => handleRestaurantTypeChange(event.target.value as RestaurantType)}
         >
           <MenuItem value={RestaurantType.Generic}>Restaurant</MenuItem>
           <MenuItem value={RestaurantType.CoffeeShop}>Coffee Shop</MenuItem>

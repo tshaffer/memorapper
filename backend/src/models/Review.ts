@@ -13,6 +13,7 @@ const StructuredReviewPropertiesSchema: Schema = new Schema({
     enum: Object.values(WouldReturn), // Ensures values are restricted to the enum
     default: WouldReturn.Undefined,
   },
+  reviewerId: { type: String, required: true }
 });
 
 const ItemReviewSchema: Schema = new Schema({
@@ -23,7 +24,6 @@ const ItemReviewSchema: Schema = new Schema({
 const FreeformReviewPropertiesSchema: Schema = new Schema({
   reviewText: { type: String, required: true },
   itemReviews: [ItemReviewSchema],
-  reviewerId: { type: String, required: true }
 });
 
 const ReviewSchema: Schema = new Schema({

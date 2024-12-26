@@ -1,5 +1,5 @@
 import { FreeformReviewProperties, ItemReview } from "./entities";
-import { RestaurantType, WouldReturn } from "./enums";
+import { WouldReturn } from "./enums";
 import { GooglePlace } from "./googlePlace";
 
 export type ChatMessage = {
@@ -18,5 +18,4 @@ export interface ReviewData {
   sessionId: string | null;
   restaurantName: string;
   chatHistory: ChatMessage[]; // Chat history
-  restaurantType: RestaurantType;
 }

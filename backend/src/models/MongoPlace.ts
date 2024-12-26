@@ -53,6 +53,7 @@ const MongoPlaceSchema: Schema = new Schema({
   opening_hours: { type: OpeningHoursSchema }, // Added opening hours field
   price_level: { type: Number },
   vicinity: { type: String },
+  restaurantType: { type: Number, required: true },
   geometry: MongoGeometrySchema
 }, { collection: "mongoPlaces" });
 
