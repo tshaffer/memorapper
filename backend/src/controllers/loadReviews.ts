@@ -7,7 +7,6 @@ import { parsePreview } from './manageReview';
 import { addPlace } from './places';
 import { IMongoPlace, IReview } from '../models';
 import { addReview } from './reviews';
-import { findBestMatch } from './textSimilarity';
 const GOOGLE_PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 const GOOGLE_PLACES_URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json';
 const GOOGLE_PLACE_DETAILS_BASE_URL = 'https://maps.googleapis.com/maps/api/place/details/json';
@@ -25,32 +24,21 @@ const addTestReview = async (restaurantName: string, dateOfVisit: string, wouldR
   const sessionId: string = generateSessionId();
 
   const freeformReviewProperties: FreeformReviewProperties = await parsePreview(sessionId, reviewText);
-  // console.log('freeformReviewProperties:', freeformReviewProperties);
 
   const place: GooglePlace = await getRestaurantProperties(restaurantName);
-  // console.log('place:', place);
 
   const newMongoPlace: IMongoPlace | null = await addPlace(place);
-  // console.log('newMongoPlace:', newMongoPlace?.toObject());
-
-  const { itemReviews } = freeformReviewProperties;
-
-  for (const itemReview of itemReviews) {
-    const inputName = itemReview.item;
-    const matchedStandardizedName = await findBestMatch(inputName);
-    // console.log('matchedStandardizedName:', matchedStandardizedName);
-  }
 
   const placeId: string = place.place_id;
-  const addReviewBody: MemoRappReview = {
-    place_id: placeId,
-    structuredReviewProperties: {
-      dateOfVisit,
-      wouldReturn,
-    },
-    freeformReviewProperties: freeformReviewProperties,
-  };
-  const newReview: IReview | null = await addReview(addReviewBody);
+  // const addReviewBody: MemoRappReview = {
+  //   place_id: placeId,
+  //   structuredReviewProperties: {
+  //     dateOfVisit,
+  //     wouldReturn,
+  //   },
+  //   freeformReviewProperties: freeformReviewProperties,
+  // };
+  // const newReview: IReview | null = await addReview(addReviewBody);
   // console.log('newReview:', newReview?.toObject());
 
   return Promise.resolve();

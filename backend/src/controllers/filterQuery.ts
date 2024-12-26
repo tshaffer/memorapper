@@ -1,14 +1,13 @@
 import { IMongoPlace } from '../models/MongoPlace';
 import { IReview } from '../models/Review';
 import { FilterQueryParams, QueryResponse, WouldReturn } from '../types';
-import ItemOrderedModel from '../models/ItemOrdered';
 
 export const getFilteredPlacesAndReviews = async (
   queryParams: FilterQueryParams,
   initialPlaces: IMongoPlace[],
   initialReviews: IReview[]
 ): Promise<QueryResponse> => {
-  const { distanceAwayQuery, wouldReturnQuery, itemsOrderedQuery } = queryParams;
+  const { distanceAwayQuery, wouldReturnQuery } = queryParams;
   const { lat, lng, radius } = distanceAwayQuery || {};
 
   try {
@@ -27,25 +26,6 @@ export const getFilteredPlacesAndReviews = async (
 
       if (returnFilter.length > 0) {
         reviewQuery['structuredReviewProperties.wouldReturn'] = { $in: returnFilter };
-      }
-    }
-
-    // Step 2: Construct the Items Ordered filter
-    if (itemsOrderedQuery && itemsOrderedQuery.length > 0) {
-      const standardizedNames = await ItemOrderedModel.find({
-        inputName: { $in: itemsOrderedQuery },
-      }).distinct('standardizedName');
-
-      const relatedInputNames = await ItemOrderedModel.find({
-        standardizedName: { $in: standardizedNames },
-      }).distinct('inputName');
-
-      if (relatedInputNames.length > 0) {
-        reviewQuery['freeformReviewProperties.itemReviews'] = {
-          $elemMatch: {
-            item: { $in: relatedInputNames },
-          },
-        };
       }
     }
 

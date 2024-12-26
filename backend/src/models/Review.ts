@@ -17,7 +17,6 @@ const StructuredReviewPropertiesSchema: Schema = new Schema({
 
 const ItemReviewSchema: Schema = new Schema({
   item: { type: String, required: true },
-  standardizedName: { type: String },
   review: { type: String, required: true }
 });
 
@@ -31,7 +30,7 @@ const ReviewSchema: Schema = new Schema({
   place_id: { type: String, required: true},
   structuredReviewProperties: StructuredReviewPropertiesSchema,
   freeformReviewProperties: FreeformReviewPropertiesSchema
-}, { collection: "reviews" });
+});
 
 const Review: ReviewModel = mongoose.model<IReview>('Review', ReviewSchema);
 

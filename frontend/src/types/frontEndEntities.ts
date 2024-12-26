@@ -37,16 +37,10 @@ export interface WouldReturnFilter {
   };
 }
 
-export interface ItemsOrderedFilter {
-  enabled: boolean;
-  selectedItems: string[];
-}
-
 export interface ReviewUIFilters {
   queryText: string | null;
   distanceFilter: DistanceFilter;
   wouldReturnFilter: WouldReturnFilter;
-  itemsOrderedFilter: ItemsOrderedFilter;
 }
 
 export interface SearchUIFilters {

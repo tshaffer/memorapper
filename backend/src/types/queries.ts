@@ -50,7 +50,6 @@ export interface FilterQueryParams {
   naturalLanguageQuery?: string;
   distanceAwayQuery?: DistanceAwayQuery;
   wouldReturnQuery?: WouldReturnQuery;
-  itemsOrderedQuery?: string[];
 }
 
 export interface PlacesReviewsCollection {

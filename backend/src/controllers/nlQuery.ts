@@ -118,8 +118,10 @@ const filterResults = async (
       const wouldReturn: WouldReturn | null = review.structuredReviewProperties.wouldReturn;
       if (!wouldReturn) return false;
 
+      const wouldReturnValue: number = wouldReturn as number;
+
       return (
-        (wouldReturnFilter.values.yes && wouldReturn === WouldReturn.Yes) ||
+        (wouldReturnFilter.values.yes && wouldReturnValue === WouldReturn.Yes) ||
         (wouldReturnFilter.values.no && wouldReturn === WouldReturn.No) ||
         (wouldReturnFilter.values.notSure && wouldReturn === WouldReturn.NotSure)
       );

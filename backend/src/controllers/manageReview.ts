@@ -7,8 +7,6 @@ import { ChatRequestBody, ChatResponse, FreeformReviewProperties, ItemReview, Me
 import { addPlace, getPlace } from './places';
 import { IMongoPlace } from '../models';
 import { addReview } from './reviews';
-import ItemOrderedModel from '../models/ItemOrdered';
-import { findBestMatch } from './textSimilarity';
 
 // Store conversations for each session
 interface ReviewConversations {
@@ -81,7 +79,6 @@ export const parsePreview = async (sessionId: string, reviewText: string): Promi
     const freeformReviewProperties: FreeformReviewProperties = {
       reviewText,
       itemReviews,
-      reviewer: removeSquareBrackets(extractFieldFromResponse(messageContent, 'Reviewer name')),
     };
 
     return freeformReviewProperties;
@@ -158,9 +155,6 @@ export const chatReviewHandler = async (
     const freeformReviewProperties: FreeformReviewProperties = {
       reviewText: updatedReviewText,
       itemReviews: itemReviews || [],
-      reviewer: structuredDataText !== "No Updated Structured Data available"
-        ? removeSquareBrackets(extractFieldFromResponse(structuredDataText, 'Reviewer name'))
-        : '',
     };
 
     const chatResponse: ChatResponse = {
@@ -202,14 +196,6 @@ export const submitReview = async (memoRappReview: SubmitReviewBody): Promise<IR
     }
   }
 
-  const { itemReviews } = freeformReviewProperties;
-
-  for (const itemReview of itemReviews) {
-    const inputName = itemReview.item;
-    const matchedStandardizedName = await findBestMatch(inputName);
-    console.log('matchedStandardizedName:', matchedStandardizedName);
-  }
-
   const addReviewBody: MemoRappReview = {
     place_id: place.place_id,
     structuredReviewProperties,
@@ -238,27 +224,3 @@ export const submitReview = async (memoRappReview: SubmitReviewBody): Promise<IR
 
   return null;
 }
-
-export const getStandardizedNames = async (request: Request, response: Response) => {
-  try {
-    const uniqueStandardizedNamesAggregation: any[] = await ItemOrderedModel.aggregate([
-      {
-        $group: {
-          _id: { $toLower: "$standardizedName" }, // Group by case-insensitive value
-          originalName: { $first: "$standardizedName" }, // Keep the original case
-        },
-      },
-      {
-        $sort: { _id: 1 }, // Sort by case-insensitive `_id` (lowercased value)
-      },
-      {
-        $replaceRoot: { newRoot: { standardizedName: "$originalName" } }, // Restore original case
-      },
-    ]).exec();
-    const uniqueStandardizedNames: string[] = uniqueStandardizedNamesAggregation.map(obj => obj.standardizedName);
-    response.json(uniqueStandardizedNames);
-  } catch (error) {
-    console.error("Error fetching standardized names:", error);
-    response.status(500).json({ error: "An error occurred while fetching standardized names." });
-  }
-};  

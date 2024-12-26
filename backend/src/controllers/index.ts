@@ -7,6 +7,5 @@ export * from './naturalLanguageQuery';
 export * from './nlQuery';
 export * from './places';
 export * from './reviews';
-export * from './textSimilarity';
 export * from './unifiedQuery';
 export * from './users';

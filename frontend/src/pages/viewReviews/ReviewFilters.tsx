@@ -9,8 +9,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import QueryModal from './QueryModal';
 import DistanceFilterModal from './DistanceFilterModal';
 import WouldReturnFilterModal from './WouldReturnModal';
-import ItemsOrderedModal from './ItemsOrderedModal';
-import { DistanceFilter, ItemsOrderedFilter, ReviewUIFilters, WouldReturnFilter } from '../../types';
+import { DistanceFilter, ReviewUIFilters, WouldReturnFilter } from '../../types';
 
 interface ReviewFiltersProps {
   onApplyFilters: (filterState: ReviewUIFilters) => void;
@@ -32,11 +31,6 @@ const initialWouldReturnFilter: WouldReturnFilter = {
   },
 };
 
-const initialItemsOrderedFilter: ItemsOrderedFilter = {
-  enabled: false,
-  selectedItems: [] as string[],
-};
-
 const ReviewFilters: React.FC<ReviewFiltersProps> = (props: ReviewFiltersProps) => {
   const { onApplyFilters } = props;
 
@@ -46,30 +40,16 @@ const ReviewFilters: React.FC<ReviewFiltersProps> = (props: ReviewFiltersProps) 
   const [isQueryModalOpen, setIsQueryModalOpen] = useState(false);
   const [isDistanceFilterOpen, setIsDistanceFilterOpen] = useState(false);
   const [isWouldReturnFilterOpen, setIsWouldReturnFilterOpen] = useState(false);
-  const [isItemsOrderedFilterOpen, setIsItemsOrderedFilterOpen] = useState(false);
 
   const [queryText, setQueryText] = useState<string | null>(null);
   const [distanceFilter, setDistanceFilter] = useState(initialDistanceFilter);
   const [wouldReturnFilter, setWouldReturnFilter] = useState(initialWouldReturnFilter);
-  const [itemsOrderedFilter, setItemsOrderedFilter] = useState(initialItemsOrderedFilter);
-
-  const [itemsOrdered, setItemsOrdered] = useState<string[]>([]);
-
-  useEffect(() => {
-    const fetchStandardizedItemsOrdered = async () => {
-      const response = await fetch('/api/standardizedNames');
-      const uniqueStandardizedNames: string[] = await response.json();
-      setItemsOrdered(uniqueStandardizedNames);
-    };
-    fetchStandardizedItemsOrdered();
-  }, []);
 
   // Clear All Filters
   const clearAllFilters = () => {
     setQueryText(null);
     setDistanceFilter(initialDistanceFilter);
     setWouldReturnFilter(initialWouldReturnFilter);
-    setItemsOrderedFilter(initialItemsOrderedFilter);
   };
 
   return (
@@ -127,21 +107,6 @@ const ReviewFilters: React.FC<ReviewFiltersProps> = (props: ReviewFiltersProps) 
         </Button>
       )}
 
-      {/* Items Button */}
-      {isMobile ? (
-        <IconButton onClick={() => setIsItemsOrderedFilterOpen(true)} aria-label="Items">
-          <ListIcon />
-        </IconButton>
-      ) : (
-        <Button
-          variant="outlined"
-          onClick={() => setIsItemsOrderedFilterOpen(true)}
-          startIcon={itemsOrderedFilter.enabled ? <>&#10003;</> : undefined}
-        >
-          Items
-        </Button>
-      )}
-
       {/* Clear Button */}
       {isMobile ? (
         <IconButton onClick={clearAllFilters} aria-label="Clear">
@@ -157,7 +122,7 @@ const ReviewFilters: React.FC<ReviewFiltersProps> = (props: ReviewFiltersProps) 
       {isMobile ? (
         <IconButton
           onClick={() =>
-            onApplyFilters({ queryText, distanceFilter, wouldReturnFilter, itemsOrderedFilter })
+            onApplyFilters({ queryText, distanceFilter, wouldReturnFilter })
           }
           aria-label="Apply"
         >
@@ -167,7 +132,7 @@ const ReviewFilters: React.FC<ReviewFiltersProps> = (props: ReviewFiltersProps) 
         <Button
           variant="contained"
           onClick={() =>
-            onApplyFilters({ queryText, distanceFilter, wouldReturnFilter, itemsOrderedFilter })
+            onApplyFilters({ queryText, distanceFilter, wouldReturnFilter })
           }
         >
           Apply
@@ -200,13 +165,6 @@ const ReviewFilters: React.FC<ReviewFiltersProps> = (props: ReviewFiltersProps) 
           setWouldReturnFilter(updatedFilter);
           setIsWouldReturnFilterOpen(false);
         }}
-      />
-      <ItemsOrderedModal
-        isOpen={isItemsOrderedFilterOpen}
-        onClose={() => setIsItemsOrderedFilterOpen(false)}
-        itemsOrdered={itemsOrdered}
-        filterState={itemsOrderedFilter}
-        onApply={(updatedFilter) => setItemsOrderedFilter(updatedFilter)}
       />
     </Box>
   );
