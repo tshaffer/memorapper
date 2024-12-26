@@ -91,6 +91,7 @@ const FormTab: React.FC<FormTabProps> = (props: FormTabProps) => {
           <MenuItem value={RestaurantType.Taqueria}>Taqueria</MenuItem>
           <MenuItem value={RestaurantType.PizzaPlace}>Pizza</MenuItem>
           <MenuItem value={RestaurantType.ItalianRestaurant}>Italian</MenuItem>
+          <MenuItem value={RestaurantType.DessertShop}>Dessert</MenuItem>
         </Select>
 
         <label>Review Text (Required):</label>

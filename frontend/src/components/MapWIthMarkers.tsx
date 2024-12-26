@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ExtendedGooglePlace } from '../types';
+import { ExtendedGooglePlace, RestaurantType } from '../types';
 import { AdvancedMarker, APIProvider, InfoWindow, Map, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace } from '../utilities';
 import '../App.css';
 import { Button, useMediaQuery } from '@mui/material';
 // import RestaurantIcon from '@mui/icons-material/Restaurant';
-import { Icon } from '@iconify/react';
-import pizzaIcon from '@iconify/icons-emojione/pizza';
+import { Icon, IconifyIcon } from '@iconify/react';
+// import pizzaIcon from '@iconify/icons-emojione/pizza';
 // // https://icon-sets.iconify.design/?query=<query>
 // import pizzaIcon from '@iconify/icons-emojione/pizza';
 // noto:burrito
@@ -14,6 +14,22 @@ import pizzaIcon from '@iconify/icons-emojione/pizza';
 // twemoji:baguette-bread
 // maki:bar
 // catppuccin:coffeescript
+
+import bakeryIcon from '@iconify/icons-emojione/bread';
+import barIcon from '@iconify/icons-emojione/cocktail-glass';
+import restaurantIcon from '@iconify/icons-emojione/fork-and-knife-with-plate';
+import pizzaIcon from '@iconify/icons-emojione/pizza';
+import pastaIcon from '@iconify/icons-emojione/spaghetti';
+import iceCreamIcon from '@iconify/icons-emojione/ice-cream';
+import burritoIcon from '@iconify/icons-noto/burrito';
+
+// emojione-v1:bread
+// emojione-v1:cocktail-glass
+// emojione-v1:fork-and-knife-with-plate
+// emojione-v1:pizza
+// emojione-v1:spaghetti
+// emojione-v1:ice-cream
+// noto:burrito
 
 const DEFAULT_ZOOM = 14;
 
@@ -130,6 +146,24 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
     }
   };
 
+  const iconFromRestaurantType = (restaurantType: RestaurantType): IconifyIcon => {
+    switch (restaurantType) {
+      case RestaurantType.Bakery:
+        return bakeryIcon;
+      case RestaurantType.Bar:
+        return barIcon;
+      case RestaurantType.PizzaPlace:
+        return pizzaIcon;
+      case RestaurantType.ItalianRestaurant:
+        return pastaIcon;
+      case RestaurantType.DessertShop:
+        return iceCreamIcon;
+      case RestaurantType.Taqueria:
+        return burritoIcon;
+    }
+    return restaurantIcon;
+  }
+
   const renderMarker = (location: ExtendedGooglePlace, index: number): JSX.Element => {
     return (
       <AdvancedMarker
@@ -140,8 +174,7 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
         <div style={{ position: 'relative' }}>
           <div style={textStyle}>{location.name}</div>
           <div style={iconContainerStyle}>
-            <Icon icon={pizzaIcon} style={{ fontSize: '24px', color: 'red' }} />
-            {/* <Icon icon={RestaurantIcon} style={{ fontSize: '18px' }} /> */}
+            <Icon icon={iconFromRestaurantType(location.restaurantType)} style={{ fontSize: '24px', color: 'red' }} />
           </div>
         </div>
       </AdvancedMarker>
