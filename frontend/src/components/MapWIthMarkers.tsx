@@ -4,10 +4,15 @@ import { AdvancedMarker, APIProvider, InfoWindow, Map, MapCameraChangedEvent } f
 import { getLatLngFromPlace } from '../utilities';
 import '../App.css';
 import { Button, useMediaQuery } from '@mui/material';
-import RestaurantIcon from '@mui/icons-material/Restaurant';
+// import RestaurantIcon from '@mui/icons-material/Restaurant';
 import { Icon } from '@iconify/react';
-import pizzaIcon from '@iconify/icons-emojione/pizza';
-
+// https://icon-sets.iconify.design/?query=<query>
+// import pizzaIcon from '@iconify/icons-emojione/pizza';
+// noto:burrito
+// mdi:bakery
+// twemoji:baguette-bread
+// maki:bar
+// catppuccin:coffeescript
 
 const DEFAULT_ZOOM = 14;
 
