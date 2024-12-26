@@ -91,6 +91,7 @@ const MultiPanelReviewForm = () => {
       },
       reviewText: reviewData.reviewText!,
       sessionId: reviewData.sessionId!,
+      restaurantType: reviewData.restaurantType,
     };
     // console.log('submitBody:', submitBody);
 

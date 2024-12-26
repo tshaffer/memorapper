@@ -1,4 +1,4 @@
-import { WouldReturn } from "./enums";
+import { RestaurantType, WouldReturn } from "./enums";
 import { GooglePlace } from "./googlePlace";
 import { AddressComponent } from "./place";
 
@@ -32,6 +32,7 @@ export interface SubmitReviewBody {
   freeformReviewProperties: FreeformReviewProperties;
   reviewText: string;
   sessionId: string;
+  restaurantType: RestaurantType;
 }
 
 export interface PreviewRequestBody {

@@ -32,6 +32,7 @@ export interface SubmitReviewBody {
   freeformReviewProperties: FreeformReviewProperties;
   reviewText: string;
   sessionId: string;
+  restaurantType: RestaurantType;
 }
 
 export interface PreviewRequestBody {
@@ -54,7 +55,7 @@ export interface MemoRappPlace {
   opening_hours?: google.maps.places.PlaceOpeningHours;
   price_level?: number;
   vicinity?: string;
-  restaurantType?: RestaurantType
+  restaurantType?: RestaurantType;
 }
 
 export interface QueryRequestBody {
