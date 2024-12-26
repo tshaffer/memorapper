@@ -14,6 +14,7 @@ import { Icon, IconifyIcon } from '@iconify/react';
 // twemoji:baguette-bread
 // maki:bar
 // catppuccin:coffeescript
+// openmoji:electric-coffee-percolator
 
 import bakeryIcon from '@iconify/icons-emojione/bread';
 import barIcon from '@iconify/icons-emojione/cocktail-glass';
@@ -22,6 +23,7 @@ import pizzaIcon from '@iconify/icons-emojione/pizza';
 import pastaIcon from '@iconify/icons-emojione/spaghetti';
 import iceCreamIcon from '@iconify/icons-emojione/ice-cream';
 import burritoIcon from '@iconify/icons-noto/burrito';
+import coffeeIcon from '@iconify/icons-openmoji/electric-coffee-percolator';
 
 // emojione-v1:bread
 // emojione-v1:cocktail-glass
@@ -152,6 +154,8 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
         return bakeryIcon;
       case RestaurantType.Bar:
         return barIcon;
+      case RestaurantType.CoffeeShop:
+        return coffeeIcon;
       case RestaurantType.PizzaPlace:
         return pizzaIcon;
       case RestaurantType.ItalianRestaurant:
