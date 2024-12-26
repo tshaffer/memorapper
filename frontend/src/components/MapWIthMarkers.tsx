@@ -30,11 +30,6 @@ const iconContainerStyle: React.CSSProperties = {
   alignItems: 'center',
 };
 
-const iconStyle: React.CSSProperties = {
-  fontSize: '16px', // Reduce icon size
-  color: 'white', // White icon color for contrast
-};
-
 const textStyle: React.CSSProperties = {
   position: 'absolute',
   right: '12px', // Adjust to position text to the left of the icon

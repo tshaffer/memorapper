@@ -1,4 +1,4 @@
-import { WouldReturn } from "./enums";
+import { RestaurantType, WouldReturn } from "./enums";
 import { GooglePlace } from "./googlePlace";
 import { AddressComponent } from "./place";
 
@@ -12,12 +12,12 @@ export interface MemoRappReview {
 export interface StructuredReviewProperties {
   dateOfVisit: string;
   wouldReturn: WouldReturn | null;
+  reviewerId: string;
 }
 
 export interface FreeformReviewProperties {
   reviewText: string;
   itemReviews: ItemReview[];
-  reviewer: string;
 }
 
 export interface ItemOrdered {
@@ -60,6 +60,7 @@ export interface MemoRappPlace {
   opening_hours?: google.maps.places.PlaceOpeningHours;
   price_level?: number;
   vicinity?: string;
+  restaurantType?: RestaurantType
 }
 
 export interface QueryRequestBody {
