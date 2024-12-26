@@ -12,12 +12,12 @@ export interface MemoRappReview {
 export interface StructuredReviewProperties {
   dateOfVisit: string;
   wouldReturn: WouldReturn | null;
+  reviewerId: string;
 }
 
 export interface FreeformReviewProperties {
   reviewText: string;
   itemReviews: ItemReview[];
-  reviewerId: string;
 }
 
 export interface ItemReview {

@@ -14,7 +14,7 @@ export interface ReviewData {
   dateOfVisit: string | null;
   wouldReturn: WouldReturn | null;
   itemReviews: ItemReview[];
-  reviewerId: string | null;
+  reviewerId: string;
   sessionId: string | null;
   restaurantName: string;
   chatHistory: ChatMessage[]; // Chat history

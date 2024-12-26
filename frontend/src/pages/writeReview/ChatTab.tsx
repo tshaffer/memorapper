@@ -82,7 +82,6 @@ const ChatTab: React.FC<ChatTabProps> = (props: ChatTabProps) => {
             {renderItemReviews(freeformReviewProperties.itemReviews)}
           </ul>
           <Typography><strong>Retrieved Location:</strong>{reviewData.place?.formatted_address}</Typography>
-          <Typography><strong>Reviewer:</strong> {freeformReviewProperties.reviewer || 'Not provided'}</Typography>
         </Box>
       </div>
     )

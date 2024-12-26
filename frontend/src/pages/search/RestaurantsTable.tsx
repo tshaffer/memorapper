@@ -33,6 +33,15 @@ const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTab
 
   const navigate = useNavigate();
 
+  const reviewerFromReviewerId = (reviewerId: string): string => {
+    switch (reviewerId) {
+      case '1':
+        return 'Ted';
+    }
+    return 'Guest';
+  }
+
+
   const getSortedPlaces = (): GooglePlace[] => {
 
     const sortedPlaces = [...filteredPlaces]; // Clone the array to avoid mutating state
@@ -55,9 +64,13 @@ const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTab
         });
       case SortCriteria.Reviewer:
         return sortedPlaces.sort((a, b) => {
-          const reviewerA = filteredReviews.find((r) => r.place_id === a.place_id)?.freeformReviewProperties.reviewer || '';
-          const reviewerB = filteredReviews.find((r) => r.place_id === b.place_id)?.freeformReviewProperties.reviewer || '';
-          return reviewerA.localeCompare(reviewerB);
+          const reviewerAId = filteredReviews.find((r) => r.place_id === a.place_id)?.structuredReviewProperties.reviewerId || '';
+          const reviewerBId = filteredReviews.find((r) => r.place_id === b.place_id)?.structuredReviewProperties.reviewerId || '';
+
+          const reviewerAName = reviewerFromReviewerId(reviewerAId);
+          const reviewerBName = reviewerFromReviewerId(reviewerBId);
+
+          return reviewerAName.localeCompare(reviewerBName);
         });
       case SortCriteria.MostRecentReview:
         return sortedPlaces.sort((a, b) => {

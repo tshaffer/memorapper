@@ -125,10 +125,6 @@ const ReviewsPage: React.FC = () => {
       filterQueryParams.wouldReturnQuery = buildWouldReturnQuery(reviewFilters.wouldReturnFilter);
     }
 
-    if (reviewFilters.itemsOrderedFilter.enabled) {
-      filterQueryParams.itemsOrderedQuery = buildItemsOrderedQuery(reviewFilters.itemsOrderedFilter.selectedItems);
-    }
-
     setIsLoading(true);
 
     await executeUnifiedSearch(filterQueryParams.naturalLanguageQuery!, filterQueryParams);

@@ -1,12 +1,12 @@
 import { useState } from 'react';
+import { useLocation, useParams } from "react-router-dom";
 import '../../styles/multiPanelStyles.css';
 import FormTab from "./FormTab";
 import PreviewTab from "./PreviewTab";
 import ChatTab from "./ChatTab";
 import { Box, Button } from "@mui/material";
-import { ChatMessage, ChatRequestBody, ChatResponse, EditableReview, GooglePlace, MemoRappReview, PreviewRequestBody, PreviewResponse, ReviewData, StructuredReviewProperties, SubmitReviewBody } from "../../types";
+import { ChatMessage, ChatRequestBody, ChatResponse, EditableReview, GooglePlace, MemoRappReview, PreviewRequestBody, PreviewResponse, RestaurantType, ReviewData, StructuredReviewProperties, SubmitReviewBody } from "../../types";
 import { getFormattedDate } from "../../utilities";
-import { useLocation, useParams } from "react-router-dom";
 
 const MultiPanelReviewForm = () => {
 
@@ -30,9 +30,10 @@ const MultiPanelReviewForm = () => {
     dateOfVisit: getFormattedDate(),
     wouldReturn: review ? review.structuredReviewProperties.wouldReturn : null,
     itemReviews: review ? review.freeformReviewProperties.itemReviews : [],
-    reviewer: review ? review.freeformReviewProperties.reviewer : '',
+    reviewerId: review ? review.structuredReviewProperties.reviewerId : '0',
     sessionId: '',
     chatHistory: [],
+    restaurantType: RestaurantType.Generic,
   };
 
   const [reviewData, setReviewData] = useState<ReviewData>(initialReviewData);
@@ -70,13 +71,16 @@ const MultiPanelReviewForm = () => {
       ...prev,
       'reviewText': data.freeformReviewProperties.reviewText,
       'itemReviews': data.freeformReviewProperties.itemReviews,
-      'reviewer': data.freeformReviewProperties.reviewer,
       'chatHistory': chatHistory,
     }));
   };
 
   const handleSubmitReview = async () => {
-    const structuredReviewProperties: StructuredReviewProperties = { dateOfVisit: reviewData.dateOfVisit!, wouldReturn: reviewData.wouldReturn! };
+    const structuredReviewProperties: StructuredReviewProperties = { 
+      dateOfVisit: reviewData.dateOfVisit!, 
+      wouldReturn: reviewData.wouldReturn!,
+      reviewerId: reviewData.reviewerId,
+     };
     const submitBody: SubmitReviewBody = {
       _id: reviewData._id,
       place: reviewData.place!,
@@ -84,7 +88,6 @@ const MultiPanelReviewForm = () => {
       freeformReviewProperties: {
         reviewText: reviewData.reviewText!,
         itemReviews: reviewData.itemReviews,
-        reviewer: reviewData.reviewer ? reviewData.reviewer : undefined
       },
       reviewText: reviewData.reviewText!,
       sessionId: reviewData.sessionId!,
@@ -127,7 +130,6 @@ const MultiPanelReviewForm = () => {
       ...prev,
       reviewText: updatedReviewText,
       itemReviews: freeformReviewProperties.itemReviews,
-      reviewer: freeformReviewProperties.reviewer,
       chatHistory: [...reviewData.chatHistory, { role: 'user', message: chatInput }, { role: 'ai', message: freeformReviewProperties }]
     }));
   };

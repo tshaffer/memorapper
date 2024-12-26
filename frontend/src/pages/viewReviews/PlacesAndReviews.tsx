@@ -48,6 +48,15 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
     return filteredReviews.filter((memoRappReview: MemoRappReview) => memoRappReview.place_id === placeId);
   };
 
+  const reviewerFromReviewerId = (reviewerId: string): string => {
+    switch (reviewerId) {
+      case '1':
+        return 'Ted';
+    }
+    return 'Guest';
+  }
+
+
   const getSortedPlaces = (): GooglePlace[] => {
     const sortedPlaces = [...filteredPlaces]; // Clone the array to avoid mutating state
 
@@ -69,9 +78,13 @@ const PlacesAndReviews: React.FC<PlacesAndReviewsProps> = (props: PlacesAndRevie
         });
       case 'reviewer':
         return sortedPlaces.sort((a, b) => {
-          const reviewerA = filteredReviews.find((r) => r.place_id === a.place_id)?.freeformReviewProperties.reviewer || '';
-          const reviewerB = filteredReviews.find((r) => r.place_id === b.place_id)?.freeformReviewProperties.reviewer || '';
-          return reviewerA.localeCompare(reviewerB);
+          const reviewerAId = filteredReviews.find((r) => r.place_id === a.place_id)?.structuredReviewProperties.reviewerId || '';
+          const reviewerBId = filteredReviews.find((r) => r.place_id === b.place_id)?.structuredReviewProperties.reviewerId || '';
+
+          const reviewerAName = reviewerFromReviewerId(reviewerAId);
+          const reviewerBName = reviewerFromReviewerId(reviewerBId);
+
+          return reviewerAName.localeCompare(reviewerBName);
         });
       case 'recentReview':
         return sortedPlaces.sort((a, b) => {

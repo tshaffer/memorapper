@@ -93,11 +93,19 @@ const RestaurantDetails: React.FC = () => {
     );
   };
 
+  const reviewerFromReviewerId = (reviewerId: string): string => {
+    switch (reviewerId) {
+      case '1':
+        return 'Ted';
+    }
+    return 'Guest';
+  }
+
   const renderReview = (review: MemoRappReview): JSX.Element => (
     <Paper elevation={1} sx={{ padding: 2, marginBottom: 2 }}>
       <Box display="flex" justifyContent="space-between" alignItems="flex-start">
         <Typography variant="body1" sx={{ flex: 1, wordBreak: 'break-word' }}>
-          <strong>Reviewer:</strong> {review.freeformReviewProperties.reviewer || 'Not mentioned in the review'}
+          <strong>Reviewer:</strong> {reviewerFromReviewerId(review.structuredReviewProperties.reviewerId)}
         </Typography>
         <Box sx={{ display: 'flex', gap: '0px' }}>
           <Tooltip title="Edit Review">
