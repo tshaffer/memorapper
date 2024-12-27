@@ -1,4 +1,4 @@
-import { GoogleGeometry, GooglePlace } from "../types";
+import { GoogleGeometry, GooglePlace, RestaurantType } from "../types";
 
 export const getCityNameFromPlace = (place: GooglePlace): string => {
   const addressComponents = place.address_components;
@@ -82,3 +82,23 @@ export const getFormattedDate = (): string => {
   return `${year}-${month}-${day}`;
 };
 
+export const restaurantTypeLabelFromRestaurantType = (restaurantType: RestaurantType): string => {
+  switch (restaurantType) {
+    case RestaurantType.Bakery:
+      return 'Bakery';
+    case RestaurantType.Bar:
+      return 'Bar';
+    case RestaurantType.CoffeeShop:
+      return 'Coffee Shop';
+    case RestaurantType.PizzaPlace:
+      return 'Pizza Place';
+    case RestaurantType.ItalianRestaurant:
+      return 'Italian Restaurant';
+    case RestaurantType.DessertShop:
+      return 'Dessert Shop';
+    case RestaurantType.Taqueria:
+      return 'Taqueria';
+  }
+  return 'Restaurant';
+
+}

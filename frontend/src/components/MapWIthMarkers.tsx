@@ -1,21 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ExtendedGooglePlace, RestaurantType } from '../types';
-import { AdvancedMarker, APIProvider, InfoWindow, Map, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
+import { AdvancedMarker, APIProvider, Map, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace } from '../utilities';
 import '../App.css';
-import { Button, useMediaQuery } from '@mui/material';
-// import RestaurantIcon from '@mui/icons-material/Restaurant';
 import { Icon, IconifyIcon } from '@iconify/react';
-// import pizzaIcon from '@iconify/icons-emojione/pizza';
 // // https://icon-sets.iconify.design/?query=<query>
-// import pizzaIcon from '@iconify/icons-emojione/pizza';
-// noto:burrito
-// mdi:bakery
-// twemoji:baguette-bread
-// maki:bar
-// catppuccin:coffeescript
-// openmoji:electric-coffee-percolator
-
+// import RestaurantIcon from '@mui/icons-material/Restaurant';
 import bakeryIcon from '@iconify/icons-emojione/bread';
 import barIcon from '@iconify/icons-emojione/cocktail-glass';
 import restaurantIcon from '@iconify/icons-emojione/fork-and-knife-with-plate';
@@ -24,14 +14,7 @@ import pastaIcon from '@iconify/icons-emojione/spaghetti';
 import iceCreamIcon from '@iconify/icons-emojione/ice-cream';
 import burritoIcon from '@iconify/icons-noto/burrito';
 import coffeeIcon from '@iconify/icons-openmoji/electric-coffee-percolator';
-
-// emojione-v1:bread
-// emojione-v1:cocktail-glass
-// emojione-v1:fork-and-knife-with-plate
-// emojione-v1:pizza
-// emojione-v1:spaghetti
-// emojione-v1:ice-cream
-// noto:burrito
+import RestaurantInfoWindow from './RestaurantInfoWindow';
 
 const DEFAULT_ZOOM = 14;
 
@@ -73,8 +56,6 @@ interface MapWithMarkersProps {
 }
 
 const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, locations, blueDotLocation }) => {
-
-  const isMobile = useMediaQuery('(max-width:768px)');
 
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<ExtendedGooglePlace | null>(null);
@@ -139,15 +120,6 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
     setZoom(event.detail.zoom);
   };
 
-  const handleShowDirections = () => {
-    if (selectedLocation && currentLocation) {
-      const destinationLocation: google.maps.LatLngLiteral = selectedLocation.geometry!.location;
-      const destinationLatLng: google.maps.LatLngLiteral = { lat: destinationLocation.lat, lng: destinationLocation.lng };
-      const url = `https://www.google.com/maps/dir/?api=1&origin=${currentLocation.lat},${currentLocation.lng}&destination=${destinationLatLng.lat},${destinationLatLng.lng}&destination_place_id=${selectedLocation.name}`;
-      window.open(url, '_blank');
-    }
-  };
-
   const iconFromRestaurantType = (restaurantType: RestaurantType): IconifyIcon => {
     switch (restaurantType) {
       case RestaurantType.Bakery:
@@ -192,66 +164,6 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
     }
     return elements;
   }
-
-  const renderInfoWindow = (): JSX.Element => {
-    return (
-      <InfoWindow
-        position={getLatLngFromPlace(selectedLocation!)}
-        onCloseClick={handleCloseInfoWindow}
-      >
-        <div
-          style={{
-            padding: '4px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-            fontSize: '13px', // Matches .gm-style-iw
-          }}
-        >
-          <style>
-            {`
-              .gm-style-iw-chr {
-                margin-top: -8px;
-                height: 30px;
-              }
-  
-              .gm-style-iw {
-                font-size: 13px;
-              }
-            `}
-          </style>
-          <h4 style={{ margin: '0 0 8px 0' }}>{selectedLocation!.name}</h4>
-          <a
-            href={selectedLocation!.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ textDecoration: 'none', color: 'blue' }}
-          >
-            {selectedLocation!.website}
-          </a>
-          <Button
-            onClick={handleShowDirections}
-            style={{
-              alignSelf: 'flex-start',
-              marginBottom: '8px',
-              padding: '8px 16px', // Ensure it's easy to tap
-              fontSize: isMobile ? '14px' : '16px', // Adjust font size for mobile
-            }}
-          >
-            Directions
-          </Button>
-          <div
-            style={{
-              fontSize: 'inherit',
-              lineHeight: '1.5',
-            }}
-          >
-            {selectedLocation!.reviews[0]?.freeformReviewProperties?.reviewText || 'No review available.'}
-          </div>
-        </div>
-      </InfoWindow>
-    );
-  };
 
   const googleMapsApiKey = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!;
 
@@ -298,7 +210,13 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
             <CustomBlueDot />
           </AdvancedMarker>
         )}
-        {selectedLocation && (renderInfoWindow())}
+        {selectedLocation &&
+          (
+            <RestaurantInfoWindow
+              location={selectedLocation!}
+              onClose={handleCloseInfoWindow}
+            />
+          )}
       </Map>
     </APIProvider>
   );
