@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 
 import '../../App.css';
 
-import { DistanceAwayQuery, DistanceFilter, FilterQueryParams, GooglePlace, MemoRappReview, PlacesReviewsCollection, QueryRequestBody, ReviewUIFilters, WouldReturnFilter, WouldReturnQuery } from '../../types';
+import { DistanceAwayQuery, DistanceFilter, FilterQueryParams, GooglePlace, MemoRappReview, PlacesReviewsCollection, ReviewUIFilters, WouldReturnFilter, WouldReturnQuery } from '../../types';
 import PlacesAndReviews from './PlacesAndReviews';
 import ReviewFilters from './ReviewFilters';
 import PulsingDots from '../../components/PulsingDots';
@@ -99,10 +99,6 @@ const ReviewsPage: React.FC = () => {
       no: wouldReturnFilter.values.no,
       notSure: wouldReturnFilter.values.notSure,
     };
-  }
-
-  const buildItemsOrderedQuery = (itemsOrderedFilter: string[]): string[] => {
-    return itemsOrderedFilter;
   }
 
   const handleApplyFilters = async (reviewFilters: ReviewUIFilters) => {

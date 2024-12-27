@@ -1,6 +1,7 @@
 import { ItemReview, MemoRappReview } from "./entities";
 import { SearchDistanceFilter, WouldReturn } from "./enums";
 import { GooglePlace } from "./googlePlace";
+import { DistanceAwayQuery } from "./queries";
 
 export interface EditableReview {
   place: GooglePlace;
@@ -47,4 +48,18 @@ export interface SearchUIFilters {
   distanceAwayFilter: SearchDistanceFilter;
   openNowFilter: boolean;
   wouldReturnFilter: WouldReturnFilter;
+}
+
+export interface SearchFilters {
+  query: string;
+  distanceAway: number;
+  isOpenNow: boolean;
+  wouldReturn: WouldReturnFilter;
+}
+
+export interface SearchQuery {
+  query: string;
+  distanceAway: DistanceAwayQuery;
+  isOpenNow: boolean;
+  wouldReturn: WouldReturnFilter;
 }

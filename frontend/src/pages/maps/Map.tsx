@@ -4,7 +4,7 @@ import { Paper, Box, IconButton, useMediaQuery } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import LocationAutocomplete from '../../components/LocationAutocomplete';
 import MapWithMarkers from '../../components/MapWIthMarkers';
-import { ExtendedGooglePlace, GooglePlace, MemoRappReview, SearchUIFilters, WouldReturnFilter } from '../../types';
+import { ExtendedGooglePlace, GooglePlace, MemoRappReview, SearchFilters, SearchQuery, SearchUIFilters, WouldReturnFilter } from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
 
 
@@ -90,34 +90,25 @@ const MapPage: React.FC = () => {
     setShowFiltersDialog(true);
   };
 
-  const executeFilter = async (
-    query: string,
-    distanceAway: number,
-    isOpenNow: boolean,
-    wouldReturn: WouldReturnFilter,
-  ): Promise<void> => {
-
-    const filter: SearchUIFilters = { distanceAwayFilter: distanceAway, openNowFilter: isOpenNow, wouldReturnFilter: wouldReturn };
-
-    // console.log('executeFilter:', filter);
-
-    const requestBody = { filter, places, reviews, mapLocation };
+  const executeSearchAndFilter = async (searchQuery: SearchQuery): Promise<void> => {
+    
+    const requestBody = { searchQuery };
 
     try {
-      const apiResponse = await fetch('/api/reviews/filterResults', {
+      const apiResponse = await fetch('/api/reviews/searchAndFilter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody),
       });
 
       const data: any = await apiResponse.json();
-      // console.log('filter query results:', data.places, data.reviews);
+      console.log('searchAndFilter results:', data);
 
       setFilteredPlaces(data.places);
-      // setFilteredReviews(reviews);
     } catch (error) {
       console.error('Error executing filter query:', error);
     }
+
   }
 
   const handleSetFilters = async (
@@ -132,19 +123,25 @@ const MapPage: React.FC = () => {
     handleCloseFiltersDialog();
 
     setIsLoading(true);
-    await executeFilter(query, distanceAway, isOpenNow, wouldReturn);
+
+    const searchQuery: SearchQuery = { 
+      query, 
+      isOpenNow,
+      wouldReturn,
+      distanceAway: {
+        lat: mapLocation!.lat,
+        lng: mapLocation!.lng,
+        radius: distanceAway,
+      }
+    };
+
+    await executeSearchAndFilter(searchQuery);
+
     setIsLoading(false);
-
-
   }
 
   const handleCloseFiltersDialog = () => {
     setShowFiltersDialog(false);
-  };
-
-  const handleExecuteQuery = (query: string) => {
-    // console.log('Executed Query:', query);
-    handleCloseFiltersDialog();
   };
 
   const handleSetMapLocation = (location: google.maps.LatLngLiteral): void => {

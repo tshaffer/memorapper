@@ -83,3 +83,10 @@ export interface SearchResponse {
   places: GooglePlace[];
   reviews: MemoRappReview[];
 }
+
+export interface SearchQuery {
+  query: string;
+  distanceAway: DistanceAwayQuery;
+  isOpenNow: boolean;
+  wouldReturn: WouldReturnFilter;
+}

@@ -82,7 +82,7 @@ export const filterResultsHandler = async (
   res.status(200).json(searchResponse);
 }
 
-const filterResults = async (
+export const filterResults = async (
   filter: FilterResultsParams,
   places: GooglePlace[],
   reviews: MemoRappReview[],
