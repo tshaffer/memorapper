@@ -196,7 +196,11 @@ const RestaurantDetails: React.FC = () => {
         </Typography>
         <Divider sx={{ marginBottom: 2 }} />
         <Box sx={{ overflowY: 'auto', maxHeight: 'calc(100vh - 100px)' }}>
-          {reviews.map((review) => renderReview(review))}
+          {reviews.map((review) => (
+            <React.Fragment key={review._id}> {/* Add key here */}
+              {renderReview(review)}
+            </React.Fragment>
+          ))}
         </Box>
       </Grid>
     </Grid>
