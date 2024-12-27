@@ -120,7 +120,7 @@ const FormTab: React.FC<FormTabProps> = (props: FormTabProps) => {
               row
               name="would-return"
               value={reviewData.wouldReturn}
-              onChange={(e) => handleChange('wouldReturn', e.target.value)}
+              onChange={(e) => handleChange('wouldReturn', parseInt(e.target.value))}
             >
               <FormControlLabel value={WouldReturn.Yes} control={<Radio />} label="Yes" />
               <FormControlLabel value={WouldReturn.No} control={<Radio />} label="No" />

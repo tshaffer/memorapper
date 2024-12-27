@@ -9,8 +9,8 @@ export type ReviewModel = Model<IReview>;
 const StructuredReviewPropertiesSchema: Schema = new Schema({
   dateOfVisit: { type: String, required: true },
   wouldReturn: {
-    type: String,
-    enum: Object.values(WouldReturn), // Ensures values are restricted to the enum
+    type: Number,
+    enum: [0, 1, 2, 3], // Explicitly define numeric values
     default: WouldReturn.Undefined,
   },
   reviewerId: { type: String, required: true }

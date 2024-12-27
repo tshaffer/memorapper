@@ -5,7 +5,7 @@ import FormTab from "./FormTab";
 import PreviewTab from "./PreviewTab";
 import ChatTab from "./ChatTab";
 import { Box, Button } from "@mui/material";
-import { ChatMessage, ChatRequestBody, ChatResponse, EditableReview, GooglePlace, MemoRappReview, PreviewRequestBody, PreviewResponse, ReviewData, StructuredReviewProperties, SubmitReviewBody } from "../../types";
+import { ChatMessage, ChatRequestBody, ChatResponse, EditableReview, GooglePlace, MemoRappReview, PreviewRequestBody, PreviewResponse, ReviewData, StructuredReviewProperties, SubmitReviewBody, WouldReturn } from "../../types";
 import { getFormattedDate } from "../../utilities";
 
 const MultiPanelReviewForm = () => {
@@ -28,7 +28,7 @@ const MultiPanelReviewForm = () => {
     restaurantName: place ? place.name : '',
     reviewText: review ? review.freeformReviewProperties.reviewText : '',
     dateOfVisit: getFormattedDate(),
-    wouldReturn: review ? review.structuredReviewProperties.wouldReturn : null,
+    wouldReturn: review ? review.structuredReviewProperties.wouldReturn : WouldReturn.Yes,
     itemReviews: review ? review.freeformReviewProperties.itemReviews : [],
     reviewerId: review ? review.structuredReviewProperties.reviewerId : '0',
     sessionId: '',
