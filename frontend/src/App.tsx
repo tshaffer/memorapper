@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
-import { AppBar, Toolbar, Typography, Button, Box, IconButton, Tooltip, useMediaQuery } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import MapIcon from '@mui/icons-material/Map';
+import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import HomeIcon from '@mui/icons-material/Home';
 import GoogleMapsProvider from './components/GoogleMapsProvider';
+import ReviewsIcon from '@mui/icons-material/Reviews';
 
 import Map from './pages/maps/Map';
 import MultiPanelReviewForm from './pages/writeReview/WriteReviewPage';
@@ -33,24 +33,17 @@ const App: React.FC = () => {
 
               {isMobile ? (
                 // Render icons for mobile
+                // Home, All Reviews, Write Review
                 <>
-                  <Tooltip title="Search">
-                    <IconButton color="inherit" component={Link} to="/search">
-                      <SearchIcon />
-                    </IconButton>
-                  </Tooltip>
-
-                  <Tooltip title="Map">
-                    <IconButton color="inherit" component={Link} to="/map">
-                      <MapIcon />
-                    </IconButton>
-                  </Tooltip>
-
-                  <Tooltip title="Write Review">
-                    <IconButton color="inherit" component={Link} to="/write-review">
-                      <EditIcon />
-                    </IconButton>
-                  </Tooltip>
+                  <IconButton color="inherit" component={Link} to="/map">
+                    <HomeIcon />
+                  </IconButton>
+                  <IconButton color="inherit" component={Link} to="/search">
+                    <ReviewsIcon />
+                  </IconButton>
+                  <IconButton color="inherit" component={Link} to="/write-review">
+                    <EditIcon />
+                  </IconButton>
                 </>
               ) : (
                 // Render labels for desktop
