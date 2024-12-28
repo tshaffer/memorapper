@@ -4,7 +4,7 @@ import { Paper, Box, IconButton, useMediaQuery } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import LocationAutocomplete from '../../components/LocationAutocomplete';
 import MapWithMarkers from '../../components/MapWIthMarkers';
-import { ExtendedGooglePlace, GooglePlace, MemoRappReview, SearchFilters, SearchQuery, SearchUIFilters, WouldReturnFilter } from '../../types';
+import { ExtendedGooglePlace, GooglePlace, MemoRappReview, SearchQuery, WouldReturnFilter } from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
 
 

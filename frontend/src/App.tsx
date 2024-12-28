@@ -5,11 +5,12 @@ import { AppBar, Toolbar, Typography, Button, Box, IconButton, Tooltip, useMedia
 import SearchIcon from '@mui/icons-material/Search';
 import MapIcon from '@mui/icons-material/Map';
 import EditIcon from '@mui/icons-material/Edit';
+import GoogleMapsProvider from './components/GoogleMapsProvider';
+
 import Map from './pages/maps/Map';
 import MultiPanelReviewForm from './pages/writeReview/WriteReviewPage';
-import GoogleMapsProvider from './components/GoogleMapsProvider';
-import Search from './pages/search/Search';
 import RestaurantDetails from './pages/search/RestaurantDetails';
+import Search from './pages/search/Search';
 
 const App: React.FC = () => {
   const isMobile = useMediaQuery('(max-width:768px)');
@@ -54,8 +55,8 @@ const App: React.FC = () => {
               ) : (
                 // Render labels for desktop
                 <>
-                  <Button color="inherit" component={Link} to="/search">Search</Button>
-                  <Button color="inherit" component={Link} to="/map">Map</Button>
+                  <Button color="inherit" component={Link} to="/map">Home</Button>
+                  <Button color="inherit" component={Link} to="/search">All Reviews</Button>
                   <Button color="inherit" component={Link} to="/write-review">Write Review</Button>
                 </>
               )}

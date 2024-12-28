@@ -50,13 +50,6 @@ export interface SearchUIFilters {
   wouldReturnFilter: WouldReturnFilter;
 }
 
-export interface SearchFilters {
-  query: string;
-  distanceAway: number;
-  isOpenNow: boolean;
-  wouldReturn: WouldReturnFilter;
-}
-
 export interface SearchQuery {
   query: string;
   distanceAway: DistanceAwayQuery;

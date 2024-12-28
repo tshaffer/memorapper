@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
-import { ExtendedGooglePlace, GooglePlace, MemoRappReview, SearchUIFilters, SortCriteria } from '../../types';
+import { GooglePlace, MemoRappReview, SearchUIFilters, SortCriteria } from '../../types';
 
 import PulsingDots from '../../components/PulsingDots';
 
-import LocationAutocomplete from '../../components/LocationAutocomplete';
-import MapWithMarkers from '../../components/MapWIthMarkers';
-import SearchFilters from './SearchFilters';
 import RestaurantsTable from './RestaurantsTable';
+import Query from '../../components/Query';
 
 const Search: React.FC = () => {
-  const [topHeight, setTopHeight] = useState(window.innerHeight * 0.4); // Initial height for the top div
-  const [bottomHeight, setBottomHeight] = useState(window.innerHeight * 0.6); // Initial height for the bottom div
 
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
@@ -69,19 +65,6 @@ const Search: React.FC = () => {
     fetchPlaces();
     fetchReviews();
   }, []);
-
-  const getReviewsForPlace = (placeId: string): MemoRappReview[] =>
-    reviews.filter((review) => review.place_id === placeId);
-
-  const getExtendedGooglePlaces = (): ExtendedGooglePlace[] =>
-    places.map((place) => ({
-      ...place,
-      reviews: getReviewsForPlace(place.place_id),
-    }));
-
-  const handleSetMapLocation = (location: google.maps.LatLngLiteral): void => {
-    setMapLocation(location);
-  }
 
   const executeQuery = async (query: string): Promise<void> => {
     const requestBody = { query };
@@ -159,13 +142,6 @@ const Search: React.FC = () => {
     return (<PulsingDots />);
   };
 
-  const renderSearchAreaUI = (): JSX.Element => {
-    return (
-      <LocationAutocomplete
-        onSetMapLocation={(location) => handleSetMapLocation(location)} />
-    );
-  }
-
   return (
     <div
       id='searchContainer'
@@ -178,40 +154,17 @@ const Search: React.FC = () => {
         overflow: 'hidden',
       }}
     >
-      {/* Search Area UI */}
-      {renderSearchAreaUI()}
-
-      {/* Map Layer */}
-      <div
-        id='mapLayer'
-        style={{
-          height: `${topHeight}px`,
-          background: '#f0f0f0',
-          overflow: 'auto',
-        }}
-      >
-        <MapWithMarkers
-          key={JSON.stringify({ googlePlaces: places, specifiedLocation: mapLocation })} // Forces re-render on prop change
-          initialCenter={mapLocation!}
-          locations={getExtendedGooglePlaces()}
-          blueDotLocation={mapLocation!}
-        />
-      </div>
-
       {/* Overlay Content */}
       <div
         id='overlayContent'
         style={{
-          height: `${bottomHeight}px`,
           background: '#e0e0e0',
           overflow: 'auto',
         }}
       >
         {/* Filters */}
-        <SearchFilters
+        <Query
           onExecuteQuery={(query: string) => handleExecuteQuery(query)}
-          onExecuteFilter={(filter: SearchUIFilters) => handleExecuteFilter(filter)}
-          onSetSortCriteria={(sortCriteria: SortCriteria) => handleSetSortCriteria(sortCriteria)}
         />
 
         {renderPulsingDots()}
