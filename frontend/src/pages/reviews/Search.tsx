@@ -102,39 +102,6 @@ const Search: React.FC = () => {
 
   }
 
-  const executeFilter = async (filter: SearchUIFilters): Promise<void> => {
-    const requestBody = { filter, places, reviews, mapLocation };
-
-    try {
-      const apiResponse = await fetch('/api/reviews/filterResults', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody),
-      });
-
-      const data: any = await apiResponse.json();
-      console.log('filterQuery:', data);
-      const { places, reviews } = data;
-      console.log('filter query results:', places, reviews);
-
-      setFilteredPlaces(places);
-      setFilteredReviews(reviews);
-    } catch (error) {
-      console.error('Error executing filter query:', error);
-    }
-  }
-  const handleExecuteFilter = async (filter: SearchUIFilters): Promise<void> => {
-    console.log('handleExecuteFilter:', filter);
-    setIsLoading(true);
-    await executeFilter(filter);
-    setIsLoading(false);
-  }
-
-  const handleSetSortCriteria = (sortCriteria: SortCriteria): void => {
-    console.log('handleSetSortCriteria:', sortCriteria);
-    setSortCriteria(sortCriteria as SortCriteria);
-  }
-
   const renderPulsingDots = (): JSX.Element | null => {
     if (!isLoading) {
       return null;

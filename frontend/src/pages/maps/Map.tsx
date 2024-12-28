@@ -6,7 +6,7 @@ import LocationAutocomplete from '../../components/LocationAutocomplete';
 import MapWithMarkers from '../../components/MapWIthMarkers';
 import { ExtendedGooglePlace, GooglePlace, MemoRappReview, SearchQuery, WouldReturnFilter } from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
-
+import PulsingDots from '../../components/PulsingDots';
 
 const MapPage: React.FC = () => {
   const { _id } = useParams<{ _id: string }>();
@@ -148,6 +148,13 @@ const MapPage: React.FC = () => {
     setMapLocation(location);
   }
 
+  const renderPulsingDots = (): JSX.Element | null => {
+    if (!isLoading) {
+      return null;
+    }
+    return (<PulsingDots />);
+  };
+
   const renderMap = () => {
 
     // console.log('renderMap:', mapLocation, filteredPlaces);
@@ -224,6 +231,8 @@ const MapPage: React.FC = () => {
           </IconButton>
         </Box>
       </Box>
+
+      {renderPulsingDots()}
 
       {/* Map Display */}
       <div style={{ flex: 1 }}>{renderMap()}</div>
