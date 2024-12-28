@@ -28,8 +28,30 @@ export const getLatLngFromPlace = (place: GooglePlace): google.maps.LatLngLitera
 //   website: '',
 // };
 
-export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.PlaceResult): GooglePlace {
+const getRestaurantType = (googlePlaceResult: google.maps.places.PlaceResult): RestaurantType => {
 
+  const googlePlaceTypes: string[] | undefined = googlePlaceResult.types;
+  if (googlePlaceTypes) {
+    for (const googlePlaceType of googlePlaceTypes) {
+      switch (googlePlaceType) {
+        case 'bakery':
+          return RestaurantType.Bakery;
+        case 'bar':
+          return RestaurantType.Bar;
+        // case 'cafe':
+        //   return RestaurantType.CoffeeShop;
+        // case 'meal_takeaway':
+        //   return RestaurantType.PizzaPlace;
+        // case 'restaurant':
+        //   return RestaurantType.Restaurant;
+      }
+    }
+  }
+
+  return RestaurantType.Generic
+}
+
+export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.PlaceResult): GooglePlace {
   const googlePlace: GooglePlace = {
     place_id: googlePlaceResult.place_id!,
     name: googlePlaceResult.name!,
@@ -51,8 +73,7 @@ export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.
     opening_hours: googlePlaceResult.opening_hours,
     price_level: googlePlaceResult.price_level,
     vicinity: googlePlaceResult.vicinity,
-    restaurantType: 0,
-
+    restaurantType: getRestaurantType(googlePlaceResult),
   };
   return googlePlace;
 

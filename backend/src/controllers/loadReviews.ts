@@ -145,28 +145,64 @@ const getGooglePlaceDetails = async (placeId: string): Promise<GooglePlaceDetail
   }
 }
 
-const pickGooglePlaceProperties = (googlePlaceDetails: GooglePlaceDetails): GooglePlace => {
+const getRestaurantType = (googlePlaceResult: google.maps.places.PlaceResult): RestaurantType => {
+
+  const googlePlaceTypes: string[] | undefined = googlePlaceResult.types;
+  if (googlePlaceTypes) {
+    for (const googlePlaceType of googlePlaceTypes) {
+      switch (googlePlaceType) {
+        case 'bakery':
+          return RestaurantType.Bakery;
+        case 'bar':
+          return RestaurantType.Bar;
+        // case 'cafe':
+        //   return RestaurantType.CoffeeShop;
+        // case 'meal_takeaway':
+        //   return RestaurantType.PizzaPlace;
+        // case 'restaurant':
+        //   return RestaurantType.Restaurant;
+      }
+    }
+  }
+
+  return RestaurantType.Generic
+}
+
+export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.PlaceResult): GooglePlace {
   const googlePlace: GooglePlace = {
-    place_id: googlePlaceDetails.place_id!,
-    name: googlePlaceDetails.name!,
-    address_components: googlePlaceDetails.address_components,
-    formatted_address: googlePlaceDetails.formatted_address!,
+    place_id: googlePlaceResult.place_id!,
+    name: googlePlaceResult.name!,
+    address_components: googlePlaceResult.address_components,
+    formatted_address: googlePlaceResult.formatted_address!,
     geometry: {
       location: {
-        lat: googlePlaceDetails.geometry!.location!.lat as unknown as number,
-        lng: googlePlaceDetails.geometry!.location!.lng as unknown as number,
+        lat: googlePlaceResult.geometry!.location!.lat(),
+        lng: googlePlaceResult.geometry!.location!.lng()
       },
       viewport: {
-        east: (googlePlaceDetails.geometry!.viewport! as any).northeast.lat,
-        north: (googlePlaceDetails.geometry!.viewport! as any).northeast.lng,
-        south: (googlePlaceDetails.geometry!.viewport! as any).southwest.lat,
-        west: (googlePlaceDetails.geometry!.viewport! as any).southwest.lng,
+        east: googlePlaceResult.geometry!.viewport!.getNorthEast().lng(),
+        north: googlePlaceResult.geometry!.viewport!.getNorthEast().lat(),
+        south: googlePlaceResult.geometry!.viewport!.getSouthWest().lat(),
+        west: googlePlaceResult.geometry!.viewport!.getSouthWest().lng(),
       },
     },
-    website: googlePlaceDetails.website || '',
-    opening_hours: googlePlaceDetails.opening_hours,
-    price_level: googlePlaceDetails.price_level,
-    vicinity: googlePlaceDetails.vicinity,
+    website: googlePlaceResult.website || '',
+    opening_hours: googlePlaceResult.opening_hours,
+    price_level: googlePlaceResult.price_level,
+    vicinity: googlePlaceResult.vicinity,
+    restaurantType: getRestaurantType(googlePlaceResult),
   };
   return googlePlace;
+
+  // const keys = Object.keys(googlePlaceTemplate) as (keyof GooglePlace)[];
+
+  // const result = Object.fromEntries(
+  //   keys
+  //     .filter(key => key in googlePlaceResult)
+  //     .map(key => [key, googlePlaceResult[key]])
+  // ) as unknown as GooglePlace;
+
+  // return result;
+
 }
+
