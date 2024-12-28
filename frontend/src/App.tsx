@@ -9,8 +9,8 @@ import GoogleMapsProvider from './components/GoogleMapsProvider';
 
 import Map from './pages/maps/Map';
 import MultiPanelReviewForm from './pages/writeReview/WriteReviewPage';
-import RestaurantDetails from './pages/search/RestaurantDetails';
-import Search from './pages/search/Search';
+import RestaurantDetails from './pages/reviews/RestaurantDetails';
+import Search from './pages/reviews/Search';
 
 const App: React.FC = () => {
   const isMobile = useMediaQuery('(max-width:768px)');
