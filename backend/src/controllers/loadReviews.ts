@@ -95,7 +95,8 @@ const getRestaurantProperties = async (restaurantName: string): Promise<GooglePl
   try {
     const place: google.maps.places.PlaceResult = await getGooglePlace(url);
     const placeDetails: GooglePlaceDetails | null = await getGooglePlaceDetails(place!.place_id!);
-    const restaurantProperties: GooglePlace = pickGooglePlaceProperties(placeDetails!)
+    // const restaurantProperties: GooglePlace = pickGooglePlaceProperties(placeDetails!)
+    const restaurantProperties: GooglePlace = pickGooglePlaceProperties(place);
     return restaurantProperties;
 
   } catch (error) {
