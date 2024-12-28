@@ -70,3 +70,10 @@ export interface ChatResponse {
   updatedReviewText: string;
 }
 
+export interface UserEntity {
+  id: string;
+  userName: string;
+  password: string;
+  email: string;
+}
+
