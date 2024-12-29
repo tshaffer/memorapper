@@ -7,9 +7,10 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Button, Typography } from '@mui/material';
 import '../../styles/multiPanelStyles.css';
-import { ReviewData, WouldReturn } from '../../types';
-import { formatDateToMMDDYYYY } from '../../utilities';
+import { ReviewData, UserEntity, WouldReturn } from '../../types';
+import { formatDateToMMDDYYYY, restaurantTypeLabelFromRestaurantType } from '../../utilities';
 import PulsingDots from '../../components/PulsingDots';
+import { useUserContext } from '../../contexts/UserContext';
 
 interface PreviewTabProps {
   reviewData: ReviewData;
@@ -18,11 +19,13 @@ interface PreviewTabProps {
 
 const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
 
+  const { users } = useUserContext();
+
   const { reviewData, onSubmitReview } = props;
 
   // console.log('ReviewPreviewPanel reviewData:', reviewData);
 
-  const { place, wouldReturn, dateOfVisit, reviewText, itemReviews } = reviewData;
+  const { place, wouldReturn, dateOfVisit, reviewerId, reviewText, itemReviews } = reviewData;
 
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
@@ -33,6 +36,11 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
     if (wouldReturn === WouldReturn.No) return 'No';
     if (wouldReturn === WouldReturn.NotSure) return 'Not sure';
     return 'Not specified';
+  }
+
+  const reviewerFromReviewerId = (): string => {
+    let reviewer: UserEntity | undefined = users.find((user) => user.id === reviewerId);
+    return reviewer!.userName;
   }
 
   const handleConfirmationClose = () => {
@@ -73,8 +81,6 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
 
   const renderReviewPreview = () => {
 
-    // console.log('renderReviewPreview isLoading:', isLoading);
-
     if (!place || !reviewText || reviewText === '') return (
       <div id="preview" className="tab-panel active">
         <h2>Review Preview</h2>
@@ -83,25 +89,56 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
       </div>
     )
     else return (
-      <div id="preview" className="tab-panel active">
-        <h2>Review Preview</h2>
-        <Typography><strong>Restaurant Name:</strong> {place.name || 'Not provided'}</Typography>
-        <Typography><strong>Date of Visit:</strong> {formatDateToMMDDYYYY(dateOfVisit!) || 'Not provided'}</Typography>
-        <Typography><strong>Would Return?</strong>{getReturnString()}</Typography>
-        <Typography><strong>Review Text:</strong></Typography>
-        <Typography>{reviewText}</Typography>
-        <h3>Extracted Information</h3>
-        <ul>
-          {itemReviews.map((itemReview, idx) => (
-            <li key={idx}>
-              {itemReview.item} - {itemReview.review || 'No rating provided'}
-            </li>
-          ))}
-        </ul>
-        {renderPulsingDots()}
-        <Button onClick={handleSubmit}>Save Review</Button>
-        {renderConfirmationDialog()}
-      </div>
+      <>
+        <div
+          id="preview"
+          className="tab-panel active"
+          style={{
+            marginLeft: '8px',
+          }}
+        >
+          <h2
+            style={{
+              marginBottom: '4px',
+            }}
+          >
+            Review Preview
+          </h2>
+          <Typography><strong>Restaurant Name:</strong> {place.name || 'Not provided'}</Typography>
+          <Typography><strong>Restaurant Type:</strong> {restaurantTypeLabelFromRestaurantType(place.restaurantType)}</Typography>
+          <Typography><strong>Reviewer:</strong> {reviewerFromReviewerId()}</Typography>
+          <Typography><strong>Date of Visit:</strong> {formatDateToMMDDYYYY(dateOfVisit!) || 'Not provided'}</Typography>
+          <Typography><strong>Would Return?</strong> {getReturnString()}</Typography>
+          <Typography><strong>Review Text:</strong></Typography>
+          <Typography>{reviewText}</Typography>
+          <h3
+            style={{
+              marginBottom: '4px',
+            }}
+          >
+            Items Ordered
+          </h3>
+          <ul style={{ listStyleType: 'none', padding: 0 }}>
+            {itemReviews.map((itemReview, idx) => (
+              <li key={idx} style={{ marginLeft: '8px' }}>
+                {itemReview.item} - {itemReview.review || 'No rating provided'}
+              </li>
+            ))}
+          </ul>
+          {renderPulsingDots()}
+          {renderConfirmationDialog()}
+        </div>
+        <Button
+          onClick={handleSubmit}
+          style={{
+            marginTop: '16px',
+            marginLeft: '7px',
+          }}
+          variant="outlined"
+        >
+          Save Review
+        </Button>
+      </>
     );
   }
 
