@@ -4,9 +4,10 @@ import { Paper, Box, IconButton, useMediaQuery } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import LocationAutocomplete from '../../components/LocationAutocomplete';
 import MapWithMarkers from '../../components/MapWIthMarkers';
-import { ExtendedGooglePlace, GooglePlace, MemoRappReview, SearchQuery, WouldReturnFilter } from '../../types';
+import { ExtendedGooglePlace, FilterResultsParams, GooglePlace, MemoRappReview, SearchQuery, SearchResponse, WouldReturnFilter } from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
 import PulsingDots from '../../components/PulsingDots';
+import { filterResults } from '../../utilities';
 
 const MapPage: React.FC = () => {
   const { _id } = useParams<{ _id: string }>();
@@ -25,40 +26,68 @@ const MapPage: React.FC = () => {
 
   // Fetch current location and places/reviews on mount
   useEffect(() => {
-    const fetchCurrentLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const location = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            };
-            if (!_id) {
-              setMapLocation(location);
-            }
-          },
-          (error) => console.error('Error getting current location: ', error),
-          { enableHighAccuracy: true }
-        );
+
+    const fetchCurrentLocation = async (): Promise<google.maps.LatLngLiteral | null> => {
+
+      if (!navigator.geolocation) {
+        console.error('Geolocation is not supported by this browser.');
+        return null;
+      }
+    
+      try {
+        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(
+            resolve,
+            reject,
+            { enableHighAccuracy: true }
+          );
+        });
+    
+        const location = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+    
+        if (!_id) {
+          setMapLocation(location);
+        }
+
+        return location;
+
+      } catch (error) {
+        console.error('Error getting current location: ', error);
+        return null;
       }
     };
-
-    const fetchPlaces = async () => {
+    
+    const fetchPlaces = async (): Promise<GooglePlace[]> => {
       const response = await fetch('/api/places');
       const data = await response.json();
       setPlaces(data.googlePlaces);
       setFilteredPlaces(data.googlePlaces);
+      return data.googlePlaces;
     };
 
-    const fetchReviews = async () => {
+    const fetchReviews = async (): Promise<MemoRappReview[]> => {
       const response = await fetch('/api/reviews');
       const data = await response.json();
       setReviews(data.memoRappReviews);
+      return data.memoRappReviews;
     };
 
-    fetchCurrentLocation();
-    fetchPlaces();
-    fetchReviews();
+    const fetchData = async () => {
+      const location = await fetchCurrentLocation();
+      const places = await fetchPlaces();
+      const reviews = await fetchReviews();
+      filterOnEntry(
+        places, reviews, location!,
+        1, true, {
+        enabled: true,
+        values: { yes: true, no: false, notSure: false },
+      });
+    };
+
+    fetchData();
   }, [_id]);
 
   // Update map location based on the provided placeId (_id)
@@ -91,7 +120,7 @@ const MapPage: React.FC = () => {
   };
 
   const executeSearchAndFilter = async (searchQuery: SearchQuery): Promise<void> => {
-    
+
     const requestBody = { searchQuery };
 
     try {
@@ -108,7 +137,30 @@ const MapPage: React.FC = () => {
     } catch (error) {
       console.error('Error executing filter query:', error);
     }
+  }
 
+  const filterOnEntry = (
+    places: any, reviews: any, location: google.maps.LatLngLiteral,
+    distanceAway: number,
+    isOpenNow: boolean,
+    wouldReturnFilter: WouldReturnFilter,
+  ) => {
+
+    console.log('filterOnEntry');
+    console.log(places);
+    console.log(reviews);
+    console.log(location);
+
+    const filter: FilterResultsParams = {
+      distanceAwayFilter: distanceAway,
+      openNowFilter: isOpenNow,
+      wouldReturnFilter,
+    };
+    const filterResultsValue: SearchResponse = filterResults(filter, places, reviews, location);
+
+    console.log(filterResultsValue);
+
+    setFilteredPlaces(filterResultsValue.places);
   }
 
   const handleSetFilters = async (
@@ -124,8 +176,8 @@ const MapPage: React.FC = () => {
 
     setIsLoading(true);
 
-    const searchQuery: SearchQuery = { 
-      query, 
+    const searchQuery: SearchQuery = {
+      query,
       isOpenNow,
       wouldReturn,
       distanceAway: {

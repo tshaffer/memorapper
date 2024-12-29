@@ -1,4 +1,5 @@
 export * from './filterQuery';
+export * from './filterResults';
 export * from './manageReview';
 export * from './googlePlaces';
 export * from './handlers';
