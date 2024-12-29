@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import { useLocation, useParams } from "react-router-dom";
 import '../../styles/multiPanelStyles.css';
-import FormTab from "./FormTab";
+import ReviewEntryForm from "./ReviewEntryForm";
 import PreviewTab from "./PreviewTab";
 import ChatTab from "./ChatTab";
 import { Box, Button } from "@mui/material";
 import { ChatMessage, ChatRequestBody, ChatResponse, EditableReview, GooglePlace, MemoRappReview, PreviewRequestBody, PreviewResponse, ReviewData, StructuredReviewProperties, SubmitReviewBody, WouldReturn } from "../../types";
 import { getFormattedDate } from "../../utilities";
+import { useUserContext } from '../../contexts/UserContext';
 
 const MultiPanelReviewForm = () => {
 
+    const { currentUser } = useUserContext();
+  
   const { _id } = useParams<{ _id: string }>();
   // console.log('MultiPanelReviewForm _id:', _id);
   const location = useLocation();
@@ -30,7 +33,7 @@ const MultiPanelReviewForm = () => {
     dateOfVisit: getFormattedDate(),
     wouldReturn: review ? review.structuredReviewProperties.wouldReturn : WouldReturn.Yes,
     itemReviews: review ? review.freeformReviewProperties.itemReviews : [],
-    reviewerId: review ? review.structuredReviewProperties.reviewerId : '0',
+    reviewerId: review ? review.structuredReviewProperties.reviewerId : currentUser!.id,
     sessionId: '',
     chatHistory: [],
   };
@@ -75,11 +78,11 @@ const MultiPanelReviewForm = () => {
   };
 
   const handleSubmitReview = async () => {
-    const structuredReviewProperties: StructuredReviewProperties = { 
-      dateOfVisit: reviewData.dateOfVisit!, 
+    const structuredReviewProperties: StructuredReviewProperties = {
+      dateOfVisit: reviewData.dateOfVisit!,
       wouldReturn: reviewData.wouldReturn!,
       reviewerId: reviewData.reviewerId,
-     };
+    };
     const submitBody: SubmitReviewBody = {
       _id: reviewData._id,
       place: reviewData.place!,
@@ -157,7 +160,7 @@ const MultiPanelReviewForm = () => {
       </nav>
       <section className="tab-content">
         {activeTab === "form" && (
-          <FormTab
+          <ReviewEntryForm
             reviewData={reviewData}
             setReviewData={setReviewData}
             onSubmitPreview={handleSubmitPreview}
@@ -178,7 +181,7 @@ const MultiPanelReviewForm = () => {
           />
         )}
       </section>
-  
+
       {/* Reset Button */}
       <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
         <Button

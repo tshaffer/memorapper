@@ -5,15 +5,18 @@ import { useEffect, useState } from 'react';
 import { RestaurantType, ReviewData, WouldReturn } from '../../types';
 import PulsingDots from '../../components/PulsingDots';
 import React from 'react';
+import { useUserContext } from '../../contexts/UserContext';
 
-interface FormTabProps {
+interface ReviewEntryFormProps {
   reviewData: ReviewData;
   setReviewData: React.Dispatch<React.SetStateAction<ReviewData>>;
   onSubmitPreview: (formData: Omit<ReviewData, 'chatHistory'>) => void;
   onReceivedPreviewResponse: () => any;
 }
 
-const FormTab: React.FC<FormTabProps> = (props: FormTabProps) => {
+const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormProps) => {
+
+  const { users, currentUser } = useUserContext();
 
   const { reviewData, setReviewData, onSubmitPreview } = props;
 
@@ -26,7 +29,7 @@ const FormTab: React.FC<FormTabProps> = (props: FormTabProps) => {
   };
 
   const handleRestaurantTypeChange = (value: RestaurantType) => {
-    setReviewData((prev) => ({ ...prev, place: { ...prev.place!, restaurantType: value  } }));
+    setReviewData((prev) => ({ ...prev, place: { ...prev.place!, restaurantType: value } }));
   }
 
   const generateSessionId = (): string => Math.random().toString(36).substring(2) + Date.now().toString(36);
@@ -57,8 +60,50 @@ const FormTab: React.FC<FormTabProps> = (props: FormTabProps) => {
     return (<PulsingDots />);
   };
 
-  // console.log('ReviewFormPanel reviewData:', reviewData);
+  const renderRestaurantType = () => {
+    if (!reviewData.place) return null;
+    return (
+      <>
+        <label>Restaurant Type (Required):</label>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={reviewData.place ? reviewData.place!.restaurantType.toString() : 0}
+          onChange={(event) => handleRestaurantTypeChange(event.target.value as RestaurantType)}
+        >
+          <MenuItem value={RestaurantType.Generic}>Restaurant</MenuItem>
+          <MenuItem value={RestaurantType.CoffeeShop}>Coffee Shop</MenuItem>
+          <MenuItem value={RestaurantType.Bar}>Bar</MenuItem>
+          <MenuItem value={RestaurantType.Bakery}>Bakery</MenuItem>
+          <MenuItem value={RestaurantType.Taqueria}>Taqueria</MenuItem>
+          <MenuItem value={RestaurantType.PizzaPlace}>Pizza</MenuItem>
+          <MenuItem value={RestaurantType.ItalianRestaurant}>Italian</MenuItem>
+          <MenuItem value={RestaurantType.DessertShop}>Dessert</MenuItem>
+        </Select>
+      </>
+    );
+  }
 
+  const renderReviewer = () => {
+
+    return (
+      <>
+        <label>Reviewer:</label>
+        <Select
+          value={reviewData.reviewerId ? reviewData.reviewerId : currentUser?.id}
+          onChange={(event) => handleChange('reviewerId', event.target.value)}
+        >
+          {
+            users.map((user) => (
+              <MenuItem key={user.id} value={user.id}>
+                {user.userName}
+              </MenuItem>
+            ))
+          }
+        </Select>
+      </>
+    );
+  }
 
   return (
 
@@ -77,22 +122,7 @@ const FormTab: React.FC<FormTabProps> = (props: FormTabProps) => {
           onSetGooglePlace={(place) => handleChange('place', place)}
         />
 
-        <label>Restaurant Type (Required):</label>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={reviewData.place ? reviewData.place!.restaurantType.toString() : 0}
-          onChange={(event) => handleRestaurantTypeChange(event.target.value as RestaurantType)}
-        >
-          <MenuItem value={RestaurantType.Generic}>Restaurant</MenuItem>
-          <MenuItem value={RestaurantType.CoffeeShop}>Coffee Shop</MenuItem>
-          <MenuItem value={RestaurantType.Bar}>Bar</MenuItem>
-          <MenuItem value={RestaurantType.Bakery}>Bakery</MenuItem>
-          <MenuItem value={RestaurantType.Taqueria}>Taqueria</MenuItem>
-          <MenuItem value={RestaurantType.PizzaPlace}>Pizza</MenuItem>
-          <MenuItem value={RestaurantType.ItalianRestaurant}>Italian</MenuItem>
-          <MenuItem value={RestaurantType.DessertShop}>Dessert</MenuItem>
-        </Select>
+        {renderRestaurantType()}
 
         <label>Review Text (Required):</label>
         <TextField
@@ -103,6 +133,8 @@ const FormTab: React.FC<FormTabProps> = (props: FormTabProps) => {
           value={reviewData.reviewText}
           onChange={(e) => handleChange('reviewText', e.target.value)}
         />
+
+        {renderReviewer()}
 
         <TextField
           fullWidth
@@ -145,4 +177,4 @@ const FormTab: React.FC<FormTabProps> = (props: FormTabProps) => {
   );
 };
 
-export default FormTab;
+export default ReviewEntryForm;

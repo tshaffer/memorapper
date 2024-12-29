@@ -37,7 +37,9 @@ const App: React.FC = () => {
       return null;
     };
 
-    setCurrentUser(getCurrentUser());
+    const currentUser = getCurrentUser();
+    console.log('useEffect', currentUser, users);
+    setCurrentUser(currentUser);
   }, [users]);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
