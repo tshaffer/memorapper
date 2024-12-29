@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
 import { Request, Response } from 'express';
-import { FreeformReviewProperties, GooglePlaceDetails, GooglePlaceDetailsResponse, GooglePlace, GooglePlacesResponse, MemoRappReview, StructuredReviewProperties, WouldReturn, RestaurantType } from '../types';
+import { FreeformReviewProperties, GooglePlaceDetails, GooglePlaceDetailsResponse, GooglePlace, GooglePlacesResponse, MemoRappReview, WouldReturn, RestaurantType } from '../types';
 import { parsePreview } from './manageReview';
 import { addPlace } from './places';
 import { IMongoPlace, IReview } from '../models';

@@ -2,7 +2,7 @@ import { ChatCompletionMessageParam } from 'openai/resources/chat';
 import openai from '../services/openai';
 import { Request, Response } from 'express';
 import Review, { IReview } from "../models/Review";
-import { extractFieldFromResponse, extractItemReviews, removeSquareBrackets } from '../utilities';
+import { extractItemReviews } from '../utilities';
 import { ChatRequestBody, ChatResponse, FreeformReviewProperties, ItemReview, MemoRappReview, PreviewRequestBody, PreviewResponse, SubmitReviewBody } from '../types';
 import { addPlace, getPlace } from './places';
 import { IMongoPlace } from '../models';

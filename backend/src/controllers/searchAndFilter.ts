@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { IMongoPlace, IReview } from "../models";
 import MongoPlace from "../models/MongoPlace";
 import Review from "../models/Review";
-import { QueryResponse, GooglePlace, ParsedQuery, StructuredQueryParams, FilterResultsParams, SearchResponse, SearchQuery, FilterQueryParams } from "../types";
+import { QueryResponse, GooglePlace, ParsedQuery, StructuredQueryParams, FilterResultsParams, SearchResponse, SearchQuery } from "../types";
 import { convertMongoPlacesToGooglePlaces } from "../utilities";
 import { buildStructuredQueryParamsFromParsedQuery, parseQueryWithChatGPT, performHybridQuery, performNaturalLanguageQuery, performStructuredQuery } from './naturalLanguageQuery';
 import { filterResults } from './filterResults';

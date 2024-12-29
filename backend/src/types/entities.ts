@@ -9,7 +9,7 @@ export interface MemoRappReview {
   freeformReviewProperties: FreeformReviewProperties;
 }
 
-export interface StructuredReviewProperties {
+interface StructuredReviewProperties {
   dateOfVisit: string;
   wouldReturn: WouldReturn | null;
   reviewerId: string;
@@ -56,10 +56,6 @@ export interface MemoRappPlace {
   price_level?: number;
   vicinity?: string;
   restaurantType?: RestaurantType;
-}
-
-export interface QueryRequestBody {
-  query: string;
 }
 
 export interface PreviewResponse {

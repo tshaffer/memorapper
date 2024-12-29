@@ -7,7 +7,7 @@ interface DateRange {
   end: string;
 }
 
-export interface QueryParameters {
+interface QueryParameters {
   location?: string;
   radius?: number;
   dateRange: DateRange;
@@ -17,21 +17,19 @@ export interface QueryParameters {
 }
 
 
-export interface WouldReturnQuery {
+interface WouldReturnQuery {
   yes: boolean;
   no: boolean;
   notSure: boolean;
 }
 
-export type WouldReturnQuerySpec = (boolean | null)[];
-
-export interface DistanceAwayQuery {
+interface DistanceAwayQuery {
   lat: number;
   lng: number;
   radius: number;
 }
 
-export interface WouldReturnFilter {
+interface WouldReturnFilter {
   enabled: boolean;
   values: {
     yes: boolean;
@@ -44,12 +42,6 @@ export interface FilterResultsParams {
   distanceAwayFilter: SearchDistanceFilter;
   openNowFilter: boolean;
   wouldReturnFilter: WouldReturnFilter;
-}
-
-export interface FilterQueryParams {
-  naturalLanguageQuery?: string;
-  distanceAwayQuery?: DistanceAwayQuery;
-  wouldReturnQuery?: WouldReturnQuery;
 }
 
 export interface PlacesReviewsCollection {
