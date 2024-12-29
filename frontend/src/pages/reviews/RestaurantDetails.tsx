@@ -15,7 +15,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-import { GooglePlace, ItemReview, MemoRappReview, RestaurantDetailsProps, UserEntity } from '../../types';
+import { GooglePlace, MemoRappReview, RestaurantDetailsProps, UserEntity } from '../../types';
 import { useUserContext } from '../../contexts/UserContext';
 
 const RestaurantDetails: React.FC = () => {
