@@ -7,8 +7,9 @@ import MapIcon from '@mui/icons-material/Map';
 
 import '../../App.css';
 
-import { GooglePlace, MemoRappReview, SortCriteria } from '../../types';
+import { GooglePlace, MemoRappReview, SortCriteria, UserEntity } from '../../types';
 import { getCityNameFromPlace } from '../../utilities';
+import { useUserContext } from '../../contexts/UserContext';
 
 const smallColumnStyle: React.CSSProperties = {
   width: '35px',
@@ -26,6 +27,8 @@ interface RestaurantsTableProps {
 
 const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTableProps) => {
 
+  const { users } = useUserContext();
+
   const { currentLocation, filteredPlaces, filteredReviews, sortCriteria } = props;
 
   const [selectedPlace, setSelectedPlace] = useState<GooglePlace | null>(null);
@@ -34,13 +37,9 @@ const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTab
   const navigate = useNavigate();
 
   const reviewerFromReviewerId = (reviewerId: string): string => {
-    switch (reviewerId) {
-      case '1':
-        return 'Ted';
-    }
-    return 'Guest';
+    let reviewer: UserEntity | undefined = users.find((user) => user.id === reviewerId);
+    return reviewer!.userName;
   }
-
 
   const getSortedPlaces = (): GooglePlace[] => {
 

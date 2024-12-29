@@ -15,9 +15,13 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-import { GooglePlace, ItemReview, MemoRappReview, RestaurantDetailsProps } from '../../types';
+import { GooglePlace, ItemReview, MemoRappReview, RestaurantDetailsProps, UserEntity } from '../../types';
+import { useUserContext } from '../../contexts/UserContext';
 
 const RestaurantDetails: React.FC = () => {
+
+  const { users } = useUserContext();
+
   const location = useLocation();
   const restaurantDetailsProps: RestaurantDetailsProps = location.state as RestaurantDetailsProps;
 
@@ -94,11 +98,8 @@ const RestaurantDetails: React.FC = () => {
   };
 
   const reviewerFromReviewerId = (reviewerId: string): string => {
-    switch (reviewerId) {
-      case '1':
-        return 'Ted';
-    }
-    return 'Guest';
+    let reviewer: UserEntity | undefined= users.find((user) => user.id === reviewerId);
+    return reviewer!.userName;
   }
 
   const renderReview = (review: MemoRappReview): JSX.Element => (
