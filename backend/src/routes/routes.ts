@@ -1,7 +1,5 @@
 import { Router } from 'express';
-import { addReviewsFromFileHandler, chatReviewHandler, filterResultsHandler, getPlaces, getReviews, healthHandler, nlQueryHandler, previewReviewHandler, submitReviewHandler, testHandler } from '../controllers';
-import { getUsers, unifiedQueryHandler } from '../controllers';
-import { searchAndFilterHandler } from '../controllers/searchAndFilter';
+import { addReviewsFromFileHandler, chatReviewHandler, getPlaces, getReviews, getUsers, healthHandler, nlQueryHandler, previewReviewHandler, searchAndFilterHandler, submitReviewHandler, testHandler } from '../controllers';
 
 const router = Router();
 
@@ -18,9 +16,6 @@ router.post('/reviews/submit', submitReviewHandler);
 router.post('/reviews/addReviewsFromFile', addReviewsFromFileHandler);
 
 router.post('/reviews/nlQuery', nlQueryHandler);
-router.post('/reviews/filterResults', filterResultsHandler);
-
-router.post('/reviews/unifiedQuery', unifiedQueryHandler);
 
 router.post('/reviews/searchAndFilter', searchAndFilterHandler);
 

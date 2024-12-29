@@ -68,18 +68,3 @@ export const nlQueryHandler = async (
 
   }
 }
-
-export const filterResultsHandler = async (
-  req: Request<{}, {}, {
-    filter: FilterResultsParams,
-    places: GooglePlace[],
-    reviews: MemoRappReview[],
-    mapLocation: google.maps.LatLngLiteral | null,
-  }>,
-  res: Response
-): Promise<void> => {
-  const { filter, places, reviews, mapLocation } = req.body;
-  const searchResponse: SearchResponse = await filterResults(filter, places, reviews, mapLocation!);
-  res.status(200).json(searchResponse);
-}
-

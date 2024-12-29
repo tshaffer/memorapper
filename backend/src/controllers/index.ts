@@ -1,4 +1,3 @@
-export * from './filterQuery';
 export * from './filterResults';
 export * from './manageReview';
 export * from './googlePlaces';
@@ -8,5 +7,5 @@ export * from './naturalLanguageQuery';
 export * from './nlQuery';
 export * from './places';
 export * from './reviews';
-export * from './unifiedQuery';
+export * from './searchAndFilter';
 export * from './users';
