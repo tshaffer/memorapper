@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
-import './App.css';
-import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } from '@mui/material';
+
 import EditIcon from '@mui/icons-material/Edit';
 import HomeIcon from '@mui/icons-material/Home';
 import GoogleMapsProvider from './components/GoogleMapsProvider';
 import ReviewsIcon from '@mui/icons-material/Reviews';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SettingsIcon from '@mui/icons-material/Settings';
+
+import './App.css';
+import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } from '@mui/material';
 import { Menu, MenuItem } from '@mui/material';
 import Map from './pages/maps/Map';
 import MultiPanelReviewForm from './pages/writeReview/WriteReviewPage';
@@ -54,11 +57,15 @@ const App: React.FC = () => {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+  const handleOpenAccountDropdown = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuClose = () => {
+  const handleOpenSettingsMenu = (event: React.MouseEvent<HTMLElement>) => {
+    console.log('Settings menu clicked');
+  };
+
+  const handleCloseAccountDropdown = () => {
     setAnchorEl(null);
   };
 
@@ -66,7 +73,7 @@ const App: React.FC = () => {
     const selectedUser = users.find((user) => user.id === userId) || null;
     setCurrentUser(selectedUser);
     localStorage.setItem('userId', userId);
-    handleMenuClose();
+    handleCloseAccountDropdown();
   };
 
   const isActive = (path: string) => location.pathname === path; // Check if the button corresponds to the current route
@@ -148,8 +155,11 @@ const App: React.FC = () => {
                 </Button>
               </>
             )}
-            <IconButton onClick={handleMenuOpen} color="inherit">
+            <IconButton onClick={handleOpenAccountDropdown} color="inherit">
               <AccountCircleIcon />
+            </IconButton>
+            <IconButton onClick={handleOpenSettingsMenu} color="inherit">
+              <SettingsIcon />
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -157,7 +167,7 @@ const App: React.FC = () => {
         <Box id="mainAppContentArea" sx={{ flexGrow: 1, overflow: 'hidden' }}>
           {content}
         </Box>
-        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseAccountDropdown}>
           <MenuItem disabled>{currentUser ? `Signed in as: ${currentUser.userName}` : 'Not signed in'}</MenuItem>
           {users.map((user) => (
             <MenuItem key={user.id} onClick={() => handleSignIn(user.id)}>
