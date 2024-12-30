@@ -16,26 +16,36 @@ export const extractListFromResponse = (response: string, fieldName: string): st
   return match ? match[1].split(',').map(item => item.trim()) : [];
 };
 
-export function extractItemReviews(responseText: string,): ItemReview[] {
-  // Update the regex to match the "Item reviews" format with JSON-like array
-  // const fieldRegex = new RegExp(`${fieldName}:\\s*\\[([\\s\\S]*?)]`, 'i'); // Adjusted to match array format in "Item reviews"
+export function extractItemReviews(responseText: string): ItemReview[] {
+  console.log('extractItemReviews responseText:', responseText);
   const fieldName = "Item reviews";
-  const fieldRegex = new RegExp(`${fieldName}:\\s*\\[([\\s\\S]*?)]`, 'i'); // Adjusted to match array format in "Item reviews"
+  const fieldRegex = new RegExp(`${fieldName}:\\s*\\[(.*?)\\]`, 'is');
+
   const fieldMatch = responseText.match(fieldRegex);
 
-  if (!fieldMatch || !fieldMatch[1]) return [];
+  // Primary parsing logic
+  if (fieldMatch && fieldMatch[1]) {
+    try {
+      const jsonString = `[${fieldMatch[1].trim()}]`;
+      const itemReviews = JSON.parse(jsonString);
 
-  try {
-    // Parse as JSON by adding brackets to form a valid JSON array
-    const itemReviews = JSON.parse(fieldMatch[0].replace(`${fieldName}: `, ""));
-    return itemReviews.map((item: any) => ({
-      item: item.item || "",
-      review: item.review || "",
-    }));
-  } catch (error) {
-    console.error("Error parsing item reviews:", error);
-    return [];
+      return itemReviews.map((item: any) => ({
+        item: item.item?.trim() || "",
+        review: item.review?.trim() || "",
+      }));
+    } catch (error) {
+      console.error("Error parsing item reviews:", error);
+    }
   }
+
+  // Fallback: Simple regex to extract items if the structured format is missing
+  const simpleItemRegex = /(?:-|\*|\n|\b)([a-zA-Z\s]+?)(?:,|\.|\n|$)/g;
+  const matches = [...responseText.matchAll(simpleItemRegex)];
+
+  return matches.map((match) => ({
+    item: match[1]?.trim() || "",
+    review: "",
+  }));
 }
 
 export function removeSquareBrackets(text: string): string {

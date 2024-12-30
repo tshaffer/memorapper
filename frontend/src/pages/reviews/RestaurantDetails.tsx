@@ -98,7 +98,7 @@ const RestaurantDetails: React.FC = () => {
   };
 
   const reviewerFromReviewerId = (reviewerId: string): string => {
-    let reviewer: UserEntity | undefined= users.find((user) => user.id === reviewerId);
+    let reviewer: UserEntity | undefined = users.find((user) => user.id === reviewerId);
     return reviewer!.userName;
   }
 
@@ -158,7 +158,10 @@ const RestaurantDetails: React.FC = () => {
                 <React.Fragment>
                   <strong>{itemReview.item}</strong>
                   {' - '}
-                  <span style={{ fontWeight: 400 }}>{itemReview.review || 'No rating provided'}</span>
+                  <span style={{ fontWeight: 400 }}>
+                    {itemReview.item}
+                    {itemReview.review ? ` - ${itemReview.review}` : ''}
+                  </span>
                 </React.Fragment>
               } sx={{
                 padding: 0,

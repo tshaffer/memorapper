@@ -121,7 +121,8 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
           <ul style={{ listStyleType: 'none', padding: 0 }}>
             {itemReviews.map((itemReview, idx) => (
               <li key={idx} style={{ marginLeft: '8px' }}>
-                {itemReview.item} - {itemReview.review || 'No rating provided'}
+                {itemReview.item}
+                {itemReview.review ? ` - ${itemReview.review}` : ''}
               </li>
             ))}
           </ul>

@@ -43,17 +43,24 @@ export const parsePreview = async (sessionId: string, reviewText: string): Promi
         role: "system",
         content: `
         You are a helpful assistant aiding in extracting structured information from restaurant reviews.
-        Your task is to extract details such as:
-        - Reviewer name
-        - Date of visit (in YYYY-MM-DD format)
-        - List of items ordered with comments for each item, formatted as "itemReviews" with properties "item" and "review".
-      
-         Review: "${reviewText}"
-      
-        Format the response as follows:
-        - Reviewer name: [Name]
-        - Date of visit: [YYYY-MM-DD]
-        - Item reviews: [{ "item": "Item 1", "review": "Review 1" }, { "item": "Item 2", "review": "Review 2" }]
+        Your task is to extract the following:
+        - Reviewer name (if provided)
+        - Date of visit (in YYYY-MM-DD format, if provided)
+        - A list of items ordered with concise comments for each item, formatted as "itemReviews" with properties "item" and "review".
+        
+        When extracting items ordered:
+        - Include all food or beverage items explicitly mentioned in the review, even if no comments are provided.
+        - For each item, extract any associated descriptive comment (e.g., "delicious", "overcooked", etc.). Avoid including unnecessary phrases such as "I had" or "we ordered."
+        - If no comment is provided for an item, leave the review field blank.
+        
+        If any details (e.g., reviewer name or date) are missing, still attempt to extract as much information as possible.
+        
+        Example format of the response:
+        - Reviewer name: [Name or ""]
+        - Date of visit: [YYYY-MM-DD or ""]
+        - Item reviews: [{ "item": "pizza", "review": "delicious" }, { "item": "pasta", "review": "" }]
+        
+        Always include all mentioned items, even if they have no associated comments.
         `,
       }
     ];

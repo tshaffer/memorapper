@@ -45,11 +45,12 @@ const ChatTab: React.FC<ChatTabProps> = (props: ChatTabProps) => {
   const renderItemReview = (itemReview: ItemReview, idx: number): JSX.Element => {
     return (
       <li key={idx}>
-        {itemReview.item} - {itemReview.review || 'No rating provided'}
+        {itemReview.item}
+        {itemReview.review ? ` - ${itemReview.review}` : ''}
       </li>
     );
-  }
-
+  };
+  
   const renderItemReviews = (itemReviews: ItemReview[]): JSX.Element[] | null => {
     if (itemReviews.length === 0) {
       return null;
