@@ -166,7 +166,10 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
 
       </form>
 
-      <Button onClick={handlePreview}>
+      <Button
+        disabled={!reviewData.place || !reviewData.reviewText}
+        onClick={handlePreview}
+      >
         Preview
       </Button>
 
