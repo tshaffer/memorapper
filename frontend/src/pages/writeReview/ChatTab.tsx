@@ -50,7 +50,7 @@ const ChatTab: React.FC<ChatTabProps> = (props: ChatTabProps) => {
       </li>
     );
   };
-  
+
   const renderItemReviews = (itemReviews: ItemReview[]): JSX.Element[] | null => {
     if (itemReviews.length === 0) {
       return null;
@@ -155,7 +155,12 @@ const ChatTab: React.FC<ChatTabProps> = (props: ChatTabProps) => {
       // onKeyPress={(e) => e.key === 'Enter' && handleSendChatMessage()}
       />
 
-      <Button onClick={handleSendChatMessage}>Send</Button>
+      <Button
+        disabled={!chatInput || chatInput.length === 0}
+        onClick={handleSendChatMessage}
+      >
+        Send
+      </Button>
 
       {renderPulsingDots()}
 
