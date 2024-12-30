@@ -16,7 +16,8 @@ import MultiPanelReviewForm from './pages/writeReview/WriteReviewPage';
 import RestaurantDetails from './pages/reviews/RestaurantDetails';
 import Search from './pages/reviews/Search';
 import { useUserContext } from './contexts/UserContext';
-import { UserEntity } from './types';
+import { Filters, UserEntity, WouldReturnFilter } from './types';
+import SettingsDialog from './components/SettingsDialog';
 
 // soft orange: #FFA07A
 // other possibilities
@@ -56,13 +57,10 @@ const App: React.FC = () => {
   }, [users]);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [settingsAnchorEl, setSettingsAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleOpenAccountDropdown = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
-  };
-
-  const handleOpenSettingsMenu = (event: React.MouseEvent<HTMLElement>) => {
-    console.log('Settings menu clicked');
   };
 
   const handleCloseAccountDropdown = () => {
@@ -75,6 +73,28 @@ const App: React.FC = () => {
     localStorage.setItem('userId', userId);
     handleCloseAccountDropdown();
   };
+
+  const handleOpenSettingsDialog = (event: React.MouseEvent<HTMLElement>) => {
+    setSettingsAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseSettingsDialog = () => {
+    setSettingsAnchorEl(null);
+  };
+
+  function handleSetSettings(distanceAway: number, isOpenNowEnabled: boolean, wouldReturnFilter: WouldReturnFilter): void {
+    console.log('Settings:', distanceAway, isOpenNowEnabled, wouldReturnFilter);
+    // Assuming you want to store these settings in local storage or context
+    const filters: Filters = {
+      distanceAway,
+      isOpenNowEnabled,
+      wouldReturnFilter,
+    };
+
+    // // Save settings to local storage
+    localStorage.setItem('defaultFilters', JSON.stringify(filters));
+
+  }
 
   const isActive = (path: string) => location.pathname === path; // Check if the button corresponds to the current route
 
@@ -158,7 +178,7 @@ const App: React.FC = () => {
             <IconButton onClick={handleOpenAccountDropdown} color="inherit">
               <AccountCircleIcon />
             </IconButton>
-            <IconButton onClick={handleOpenSettingsMenu} color="inherit">
+            <IconButton onClick={handleOpenSettingsDialog} color="inherit">
               <SettingsIcon />
             </IconButton>
           </Toolbar>
@@ -175,6 +195,11 @@ const App: React.FC = () => {
             </MenuItem>
           ))}
         </Menu>
+        <SettingsDialog
+          open={settingsAnchorEl !== null}
+          onSetSettings={handleSetSettings}
+          onClose={handleCloseSettingsDialog}
+        />
       </Box >
     </GoogleMapsProvider >
   );

@@ -1,5 +1,5 @@
 import { ItemReview, MemoRappReview } from "./entities";
-import { SearchDistanceFilter, WouldReturn } from "./enums";
+import { DistanceAwayFilter, WouldReturn } from "./enums";
 import { GooglePlace } from "./googlePlace";
 import { DistanceAwayQuery } from "./queries";
 
@@ -38,21 +38,15 @@ export interface WouldReturnFilter {
   };
 }
 
-export interface ReviewUIFilters {
-  queryText: string | null;
-  distanceFilter: DistanceFilter;
-  wouldReturnFilter: WouldReturnFilter;
-}
-
-export interface SearchUIFilters {
-  distanceAwayFilter: SearchDistanceFilter;
-  openNowFilter: boolean;
-  wouldReturnFilter: WouldReturnFilter;
-}
-
 export interface SearchQuery {
   query: string;
   distanceAway: DistanceAwayQuery;
   isOpenNow: boolean;
   wouldReturn: WouldReturnFilter;
+}
+
+export interface Filters {
+  distanceAway: DistanceAwayFilter;
+  wouldReturnFilter: WouldReturnFilter;
+  isOpenNowEnabled: boolean;
 }

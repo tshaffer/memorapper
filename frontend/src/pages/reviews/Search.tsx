@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { GooglePlace, MemoRappReview, SearchUIFilters, SortCriteria } from '../../types';
+import { GooglePlace, MemoRappReview, SortCriteria } from '../../types';
 
 import PulsingDots from '../../components/PulsingDots';
 

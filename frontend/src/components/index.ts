@@ -6,3 +6,4 @@ export * from './MapWIthMarkers';
 export * from './PulsingDots';
 export * from './Query';
 export * from './RestaurantName';
+export * from './SettingsDialog';
