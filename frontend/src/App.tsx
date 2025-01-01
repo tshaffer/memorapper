@@ -49,7 +49,7 @@ const App: React.FC = () => {
           }
         }
       }
-      return null;
+      return users.find((user) => user.id === '0')!;
     };
 
     setCurrentUser(getCurrentUser());
