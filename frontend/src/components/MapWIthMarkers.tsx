@@ -3,18 +3,19 @@ import { ExtendedGooglePlace, RestaurantType } from '../types';
 import { AdvancedMarker, APIProvider, Map, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace } from '../utilities';
 import '../App.css';
+import RestaurantInfoWindow from './RestaurantInfoWindow';
+
 import { Icon, IconifyIcon } from '@iconify/react';
+
 // // https://icon-sets.iconify.design/?query=<query>
-// import RestaurantIcon from '@mui/icons-material/Restaurant';
+import restaurantIcon from '@iconify/icons-openmoji/fork-and-knife-with-plate';
 import bakeryIcon from '@iconify/icons-emojione/bread';
-import barIcon from '@iconify/icons-emojione/cocktail-glass';
-import restaurantIcon from '@iconify/icons-emojione/fork-and-knife-with-plate';
+import barIcon from '@iconify/icons-emojione/wine-glass';
 import pizzaIcon from '@iconify/icons-emojione/pizza';
 import pastaIcon from '@iconify/icons-emojione/spaghetti';
 import iceCreamIcon from '@iconify/icons-emojione/ice-cream';
 import burritoIcon from '@iconify/icons-noto/burrito';
 import coffeeIcon from '@iconify/icons-openmoji/electric-coffee-percolator';
-import RestaurantInfoWindow from './RestaurantInfoWindow';
 
 const DEFAULT_ZOOM = 14;
 
@@ -23,8 +24,8 @@ const iconContainerStyle: React.CSSProperties = {
   top: '-16px', // Adjust to align the icon and text vertically
   left: '50%',
   transform: 'translate(-50%, -50%)', // Center the icon
-  width: '24px', // Set a fixed size for the icon background
-  height: '24px',
+  width: '30px', // Set a fixed size for the icon background
+  height: '30px',
   backgroundColor: 'lightgray', // Black circle background
   borderRadius: '50%', // Make it a circle
   display: 'flex', // Center the icon inside the circle
@@ -34,7 +35,7 @@ const iconContainerStyle: React.CSSProperties = {
 
 const textStyle: React.CSSProperties = {
   position: 'absolute',
-  right: '12px', // Adjust to position text to the left of the icon
+  right: '18px', // Adjust to position text to the left of the icon
   transform: 'translateY(-150%)', // Align text vertically with the icon
   whiteSpace: 'nowrap', // Prevent text wrapping
   color: 'red', // Adjust text color
@@ -150,7 +151,7 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
         <div style={{ position: 'relative' }}>
           <div style={textStyle}>{location.name}</div>
           <div style={iconContainerStyle}>
-            <Icon icon={iconFromRestaurantType(location.restaurantType)} style={{ fontSize: '24px', color: 'red' }} />
+            <Icon icon={iconFromRestaurantType(location.restaurantType)} style={{ fontSize: '30px', color: 'red' }} />
           </div>
         </div>
       </AdvancedMarker>
