@@ -121,6 +121,8 @@ const MapPage: React.FC = () => {
 
   const executeSearchAndFilter = async (searchQuery: SearchQuery): Promise<void> => {
 
+    console.log('executeSearchAndFilter:', searchQuery);
+
     const requestBody = { searchQuery };
 
     try {
@@ -147,18 +149,21 @@ const MapPage: React.FC = () => {
   ) => {
 
     console.log('filterOnEntry');
-    console.log(places);
-    console.log(reviews);
-    console.log(location);
+    // console.log(places);
+    // console.log(reviews);
+    // console.log(location);
 
     const filter: FilterResultsParams = {
       distanceAwayFilter: distanceAway,
       openNowFilter: isOpenNow,
       wouldReturnFilter,
     };
+
+    console.log(filter);
+
     const filterResultsValue: SearchResponse = filterResults(filter, places, reviews, location);
 
-    console.log(filterResultsValue);
+    // console.log(filterResultsValue);
 
     setFilteredPlaces(filterResultsValue.places);
   }

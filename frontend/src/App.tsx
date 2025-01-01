@@ -51,7 +51,6 @@ const App: React.FC = () => {
       }
 
       const defaultUser : UserEntity | null = users ? users.find((user) => user.id === '0') || null : null;
-      console.log('currentUser:', defaultUser);
       if (defaultUser) {
         localStorage.setItem('userId', defaultUser.id);
       }
@@ -59,7 +58,6 @@ const App: React.FC = () => {
     };
 
     const currentUser: UserEntity | null = getCurrentUser();
-    console.log('currentUser:', currentUser);
     setCurrentUser(currentUser);
 
   }, [users]);
