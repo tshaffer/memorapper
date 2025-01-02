@@ -11,7 +11,7 @@ export enum WouldReturn {
   Undefined = 3,
 }
 
-export enum DistanceAwayFilter {
+export enum DistanceAwayFilterValues {
   HalfMile = 0.5,
   OneMile = 1,
   FiveMiles = 5,

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Box, Button, Switch, Typography, useMediaQuery } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import { DistanceAwayFilter, Filters } from "../types";
+import { DistanceAwayFilterValues, Filters } from "../types";
 export interface FiltersSettingsProps {
   filters: Filters
   onUpdateFilters: (filters: Filters) => void;
@@ -27,7 +27,7 @@ const myButtonStyle: React.CSSProperties = {
 const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsProps) => {
 
   const { filters, onUpdateFilters } = props;
-  const { distanceAway, wouldReturnFilter, isOpenNowEnabled } = filters;
+  const { distanceAwayFilter: distanceAway, wouldReturnFilter, isOpenNowFilterEnabled: isOpenNowEnabled } = filters;
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
@@ -44,7 +44,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
 
   const handleDistanceAwayChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newDistanceAway = Number(e.target.value);
-    onUpdateFilters({ ...filters, distanceAway: newDistanceAway });
+    onUpdateFilters({ ...filters, distanceAwayFilter: newDistanceAway });
     setDistanceAwayDropdownVisible(false);
   };
 
@@ -52,7 +52,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     setDistanceAwayDropdownVisible(false);
     setWouldReturnDropdownVisible(false);
     const newOpenNowFilterEnabled = !isOpenNowEnabled;
-    onUpdateFilters({ ...filters, isOpenNowEnabled: newOpenNowFilterEnabled });
+    onUpdateFilters({ ...filters, isOpenNowFilterEnabled: newOpenNowFilterEnabled });
   };
 
   const handleWouldReturnChange = (updatedValues: any) => {
@@ -140,11 +140,11 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
           cursor: 'pointer',
         }}
       >
-        <option value={DistanceAwayFilter.HalfMile}>HALF MILE</option>
-        <option value={DistanceAwayFilter.OneMile}>1 MILE</option>
-        <option value={DistanceAwayFilter.FiveMiles}>5 MILES</option>
-        <option value={DistanceAwayFilter.TenMiles}>10 MILES</option>
-        <option value={DistanceAwayFilter.AnyDistance}>ANY DISTANCE</option>
+        <option value={DistanceAwayFilterValues.HalfMile}>HALF MILE</option>
+        <option value={DistanceAwayFilterValues.OneMile}>1 MILE</option>
+        <option value={DistanceAwayFilterValues.FiveMiles}>5 MILES</option>
+        <option value={DistanceAwayFilterValues.TenMiles}>10 MILES</option>
+        <option value={DistanceAwayFilterValues.AnyDistance}>ANY DISTANCE</option>
       </select>
     </Box>
   );

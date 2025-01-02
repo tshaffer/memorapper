@@ -1,5 +1,5 @@
 import { MemoRappReview } from "./entities";
-import { DistanceAwayFilter } from "./enums";
+import { DistanceAwayFilterValues } from "./enums";
 import { WouldReturnFilter } from "./frontEndEntities";
 import { GooglePlace } from "./googlePlace";
 
@@ -43,7 +43,7 @@ export interface WouldReturnQuery {
 }
 
 export interface FilterResultsParams {
-  distanceAwayFilter: DistanceAwayFilter;
+  distanceAwayFilter: DistanceAwayFilterValues;
   openNowFilter: boolean;
   wouldReturnFilter: WouldReturnFilter;
 }

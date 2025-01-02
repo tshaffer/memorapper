@@ -16,7 +16,7 @@ import MultiPanelReviewForm from './pages/writeReview/WriteReviewPage';
 import RestaurantDetails from './pages/reviews/RestaurantDetails';
 import Search from './pages/reviews/Search';
 import { useUserContext } from './contexts/UserContext';
-import { Filters, UserEntity, WouldReturnFilter } from './types';
+import { DistanceAwayFilterValues, Filters, UserEntity, WouldReturnFilter } from './types';
 import SettingsDialog from './components/SettingsDialog';
 
 // soft orange: #FFA07A
@@ -32,7 +32,7 @@ const activeButtonStyle: React.CSSProperties = {
 };
 
 const App: React.FC = () => {
-  const { users, currentUser, setCurrentUser, loading, error } = useUserContext();
+  const { users, currentUser, setCurrentUser, filters, setFilters, loading, error } = useUserContext();
   const isMobile = useMediaQuery('(max-width:768px)');
   const location = useLocation(); // Track the current route
 
@@ -50,15 +50,40 @@ const App: React.FC = () => {
         }
       }
 
-      const defaultUser : UserEntity | null = users ? users.find((user) => user.id === '0') || null : null;
+      const defaultUser: UserEntity | null = users ? users.find((user) => user.id === '0') || null : null;
       if (defaultUser) {
         localStorage.setItem('userId', defaultUser.id);
       }
       return defaultUser;
-    };
+    }
+
+    const getFilters = (): Filters => {
+      const defaultFilters: string | null = localStorage.getItem('defaultFilters');
+      if (defaultFilters) {
+        return JSON.parse(defaultFilters);
+      } else {
+        const filters: Filters = {
+          distanceAwayFilter: DistanceAwayFilterValues.AnyDistance,
+          isOpenNowFilterEnabled: false,
+          wouldReturnFilter: {
+            enabled: false,
+            values: {
+              yes: false,
+              no: false,
+              notSure: false,
+            },
+          }
+        };
+        localStorage.setItem('defaultFilters', JSON.stringify(filters));
+        return filters;
+      }
+    }
 
     const currentUser: UserEntity | null = getCurrentUser();
     setCurrentUser(currentUser);
+
+    const defaultFilters: Filters = getFilters();
+    setFilters(defaultFilters);
 
   }, [users]);
 
@@ -88,18 +113,9 @@ const App: React.FC = () => {
     setSettingsAnchorEl(null);
   };
 
-  function handleSetSettings(distanceAway: number, isOpenNowEnabled: boolean, wouldReturnFilter: WouldReturnFilter): void {
-    console.log('Settings:', distanceAway, isOpenNowEnabled, wouldReturnFilter);
-    // Assuming you want to store these settings in local storage or context
-    const filters: Filters = {
-      distanceAway,
-      isOpenNowEnabled,
-      wouldReturnFilter,
-    };
-
-    // // Save settings to local storage
+  function handleSetSettings(filters: Filters): void {
+    setFilters(filters);
     localStorage.setItem('defaultFilters', JSON.stringify(filters));
-
   }
 
   const isActive = (path: string) => location.pathname === path; // Check if the button corresponds to the current route
@@ -203,6 +219,7 @@ const App: React.FC = () => {
         </Menu>
         <SettingsDialog
           open={settingsAnchorEl !== null}
+          filters={filters}
           onSetSettings={handleSetSettings}
           onClose={handleCloseSettingsDialog}
         />

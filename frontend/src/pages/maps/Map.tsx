@@ -4,13 +4,15 @@ import { Paper, Box, IconButton, useMediaQuery } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import LocationAutocomplete from '../../components/LocationAutocomplete';
 import MapWithMarkers from '../../components/MapWIthMarkers';
-import { ExtendedGooglePlace, FilterResultsParams, GooglePlace, MemoRappReview, SearchQuery, SearchResponse, WouldReturnFilter } from '../../types';
+import { ExtendedGooglePlace, FilterResultsParams, Filters, GooglePlace, MemoRappReview, SearchQuery, SearchResponse } from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
 import PulsingDots from '../../components/PulsingDots';
 import { filterResults } from '../../utilities';
+import { useUserContext } from '../../contexts/UserContext';
 
 const MapPage: React.FC = () => {
   const { _id } = useParams<{ _id: string }>();
+  const { filters } = useUserContext();
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
@@ -79,12 +81,7 @@ const MapPage: React.FC = () => {
       const location = await fetchCurrentLocation();
       const places = await fetchPlaces();
       const reviews = await fetchReviews();
-      filterOnEntry(
-        places, reviews, location!,
-        1, true, {
-        enabled: true,
-        values: { yes: true, no: false, notSure: false },
-      });
+      filterOnEntry(places, reviews, location!, filters);
     };
 
     fetchData();
@@ -142,40 +139,26 @@ const MapPage: React.FC = () => {
   }
 
   const filterOnEntry = (
-    places: any, reviews: any, location: google.maps.LatLngLiteral,
-    distanceAway: number,
-    isOpenNow: boolean,
-    wouldReturnFilter: WouldReturnFilter,
+    places: any, reviews: any, location: google.maps.LatLngLiteral, filters: Filters,
   ) => {
 
-    console.log('filterOnEntry');
-    // console.log(places);
-    // console.log(reviews);
-    // console.log(location);
+    const { distanceAwayFilter, isOpenNowFilterEnabled, wouldReturnFilter } = filters;
 
     const filter: FilterResultsParams = {
-      distanceAwayFilter: distanceAway,
-      openNowFilter: isOpenNow,
+      distanceAwayFilter,
+      openNowFilter: isOpenNowFilterEnabled,
       wouldReturnFilter,
     };
 
-    console.log(filter);
-
     const filterResultsValue: SearchResponse = filterResults(filter, places, reviews, location);
-
-    // console.log(filterResultsValue);
 
     setFilteredPlaces(filterResultsValue.places);
   }
 
   const handleSetFilters = async (
     query: string,
-    distanceAway: number,
-    isOpenNow: boolean,
-    wouldReturn: WouldReturnFilter,
+    filters: Filters,
   ) => {
-
-    // console.log('handleSetFilters:', query, distanceAway, isOpenNow, wouldReturn);
 
     handleCloseFiltersDialog();
 
@@ -183,12 +166,12 @@ const MapPage: React.FC = () => {
 
     const searchQuery: SearchQuery = {
       query,
-      isOpenNow,
-      wouldReturn,
+      isOpenNow: filters.isOpenNowFilterEnabled,
+      wouldReturn: filters.wouldReturnFilter,
       distanceAway: {
         lat: mapLocation!.lat,
         lng: mapLocation!.lng,
-        radius: distanceAway,
+        radius: filters.distanceAwayFilter,
       }
     };
 
@@ -213,8 +196,6 @@ const MapPage: React.FC = () => {
   };
 
   const renderMap = () => {
-
-    // console.log('renderMap:', mapLocation, filteredPlaces);
 
     if (!mapLocation) {
       return null;
@@ -297,6 +278,7 @@ const MapPage: React.FC = () => {
       {/* Filters Dialog */}
       <FiltersDialog
         open={showFiltersDialog}
+        filters={filters}
         onSetFilters={handleSetFilters}
         onClose={handleCloseFiltersDialog}
       />

@@ -3,68 +3,45 @@ import { useEffect, useState } from 'react';
 import { Box, Button, TextField, Tooltip, Typography, useMediaQuery } from '@mui/material';
 
 import FiltersSettings from "./FilterSettings";
-import { DistanceAwayFilter, Filters, WouldReturnFilter } from "../types";
-
-const initialDistanceAwayFilter: DistanceAwayFilter = DistanceAwayFilter.FiveMiles;
-const initialIsOpenNowFilterEnabled: boolean = false;
-const initialWouldReturnFilter: WouldReturnFilter = {
-  enabled: false,
-  values: {
-    yes: false,
-    no: false,
-    notSure: false,
-  },
-};
+import { Filters, WouldReturnFilter } from "../types";
 
 export interface FiltersDialogPropsFromParent {
   open: boolean;
+  filters: Filters;
   onClose: () => void;
   onSetFilters: (
     query: string,
-    distanceAway: number,
-    isOpenNow: boolean,
-    wouldReturn: WouldReturnFilter,
+    filters: Filters,
   ) => void;
 }
 
 export interface FiltersDialogProps extends FiltersDialogPropsFromParent {
+  filters: Filters;
 }
 
 const FiltersDialog: React.FC<FiltersDialogProps> = (props: FiltersDialogProps) => {
 
-  useEffect(() => {
-    const initializeSettings = (): void => {
-      const defaultFilters: string | null = localStorage.getItem('defaultFilters');
-      if (defaultFilters) {
-        const filters: Filters = JSON.parse(defaultFilters);
-        setDistanceAwayFilter(filters.distanceAway);
-        setIsOpenNowFilterEnabled(filters.isOpenNowEnabled);
-        setWouldReturnFilter(filters.wouldReturnFilter);
-      } else {
-        setDistanceAwayFilter(initialDistanceAwayFilter);
-        setIsOpenNowFilterEnabled(initialIsOpenNowFilterEnabled);
-        setWouldReturnFilter(initialWouldReturnFilter);
-      }
-    }
-    initializeSettings();
-
-  }, []);
-
   const isMobile = useMediaQuery('(max-width:768px)');
 
   const [query, setQuery] = useState('');
-  const [distanceAwayFilter, setDistanceAwayFilter] = useState<number>(initialDistanceAwayFilter);
-  const [wouldReturnFilter, setWouldReturnFilter] = useState<WouldReturnFilter>(initialWouldReturnFilter);
-  const [isOpenNowFilterEnabled, setIsOpenNowFilterEnabled] = useState(initialIsOpenNowFilterEnabled);
+  const [distanceAwayFilter, setDistanceAwayFilter] = useState<number>(props.filters.distanceAwayFilter);
+  const [wouldReturnFilter, setWouldReturnFilter] = useState<WouldReturnFilter>(props.filters.wouldReturnFilter);
+  const [isOpenNowFilterEnabled, setIsOpenNowFilterEnabled] = useState(props.filters.isOpenNowFilterEnabled);
+
+  useEffect(() => {
+    setDistanceAwayFilter(props.filters.distanceAwayFilter);
+    setWouldReturnFilter(props.filters.wouldReturnFilter);
+    setIsOpenNowFilterEnabled(props.filters.isOpenNowFilterEnabled);
+  }, [props.filters.distanceAwayFilter, props.filters.wouldReturnFilter, props.filters.isOpenNowFilterEnabled]);
 
   const handleUpdateFilters = (filters: Filters) => {
-    setDistanceAwayFilter(filters.distanceAway);
-    setIsOpenNowFilterEnabled(filters.isOpenNowEnabled);
+    setDistanceAwayFilter(filters.distanceAwayFilter);
+    setIsOpenNowFilterEnabled(filters.isOpenNowFilterEnabled);
     setWouldReturnFilter(filters.wouldReturnFilter);
   }
 
   function handleSetFilters(): void {
-    props.onSetFilters(query, distanceAwayFilter, isOpenNowFilterEnabled, wouldReturnFilter);
+    props.onSetFilters(query, { distanceAwayFilter, isOpenNowFilterEnabled, wouldReturnFilter });
     props.onClose();
   }
 
@@ -103,9 +80,9 @@ const FiltersDialog: React.FC<FiltersDialogProps> = (props: FiltersDialogProps) 
           {renderQueryInput()}
           <FiltersSettings
             filters={{
-              distanceAway: distanceAwayFilter,
+              distanceAwayFilter: distanceAwayFilter,
               wouldReturnFilter: wouldReturnFilter,
-              isOpenNowEnabled: isOpenNowFilterEnabled,
+              isOpenNowFilterEnabled: isOpenNowFilterEnabled,
             }}
             onUpdateFilters={handleUpdateFilters}
           />

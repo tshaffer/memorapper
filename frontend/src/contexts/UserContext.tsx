@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { UserEntity } from '../types';
+import { DistanceAwayFilterValues, Filters, UserEntity } from '../types';
 
 interface UserContextValue {
   users: UserEntity[];
   currentUser: UserEntity | null;
+  filters: Filters;
   setCurrentUser: (user: UserEntity | null) => void;
+  setFilters: (filters: Filters) => void;
   loading: boolean;
   error: string | null;
 }
@@ -14,6 +16,18 @@ const UserContext = createContext<UserContextValue | undefined>(undefined);
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [users, setUsers] = useState<UserEntity[]>([]);
   const [currentUser, setCurrentUser] = useState<UserEntity | null>(null);
+  const [filters, setFilters] = useState<Filters>({
+    distanceAwayFilter: DistanceAwayFilterValues.AnyDistance,
+    isOpenNowFilterEnabled: false,
+    wouldReturnFilter: {
+      enabled: false,
+      values: {
+        yes: false,
+        no: false,
+        notSure: false,
+      },
+    },
+  });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,7 +53,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   return (
-    <UserContext.Provider value={{ users, currentUser, setCurrentUser, loading, error }}>
+    <UserContext.Provider value={{ users, currentUser, setCurrentUser, filters, setFilters, loading, error }}>
       {children}
     </UserContext.Provider>
   );
