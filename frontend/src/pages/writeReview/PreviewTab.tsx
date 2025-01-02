@@ -5,7 +5,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Button, Typography } from '@mui/material';
+import { Button, Typography, useMediaQuery } from '@mui/material';
 import '../../styles/multiPanelStyles.css';
 import { ReviewData, UserEntity, WouldReturn } from '../../types';
 import { formatDateToMMDDYYYY, restaurantTypeLabelFromRestaurantType } from '../../utilities';
@@ -22,6 +22,8 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
   const { users } = useUserContext();
 
   const { reviewData, onSubmitReview } = props;
+
+  const isMobile = useMediaQuery('(max-width:768px)');
 
   // console.log('ReviewPreviewPanel reviewData:', reviewData);
 
@@ -82,7 +84,14 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
   const renderReviewPreview = () => {
 
     if (!place || !reviewText || reviewText === '') return (
-      <div id="preview" className="tab-panel active">
+      <div
+        id="preview"
+        className="tab-panel active"
+        style={{
+          marginLeft: '8px',
+          maxHeight: isMobile ? 'calc(60vh)' : 'auto'
+        }}
+      >
         <h2>Review Preview</h2>
         <Typography>Not enough information to generate a preview.</Typography>
         {renderConfirmationDialog()}
@@ -95,6 +104,7 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
           className="tab-panel active"
           style={{
             marginLeft: '8px',
+            maxHeight: isMobile ? 'calc(60vh)' : 'auto'
           }}
         >
           <h2

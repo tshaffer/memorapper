@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography, useMediaQuery } from '@mui/material';
 import '../../styles/multiPanelStyles.css';
 import '../../styles/chatStyles.css';
 import { ChatMessage, FreeformReviewProperties, ItemReview, ReviewData, ReviewEntity, WouldReturn } from '../../types';
@@ -17,6 +17,8 @@ const ChatTab: React.FC<ChatTabProps> = (props: ChatTabProps) => {
   console.log('ReviewChatPanel::props:', props);
 
   const { reviewData, onSendChatMessage } = props;
+
+  const isMobile = useMediaQuery('(max-width:768px)');
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -141,7 +143,14 @@ const ChatTab: React.FC<ChatTabProps> = (props: ChatTabProps) => {
   };
 
   return (
-    <div id="chat" className="tab-panel active">
+    <div
+      id="chat"
+      className="tab-panel active"
+      style={{
+        marginLeft: '8px',
+        maxHeight: isMobile ? 'calc(60vh)' : 'auto'
+      }}
+    >
       <h2>Chat</h2>
       <div className="chat-history">
         {renderChatHistory()}
