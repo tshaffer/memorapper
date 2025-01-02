@@ -12,7 +12,7 @@ import { useUserContext } from '../../contexts/UserContext';
 
 const MapPage: React.FC = () => {
   const { _id } = useParams<{ _id: string }>();
-  const { filters } = useUserContext();
+  const { filters, setFilters } = useUserContext();
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
@@ -161,6 +161,8 @@ const MapPage: React.FC = () => {
   ) => {
 
     handleCloseFiltersDialog();
+
+    setFilters(filters);
 
     setIsLoading(true);
 

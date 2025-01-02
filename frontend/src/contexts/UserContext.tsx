@@ -16,7 +16,8 @@ const UserContext = createContext<UserContextValue | undefined>(undefined);
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [users, setUsers] = useState<UserEntity[]>([]);
   const [currentUser, setCurrentUser] = useState<UserEntity | null>(null);
-  const [filters, setFilters] = useState<Filters>({
+
+  const [filters, _setFilters] = useState<Filters>({
     distanceAwayFilter: DistanceAwayFilterValues.AnyDistance,
     isOpenNowFilterEnabled: false,
     wouldReturnFilter: {
@@ -28,7 +29,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       },
     },
   });
-  const [loading, setLoading] = useState<boolean>(true);
+
+  const setFilters = (newFilters: Filters) => {
+    _setFilters(newFilters);
+  };
+    const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -52,6 +57,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     fetchUsers();
   }, []);
 
+  console.log('UserContext:', filters);
+
   return (
     <UserContext.Provider value={{ users, currentUser, setCurrentUser, filters, setFilters, loading, error }}>
       {children}
@@ -60,7 +67,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 };
 
 export const useUserContext = (): UserContextValue => {
+  console.log('useUserContext');
   const context = useContext(UserContext);
+  console.log(context?.filters.distanceAwayFilter);
   if (!context) {
     throw new Error('useUserContext must be used within a UserProvider');
   }
