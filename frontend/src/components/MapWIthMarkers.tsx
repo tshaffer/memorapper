@@ -167,7 +167,8 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
   }
 
   const googleMapsApiKey = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!;
-
+  console.log('MapWithMarkers::googleMapsApiKey:', googleMapsApiKey);
+  
   const locationMarkers: JSX.Element[] = renderMarkers();
 
   const getBlueDotLocation = (): google.maps.LatLngLiteral | null => {

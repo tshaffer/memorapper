@@ -2,6 +2,7 @@ import axios from 'axios';
 import { MongoGeometry, GoogleGeometry, MongoViewport, GeoJSONPoint } from '../types';
 
 const GOOGLE_PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
+console.log('googlePlaces: GOOGLE_PLACES_API_KEY:', GOOGLE_PLACES_API_KEY);
 
 export const getCoordinates = async (location: string): Promise<google.maps.LatLngLiteral | null> => {
   try {
