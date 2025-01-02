@@ -57,8 +57,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     fetchUsers();
   }, []);
 
-  console.log('UserContext:', filters);
-
   return (
     <UserContext.Provider value={{ users, currentUser, setCurrentUser, filters, setFilters, loading, error }}>
       {children}
@@ -67,9 +65,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 };
 
 export const useUserContext = (): UserContextValue => {
-  console.log('useUserContext');
   const context = useContext(UserContext);
-  console.log(context?.filters.distanceAwayFilter);
   if (!context) {
     throw new Error('useUserContext must be used within a UserProvider');
   }
