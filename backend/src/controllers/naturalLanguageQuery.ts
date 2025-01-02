@@ -1,4 +1,4 @@
-import openai from '../services/openai';
+import getOpenAIClient from '../services/openai';
 import Review, { IReview } from '../models/Review';
 import MongoPlace, { IMongoPlace } from '../models/MongoPlace';
 import { ParsedQuery, QueryResponse, StructuredQueryParams, WouldReturn } from '../types';
@@ -32,7 +32,7 @@ export const buildStructuredQueryParamsFromParsedQuery = (parsedQuery: ParsedQue
 }
 
 export const parseQueryWithChatGPT = async (query: string): Promise<ParsedQuery> => {
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAIClient().chat.completions.create({
     model: "gpt-4",
     messages: [
       {
@@ -217,7 +217,7 @@ export const performNaturalLanguageQuery = async (
   }));
 
   // Step 2: Call OpenAI API
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAIClient().chat.completions.create({
     model: "gpt-4",
     messages: [
       {
@@ -371,7 +371,7 @@ export const performHybridQuery = async (
       place_id: review.place_id,
     }));
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAIClient().chat.completions.create({
       model: "gpt-4",
       messages: [
         {

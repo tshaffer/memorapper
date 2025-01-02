@@ -1,9 +1,9 @@
-import openai from '../services/openai';
+import getOpenAIClient from '../services/openai';
 import { Request, Response } from 'express';
 
 export const healthHandler = async (req: Request, res: Response) => {
   try {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAIClient().chat.completions.create({
       model: "gpt-3.5-turbo", // Use the new supported model
       messages: [
         { role: "system", content: "You are a helpful assistant." },

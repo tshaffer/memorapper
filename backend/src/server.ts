@@ -1,6 +1,6 @@
+import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import routes from './routes/routes';
 import mongoose from 'mongoose';
 import path from 'path';

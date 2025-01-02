@@ -1,5 +1,5 @@
 import { ChatCompletionMessageParam } from 'openai/resources/chat';
-import openai from '../services/openai';
+import getOpenAIClient from '../services/openai';
 import { Request, Response } from 'express';
 import Review, { IReview } from "../models/Review";
 import { extractItemReviews } from '../utilities';
@@ -68,7 +68,7 @@ export const parsePreview = async (sessionId: string, reviewText: string): Promi
   reviewConversations[sessionId].push({ role: "user", content: reviewText });
 
   try {
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAIClient().chat.completions.create({
       model: "gpt-4",
       messages: reviewConversations[sessionId],
       max_tokens: 500,
@@ -110,7 +110,7 @@ export const chatReviewHandler = async (
   reviewConversations[sessionId].push({ role: "user", content: userInput });
 
   try {
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAIClient().chat.completions.create({
       model: "gpt-4",
       messages: [
         ...reviewConversations[sessionId],
