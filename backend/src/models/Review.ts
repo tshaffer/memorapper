@@ -8,6 +8,8 @@ export type ReviewModel = Model<IReview>;
 
 const StructuredReviewPropertiesSchema: Schema = new Schema({
   dateOfVisit: { type: String, required: true },
+  primaryRating: { type: Number, required: true },
+  secondaryRating: { type: Number },
   wouldReturn: {
     type: Number,
     enum: [0, 1, 2, 3], // Explicitly define numeric values

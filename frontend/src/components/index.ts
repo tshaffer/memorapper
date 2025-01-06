@@ -5,5 +5,7 @@ export * from './LocationAutocomplete';
 export * from './MapWIthMarkers';
 export * from './PulsingDots';
 export * from './Query';
+export * from './RestaurantInfoWindow';
+export * from './RestaurantToVisitInfoWindow';
 export * from './RestaurantName';
 export * from './SettingsDialog';

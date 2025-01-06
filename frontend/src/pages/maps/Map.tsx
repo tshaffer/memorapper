@@ -4,7 +4,7 @@ import { Paper, Box, IconButton, useMediaQuery } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import LocationAutocomplete from '../../components/LocationAutocomplete';
 import MapWithMarkers from '../../components/MapWIthMarkers';
-import { ExtendedGooglePlace, FilterResultsParams, Filters, GooglePlace, MemoRappReview, SearchQuery, SearchResponse } from '../../types';
+import { ExtendedGooglePlace, ExtendedGooglePlaceToVisit, FilterResultsParams, Filters, FuturePlace, GooglePlace, MemoRappReview, SearchQuery, SearchResponse } from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
 import PulsingDots from '../../components/PulsingDots';
 import { filterResults } from '../../utilities';
@@ -12,7 +12,7 @@ import { useUserContext } from '../../contexts/UserContext';
 
 const MapPage: React.FC = () => {
   const { _id } = useParams<{ _id: string }>();
-  const { filters, setFilters } = useUserContext();
+  const { settings, setFilters } = useUserContext();
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
@@ -21,6 +21,8 @@ const MapPage: React.FC = () => {
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [places, setPlaces] = useState<GooglePlace[]>([]);
   const [filteredPlaces, setFilteredPlaces] = useState<GooglePlace[]>([]);
+  const [futurePlaces, setFuturePlaces] = useState<GooglePlace[]>([]);
+  const [futurePlacesToVisit, setFuturePlacesToVisit] = useState<FuturePlace[]>([]);
 
   const [reviews, setReviews] = useState<MemoRappReview[]>([]);
 
@@ -35,7 +37,7 @@ const MapPage: React.FC = () => {
         console.error('Geolocation is not supported by this browser.');
         return null;
       }
-    
+
       try {
         const position = await new Promise<GeolocationPosition>((resolve, reject) => {
           navigator.geolocation.getCurrentPosition(
@@ -44,12 +46,12 @@ const MapPage: React.FC = () => {
             { enableHighAccuracy: true }
           );
         });
-    
+
         const location = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
-    
+
         if (!_id) {
           setMapLocation(location);
         }
@@ -61,13 +63,27 @@ const MapPage: React.FC = () => {
         return null;
       }
     };
-    
+
     const fetchPlaces = async (): Promise<GooglePlace[]> => {
       const response = await fetch('/api/places');
       const data = await response.json();
       setPlaces(data.googlePlaces);
       setFilteredPlaces(data.googlePlaces);
       return data.googlePlaces;
+    };
+
+    const fetchFuturePlaces = async (): Promise<GooglePlace[]> => {
+      const response = await fetch('/api/futurePlaces');
+      const data = await response.json();
+      setFuturePlaces(data.googlePlaces);
+      return data.googlePlaces;
+    };
+
+    const fetchFuturePlacesToVisit = async (): Promise<FuturePlace[]> => {
+      const response = await fetch('/api/futurePlacesToVisit');
+      const data = await response.json();
+      setFuturePlacesToVisit(data.futurePlacesToVisit);
+      return data.futurePlacesToVisit;
     };
 
     const fetchReviews = async (): Promise<MemoRappReview[]> => {
@@ -81,10 +97,13 @@ const MapPage: React.FC = () => {
       const location = await fetchCurrentLocation();
       const places = await fetchPlaces();
       const reviews = await fetchReviews();
-      filterOnEntry(places, reviews, location!, filters);
+      filterOnEntry(places, reviews, location!, settings.filters);
     };
 
     fetchData();
+    fetchFuturePlacesToVisit();
+    fetchFuturePlaces();
+
   }, [_id]);
 
   // Update map location based on the provided placeId (_id)
@@ -111,6 +130,26 @@ const MapPage: React.FC = () => {
       ...place,
       reviews: getReviewsForPlace(place.place_id),
     }));
+
+  const getExtendedGooglePlaceToVisit = (place: GooglePlace): ExtendedGooglePlaceToVisit => {
+    const googlePlaceId = place.place_id;
+    const futurePlace: FuturePlace | undefined = futurePlacesToVisit.find((futurePlaceToVisit) => futurePlaceToVisit.place_id === googlePlaceId);
+    return {
+      ...place,
+      comments: futurePlace?.comments || '',
+      rating: futurePlace?.rating || 0,
+    };
+  }
+
+  const getExtendedGooglePlacesToVisit = (): ExtendedGooglePlaceToVisit[] => {
+    const extendedGooglePlacesToVisit: ExtendedGooglePlaceToVisit[] = [];
+    for (const futurePlace of futurePlaces) {
+      const extendedGooglePlaceToVisit: ExtendedGooglePlaceToVisit = getExtendedGooglePlaceToVisit(futurePlace);
+      extendedGooglePlacesToVisit.push(extendedGooglePlaceToVisit);
+    }
+    return extendedGooglePlacesToVisit;
+  }
+
 
   const handleOpenFiltersDialog = () => {
     setShowFiltersDialog(true);
@@ -214,6 +253,7 @@ const MapPage: React.FC = () => {
           key={JSON.stringify({ googlePlaces: filteredPlaces, specifiedLocation: mapLocation })} // Forces re-render on prop change
           initialCenter={mapLocation!}
           locations={getExtendedGooglePlaces(filteredPlaces)}
+          locationsToVisit={getExtendedGooglePlacesToVisit()}
         />
       </div>
     );
@@ -280,7 +320,7 @@ const MapPage: React.FC = () => {
       {/* Filters Dialog */}
       <FiltersDialog
         open={showFiltersDialog}
-        filters={filters}
+        filters={settings.filters}
         onSetFilters={handleSetFilters}
         onClose={handleCloseFiltersDialog}
       />

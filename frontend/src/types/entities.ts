@@ -1,6 +1,18 @@
 import { RestaurantType, WouldReturn } from "./enums";
+import { Filters } from "./frontEndEntities";
 import { GooglePlace } from "./googlePlace";
 import { AddressComponent } from "./place";
+
+export interface RatingsUI {
+  showSecondaryRating: boolean;
+  primaryRatingLabel: string;
+  secondaryRatingLabel: string;
+}
+
+export interface Settings {
+  filters: Filters;
+  ratingsUI: RatingsUI;
+}
 
 export interface MemoRappReview {
   _id?: any;
@@ -9,8 +21,41 @@ export interface MemoRappReview {
   freeformReviewProperties: FreeformReviewProperties;
 }
 
+export interface FuturePlaceRequestBody {
+  _id?: string;
+  place: GooglePlace;
+  comments: string;
+  rating: number;
+}
+
+
+export interface FuturePlace {
+  _id?: any;
+  place_id: string;
+  comments: string;
+  rating: number;
+}
+
+export interface EditableFuturePlace {
+  place: GooglePlace;
+  comments: string;
+  rating: number;
+
+  // review: MemoRappReview;
+}
+
+export interface FuturePlaceData {
+  _id: string;
+  place: GooglePlace | null;
+  comments: string;
+  rating: number | null;
+  restaurantName: string;
+}
+
 export interface StructuredReviewProperties {
   dateOfVisit: string;
+  primaryRating: number;
+  secondaryRating?: number;
   wouldReturn: WouldReturn | null;
   reviewerId: string;
 }

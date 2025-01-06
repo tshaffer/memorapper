@@ -12,6 +12,8 @@ export interface ReviewData {
   place: GooglePlace | null;
   reviewText: string | null;
   dateOfVisit: string | null;
+  primaryRating: number | null;
+  secondaryRating: number | undefined;
   wouldReturn: WouldReturn | null;
   itemReviews: ItemReview[];
   reviewerId: string;

@@ -16,6 +16,8 @@ export interface RestaurantDetailsProps {
 export interface ReviewEntity {
   googlePlace: GooglePlace;
   dateOfVisit: string;
+  primaryRating: number;
+  secondaryRating?: number;
   wouldReturn: WouldReturn | null;
   itemReviews: ItemReview[];
   reviewerId: string;

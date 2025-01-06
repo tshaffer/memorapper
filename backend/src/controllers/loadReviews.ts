@@ -18,6 +18,8 @@ interface TestReview {
   reviewText: string;
   restaurantType: RestaurantType;
   reviewerId: string;
+  primaryRating: number;
+  secondaryRating?: number;
 };
 
 const generateSessionId = () => Math.random().toString(36).substring(2) + Date.now().toString(36);
@@ -28,7 +30,9 @@ const addTestReview = async (
   wouldReturn: WouldReturn | null,
   reviewText: string,
   restaurantType: RestaurantType,
-  reviewerId: string
+  reviewerId: string,
+  primaryRating: number,
+  secondaryRating?: number,
 ): Promise<void> => {
   const sessionId: string = generateSessionId();
 
@@ -46,6 +50,8 @@ const addTestReview = async (
       dateOfVisit,
       wouldReturn,
       reviewerId,
+      primaryRating,
+      secondaryRating,
     },
     freeformReviewProperties: freeformReviewProperties,
   };
@@ -74,8 +80,8 @@ export const addReviewsFromFileHandler = async (
     const reviews: TestReview[] = JSON.parse(data);
 
     for (const review of reviews) {
-      const { restaurantName, reviewText, dateOfVisit, wouldReturn, restaurantType, reviewerId }: TestReview = review;
-      await addTestReview(restaurantName, dateOfVisit, wouldReturn, reviewText, restaurantType, reviewerId);
+      const { restaurantName, reviewText, dateOfVisit, wouldReturn, restaurantType, reviewerId, primaryRating, secondaryRating }: TestReview = review;
+      await addTestReview(restaurantName, dateOfVisit, wouldReturn, reviewText, restaurantType, reviewerId, primaryRating, secondaryRating);
       console.log('review added for ' + restaurantName);
     }
     console.log('All reviews loaded:');

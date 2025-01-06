@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { DistanceAwayFilterValues, Filters, UserEntity } from '../types';
+import { DistanceAwayFilterValues, Filters, RatingsUI, Settings, UserEntity } from '../types';
 
 interface UserContextValue {
   users: UserEntity[];
   currentUser: UserEntity | null;
-  filters: Filters;
+  settings: Settings; // Updated to use the new Settings structure
   setCurrentUser: (user: UserEntity | null) => void;
   setFilters: (filters: Filters) => void;
+  setRatingsUI: (ratingsUI: RatingsUI) => void; // Function to update ratings UI
+  setSettings: (settings: Settings) => void;
   loading: boolean;
   error: string | null;
 }
@@ -17,23 +19,45 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [users, setUsers] = useState<UserEntity[]>([]);
   const [currentUser, setCurrentUser] = useState<UserEntity | null>(null);
 
-  const [filters, _setFilters] = useState<Filters>({
-    distanceAwayFilter: DistanceAwayFilterValues.AnyDistance,
-    isOpenNowFilterEnabled: false,
-    wouldReturnFilter: {
-      enabled: false,
-      values: {
-        yes: false,
-        no: false,
-        notSure: false,
+  const [settings, setSettingsState] = useState<Settings>({
+    filters: {
+      distanceAwayFilter: DistanceAwayFilterValues.AnyDistance,
+      isOpenNowFilterEnabled: false,
+      wouldReturnFilter: {
+        enabled: false,
+        values: {
+          yes: false,
+          no: false,
+          notSure: false,
+        },
       },
+    },
+    ratingsUI: {
+      showSecondaryRating: false,
+      primaryRatingLabel: 'Rating',
+      secondaryRatingLabel: '',
     },
   });
 
   const setFilters = (newFilters: Filters) => {
-    _setFilters(newFilters);
+    setSettingsState((prevSettings) => ({
+      ...prevSettings,
+      filters: newFilters,
+    }));
   };
-    const [loading, setLoading] = useState<boolean>(true);
+
+  const setRatingsUI = (newRatingsUI: RatingsUI) => {
+    setSettingsState((prevSettings) => ({
+      ...prevSettings,
+      ratingsUI: newRatingsUI,
+    }));
+  };
+
+  const setSettings = (newSettings: Settings) => {
+    setSettingsState(newSettings);
+  };
+
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -58,7 +82,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   return (
-    <UserContext.Provider value={{ users, currentUser, setCurrentUser, filters, setFilters, loading, error }}>
+    <UserContext.Provider
+      value={{
+        users,
+        currentUser,
+        settings,
+        setCurrentUser,
+        setFilters,
+        setRatingsUI,
+        setSettings,
+        loading,
+        error,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

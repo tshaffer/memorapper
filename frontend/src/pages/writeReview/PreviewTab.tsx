@@ -25,9 +25,7 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
-  // console.log('ReviewPreviewPanel reviewData:', reviewData);
-
-  const { place, wouldReturn, dateOfVisit, reviewerId, reviewText, itemReviews } = reviewData;
+  const { place, wouldReturn, dateOfVisit, primaryRating, secondaryRating, reviewerId, reviewText, itemReviews } = reviewData;
 
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
@@ -118,6 +116,8 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
           <Typography><strong>Restaurant Type:</strong> {restaurantTypeLabelFromRestaurantType(place.restaurantType)}</Typography>
           <Typography><strong>Reviewer:</strong> {reviewerFromReviewerId()}</Typography>
           <Typography><strong>Date of Visit:</strong> {formatDateToMMDDYYYY(dateOfVisit!) || 'Not provided'}</Typography>
+          <Typography><strong>Rating:</strong> {primaryRating || 'Not provided'}</Typography>
+          <Typography><strong>Secondary Rating:</strong> {secondaryRating || 'Not provided'}</Typography>
           <Typography><strong>Would Return?</strong> {getReturnString()}</Typography>
           <Typography><strong>Review Text:</strong></Typography>
           <Typography>{reviewText}</Typography>

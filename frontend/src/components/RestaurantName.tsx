@@ -1,23 +1,19 @@
 import { useRef } from "react";
 import { Box, TextField } from "@mui/material";
 import { Autocomplete } from '@react-google-maps/api';
-import { GooglePlace, ReviewData } from "../types";
+import { GooglePlace } from "../types";
 import { pickGooglePlaceProperties } from "../utilities";
 
 interface RestaurantNameProps {
-  reviewData: ReviewData;
-  setReviewData: React.Dispatch<React.SetStateAction<ReviewData>>;
+  restaurantName: string;
+  onSetRestaurantName: (restaurantName: string) => any;
   onSetGooglePlace: (googlePlace: GooglePlace) => any;
 }
 
 const RestaurantName: React.FC<RestaurantNameProps> = (props: RestaurantNameProps) => {
 
-  const { reviewData, setReviewData } = props;
+  const { restaurantName, onSetRestaurantName } = props;
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-
-  const handleChange = (field: keyof ReviewData, value: any) => {
-    setReviewData((prev) => ({ ...prev, [field]: value }));
-  };
 
   const handlePlaceChanged = () => {
     if (autocompleteRef.current) {
@@ -29,7 +25,7 @@ const RestaurantName: React.FC<RestaurantNameProps> = (props: RestaurantNameProp
         console.log('Reviews:', place.reviews);
 
         props.onSetGooglePlace(googlePlace);
-        handleChange('restaurantName', googlePlace.name);
+        onSetRestaurantName(googlePlace.name);
       } catch (error) {
         console.error('Error parsing Google Place data: ', error);
       }
@@ -42,7 +38,7 @@ const RestaurantName: React.FC<RestaurantNameProps> = (props: RestaurantNameProp
     }
   };
 
-  // console.log('RestaurantName reviewData:', reviewData);
+  // console.log('RestaurantName restaurantName:', restaurantName);
 
   return (
     <Box>
@@ -53,8 +49,8 @@ const RestaurantName: React.FC<RestaurantNameProps> = (props: RestaurantNameProp
         <TextField
           fullWidth
           label="Restaurant Name"
-          value={reviewData.restaurantName}
-          onChange={(e) => handleChange('restaurantName', e.target.value)}
+          value={restaurantName}
+          onChange={(e) => onSetRestaurantName(e.target.value)}
           placeholder="Enter the restaurant name"
           required
           style={{ marginBottom: 20 }}

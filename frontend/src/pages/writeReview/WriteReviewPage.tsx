@@ -9,12 +9,11 @@ import { ChatMessage, ChatRequestBody, ChatResponse, EditableReview, GooglePlace
 import { getFormattedDate } from "../../utilities";
 import { useUserContext } from '../../contexts/UserContext';
 
-const MultiPanelReviewForm = () => {
+const WriteReviewPage = () => {
 
   const { currentUser } = useUserContext();
 
   const { _id } = useParams<{ _id: string }>();
-  // console.log('MultiPanelReviewForm _id:', _id);
   const location = useLocation();
   const editableReview = location.state as EditableReview | null;
 
@@ -31,6 +30,8 @@ const MultiPanelReviewForm = () => {
     restaurantName: place ? place.name : '',
     reviewText: review ? review.freeformReviewProperties.reviewText : '',
     dateOfVisit: getFormattedDate(),
+    primaryRating: review ? review.structuredReviewProperties.primaryRating : 5,
+    secondaryRating: review ? review.structuredReviewProperties.secondaryRating : undefined,
     wouldReturn: review ? review.structuredReviewProperties.wouldReturn : WouldReturn.Yes,
     itemReviews: review ? review.freeformReviewProperties.itemReviews : [],
     reviewerId: review ? review.structuredReviewProperties.reviewerId : currentUser!.id,
@@ -80,6 +81,8 @@ const MultiPanelReviewForm = () => {
   const handleSubmitReview = async () => {
     const structuredReviewProperties: StructuredReviewProperties = {
       dateOfVisit: reviewData.dateOfVisit!,
+      primaryRating: reviewData.primaryRating!,
+      secondaryRating: reviewData.secondaryRating,
       wouldReturn: reviewData.wouldReturn!,
       reviewerId: reviewData.reviewerId,
     };
@@ -196,4 +199,4 @@ const MultiPanelReviewForm = () => {
   );
 };
 
-export default MultiPanelReviewForm;
+export default WriteReviewPage;

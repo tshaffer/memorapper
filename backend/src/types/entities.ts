@@ -9,8 +9,24 @@ export interface MemoRappReview {
   freeformReviewProperties: FreeformReviewProperties;
 }
 
+export interface FuturePlaceRequestBody {
+  _id?: string;
+  place: GooglePlace;
+  comments: string;
+  rating: number;
+}
+
+export interface FuturePlace {
+  _id?: any;
+  place_id: string;
+  comments: string;
+  rating: number;
+}
+
 interface StructuredReviewProperties {
   dateOfVisit: string;
+  primaryRating: number;
+  secondaryRating?: number;
   wouldReturn: WouldReturn | null;
   reviewerId: string;
 }

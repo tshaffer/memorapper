@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ExtendedGooglePlace, RestaurantType } from '../types';
+import { ExtendedGooglePlace, ExtendedGooglePlaceToVisit, RestaurantType } from '../types';
 import { AdvancedMarker, APIProvider, Map, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace } from '../utilities';
 import '../App.css';
 import RestaurantInfoWindow from './RestaurantInfoWindow';
+import RestaurantToVisitInfoWindow from './RestaurantToVisitInfoWindow';
 
 import { Icon, IconifyIcon } from '@iconify/react';
 
@@ -21,75 +22,78 @@ const DEFAULT_ZOOM = 14;
 
 const iconContainerStyle: React.CSSProperties = {
   position: 'absolute',
-  top: '-16px', // Adjust to align the icon and text vertically
+  top: '-16px',
   left: '50%',
-  transform: 'translate(-50%, -50%)', // Center the icon
-  width: '30px', // Set a fixed size for the icon background
+  transform: 'translate(-50%, -50%)',
+  width: '30px',
   height: '30px',
-  backgroundColor: 'lightgray', // Black circle background
-  borderRadius: '50%', // Make it a circle
-  display: 'flex', // Center the icon inside the circle
+  backgroundColor: 'lightgray',
+  borderRadius: '50%',
+  display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
 };
 
-const textStyle: React.CSSProperties = {
+const textStyle = (color: string): React.CSSProperties => ({
   position: 'absolute',
-  right: '18px', // Adjust to position text to the left of the icon
-  transform: 'translateY(-150%)', // Align text vertically with the icon
-  whiteSpace: 'nowrap', // Prevent text wrapping
-  color: 'red', // Adjust text color
-  fontSize: '14px', // Adjust font size as needed
+  right: '18px',
+  transform: 'translateY(-150%)',
+  whiteSpace: 'nowrap',
+  color, // Dynamic color
+  fontSize: '14px',
   fontWeight: '500',
-  backgroundColor: 'transparent', // Transparent background
+  backgroundColor: 'transparent',
   textShadow: `
     1px 1px 0 white,
     -1px 1px 0 white,
     1px -1px 0 white,
     -1px -1px 0 white
-  `, // Creates a solid outline around the text
-};
+  `,
+});
 
 interface MapWithMarkersProps {
   initialCenter: google.maps.LatLngLiteral;
   locations: ExtendedGooglePlace[];
+  locationsToVisit: ExtendedGooglePlaceToVisit[];
   blueDotLocation?: google.maps.LatLngLiteral;
 }
 
-const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, locations, blueDotLocation }) => {
-
+const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, locations, locationsToVisit, blueDotLocation }) => {
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<ExtendedGooglePlace | null>(null);
+  const [selectedLocationToVisit, setSelectedLocationToVisit] = useState<ExtendedGooglePlaceToVisit | null>(null);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
 
   useEffect(() => {
+
+    // const handleKeyDown = (event: KeyboardEvent) => {
+    //   if ((event.metaKey || event.ctrlKey) && (event.key === '+' || event.key === '=' || event.key === '-')) {
+    //     event.preventDefault();
+    //     if (event.key === '+' || event.key === '=') {
+    //       setZoom(zoom + 1);
+    //     } else if (event.key === '-') {
+    //       setZoom(zoom - 1);
+    //     }
+    //   }
+    // };
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && (event.key === '+' || event.key === '=' || event.key === '-')) {
         event.preventDefault();
-        if (event.key === '+' || event.key === '=') {
-          setZoom(zoom + 1);
-        } else if (event.key === '-') {
-          setZoom(zoom - 1);
-        }
+        setZoom((prevZoom) => (event.key === '+' || event.key === '=') ? prevZoom + 1 : prevZoom - 1);
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+// }, [zoom]);
 
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [zoom]);
 
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setCurrentLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
+        (position) => setCurrentLocation({ lat: position.coords.latitude, lng: position.coords.longitude }),
         (error) => console.error("Error getting current location: ", error),
         { enableHighAccuracy: true }
       );
@@ -100,25 +104,26 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
     <div style={{
       width: '16px',
       height: '16px',
-      backgroundColor: '#4285F4',  // Google blue color
+      backgroundColor: '#4285F4',
       borderRadius: '50%',
-      border: '2px solid #FFFFFF',  // White border
-      boxShadow: '0 0 8px rgba(66, 133, 244, 0.5)',  // Shadow for emphasis
+      border: '2px solid #FFFFFF',
+      boxShadow: '0 0 8px rgba(66, 133, 244, 0.5)',
     }} />
   );
 
   const handleMarkerClick = (location: ExtendedGooglePlace) => {
     setSelectedLocation(location);
+    setSelectedLocationToVisit(null);
+  };
+
+  const handleLocationToVisitClick = (location: ExtendedGooglePlaceToVisit) => {
+    setSelectedLocationToVisit(location);
+    setSelectedLocation(null);
   };
 
   const handleCloseInfoWindow = () => {
     setSelectedLocation(null);
-  };
-
-  const handleZoomChanged = (event: MapCameraChangedEvent) => {
-    // console.log('handleZoomChanged event: ', event);
-    // console.log('event.detail.zoom: ', event.detail.zoom);
-    setZoom(event.detail.zoom);
+    setSelectedLocationToVisit(null);
   };
 
   const iconFromRestaurantType = (restaurantType: RestaurantType): IconifyIcon => {
@@ -141,84 +146,69 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
     return restaurantIcon;
   }
 
-  const renderMarker = (location: ExtendedGooglePlace, index: number): JSX.Element => {
-    return (
-      <AdvancedMarker
-        key={index}
-        position={getLatLngFromPlace(location)}
-        onClick={() => handleMarkerClick(location)}
-      >
-        <div style={{ position: 'relative' }}>
-          <div style={textStyle}>{location.name}</div>
-          <div style={iconContainerStyle}>
-            <Icon icon={iconFromRestaurantType(location.restaurantType)} style={{ fontSize: '30px', color: 'red' }} />
-          </div>
+  const renderMarker = (location: ExtendedGooglePlace, index: number): JSX.Element => (
+    <AdvancedMarker
+      key={`location-${index}`}
+      position={getLatLngFromPlace(location)}
+      onClick={() => handleMarkerClick(location)}
+    >
+      <div style={{ position: 'relative' }}>
+        <div style={textStyle('red')}>{location.name}</div>
+        <div style={iconContainerStyle}>
+          <Icon icon={iconFromRestaurantType(location.restaurantType)} style={{ fontSize: '30px', color: 'red' }} />
         </div>
-      </AdvancedMarker>
-    );
-  };
+      </div>
+    </AdvancedMarker>
+  );
 
-  const renderMarkers = (): JSX.Element[] => {
-    const elements: JSX.Element[] = [];
-    for (let i = 0; i < locations.length; i++) {
-      elements.push(renderMarker(locations[i], i));
-    }
-    return elements;
-  }
+  const renderLocationToVisitMarker = (location: ExtendedGooglePlaceToVisit, index: number): JSX.Element => (
+    <AdvancedMarker
+      key={`locationToVisit-${index}`}
+      position={getLatLngFromPlace(location)}
+      onClick={() => handleLocationToVisitClick(location)}
+    >
+      <div style={{ position: 'relative' }}>
+        <div style={textStyle('blue')}>{location.name}</div>
+        <div style={iconContainerStyle}>
+          <Icon icon={restaurantIcon} style={{ fontSize: '30px', color: 'blue' }} />
+        </div>
+      </div>
+    </AdvancedMarker>
+  );
 
   const googleMapsApiKey = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!;
-  console.log('MapWithMarkers::googleMapsApiKey:', googleMapsApiKey);
-  
-  const locationMarkers: JSX.Element[] = renderMarkers();
-
-  const getBlueDotLocation = (): google.maps.LatLngLiteral | null => {
-    if (blueDotLocation) {
-      return blueDotLocation;
-    } else {
-      return currentLocation;
-    }
-  }
-
-  // console.log('MapWithMarkers render:', initialCenter, locations, currentLocation, selectedLocation, zoom);
-  // console.log('MapWithMarkers render:');
-  // console.log(locations);
 
   return (
-    <APIProvider
-      apiKey={googleMapsApiKey}
-      version="beta"
-    >
+    <APIProvider apiKey={googleMapsApiKey} version="beta">
       <Map
         style={{ width: '100%', height: '100%' }}
         id="gmap"
         mapId="1ca0b6526e7d4819"
         defaultCenter={initialCenter}
         zoom={zoom}
-        onZoomChanged={(event) => handleZoomChanged(event)}
+        onZoomChanged={(event) => setZoom(event.detail.zoom)}
         fullscreenControl={false}
-        zoomControl={true}
-        gestureHandling={'greedy'}
-        scrollwheel={true}
-
+        zoomControl
+        gestureHandling="greedy"
+        scrollwheel
         mapTypeControl={false}
         streetViewControl={false}
         rotateControl={false}
         scaleControl={false}
-
       >
-        {locationMarkers}
+        {locations.map((location, index) => renderMarker(location, index))}
+        {locationsToVisit.map((location, index) => renderLocationToVisitMarker(location, index))}
         {currentLocation && (
-          <AdvancedMarker position={getBlueDotLocation()}>
+          <AdvancedMarker position={blueDotLocation || currentLocation}>
             <CustomBlueDot />
           </AdvancedMarker>
         )}
-        {selectedLocation &&
-          (
-            <RestaurantInfoWindow
-              location={selectedLocation!}
-              onClose={handleCloseInfoWindow}
-            />
-          )}
+        {selectedLocation && (
+          <RestaurantInfoWindow location={selectedLocation} onClose={handleCloseInfoWindow} />
+        )}
+        {selectedLocationToVisit && (
+          <RestaurantToVisitInfoWindow location={selectedLocationToVisit} onClose={handleCloseInfoWindow} />
+        )}
       </Map>
     </APIProvider>
   );

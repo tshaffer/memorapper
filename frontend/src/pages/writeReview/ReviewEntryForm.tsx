@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, Select, TextField, useMediaQuery } from '@mui/material';
+import { Box, Button, FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, Select, Slider, TextField, useMediaQuery } from '@mui/material';
 import RestaurantName from '../../components/RestaurantName';
 import '../../styles/multiPanelStyles.css';
 import { useEffect, useState } from 'react';
@@ -41,6 +41,18 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     }
   }, [reviewData.sessionId]);
 
+  const handleSetRestaurantName = (name: string) => {
+    setReviewData((prev) => ({ ...prev, restaurantName: name }));
+  }
+
+  const handlePrimaryRatingChange = (_: Event, value: number | number[]) => {
+    setReviewData((prev) => ({ ...prev, primaryRating: value as number }));
+  };
+
+  const handleSecondaryRatingChange = (_: Event, value: number | number[]) => {
+    setReviewData((prev) => ({ ...prev, secondaryRating: value as number }));
+  };
+
   const handlePreview = async () => {
     if (!reviewData.sessionId) return;
     try {
@@ -53,22 +65,28 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     setIsLoading(false);
   };
 
-  const renderPulsingDots = (): JSX.Element | null => {
-    if (!isLoading) {
-      return null;
-    }
-    return (<PulsingDots />);
-  };
+  const renderRestaurantName = (): JSX.Element => {
+    return (
+      <>
+        <label htmlFor="restaurant-name">Restaurant Name (Required):</label>
+        <RestaurantName
+          restaurantName={reviewData.restaurantName}
+          onSetRestaurantName={handleSetRestaurantName}
+          onSetGooglePlace={(place) => handleChange('place', place)}
+        />
+      </>
+    );
+  }
 
-  const renderRestaurantType = () => {
-    if (!reviewData.place) return null;
+  const renderRestaurantType = (): JSX.Element => {
+    const value = reviewData ?  (reviewData.place ? reviewData.place!.restaurantType.toString() : 0) : 0;
     return (
       <>
         <label>Restaurant Type (Required):</label>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={reviewData.place ? reviewData.place!.restaurantType.toString() : 0}
+          value={value}
           onChange={(event) => handleRestaurantTypeChange(event.target.value as RestaurantType)}
         >
           <MenuItem value={RestaurantType.Generic}>Restaurant</MenuItem>
@@ -84,8 +102,23 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     );
   }
 
-  const renderReviewer = () => {
+  const renderReviewText = (): JSX.Element => {
+    return (
+      <>
+        <label>Review Text (Required):</label>
+        <TextField
+          label="Review Text"
+          fullWidth
+          multiline
+          rows={4}
+          value={reviewData.reviewText}
+          onChange={(e) => handleChange('reviewText', e.target.value)}
+        />
+      </>
+    );
+  }
 
+  const renderReviewer = (): JSX.Element => {
     return (
       <>
         <label>Reviewer:</label>
@@ -105,8 +138,137 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     );
   }
 
-  return (
+  const renderDateOfVisit = (): JSX.Element => {
+    return (
+      <TextField
+        fullWidth
+        type="date"
+        value={reviewData.dateOfVisit}
+        onChange={(e) => handleChange('dateOfVisit', e.target.value)}
+        // placeholder="mm/dd/yyyy"
+        label="Date of Visit"
+      />
+    )
+  }
 
+  const renderRatings = (): JSX.Element => {
+    const { settings } = useUserContext();
+    return (
+      <>
+        <label>Ratings</label>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "fit-content(300px) 200px", // First column auto-sizes up to a maximum of 300px
+            gridAutoRows: "auto", // Each row's height adjusts to its content
+            gap: 2, // Optional: spacing between items
+          }}
+        >
+          {/* Primary Rating */}
+          <Box
+            sx={{
+              border: "1px solid",
+              padding: "0px 15px 0px 10px",
+              display: "flex",
+              justifyContent: "left",
+              alignItems: "center", // Optional: centers vertically if needed
+            }}
+          >
+            <FormLabel>{settings.ratingsUI.primaryRatingLabel}</FormLabel>
+          </Box>
+          <Box
+            sx={{
+              border: "1px solid",
+              padding: 1,
+              display: "flex", // Use flexbox
+              justifyContent: "center", // Horizontally center the content
+            }}
+          >
+            <Slider
+              sx={{ width: '150px' }}
+              defaultValue={5}
+              value={reviewData.primaryRating || 0}
+              valueLabelDisplay="auto"
+              step={1}
+              marks
+              min={0}
+              max={10}
+              onChange={handlePrimaryRatingChange}
+            />
+          </Box>
+          {/* Secondary Rating */}
+          {settings.ratingsUI.showSecondaryRating && (
+            <>
+              <Box
+                sx={{
+                  border: "1px solid",
+                  padding: "0px 15px 0px 10px",
+                  display: "flex",
+                  justifyContent: "left",
+                  alignItems: "center", // Optional: centers vertically if needed
+                }}
+              >
+                <FormLabel>{settings.ratingsUI.secondaryRatingLabel}</FormLabel>
+              </Box>
+              <Box
+                sx={{
+                  border: "1px solid",
+                  padding: 1,
+                  display: "flex", // Use flexbox
+                  justifyContent: "center", // Horizontally center the content
+                }}
+              >
+                <Slider
+                  sx={{ width: '150px' }}
+                  defaultValue={5}
+                  value={reviewData.secondaryRating || 0}
+                  valueLabelDisplay="auto"
+                  step={1}
+                  marks
+                  min={0}
+                  max={10}
+                  onChange={handleSecondaryRatingChange}
+                />
+              </Box>
+            </>
+          )}
+        </Box>
+      </>
+    );
+  }
+
+  const renderWouldReturn = (): JSX.Element => {
+    return (
+      <FormControl component="fieldset" style={{ marginTop: 20, width: '100%' }}>
+        <FormLabel component="legend">Would Return</FormLabel>
+        <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+          <RadioGroup
+            row
+            name="would-return"
+            value={reviewData.wouldReturn}
+            onChange={(e) => handleChange('wouldReturn', parseInt(e.target.value))}
+          >
+            <FormControlLabel value={WouldReturn.Yes} control={<Radio />} label="Yes" />
+            <FormControlLabel value={WouldReturn.No} control={<Radio />} label="No" />
+            <FormControlLabel value={WouldReturn.NotSure} control={<Radio />} label="Not Sure" />
+          </RadioGroup>
+          <Button onClick={() => handleChange('wouldReturn', null)} size="small">
+            Clear
+          </Button>
+        </Box>
+      </FormControl>
+    );
+  }
+
+  const renderPulsingDots = (): JSX.Element | null => {
+    if (!isLoading) {
+      return null;
+    }
+    return (<PulsingDots />);
+  };
+
+
+  return (
     <div
       id="form"
       className="tab-panel active"
@@ -115,55 +277,13 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
       }}
     >
       <form id='add-review-form'>
-        <label htmlFor="restaurant-name">Restaurant Name (Required):</label>
-        <RestaurantName
-          reviewData={reviewData}
-          setReviewData={setReviewData}
-          onSetGooglePlace={(place) => handleChange('place', place)}
-        />
-
+        {renderRestaurantName()}
         {renderRestaurantType()}
-
-        <label>Review Text (Required):</label>
-        <TextField
-          label="Review Text"
-          fullWidth
-          multiline
-          rows={4}
-          value={reviewData.reviewText}
-          onChange={(e) => handleChange('reviewText', e.target.value)}
-        />
-
+        {renderReviewText()}
         {renderReviewer()}
-
-        <TextField
-          fullWidth
-          type="date"
-          value={reviewData.dateOfVisit}
-          onChange={(e) => handleChange('dateOfVisit', e.target.value)}
-          // placeholder="mm/dd/yyyy"
-          label="Date of Visit"
-        />
-
-        <FormControl component="fieldset" style={{ marginTop: 20, width: '100%' }}>
-          <FormLabel component="legend">Would Return</FormLabel>
-          <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
-            <RadioGroup
-              row
-              name="would-return"
-              value={reviewData.wouldReturn}
-              onChange={(e) => handleChange('wouldReturn', parseInt(e.target.value))}
-            >
-              <FormControlLabel value={WouldReturn.Yes} control={<Radio />} label="Yes" />
-              <FormControlLabel value={WouldReturn.No} control={<Radio />} label="No" />
-              <FormControlLabel value={WouldReturn.NotSure} control={<Radio />} label="Not Sure" />
-            </RadioGroup>
-            <Button onClick={() => handleChange('wouldReturn', null)} size="small">
-              Clear
-            </Button>
-          </Box>
-        </FormControl>
-
+        {renderDateOfVisit()}
+        {renderRatings()}
+        {renderWouldReturn()}
       </form>
 
       <Button
@@ -176,7 +296,6 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
       {renderPulsingDots()}
 
     </div>
-
   );
 };
 

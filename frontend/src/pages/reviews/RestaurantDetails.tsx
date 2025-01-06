@@ -124,6 +124,8 @@ const RestaurantDetails: React.FC = () => {
       <Typography>
         <strong>Date of Visit:</strong> {review.structuredReviewProperties.dateOfVisit || 'Unknown'}
       </Typography>
+      <Typography><strong>Rating:</strong> {review.structuredReviewProperties.primaryRating || 'Not provided'}</Typography>
+      <Typography><strong>Secondary Rating:</strong> {review.structuredReviewProperties.secondaryRating || 'Not provided'}</Typography>
       <Typography>
         <strong>Would Return:</strong>{' '}
         {review.structuredReviewProperties.wouldReturn === null

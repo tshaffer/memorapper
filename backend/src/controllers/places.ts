@@ -3,6 +3,7 @@ import MongoPlace, { IMongoPlace } from "../models/MongoPlace";
 import { GoogleGeometry, GooglePlace, MongoGeometry, MongoPlaceEntity } from "../types";
 import { getMongoGeometryFromGoogleGeometry } from "./googlePlaces";
 import { convertMongoPlacesToGooglePlaces } from '../utilities';
+import FuturePlace, { IFuturePlace } from '../models/FuturePlace';
 
 export const getPlace = async (placeId: any): Promise<IMongoPlace | null> => {
   try {
@@ -16,8 +17,49 @@ export const getPlace = async (placeId: any): Promise<IMongoPlace | null> => {
 export const getPlaces = async (request: Request, response: Response, next: any) => {
   try {
     const mongoPlaces: IMongoPlace[] = await MongoPlace.find({}).exec();
-    const googlePlaces: GooglePlace[] = convertMongoPlacesToGooglePlaces(mongoPlaces);
+    const futurePlaces: IFuturePlace[] = await FuturePlace.find({}).exec();
+    const visitedPlaces: IMongoPlace[] = mongoPlaces.filter(
+      (mongoPlace) => !futurePlaces.some((futurePlace) => futurePlace.place_id === mongoPlace.place_id)
+    );
+    const googlePlaces: GooglePlace[] = convertMongoPlacesToGooglePlaces(visitedPlaces);
     response.status(200).json({ googlePlaces });
+    return;
+  } catch (error) {
+    console.error('Error retrieving reviews:', error);
+    response.status(500).json({ error: 'An error occurred while retrieving the reviews.' });
+    return;
+  }
+}
+
+export const getFuturePlaces = async (request: Request, response: Response, next: any) => {
+  try {
+    const futurePlaces: IFuturePlace[] = await FuturePlace.find({}).exec();
+    // Extract all place_id values from futurePlaces
+    const futurePlaceIds = futurePlaces.map((futurePlace) => futurePlace.place_id);
+
+    // Find all MongoPlaces with a matching place_id
+    const futureMongoPlaces: IMongoPlace[] = await MongoPlace.find({
+      place_id: { $in: futurePlaceIds }
+    }).exec();
+
+    const googlePlaces: GooglePlace[] = convertMongoPlacesToGooglePlaces(futureMongoPlaces);
+    
+    response.status(200).json({ googlePlaces });
+    return;
+  } catch (error) {
+    console.error('Error retrieving reviews:', error);
+    response.status(500).json({ error: 'An error occurred while retrieving the reviews.' });
+    return;
+  }
+}
+
+export const getFuturePlacesToVisit = async (request: Request, response: Response, next: any) => {
+  try {
+    const futurePlaces: IFuturePlace[] = await FuturePlace.find({}).exec();
+    const futurePlacesToVisit: FuturePlace[] = futurePlaces.map((futurePlace) => {
+      return futurePlace.toObject();
+    });
+    response.status(200).json({ futurePlacesToVisit });
     return;
   } catch (error) {
     console.error('Error retrieving reviews:', error);

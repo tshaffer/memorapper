@@ -1,61 +1,127 @@
 import { useState } from "react";
-import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
-import { Box, Button, Tooltip } from '@mui/material';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Checkbox,
+  FormControlLabel,
+  Box,
+  Button,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 
 import FiltersSettings from "./FilterSettings";
-import { Filters, WouldReturnFilter } from "../types";
+import { Filters, Settings, RatingsUI } from "../types";
 
 export interface SettingsDialogPropsFromParent {
   open: boolean;
   onClose: () => void;
-  filters: Filters;
-  onSetSettings: (
-    filters: Filters,
-  ) => void;
+  settings: Settings;
+  onSetSettings: (settings: Settings) => void;
 }
 
-export interface SettingsDialogProps extends SettingsDialogPropsFromParent {
-}
+export interface SettingsDialogProps extends SettingsDialogPropsFromParent {}
 
 const SettingsDialog: React.FC<SettingsDialogProps> = (props: SettingsDialogProps) => {
+  const [filters, setFilters] = useState<Filters>(props.settings.filters);
+  const [ratingsUI, setRatingsUI] = useState<RatingsUI>(props.settings.ratingsUI);
 
-  const [distanceAwayFilter, setDistanceAwayFilter] = useState<number>(props.filters.distanceAwayFilter);
-  const [wouldReturnFilter, setWouldReturnFilter] = useState<WouldReturnFilter>(props.filters.wouldReturnFilter);
-  const [isOpenNowFilterEnabled, setIsOpenNowFilterEnabled] = useState(props.filters.isOpenNowFilterEnabled);
+  const handleUpdateFilters = (updatedFilters: Filters) => {
+    setFilters(updatedFilters);
+  };
 
-  const handleUpdateFilters = (filters: Filters) => {
-    setDistanceAwayFilter(filters.distanceAwayFilter);
-    setIsOpenNowFilterEnabled(filters.isOpenNowFilterEnabled);
-    setWouldReturnFilter(filters.wouldReturnFilter);
-  }
-
-  function handleSetSettings(): void {
-    props.onSetSettings({ distanceAwayFilter, isOpenNowFilterEnabled, wouldReturnFilter });
+  const handleSetSettings = () => {
+    const updatedSettings: Settings = {
+      filters,
+      ratingsUI,
+    };
+    props.onSetSettings(updatedSettings);
     props.onClose();
-  }
+  };
 
   const handleClose = () => {
     props.onClose();
-  }
+  };
 
   return (
     <Dialog onClose={props.onClose} open={props.open}>
-      <DialogTitle>Filters</DialogTitle>
-      <DialogContent style={{ paddingBottom: '0px' }}>
-        <Box sx={{ padding: '8px', overflowY: 'auto' }}>
-          <FiltersSettings
-            filters={{
-              distanceAwayFilter,
-              wouldReturnFilter,
-              isOpenNowFilterEnabled,
+      <DialogTitle>Settings</DialogTitle>
+      <DialogContent style={{ paddingBottom: "0px" }}>
+        <Box sx={{ padding: "8px", overflowY: "auto" }}>
+          {/* Ratings UI Section */}
+          <Box
+            sx={{
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              padding: "16px",
+              marginBottom: "16px",
             }}
-            onUpdateFilters={handleUpdateFilters}
-          />
+          >
+            <Typography variant="h6" component="div" gutterBottom>
+              Ratings UI
+            </Typography>
+            <TextField
+              label="Primary Rating Label"
+              value={ratingsUI.primaryRatingLabel}
+              onChange={(e) =>
+                setRatingsUI((prev) => ({
+                  ...prev,
+                  primaryRatingLabel: e.target.value,
+                }))
+              }
+              fullWidth
+              margin="dense"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={ratingsUI.showSecondaryRating}
+                  onChange={(e) =>
+                    setRatingsUI((prev) => ({
+                      ...prev,
+                      showSecondaryRating: e.target.checked,
+                    }))
+                  }
+                />
+              }
+              label="Show Secondary Rating"
+            />
+            <TextField
+              label="Secondary Rating Label"
+              value={ratingsUI.secondaryRatingLabel}
+              onChange={(e) =>
+                setRatingsUI((prev) => ({
+                  ...prev,
+                  secondaryRatingLabel: e.target.value,
+                }))
+              }
+              fullWidth
+              margin="dense"
+              disabled={!ratingsUI.showSecondaryRating} // Disable unless checkbox is checked
+            />
+          </Box>
+
+          {/* Filter Settings Section */}
+          <Box
+            sx={{
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              padding: "16px",
+            }}
+          >
+            <Typography variant="h6" component="div" gutterBottom>
+              Filters
+            </Typography>
+            <FiltersSettings filters={filters} onUpdateFilters={handleUpdateFilters} />
+          </Box>
         </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Tooltip title="Press Enter to set the filters" arrow>
+        <Tooltip title="Press Enter to save settings" arrow>
           <Button
             onClick={handleSetSettings}
             autoFocus

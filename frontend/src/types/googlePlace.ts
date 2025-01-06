@@ -5,6 +5,11 @@ export interface ExtendedGooglePlace extends GooglePlace {
   reviews: MemoRappReview[];
 }
 
+export interface ExtendedGooglePlaceToVisit extends GooglePlace {
+  comments: string;
+  rating: number;
+}
+
 export interface GooglePlace extends MemoRappPlace {
   geometry?: GoogleGeometry;
 }

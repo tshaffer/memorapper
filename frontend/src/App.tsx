@@ -12,12 +12,13 @@ import './App.css';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } from '@mui/material';
 import { Menu, MenuItem } from '@mui/material';
 import Map from './pages/maps/Map';
-import MultiPanelReviewForm from './pages/writeReview/WriteReviewPage';
+import WriteReviewPage from './pages/writeReview/WriteReviewPage';
 import RestaurantDetails from './pages/reviews/RestaurantDetails';
 import Search from './pages/reviews/Search';
 import { useUserContext } from './contexts/UserContext';
-import { DistanceAwayFilterValues, Filters, UserEntity, WouldReturnFilter } from './types';
+import { DistanceAwayFilterValues, Settings, UserEntity } from './types';
 import SettingsDialog from './components/SettingsDialog';
+import FuturePlaceForm from './pages/futurePlaces/FuturePlaceForm';
 
 // soft orange: #FFA07A
 // other possibilities
@@ -32,7 +33,7 @@ const activeButtonStyle: React.CSSProperties = {
 };
 
 const App: React.FC = () => {
-  const { users, currentUser, setCurrentUser, filters, setFilters, loading, error } = useUserContext();
+  const { users, currentUser, setCurrentUser, settings, setSettings, setFilters, setRatingsUI, loading, error } = useUserContext();
   const isMobile = useMediaQuery('(max-width:768px)');
   const location = useLocation(); // Track the current route
 
@@ -57,33 +58,42 @@ const App: React.FC = () => {
       return defaultUser;
     }
 
-    const getFilters = (): Filters => {
-      const defaultFilters: string | null = localStorage.getItem('defaultFilters');
-      if (defaultFilters) {
-        return JSON.parse(defaultFilters);
+    const getAppSettings = (): Settings => {
+      const appSettings: string | null = localStorage.getItem('appSettings');
+      if (appSettings) {
+        return JSON.parse(appSettings);
       } else {
-        const filters: Filters = {
-          distanceAwayFilter: DistanceAwayFilterValues.AnyDistance,
-          isOpenNowFilterEnabled: false,
-          wouldReturnFilter: {
-            enabled: false,
-            values: {
-              yes: false,
-              no: false,
-              notSure: false,
-            },
+        const settings: Settings = {
+          filters: {
+            distanceAwayFilter: DistanceAwayFilterValues.AnyDistance,
+            isOpenNowFilterEnabled: false,
+            wouldReturnFilter: {
+              enabled: false,
+              values: {
+                yes: false,
+                no: false,
+                notSure: false,
+              },
+            }
+          },
+          ratingsUI: {
+            primaryRatingLabel: 'Rating',
+            showSecondaryRating: false,
+            secondaryRatingLabel: '',
           }
         };
-        localStorage.setItem('defaultFilters', JSON.stringify(filters));
-        return filters;
+        localStorage.setItem("appSettings", JSON.stringify(settings));
+        return settings;
       }
     }
 
     const currentUser: UserEntity | null = getCurrentUser();
     setCurrentUser(currentUser);
 
-    const defaultFilters: Filters = getFilters();
-    setFilters(defaultFilters);
+    const appSettings: Settings = getAppSettings();
+    setSettings(appSettings);
+    setFilters(appSettings.filters);
+    setRatingsUI(appSettings.ratingsUI);
 
   }, [users]);
 
@@ -113,10 +123,13 @@ const App: React.FC = () => {
     setSettingsAnchorEl(null);
   };
 
-  function handleSetSettings(filters: Filters): void {
-    setFilters(filters);
-    localStorage.setItem('defaultFilters', JSON.stringify(filters));
-  }
+  const handleSetSettings = (updatedSettings: Settings) => {
+    // Update settings using the UserContext's setSettings
+    setSettings(updatedSettings);
+
+    // Persist the updated settings to localStorage
+    localStorage.setItem("appSettings", JSON.stringify(updatedSettings));
+  };
 
   const isActive = (path: string) => location.pathname === path; // Check if the button corresponds to the current route
 
@@ -135,8 +148,10 @@ const App: React.FC = () => {
         <Route path="/restaurantDetails" element={<RestaurantDetails />} />
         <Route path="/map" element={<Map />} />
         <Route path="/map/:_id" element={<Map />} />
-        <Route path="/write-review" element={<MultiPanelReviewForm />} />
-        <Route path="/write-review/:_id" element={<MultiPanelReviewForm />} />
+        <Route path="/write-review" element={<WriteReviewPage />} />
+        <Route path="/write-review/:_id" element={<WriteReviewPage />} />
+        <Route path="/add-place" element={<FuturePlaceForm />} />
+        <Route path="/add-place/:_id" element={<FuturePlaceForm />} />
       </Routes>
     );
   }
@@ -170,6 +185,9 @@ const App: React.FC = () => {
                 <IconButton color="inherit" component={Link} to="/write-review">
                   <EditIcon />
                 </IconButton>
+                <IconButton color="inherit" component={Link} to="/add-place">
+                  <EditIcon />
+                </IconButton>
               </>
             ) : (
               // Render labels for desktop
@@ -195,6 +213,13 @@ const App: React.FC = () => {
                 >
                   Write Review
                 </Button>
+                <Button
+                  style={isActive('/add-place') ? activeButtonStyle : { color: 'white' }}
+                  component={Link}
+                  to="/add-place"
+                >
+                  Add Place
+                </Button>
               </>
             )}
             <IconButton onClick={handleOpenAccountDropdown} color="inherit">
@@ -219,9 +244,9 @@ const App: React.FC = () => {
         </Menu>
         <SettingsDialog
           open={settingsAnchorEl !== null}
-          filters={filters}
-          onSetSettings={handleSetSettings}
           onClose={handleCloseSettingsDialog}
+          settings={settings}
+          onSetSettings={handleSetSettings}
         />
       </Box >
     </GoogleMapsProvider >
