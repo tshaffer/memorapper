@@ -43,9 +43,9 @@ const addTestReview = async (
 
   const newMongoPlace: IMongoPlace | null = await addPlace(place);
 
-  const placeId: string = place.place_id;
+  const googlePlaceId: string = place.googlePlaceId;
   const addReviewBody: MemoRappReview = {
-    place_id: placeId,
+    googlePlaceId,
     structuredReviewProperties: {
       dateOfVisit,
       wouldReturn,
@@ -100,8 +100,6 @@ const getRestaurantProperties = async (restaurantName: string): Promise<GooglePl
 
   try {
     const place: google.maps.places.PlaceResult = await getGooglePlace(url);
-    const placeDetails: GooglePlaceDetails | null = await getGooglePlaceDetails(place!.place_id!);
-    // const restaurantProperties: GooglePlace = pickGooglePlaceProperties(placeDetails!)
     const restaurantProperties: GooglePlace = pickGooglePlaceProperties(place);
     return restaurantProperties;
 
@@ -126,29 +124,6 @@ const getGooglePlace = async (url: string): Promise<google.maps.places.PlaceResu
   catch (error) {
     console.error('Error with Google Places API:', error);
     throw error;
-  }
-}
-
-const getGooglePlaceDetails = async (placeId: string): Promise<GooglePlaceDetails | null> => {
-  try {
-    const response: any = await axios.get(
-      GOOGLE_PLACE_DETAILS_BASE_URL,
-      {
-        params: {
-          place_id: placeId,
-          key: GOOGLE_PLACES_API_KEY,
-        },
-      }
-    );
-
-    // console.log('getPlaceResult response:', response.data);
-
-    const placeDetailsResponse: GooglePlaceDetailsResponse = response.data;
-    const googlePlaceDetails: GooglePlaceDetails = placeDetailsResponse.result;
-    return googlePlaceDetails;
-  } catch (error) {
-    console.error("Error fetching city name:", error);
-    return null;
   }
 }
 
@@ -177,7 +152,7 @@ const getRestaurantType = (googlePlaceResult: google.maps.places.PlaceResult): R
 
 export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.PlaceResult): GooglePlace {
   const googlePlace: GooglePlace = {
-    place_id: googlePlaceResult.place_id!,
+    googlePlaceId: googlePlaceResult.place_id!,
     name: googlePlaceResult.name!,
     address_components: googlePlaceResult.address_components,
     formatted_address: googlePlaceResult.formatted_address!,

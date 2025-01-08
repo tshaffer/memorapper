@@ -18,7 +18,7 @@ import Search from './pages/reviews/Search';
 import { useUserContext } from './contexts/UserContext';
 import { DistanceAwayFilterValues, Settings, UserEntity } from './types';
 import SettingsDialog from './components/SettingsDialog';
-import FuturePlaceForm from './pages/futurePlaces/FuturePlaceForm';
+import DesiredRestaurantForm from './pages/desiredRestaurants/DesiredRestaurantForm';
 
 // soft orange: #FFA07A
 // other possibilities
@@ -150,8 +150,8 @@ const App: React.FC = () => {
         <Route path="/map/:_id" element={<Map />} />
         <Route path="/write-review" element={<WriteReviewPage />} />
         <Route path="/write-review/:_id" element={<WriteReviewPage />} />
-        <Route path="/add-place" element={<FuturePlaceForm />} />
-        <Route path="/add-place/:_id" element={<FuturePlaceForm />} />
+        <Route path="/add-place" element={<DesiredRestaurantForm />} />
+        <Route path="/add-place/:_id" element={<DesiredRestaurantForm />} />
       </Routes>
     );
   }

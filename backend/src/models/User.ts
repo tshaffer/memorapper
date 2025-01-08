@@ -1,15 +1,19 @@
-import mongoose from 'mongoose';
-import { UserEntity } from '../types/entities';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
-const UserSchema = new mongoose.Schema(
-  {
-    id: { type: String, required: true },
-    userName: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    email: { type: String, required: true },
-  },
-);
+export interface IUser extends Document {
+  id: string;
+  userName: string;
+  password: string;
+  email: string;
+}
 
-const UserModel = mongoose.model<UserEntity>("User", UserSchema);
+const UserSchema: Schema = new Schema({
+  id: { type: String, required: true, unique: true },
+  userName: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+});
+
+const UserModel: Model<IUser>  = mongoose.model<IUser>('User', UserSchema);
 
 export default UserModel;

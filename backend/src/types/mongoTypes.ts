@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import { MemoRappPlace } from "./entities";
+import { BasePlace } from "./entities";
 import { IMongoPlace, IReview } from "../models";
 
-export interface MongoPlaceEntity extends MemoRappPlace{
+export interface MongoPlace extends BasePlace {
   _id?: mongoose.Types.ObjectId;
   geometry?: MongoGeometry;
 }

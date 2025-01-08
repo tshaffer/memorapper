@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { IMongoPlace, IReview } from "../models";
-import MongoPlace from "../models/MongoPlace";
+import MongoPlaceModel from "../models/MongoPlace";
 import Review from "../models/Review";
 import { QueryResponse, GooglePlace, ParsedQuery, StructuredQueryParams, FilterResultsParams, SearchResponse, SearchQuery } from "../types";
 import { convertMongoPlacesToGooglePlaces } from "../utilities";
@@ -23,7 +23,7 @@ export const searchAndFilterHandler = async (
 
     if (!query) {
 
-      nlPlaces = await MongoPlace.find({});
+      nlPlaces = await MongoPlaceModel.find({});
       nlReviews = await Review.find({});
 
     } else {
@@ -39,7 +39,7 @@ export const searchAndFilterHandler = async (
           buildStructuredQueryParamsFromParsedQuery(parsedQuery);
         naturalLanguageResponse = await performStructuredQuery(structuredQueryParams);
       } else if (queryType === 'full-text') {
-        const places = await MongoPlace.find({});
+        const places = await MongoPlaceModel.find({});
         const reviews = await Review.find({});
         naturalLanguageResponse = await performNaturalLanguageQuery(
           query,

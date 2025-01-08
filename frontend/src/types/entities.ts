@@ -3,6 +3,58 @@ import { Filters } from "./frontEndEntities";
 import { GooglePlace } from "./googlePlace";
 import { AddressComponent } from "./place";
 
+export interface UserEntity {
+  id: string;
+  userName: string;
+  password: string;
+  email: string;
+}
+
+export interface Contributor {
+  id: string;
+  userId: string; // Foreign key to UserEntity
+  name: string;
+}
+
+export interface ContributorRating {
+  contributorId: string; // Foreign key to Contributor
+  rating: number;
+}
+
+export interface VisitedRestaurant {
+  _id?: string;
+  googlePlaceId: string;
+  ratings?: ContributorRating[]; // List of ratings per contributor
+  comments?: string;
+}
+
+export interface DesiredRestaurant {
+  _id?: string;
+  googlePlace: GooglePlace | undefined;
+  restaurantName: string;
+  interestLevel: number;
+  comments: string;
+}
+
+export interface EditableDesiredRestaurant {
+  googlePlace: GooglePlace;
+  restaurantName: string;
+  comments: string;
+  interestLevel: number;
+}
+
+export interface SubmitVisitedRestaurantRequestBody {
+  _id?: string;
+  googlePlace: GooglePlace;
+}
+
+export interface SubmitDesiredRestaurantRequestBody {
+  _id?: string;
+  googlePlace: GooglePlace;
+  interestLevel: number;
+  comments: string;
+}
+
 export interface RatingsUI {
   showSecondaryRating: boolean;
   primaryRatingLabel: string;
@@ -21,35 +73,24 @@ export interface MemoRappReview {
   freeformReviewProperties: FreeformReviewProperties;
 }
 
-export interface FuturePlaceRequestBody {
-  _id?: string;
-  place: GooglePlace;
+export interface UnvisitedPlace {
+  _id?: any;
+  place: GooglePlace | null;
   comments: string;
   rating: number;
 }
 
-
-export interface FuturePlace {
+export interface UnvisitedPlaceFromDb {
   _id?: any;
   place_id: string;
   comments: string;
   rating: number;
 }
 
-export interface EditableFuturePlace {
+export interface EditableUnvisitedPlace {
   place: GooglePlace;
   comments: string;
   rating: number;
-
-  // review: MemoRappReview;
-}
-
-export interface FuturePlaceData {
-  _id: string;
-  place: GooglePlace | null;
-  comments: string;
-  rating: number | null;
-  restaurantName: string;
 }
 
 export interface StructuredReviewProperties {
@@ -90,16 +131,16 @@ export interface ChatRequestBody {
   reviewText: string;
 }
 
-export interface MemoRappPlace {
-  place_id: string;
+export interface BasePlace {
+  googlePlaceId: string;
   name: string;
-  restaurantType: RestaurantType;
   address_components?: AddressComponent[];
   formatted_address: string;
   website: string;
   opening_hours?: google.maps.places.PlaceOpeningHours;
   price_level?: number;
   vicinity?: string;
+  restaurantType: RestaurantType;
 }
 
 export interface QueryRequestBody {
@@ -113,12 +154,5 @@ export interface PreviewResponse {
 export interface ChatResponse {
   freeformReviewProperties: FreeformReviewProperties;
   updatedReviewText: string;
-}
-
-export interface UserEntity {
-  id: string;
-  userName: string;
-  password: string;
-  email: string;
 }
 

@@ -192,9 +192,9 @@ export const submitReviewHandler = async (req: Request, res: Response): Promise<
 export const submitReview = async (memoRappReview: SubmitReviewBody): Promise<IReview | null> => {
 
   const { _id, place, structuredReviewProperties, freeformReviewProperties, sessionId } = memoRappReview;
-  const place_id = place.place_id;
+  const googlePlaceId = place.googlePlaceId;
 
-  let mongoPlace: IMongoPlace | null = await getPlace(place_id);
+  let mongoPlace: IMongoPlace | null = await getPlace(googlePlaceId);
   console.log('place:', place);
   if (!mongoPlace) {
     mongoPlace = await addPlace(place);
@@ -204,7 +204,7 @@ export const submitReview = async (memoRappReview: SubmitReviewBody): Promise<IR
   }
 
   const addReviewBody: MemoRappReview = {
-    place_id: place.place_id,
+    googlePlaceId: place.googlePlaceId,
     structuredReviewProperties,
     freeformReviewProperties,
   };

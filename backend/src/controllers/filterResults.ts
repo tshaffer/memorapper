@@ -24,12 +24,12 @@ export const filterResults = async (
   });
 
   // Extract the filtered place IDs for review filtering
-  const filteredPlaceIds = new Set(filteredPlaces.map((place) => place.place_id));
+  const filteredPlaceIds = new Set(filteredPlaces.map((place) => place.googlePlaceId));
 
   // Filter reviews based on filtered places and wouldReturnFilter
   const filteredReviews = reviews.filter((review) => {
     // Check if the review belongs to a filtered place
-    if (!filteredPlaceIds.has(review.place_id)) return false;
+    if (!filteredPlaceIds.has(review.googlePlaceId)) return false;
 
     // Apply wouldReturnFilter if enabled
     if (wouldReturnFilter.enabled) {

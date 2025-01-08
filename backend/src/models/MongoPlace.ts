@@ -1,9 +1,7 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { MongoPlaceEntity } from '../types/mongoTypes';
+import { MongoPlace } from '../types/mongoTypes';
 
-export interface IMongoPlace extends Omit<MongoPlaceEntity, "_id">, Document { }
-
-export type MongoPlaceModel = Model<IMongoPlace>;
+export interface IMongoPlace extends Omit<MongoPlace, "_id">, Document { }
 
 const GeoJSONPointSchema: Schema = new Schema({
   type: {
@@ -45,7 +43,7 @@ const OpeningHoursSchema: Schema = new Schema({
 });
 
 const MongoPlaceSchema: Schema = new Schema({
-  place_id: { type: String, required: true, unique: true },
+  googlePlaceId: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   address_components: { type: Array },
   formatted_address: { type: String, required: true },
@@ -59,6 +57,6 @@ const MongoPlaceSchema: Schema = new Schema({
 
 MongoPlaceSchema.index({ "geometry.location": "2dsphere" });
 
-const MongoPlace: MongoPlaceModel = mongoose.model<IMongoPlace>('MongoPlace', MongoPlaceSchema);
+const MongoPlaceModel: Model<IMongoPlace> = mongoose.model<IMongoPlace>('MongoPlace', MongoPlaceSchema);
 
-export default MongoPlace;
+export default MongoPlaceModel;

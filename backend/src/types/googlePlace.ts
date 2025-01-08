@@ -1,7 +1,7 @@
-import { MemoRappPlace } from "./entities";
+import { BasePlace } from "./entities";
 import { AddressComponent, PlacePhoto, PlaceReview } from "./place";
 
-export interface GooglePlace extends MemoRappPlace {
+export interface GooglePlace extends BasePlace {
   geometry?: GoogleGeometry;
 }
 

@@ -53,7 +53,7 @@ const getRestaurantType = (googlePlaceResult: google.maps.places.PlaceResult): R
 
 export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.PlaceResult): GooglePlace {
   const googlePlace: GooglePlace = {
-    place_id: googlePlaceResult.place_id!,
+    googlePlaceId: googlePlaceResult.place_id!,
     name: googlePlaceResult.name!,
     address_components: googlePlaceResult.address_components,
     formatted_address: googlePlaceResult.formatted_address!,

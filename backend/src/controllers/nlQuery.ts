@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { IMongoPlace, IReview } from "../models";
-import MongoPlace from "../models/MongoPlace";
+import MongoPlaceModel from "../models/MongoPlace";
 import Review from "../models/Review";
 import { QueryResponse, GooglePlace, MemoRappReview, PlacesReviewsCollection, ParsedQuery, StructuredQueryParams } from "../types";
 import { convertMongoPlacesToGooglePlaces } from "../utilities";
@@ -28,7 +28,7 @@ export const nlQueryHandler = async (
         buildStructuredQueryParamsFromParsedQuery(parsedQuery);
       naturalLanguageResponse = await performStructuredQuery(structuredQueryParams);
     } else if (queryType === 'full-text') {
-      const places = await MongoPlace.find({});
+      const places = await MongoPlaceModel.find({});
       const reviews = await Review.find({});
       naturalLanguageResponse = await performNaturalLanguageQuery(
         query,

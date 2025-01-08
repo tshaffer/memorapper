@@ -29,7 +29,7 @@ const FreeformReviewPropertiesSchema: Schema = new Schema({
 });
 
 const ReviewSchema: Schema = new Schema({
-  place_id: { type: String, required: true},
+  googlePlaceId: { type: String, required: true},
   structuredReviewProperties: StructuredReviewPropertiesSchema,
   freeformReviewProperties: FreeformReviewPropertiesSchema
 });

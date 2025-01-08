@@ -4,7 +4,7 @@ import { Paper, Box, IconButton, useMediaQuery } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import LocationAutocomplete from '../../components/LocationAutocomplete';
 import MapWithMarkers from '../../components/MapWIthMarkers';
-import { ExtendedGooglePlace, ExtendedGooglePlaceToVisit, FilterResultsParams, Filters, FuturePlace, GooglePlace, MemoRappReview, SearchQuery, SearchResponse } from '../../types';
+import { ExtendedGooglePlace, ExtendedGooglePlaceToVisit, FilterResultsParams, Filters, UnvisitedPlace, UnvisitedPlaceFromDb, GooglePlace, MemoRappReview, SearchQuery, SearchResponse } from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
 import PulsingDots from '../../components/PulsingDots';
 import { filterResults } from '../../utilities';
@@ -21,8 +21,8 @@ const MapPage: React.FC = () => {
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [places, setPlaces] = useState<GooglePlace[]>([]);
   const [filteredPlaces, setFilteredPlaces] = useState<GooglePlace[]>([]);
-  const [futurePlaces, setFuturePlaces] = useState<GooglePlace[]>([]);
-  const [futurePlacesToVisit, setFuturePlacesToVisit] = useState<FuturePlace[]>([]);
+  const [unvisitedPlaces, setUnvisitedPlaces] = useState<GooglePlace[]>([]);
+  const [unvisitedPlacesToVisit, setUnvisitedPlacesToVisit] = useState<UnvisitedPlace[]>([]);
 
   const [reviews, setReviews] = useState<MemoRappReview[]>([]);
 
@@ -72,18 +72,34 @@ const MapPage: React.FC = () => {
       return data.googlePlaces;
     };
 
-    const fetchFuturePlaces = async (): Promise<GooglePlace[]> => {
-      const response = await fetch('/api/futurePlaces');
+    const fetchUnvisitedPlaces = async (): Promise<GooglePlace[]> => {
+      const response = await fetch('/api/unvisitedPlaces');
       const data = await response.json();
-      setFuturePlaces(data.googlePlaces);
+      setUnvisitedPlaces(data.googlePlaces);
       return data.googlePlaces;
     };
 
-    const fetchFuturePlacesToVisit = async (): Promise<FuturePlace[]> => {
-      const response = await fetch('/api/futurePlacesToVisit');
+    const fetchUnvisitedPlacesToVisit = async (): Promise<UnvisitedPlace[]> => {
+      const unvisitedPlacesToVisit: UnvisitedPlace[] = [];
+      const response = await fetch('/api/unvisitedPlacesToVisit');
       const data = await response.json();
-      setFuturePlacesToVisit(data.futurePlacesToVisit);
-      return data.futurePlacesToVisit;
+      const unvisitedPlacesToVisitFromDb: UnvisitedPlaceFromDb[] = data.unvisitedPlacesToVisit;
+      for (const unvisitedPlaceToVisitFromDb of unvisitedPlacesToVisitFromDb) {
+        const unvisitedPlaceToVisit: UnvisitedPlace = {
+          _id: unvisitedPlaceToVisitFromDb._id,
+          place: null,
+          comments: unvisitedPlaceToVisitFromDb.comments,
+          rating: unvisitedPlaceToVisitFromDb.rating,
+        };
+        const placeId = unvisitedPlaceToVisitFromDb.place_id;
+        const googlePlace = places.find((place) => place.googlePlaceId === placeId);
+        if (googlePlace) {
+          unvisitedPlaceToVisit.place = googlePlace;
+        }
+        unvisitedPlacesToVisit.push(unvisitedPlaceToVisit);
+      }
+      setUnvisitedPlacesToVisit(unvisitedPlacesToVisit);
+      return data.unvisitedPlacesToVisit;
     };
 
     const fetchReviews = async (): Promise<MemoRappReview[]> => {
@@ -100,16 +116,20 @@ const MapPage: React.FC = () => {
       filterOnEntry(places, reviews, location!, settings.filters);
     };
 
+    const fetchUnvisitedPlacesFromBackend = async () => {
+      const unvisitedPlaces = await fetchUnvisitedPlaces();
+      setUnvisitedPlaces(unvisitedPlaces);
+    }
+
     fetchData();
-    fetchFuturePlacesToVisit();
-    fetchFuturePlaces();
+    fetchUnvisitedPlacesFromBackend();
 
   }, [_id]);
 
   // Update map location based on the provided placeId (_id)
   useEffect(() => {
     if (_id && places.length > 0) {
-      const googlePlace = places.find((place) => place.place_id === _id);
+      const googlePlace = places.find((place) => place.googlePlaceId === _id);
       if (googlePlace && googlePlace.geometry) {
         const location = {
           lat: googlePlace.geometry.location.lat,
@@ -128,23 +148,23 @@ const MapPage: React.FC = () => {
   const getExtendedGooglePlaces = (inputPlaces: GooglePlace[]): ExtendedGooglePlace[] =>
     inputPlaces.map((place) => ({
       ...place,
-      reviews: getReviewsForPlace(place.place_id),
+      reviews: getReviewsForPlace(place.googlePlaceId),
     }));
 
   const getExtendedGooglePlaceToVisit = (place: GooglePlace): ExtendedGooglePlaceToVisit => {
-    const googlePlaceId = place.place_id;
-    const futurePlace: FuturePlace | undefined = futurePlacesToVisit.find((futurePlaceToVisit) => futurePlaceToVisit.place_id === googlePlaceId);
+    const googlePlaceId = place.googlePlaceId;
+    const unvisitedPlace: UnvisitedPlace | undefined = unvisitedPlacesToVisit.find((unvisitedPlaceToVisit) => unvisitedPlaceToVisit.place!.googlePlaceId === googlePlaceId);
     return {
       ...place,
-      comments: futurePlace?.comments || '',
-      rating: futurePlace?.rating || 0,
+      comments: unvisitedPlace?.comments || '',
+      rating: unvisitedPlace?.rating || 0,
     };
   }
 
   const getExtendedGooglePlacesToVisit = (): ExtendedGooglePlaceToVisit[] => {
     const extendedGooglePlacesToVisit: ExtendedGooglePlaceToVisit[] = [];
-    for (const futurePlace of futurePlaces) {
-      const extendedGooglePlaceToVisit: ExtendedGooglePlaceToVisit = getExtendedGooglePlaceToVisit(futurePlace);
+    for (const unvisitedPlace of unvisitedPlaces) {
+      const extendedGooglePlaceToVisit: ExtendedGooglePlaceToVisit = getExtendedGooglePlaceToVisit(unvisitedPlace);
       extendedGooglePlacesToVisit.push(extendedGooglePlaceToVisit);
     }
     return extendedGooglePlacesToVisit;

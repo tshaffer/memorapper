@@ -1,6 +1,6 @@
 import { convertMongoGeometryToGoogleGeometry } from "../controllers";
 import { IMongoPlace } from "../models";
-import { GooglePlace, ItemReview, MongoPlaceEntity } from "../types";
+import { GooglePlace, ItemReview, MongoPlace } from "../types";
 
 // Extract a field from the response based on a keyword
 export const extractFieldFromResponse = (response: string, fieldName: string): string => {
@@ -54,7 +54,7 @@ export function removeSquareBrackets(text: string): string {
 
 export function convertMongoPlacesToGooglePlaces(mongoPlaces: IMongoPlace[]): GooglePlace[] {
   return mongoPlaces.map((mongoPlace) => {
-    const mongoPlaceObject: MongoPlaceEntity = mongoPlace.toObject();
+    const mongoPlaceObject: MongoPlace = mongoPlace.toObject();
     const googlePlace: GooglePlace = {
       ...mongoPlaceObject,
       geometry: convertMongoGeometryToGoogleGeometry(mongoPlace.geometry!)

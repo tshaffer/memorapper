@@ -1,6 +1,6 @@
 import getOpenAIClient from '../services/openai';
 import Review, { IReview } from '../models/Review';
-import MongoPlace, { IMongoPlace } from '../models/MongoPlace';
+import MongoPlaceModel, { IMongoPlace } from '../models/MongoPlace';
 import { ParsedQuery, QueryResponse, StructuredQueryParams, WouldReturn } from '../types';
 
 export const buildStructuredQueryParamsFromParsedQuery = (parsedQuery: ParsedQuery): StructuredQueryParams => {
@@ -147,7 +147,7 @@ export const performStructuredQuery = async (queryParams: StructuredQueryParams)
     let reviews: IReview[] = await Review.find(reviewQuery);
 
     // Step 5: Extract unique place IDs from the filtered reviews
-    const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.place_id)));
+    const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.googlePlaceId)));
     if (placeIdsWithReviews.length === 0) {
       return { places: [], reviews: [] };
     }
@@ -173,14 +173,14 @@ export const performStructuredQuery = async (queryParams: StructuredQueryParams)
     }
 
     // Restrict to places that have matching reviews
-    placeQuery['place_id'] = { $in: placeIdsWithReviews };
+    placeQuery['googlePlaceId'] = { $in: placeIdsWithReviews };
 
     // Fetch places matching placeQuery
-    let places: IMongoPlace[] = await MongoPlace.find(placeQuery);
+    let places: IMongoPlace[] = await MongoPlaceModel.find(placeQuery);
 
     // Step 7: Refine reviews to only those belonging to filtered places
-    const filteredPlaceIds = places.map((place) => place.place_id);
-    reviews = reviews.filter((review) => filteredPlaceIds.includes(review.place_id));
+    const filteredPlaceIds = places.map((place) => place.googlePlaceId);
+    reviews = reviews.filter((review) => filteredPlaceIds.includes(review.googlePlaceId));
 
     // Combine results
     return {
@@ -202,7 +202,7 @@ export const performNaturalLanguageQuery = async (
 
   // Step 1: Prepare data for OpenAI query
   const placeData = places.map(place => ({
-    id: place.place_id,
+    id: place.googlePlaceId,
     name: place.name,
     address: place.formatted_address,
     location: place.geometry?.location,
@@ -213,7 +213,7 @@ export const performNaturalLanguageQuery = async (
     text: review.freeformReviewProperties.reviewText,
     dateOfVisit: review.structuredReviewProperties.dateOfVisit,
     wouldReturn: review.structuredReviewProperties.wouldReturn,
-    place_id: review.place_id,
+    googlePlaceId: review.googlePlaceId,
   }));
 
   // Step 2: Call OpenAI API
@@ -253,7 +253,7 @@ export const performNaturalLanguageQuery = async (
   const relevantReviewIds = result.reviews?.map((review: { id: string }) => review.id) || [];
 
   // Step 4: Filter places and reviews based on IDs
-  const filteredPlaces = places.filter(place => relevantPlaceIds.includes(place.place_id));
+  const filteredPlaces = places.filter(place => relevantPlaceIds.includes(place.googlePlaceId));
   const filteredReviews = reviews.filter(review => relevantReviewIds.includes(review._id!.toString()));
 
   // Step 5: Return the filtered data
@@ -320,7 +320,7 @@ export const performHybridQuery = async (
     let reviews: IReview[] = await Review.find(reviewQuery);
 
     // Extract unique place IDs from the filtered reviews
-    const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.place_id)));
+    const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.googlePlaceId)));
     if (placeIdsWithReviews.length === 0) {
       return { places: [], reviews: [] };
     }
@@ -346,18 +346,18 @@ export const performHybridQuery = async (
     }
 
     // Restrict places to those with matching reviews
-    placeQuery['place_id'] = { $in: placeIdsWithReviews };
+    placeQuery['googlePlaceId'] = { $in: placeIdsWithReviews };
 
     // Fetch structured places
-    let places: IMongoPlace[] = await MongoPlace.find(placeQuery);
+    let places: IMongoPlace[] = await MongoPlaceModel.find(placeQuery);
 
     // Refine reviews to those matching structured places
-    const filteredPlaceIds = places.map((place) => place.place_id);
-    reviews = reviews.filter((review) => filteredPlaceIds.includes(review.place_id));
+    const filteredPlaceIds = places.map((place) => place.googlePlaceId);
+    reviews = reviews.filter((review) => filteredPlaceIds.includes(review.googlePlaceId));
 
     // Step 2: Perform natural language query using OpenAI
     const placeData = places.map((place) => ({
-      id: place.place_id,
+      id: place.googlePlaceId,
       name: place.name,
       address: place.formatted_address,
       location: place.geometry?.location,
@@ -368,7 +368,7 @@ export const performHybridQuery = async (
       text: review.freeformReviewProperties.reviewText,
       dateOfVisit: review.structuredReviewProperties.dateOfVisit,
       wouldReturn: review.structuredReviewProperties.wouldReturn,
-      place_id: review.place_id,
+      googlePlaceId: review.googlePlaceId,
     }));
 
     const response = await getOpenAIClient().chat.completions.create({
@@ -407,7 +407,7 @@ export const performHybridQuery = async (
     const relevantReviewIds = result.reviews?.map((review: { id: string }) => review.id) || [];
 
     // Step 3: Combine structured and full-text results
-    const hybridPlaces = places.filter((place) => relevantPlaceIds.includes(place.place_id));
+    const hybridPlaces = places.filter((place) => relevantPlaceIds.includes(place.googlePlaceId));
     const hybridReviews = reviews.filter((review) => relevantReviewIds.includes(review._id!.toString()));
 
     // Step 4: Return combined results

@@ -1,94 +1,96 @@
 import { useState } from 'react';
 import '../../styles/multiPanelStyles.css';
 import { Box, Button, MenuItem, Select, Slider, TextField, useMediaQuery } from "@mui/material";
-import { RestaurantType, FuturePlaceData, GooglePlace, EditableFuturePlace, FuturePlaceRequestBody } from "../../types";
+import { RestaurantType, DesiredRestaurant, GooglePlace, EditableDesiredRestaurant, SubmitDesiredRestaurantRequestBody } from "../../types";
 import RestaurantName from '../../components/RestaurantName';
 import PulsingDots from '../../components/PulsingDots';
 import { useLocation, useParams } from 'react-router-dom';
 
-const FuturePlaceForm = () => {
+const DesiredRestaurantForm = () => {
 
   const { _id } = useParams<{ _id: string }>();
   const location = useLocation();
-  const editableFuturePlace = location.state as EditableFuturePlace | null;
+  const editableDesiredRestaurant = location.state as EditableDesiredRestaurant | null;
 
-  let place: GooglePlace | null = null;
+  let googlePlace: GooglePlace | undefined = undefined;
+  let restaurantName = '';
   let comments = '';
-  if (editableFuturePlace) {
-    place = editableFuturePlace.place;
-    comments = editableFuturePlace.comments;
+  let interestLevel = 0;
+  if (editableDesiredRestaurant) {
+    googlePlace = editableDesiredRestaurant.googlePlace;
+    restaurantName = editableDesiredRestaurant.restaurantName;
+    interestLevel = editableDesiredRestaurant.interestLevel;
+    comments = editableDesiredRestaurant.comments;
   }
 
-  const initialFuturePlaceData: FuturePlaceData = {
-    _id: _id ? _id : '',
-    place,
+  const initialDesiredRestaurantData: DesiredRestaurant = {
+    _id,
+    googlePlace,
+    restaurantName,
     comments,
-    rating: editableFuturePlace ? editableFuturePlace.rating : null,
-    restaurantName: place ? place.name : '',
+    interestLevel: editableDesiredRestaurant ? editableDesiredRestaurant.interestLevel : 0,
   };
 
-  const [futurePlaceData, setFuturePlaceData] = useState<FuturePlaceData>(initialFuturePlaceData);
+  const [desiredRestaurantData, setDesiredRestaurantData] = useState<DesiredRestaurant>(initialDesiredRestaurantData);
 
   const isMobile = useMediaQuery('(max-width:768px)');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (field: keyof FuturePlaceData, value: any) => {
-    setFuturePlaceData((prev) => ({ ...prev, [field]: value }));
+  const handleChange = (field: keyof DesiredRestaurant, value: any) => {
+    setDesiredRestaurantData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleRestaurantTypeChange = (value: RestaurantType) => {
-    setFuturePlaceData((prev) => ({ ...prev, place: { ...prev.place!, restaurantType: value } }));
+    setDesiredRestaurantData((prev) => ({ ...prev, googlePlace: { ...prev.googlePlace!, restaurantType: value } }));
   }
 
   const handleAddPlace = async (_: React.MouseEvent<HTMLButtonElement, MouseEvent>): Promise<void> => {
-    
-    console.log('handleAddPlace');
-    console.log('futurePlaceData:', futurePlaceData);
 
-    const futurePlaceRequestBody: FuturePlaceRequestBody = {
-      _id: futurePlaceData._id,
-      place: futurePlaceData.place!,
-      comments: futurePlaceData.comments,
-      rating: futurePlaceData.rating || 0,
+    console.log('handleAddPlace');
+    console.log('desiredRestaurantData:', desiredRestaurantData);
+
+    const desiredRestaurantRequestBody: SubmitDesiredRestaurantRequestBody = {
+      _id: desiredRestaurantData._id,
+      googlePlace: desiredRestaurantData.googlePlace!,
+      comments: desiredRestaurantData.comments,
+      interestLevel: desiredRestaurantData.interestLevel || 0,
     };
 
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/submitFuturePlace', {
+      const response = await fetch('/api/submitDesiredRestaurant', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...futurePlaceRequestBody,
+          ...desiredRestaurantRequestBody,
         }),
       });
       const data = await response.json();
-      console.log('Future Place submitted:', data);
+      console.log('Unvisited Place submitted:', data);
       setIsLoading(false);
       // resetReviewData();
     } catch (error) {
       console.error('Error submitting review:', error);
       setIsLoading(false);
     }
-
   };
-
 
   const renderRestaurantName = (): JSX.Element => {
     return (
       <>
         <label htmlFor="restaurant-name">Restaurant Name (Required):</label>
         <RestaurantName
-          restaurantName={futurePlaceData!.restaurantName}
+          restaurantName={desiredRestaurantData!.restaurantName}
           onSetRestaurantName={(name) => handleChange('restaurantName', name)}
-          onSetGooglePlace={(place) => handleChange('place', place)}
+          onSetGooglePlace={(googlePlace) => handleChange('googlePlace', googlePlace)}
         />
       </>
     );
   }
 
   const renderRestaurantType = (): JSX.Element => {
-    const value = futurePlaceData ? (futurePlaceData.place ? futurePlaceData.place!.restaurantType.toString() : 0) : 0;
+    const value = desiredRestaurantData ? (desiredRestaurantData.googlePlace ? desiredRestaurantData.googlePlace!.restaurantType : 0) : 0;
     return (
       <>
         <label>Restaurant Type (Required):</label>
@@ -135,13 +137,13 @@ const FuturePlaceForm = () => {
             <Slider
               sx={{ width: '150px' }}
               defaultValue={5}
-              value={futurePlaceData.rating || 5}
+              value={desiredRestaurantData.interestLevel || 5}
               valueLabelDisplay="auto"
               step={1}
               marks
               min={0}
               max={10}
-              onChange={(_, value) => handleChange('rating', value as number)}
+              onChange={(_, value) => handleChange('interestLevel', value as number)}
             />
           </Box>
         </Box>
@@ -158,7 +160,7 @@ const FuturePlaceForm = () => {
           fullWidth
           multiline
           rows={4}
-          value={futurePlaceData.comments}
+          value={desiredRestaurantData.comments}
           onChange={(e) => handleChange('comments', e.target.value)}
         />
       </>
@@ -190,7 +192,7 @@ const FuturePlaceForm = () => {
       </form>
 
       <Button
-        disabled={!futurePlaceData.place || !futurePlaceData.place.place_id}
+        disabled={!desiredRestaurantData.googlePlace || !desiredRestaurantData.googlePlace.googlePlaceId}
         onClick={handleAddPlace}
       >
         Add Place
@@ -202,4 +204,4 @@ const FuturePlaceForm = () => {
   );
 };
 
-export default FuturePlaceForm;
+export default DesiredRestaurantForm;

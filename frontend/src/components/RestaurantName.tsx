@@ -20,10 +20,6 @@ const RestaurantName: React.FC<RestaurantNameProps> = (props: RestaurantNameProp
       const place: google.maps.places.PlaceResult = autocompleteRef.current.getPlace();
       try {
         const googlePlace: GooglePlace = pickGooglePlaceProperties(place);
-        console.log('Place name: ', place.name);
-        console.log('Place types:', place.types);
-        console.log('Reviews:', place.reviews);
-
         props.onSetGooglePlace(googlePlace);
         onSetRestaurantName(googlePlace.name);
       } catch (error) {

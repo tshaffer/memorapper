@@ -24,7 +24,7 @@ export const filterResults = (
   });
 
   // Extract the filtered place IDs for review filtering
-  const filteredPlaceIds = new Set(filteredPlaces.map((place) => place.place_id));
+  const filteredPlaceIds = new Set(filteredPlaces.map((place) => place.googlePlaceId));
 
   // Filter reviews based on filtered places and wouldReturnFilter
   const filteredReviews = reviews.filter((review) => {

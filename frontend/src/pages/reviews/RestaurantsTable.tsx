@@ -63,8 +63,8 @@ const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTab
         });
       case SortCriteria.Reviewer:
         return sortedPlaces.sort((a, b) => {
-          const reviewerAId = filteredReviews.find((r) => r.place_id === a.place_id)?.structuredReviewProperties.reviewerId || '';
-          const reviewerBId = filteredReviews.find((r) => r.place_id === b.place_id)?.structuredReviewProperties.reviewerId || '';
+          const reviewerAId = filteredReviews.find((r) => r.place_id === a.googlePlaceId)?.structuredReviewProperties.reviewerId || '';
+          const reviewerBId = filteredReviews.find((r) => r.place_id === b.googlePlaceId)?.structuredReviewProperties.reviewerId || '';
 
           const reviewerAName = reviewerFromReviewerId(reviewerAId);
           const reviewerBName = reviewerFromReviewerId(reviewerBId);
@@ -74,10 +74,10 @@ const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTab
       case SortCriteria.MostRecentReview:
         return sortedPlaces.sort((a, b) => {
           const recentDateA = filteredReviews
-            .filter((r) => r.place_id === a.place_id)
+            .filter((r) => r.place_id === a.googlePlaceId)
             .reduce((latest, r) => Math.max(latest, new Date(r.structuredReviewProperties.dateOfVisit).getTime()), 0);
           const recentDateB = filteredReviews
-            .filter((r) => r.place_id === b.place_id)
+            .filter((r) => r.place_id === b.googlePlaceId)
             .reduce((latest, r) => Math.max(latest, new Date(r.structuredReviewProperties.dateOfVisit).getTime()), 0);
           return recentDateB - recentDateA;
         });
@@ -93,9 +93,9 @@ const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTab
 
   const handlePlaceClick = (place: GooglePlace) => {
     console.log('handlePlaceClick place: ', place);
-    setSelectedPlaceId(place.place_id); // Update selected place ID
+    setSelectedPlaceId(place.googlePlaceId); // Update selected place ID
     setSelectedPlace(place);
-    const reviews: MemoRappReview[] = getReviewsForPlace(place.place_id);
+    const reviews: MemoRappReview[] = getReviewsForPlace(place.googlePlaceId);
     navigate(`/restaurantDetails`, { state: { place, reviews } });
   };
 
@@ -105,7 +105,7 @@ const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTab
   };
 
   const handleShowDirections = (placeId: string) => {
-    const destination: GooglePlace | undefined = filteredPlaces.find(place => place.place_id === placeId);
+    const destination: GooglePlace | undefined = filteredPlaces.find(place => place.googlePlaceId === placeId);
     if (destination && currentLocation) {
       const destinationLocation: google.maps.LatLngLiteral = destination.geometry!.location;
       const destinationLatLng: google.maps.LatLngLiteral = { lat: destinationLocation.lat, lng: destinationLocation.lng };
@@ -147,20 +147,20 @@ const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTab
             </TableHead>
             <TableBody>
               {sortedPlaces.map((place: GooglePlace) => (
-                <React.Fragment key={place.place_id}>
+                <React.Fragment key={place.googlePlaceId}>
                   <TableRow
                     className="table-row-hover"
                     onClick={() => handlePlaceClick(place)}
                     sx={{
                       backgroundColor:
-                        place.place_id === selectedPlaceId ? '#f0f8ff' : 'inherit', // Highlight selected row
+                        place.googlePlaceId === selectedPlaceId ? '#f0f8ff' : 'inherit', // Highlight selected row
                       cursor: 'pointer', // Indicate clickable rows
                     }}
                   >
                     <TableCell align="right" className="dimmed" style={smallColumnStyle}>
                       <IconButton onClick={(event) => {
                         event.stopPropagation();
-                        handleShowMap(place.place_id)
+                        handleShowMap(place.googlePlaceId)
                       }}
                       >
                         <MapIcon />
@@ -169,7 +169,7 @@ const RestaurantsTable: React.FC<RestaurantsTableProps> = (props: RestaurantsTab
                     <TableCell align="right" className="dimmed" style={smallColumnStyle}>
                       <IconButton onClick={(event) => {
                         event.stopPropagation();
-                        handleShowDirections(place.place_id)
+                        handleShowDirections(place.googlePlaceId)
                       }}>
                         <DirectionsIcon />
                       </IconButton>

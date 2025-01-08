@@ -2,23 +2,69 @@ import { RestaurantType, WouldReturn } from "./enums";
 import { GooglePlace } from "./googlePlace";
 import { AddressComponent } from "./place";
 
+export interface UserEntity {
+  id: string;
+  userName: string;
+  password: string;
+  email: string;
+}
+
+export interface Contributor {
+  id: string;
+  userId: string; // Foreign key to UserEntity
+  name: string;
+}
+
+export interface ContributorInput {
+  contributorId: string; // Foreign key to Contributor
+  rating: number;
+  comments: string;
+}
+
+export interface VisitedRestaurant {
+  _id?: string;
+  googlePlaceId: string;
+  contributorInput?: ContributorInput[]; // Input per contributor
+}
+
+export interface DesiredRestaurant {
+  _id?: string;
+  googlePlaceId: string;
+  interestLevel: number;
+  comments: string;
+}
+
+export interface SubmitVisitedRestaurantRequestBody {
+  _id?: string;
+  googlePlace: GooglePlace;
+  // rating: number;
+  // comments: string;
+}
+
+export interface SubmitDesiredRestaurantRequestBody {
+  _id?: string;
+  googlePlace: GooglePlace;
+  interestLevel: number;
+  comments: string;
+}
+
 export interface MemoRappReview {
   _id?: any;
-  place_id: string;
+  googlePlaceId: string;
   structuredReviewProperties: StructuredReviewProperties;
   freeformReviewProperties: FreeformReviewProperties;
 }
 
-export interface FuturePlaceRequestBody {
+export interface UnvisitedPlaceRequestBody {
   _id?: string;
   place: GooglePlace;
   comments: string;
   rating: number;
 }
 
-export interface FuturePlace {
+export interface UnvisitedPlace {
   _id?: any;
-  place_id: string;
+  googlePlaceId: string;
   comments: string;
   rating: number;
 }
@@ -62,8 +108,8 @@ export interface ChatRequestBody {
   reviewText: string;
 }
 
-export interface MemoRappPlace {
-  place_id: string;
+export interface BasePlace {
+  googlePlaceId: string;
   name: string;
   address_components?: AddressComponent[];
   formatted_address: string;
@@ -81,12 +127,5 @@ export interface PreviewResponse {
 export interface ChatResponse {
   freeformReviewProperties: FreeformReviewProperties;
   updatedReviewText: string;
-}
-
-export interface UserEntity {
-  id: string;
-  userName: string;
-  password: string;
-  email: string;
 }
 
