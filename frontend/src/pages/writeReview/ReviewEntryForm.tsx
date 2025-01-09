@@ -335,7 +335,10 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
           <legend>Review</legend>
           {renderReviewText()}
         </fieldset>
-        {renderRatingsAndComments()}
+        <fieldset>
+          <legend>Ratings and Comments</legend>
+          {renderRatingsAndComments()}
+        </fieldset>
       </form>
 
       <div className="form-actions">
