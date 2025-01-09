@@ -27,7 +27,7 @@ export enum SortCriteria {
 }
 
 export enum RestaurantType {
-  Generic = 0,
+  Restaurant = 0,
   CoffeeShop = 1,
   Bar = 2,
   Bakery = 3,

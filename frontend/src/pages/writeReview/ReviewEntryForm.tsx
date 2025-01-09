@@ -42,6 +42,13 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     }
   }, [reviewData.sessionId]);
 
+  const restaurantTypeOptions = Object.keys(RestaurantType)
+    .filter((key) => isNaN(Number(key)))
+    .map((label) => ({
+      label, // The human-readable label
+      value: RestaurantType[label as keyof typeof RestaurantType], // The corresponding numeric value
+    }));
+
   const handleSetRestaurantName = (name: string) => {
     setReviewData((prev) => ({ ...prev, restaurantName: name }));
   }
@@ -76,28 +83,28 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
       />
     </div>
   );
-  
+
   const renderRestaurantType = (): JSX.Element => {
-    const value = reviewData?.place?.restaurantType?.toString() || RestaurantType.Generic;
-  
+    const value = reviewData?.place?.restaurantType || RestaurantType.Restaurant;
+
     return (
       <div className="form-group">
         <label htmlFor="restaurant-type">Restaurant Type</label>
         <Select
           id="restaurant-type"
           value={value}
-          onChange={(event) => handleRestaurantTypeChange(event.target.value as RestaurantType)}
+          onChange={(event) => handleRestaurantTypeChange(Number(event.target.value) as RestaurantType)}
         >
-          {Object.values(RestaurantType).map((type) => (
-            <MenuItem key={type} value={type}>
-              {type}
+          {restaurantTypeOptions.map(({ label, value }) => (
+            <MenuItem key={value} value={value}>
+              {label}
             </MenuItem>
           ))}
         </Select>
       </div>
     );
   };
-  
+
   const renderDateOfVisit = (): JSX.Element => (
     <div className="form-group">
       <label htmlFor="date-of-visit">Date of Visit</label>
@@ -110,7 +117,7 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
       />
     </div>
   );
-  
+
   const renderReviewText = (): JSX.Element => (
     <div className="form-group">
       <label htmlFor="review-text">Review Text</label>
@@ -125,12 +132,12 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
       />
     </div>
   );
-  
+
   const renderPulsingDots = (): JSX.Element | null => {
     if (!isLoading) return null;
     return <PulsingDots />;
   };
-  
+
   const renderReviewer = (): JSX.Element => {
     return (
       <>
