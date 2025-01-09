@@ -16,16 +16,16 @@ export interface Contributor {
   name: string;
 }
 
-export interface ContributorRating {
+export interface ContributorInput {
   contributorId: string; // Foreign key to Contributor
   rating: number;
+  comments: string;
 }
 
 export interface VisitedRestaurant {
   _id?: string;
   googlePlaceId: string;
-  ratings?: ContributorRating[]; // List of ratings per contributor
-  comments?: string;
+  contributorInput?: ContributorInput[]; // Input per contributor
 }
 
 export interface DesiredRestaurant {

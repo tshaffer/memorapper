@@ -1,9 +1,11 @@
 import { Box, Button, FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, Select, Slider, TextField, useMediaQuery } from '@mui/material';
+import Rating from '@mui/material/Rating';
+
 import RestaurantName from '../../components/RestaurantName';
 import '../../styles/multiPanelStyles.css';
 import '../../styles/reviewEntryForm.css';
 import { useEffect, useState } from 'react';
-import { RestaurantType, ReviewData, WouldReturn } from '../../types';
+import { Contributor, RestaurantType, ReviewData, WouldReturn } from '../../types';
 import PulsingDots from '../../components/PulsingDots';
 import React from 'react';
 import { useUserContext } from '../../contexts/UserContext';
@@ -20,6 +22,10 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
   const { users, currentUser } = useUserContext();
 
   const { reviewData, setReviewData, onSubmitPreview } = props;
+
+  const contributors: Contributor[] = [];
+  contributors.push({ id: '1', name: 'Ted', userId: '1' });
+  contributors.push({ id: '2', name: 'Lori', userId: '1' });
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
@@ -53,6 +59,21 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     setReviewData((prev) => ({ ...prev, restaurantName: name }));
   }
 
+  const handleContributorChange = (
+    contributorId: string,
+    field: 'rating' | 'comments',
+    value: number | string
+  ) => {
+    console.log('handleContributorChange', contributorId, field, value);
+    // setContributors((prevContributors) =>
+    //   prevContributors.map((contributor) =>
+    //     contributor.id === contributorId
+    //       ? { ...contributor, [field]: value }
+    //       : contributor
+    //   )
+    // );
+  };
+  
   const handlePrimaryRatingChange = (_: Event, value: number | number[]) => {
     setReviewData((prev) => ({ ...prev, primaryRating: value as number }));
   };
@@ -130,6 +151,45 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
         onChange={(e) => handleChange('reviewText', e.target.value)}
       />
     </div>
+  );
+
+  const renderRatingsAndComments = (): JSX.Element => (
+    <fieldset className="ratings-comments-section">
+      <legend>Ratings and Comments by Contributors</legend>
+      {contributors.map((contributor) => (
+        <div key={contributor.id} className="contributor-section">
+          <div className="contributor-header">
+            <h4>{contributor.name}</h4>
+          </div>
+          <div className="contributor-rating">
+            <label htmlFor={`rating-${contributor.id}`}>Rating</label>
+            <Rating
+              id={`rating-${contributor.id}`}
+              name={`rating-${contributor.id}`}
+              value={contributor.rating || 0}
+              max={10}
+              onChange={(event, newValue) =>
+                handleContributorChange(contributor.id, 'rating', newValue)
+              }
+            />
+          </div>
+          <div className="contributor-comments">
+            <label htmlFor={`comments-${contributor.id}`}>Comments</label>
+            <TextField
+              id={`comments-${contributor.id}`}
+              name={`comments-${contributor.id}`}
+              fullWidth
+              multiline
+              rows={3}
+              value={contributor.comments || ''}
+              onChange={(event) =>
+                handleContributorChange(contributor.id, 'comments', event.target.value)
+              }
+            />
+          </div>
+        </div>
+      ))}
+    </fieldset>
   );
 
   const renderPulsingDots = (): JSX.Element | null => {
