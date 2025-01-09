@@ -68,7 +68,7 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
   const renderRestaurantName = (): JSX.Element => {
     return (
       <>
-        <label htmlFor="restaurant-name">Restaurant Name (Required):</label>
+        <label htmlFor="restaurant-name">Restaurant Name</label>
         <RestaurantName
           restaurantName={reviewData.restaurantName}
           onSetRestaurantName={handleSetRestaurantName}
@@ -79,10 +79,10 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
   }
 
   const renderRestaurantType = (): JSX.Element => {
-    const value = reviewData ?  (reviewData.place ? reviewData.place!.restaurantType.toString() : 0) : 0;
+    const value = reviewData ? (reviewData.place ? reviewData.place!.restaurantType.toString() : 0) : 0;
     return (
       <>
-        <label>Restaurant Type (Required):</label>
+        <label>Restaurant Type</label>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
@@ -102,10 +102,25 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     );
   }
 
+  const renderDateOfVisit = (): JSX.Element => {
+    return (
+      <>
+        <label>Date of Visit</label>
+        <TextField
+          fullWidth
+          type="date"
+          value={reviewData.dateOfVisit}
+          onChange={(e) => handleChange('dateOfVisit', e.target.value)}
+          // label="Date of Visit"
+        />
+      </>
+    )
+  }
+
   const renderReviewText = (): JSX.Element => {
     return (
       <>
-        <label>Review Text (Required):</label>
+        <label>Review Text</label>
         <TextField
           label="Review Text"
           fullWidth
@@ -117,6 +132,13 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
       </>
     );
   }
+
+  const renderPulsingDots = (): JSX.Element | null => {
+    if (!isLoading) {
+      return null;
+    }
+    return (<PulsingDots />);
+  };
 
   const renderReviewer = (): JSX.Element => {
     return (
@@ -136,19 +158,6 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
         </Select>
       </>
     );
-  }
-
-  const renderDateOfVisit = (): JSX.Element => {
-    return (
-      <TextField
-        fullWidth
-        type="date"
-        value={reviewData.dateOfVisit}
-        onChange={(e) => handleChange('dateOfVisit', e.target.value)}
-        // placeholder="mm/dd/yyyy"
-        label="Date of Visit"
-      />
-    )
   }
 
   const renderRatings = (): JSX.Element => {
@@ -260,14 +269,12 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     );
   }
 
-  const renderPulsingDots = (): JSX.Element | null => {
-    if (!isLoading) {
-      return null;
-    }
-    return (<PulsingDots />);
-  };
 
-
+  /*
+        {renderReviewer()}
+        {renderRatings()}
+        {renderWouldReturn()}
+  */
   return (
     <div
       id="form"
@@ -279,13 +286,9 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
       <form id='add-review-form'>
         {renderRestaurantName()}
         {renderRestaurantType()}
-        {renderReviewText()}
-        {renderReviewer()}
         {renderDateOfVisit()}
-        {renderRatings()}
-        {renderWouldReturn()}
+        {renderReviewText()}
       </form>
-
       <Button
         disabled={!reviewData.place || !reviewData.reviewText}
         onClick={handlePreview}
