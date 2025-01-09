@@ -12,6 +12,6 @@ export const ContributorInputSchema: Schema<IContributorInput> = new Schema({
   comments: { type: String, required: true },
 });
 
-const ContributorInputModel: Model<IContributorInput> = mongoose.model<IContributorInput>('Contributor', ContributorInputSchema);
+const ContributorInputModel: Model<IContributorInput> = mongoose.model<IContributorInput>('ContributorInput', ContributorInputSchema);
 
 export default ContributorInputModel;

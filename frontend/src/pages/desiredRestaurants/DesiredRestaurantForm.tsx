@@ -100,7 +100,7 @@ const DesiredRestaurantForm = () => {
           value={value}
           onChange={(event) => handleRestaurantTypeChange(event.target.value as RestaurantType)}
         >
-          <MenuItem value={RestaurantType.Generic}>Restaurant</MenuItem>
+          <MenuItem value={RestaurantType.Restaurant}>Restaurant</MenuItem>
           <MenuItem value={RestaurantType.CoffeeShop}>Coffee Shop</MenuItem>
           <MenuItem value={RestaurantType.Bar}>Bar</MenuItem>
           <MenuItem value={RestaurantType.Bakery}>Bakery</MenuItem>

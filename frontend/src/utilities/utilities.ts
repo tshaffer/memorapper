@@ -48,7 +48,7 @@ const getRestaurantType = (googlePlaceResult: google.maps.places.PlaceResult): R
     }
   }
 
-  return RestaurantType.Generic
+  return RestaurantType.Restaurant
 }
 
 export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.PlaceResult): GooglePlace {

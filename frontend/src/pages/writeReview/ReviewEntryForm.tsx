@@ -24,16 +24,19 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
 
   const { reviewData, setReviewData, onSubmitPreview } = props;
 
-  const contributors: Contributor[] = [];
-  contributors.push({ id: '1', name: 'Ted', userId: '1' });
-  contributors.push({ id: '2', name: 'Lori', userId: '1' });
+  // const contributors: Contributor[] = [];
+  // contributors.push({ id: '1', name: 'Ted', userId: '1' });
+  // contributors.push({ id: '2', name: 'Lori', userId: '1' });
 
-  const [contributorInputs, setContributorInputs] = React.useState<ContributorInput[]>([
-    { contributorId: '1', rating: 8, comments: 'Great food!' },
-    { contributorId: '2', rating: 9, comments: 'Amazing service!' },
-  ]);
+  // const [contributorInputs, setContributorInputs] = React.useState<ContributorInput[]>([
+  //   { contributorId: '1', rating: 8, comments: 'Great food!' },
+  //   { contributorId: '2', rating: 9, comments: 'Amazing service!' },
+  // ]);
 
   const isMobile = useMediaQuery('(max-width:768px)');
+
+  const [contributors, setContributors] = useState<Contributor[]>([]);
+  const [contributorInputs, setContributorInputs] = useState<ContributorInput[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -53,6 +56,32 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
       handleChange('sessionId', newSessionId);
     }
   }, [reviewData.sessionId]);
+
+  useEffect(() => {
+
+    const fetchContributors = async (): Promise<Contributor[]> => {
+      const response = await fetch('/api/contributors');
+      const data = await response.json();
+      return data.contributors;
+    }
+
+    const fetchContributorInputs = async (): Promise<ContributorInput[]> => {
+      const response = await fetch('/api/contributorInputs');
+      const data = await response.json();
+      return data.contributorInputs;
+    }
+
+    const fetchData = async () => {
+      const contributors = await fetchContributors();
+      setContributors(contributors);
+      const contributorInputs = await fetchContributorInputs();
+      setContributorInputs(contributorInputs);
+    };
+
+    fetchData();
+
+  }, []);
+
 
   const restaurantTypeOptions = Object.keys(RestaurantType)
     .filter((key) => isNaN(Number(key)))
