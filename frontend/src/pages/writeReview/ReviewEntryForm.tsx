@@ -123,7 +123,6 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
       <label htmlFor="review-text">Review Text</label>
       <TextField
         id="review-text"
-        label="Review Text"
         fullWidth
         multiline
         rows={4}

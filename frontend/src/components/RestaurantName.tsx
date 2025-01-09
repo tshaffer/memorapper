@@ -34,8 +34,6 @@ const RestaurantName: React.FC<RestaurantNameProps> = (props: RestaurantNameProp
     }
   };
 
-  // console.log('RestaurantName restaurantName:', restaurantName);
-
   return (
     <Box>
       <Autocomplete
@@ -44,7 +42,6 @@ const RestaurantName: React.FC<RestaurantNameProps> = (props: RestaurantNameProp
       >
         <TextField
           fullWidth
-          label="Restaurant Name"
           value={restaurantName}
           onChange={(e) => onSetRestaurantName(e.target.value)}
           placeholder="Enter the restaurant name"
