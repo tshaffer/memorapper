@@ -1,6 +1,7 @@
 import { Box, Button, FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, Select, Slider, TextField, useMediaQuery } from '@mui/material';
 import RestaurantName from '../../components/RestaurantName';
 import '../../styles/multiPanelStyles.css';
+import '../../styles/reviewEntryForm.css';
 import { useEffect, useState } from 'react';
 import { RestaurantType, ReviewData, WouldReturn } from '../../types';
 import PulsingDots from '../../components/PulsingDots';
@@ -65,81 +66,71 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     setIsLoading(false);
   };
 
-  const renderRestaurantName = (): JSX.Element => {
-    return (
-      <>
-        <label htmlFor="restaurant-name">Restaurant Name</label>
-        <RestaurantName
-          restaurantName={reviewData.restaurantName}
-          onSetRestaurantName={handleSetRestaurantName}
-          onSetGooglePlace={(place) => handleChange('place', place)}
-        />
-      </>
-    );
-  }
-
+  const renderRestaurantName = (): JSX.Element => (
+    <div className="form-group">
+      <label htmlFor="restaurant-name">Restaurant Name</label>
+      <RestaurantName
+        restaurantName={reviewData.restaurantName}
+        onSetRestaurantName={handleSetRestaurantName}
+        onSetGooglePlace={(place) => handleChange('place', place)}
+      />
+    </div>
+  );
+  
   const renderRestaurantType = (): JSX.Element => {
-    const value = reviewData ? (reviewData.place ? reviewData.place!.restaurantType.toString() : 0) : 0;
+    const value = reviewData?.place?.restaurantType?.toString() || RestaurantType.Generic;
+  
     return (
-      <>
-        <label>Restaurant Type</label>
+      <div className="form-group">
+        <label htmlFor="restaurant-type">Restaurant Type</label>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
+          id="restaurant-type"
           value={value}
           onChange={(event) => handleRestaurantTypeChange(event.target.value as RestaurantType)}
         >
-          <MenuItem value={RestaurantType.Generic}>Restaurant</MenuItem>
-          <MenuItem value={RestaurantType.CoffeeShop}>Coffee Shop</MenuItem>
-          <MenuItem value={RestaurantType.Bar}>Bar</MenuItem>
-          <MenuItem value={RestaurantType.Bakery}>Bakery</MenuItem>
-          <MenuItem value={RestaurantType.Taqueria}>Taqueria</MenuItem>
-          <MenuItem value={RestaurantType.PizzaPlace}>Pizza</MenuItem>
-          <MenuItem value={RestaurantType.ItalianRestaurant}>Italian</MenuItem>
-          <MenuItem value={RestaurantType.DessertShop}>Dessert</MenuItem>
+          {Object.values(RestaurantType).map((type) => (
+            <MenuItem key={type} value={type}>
+              {type}
+            </MenuItem>
+          ))}
         </Select>
-      </>
+      </div>
     );
-  }
-
-  const renderDateOfVisit = (): JSX.Element => {
-    return (
-      <>
-        <label>Date of Visit</label>
-        <TextField
-          fullWidth
-          type="date"
-          value={reviewData.dateOfVisit}
-          onChange={(e) => handleChange('dateOfVisit', e.target.value)}
-          // label="Date of Visit"
-        />
-      </>
-    )
-  }
-
-  const renderReviewText = (): JSX.Element => {
-    return (
-      <>
-        <label>Review Text</label>
-        <TextField
-          label="Review Text"
-          fullWidth
-          multiline
-          rows={4}
-          value={reviewData.reviewText}
-          onChange={(e) => handleChange('reviewText', e.target.value)}
-        />
-      </>
-    );
-  }
-
-  const renderPulsingDots = (): JSX.Element | null => {
-    if (!isLoading) {
-      return null;
-    }
-    return (<PulsingDots />);
   };
-
+  
+  const renderDateOfVisit = (): JSX.Element => (
+    <div className="form-group">
+      <label htmlFor="date-of-visit">Date of Visit</label>
+      <TextField
+        id="date-of-visit"
+        type="date"
+        fullWidth
+        value={reviewData.dateOfVisit}
+        onChange={(e) => handleChange('dateOfVisit', e.target.value)}
+      />
+    </div>
+  );
+  
+  const renderReviewText = (): JSX.Element => (
+    <div className="form-group">
+      <label htmlFor="review-text">Review Text</label>
+      <TextField
+        id="review-text"
+        label="Review Text"
+        fullWidth
+        multiline
+        rows={4}
+        value={reviewData.reviewText}
+        onChange={(e) => handleChange('reviewText', e.target.value)}
+      />
+    </div>
+  );
+  
+  const renderPulsingDots = (): JSX.Element | null => {
+    if (!isLoading) return null;
+    return <PulsingDots />;
+  };
+  
   const renderReviewer = (): JSX.Element => {
     return (
       <>
@@ -280,24 +271,35 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
       id="form"
       className="tab-panel active"
       style={{
-        maxHeight: isMobile ? 'calc(60vh)' : 'auto'
+        maxHeight: isMobile ? 'calc(60vh)' : 'auto',
       }}
     >
-      <form id='add-review-form'>
-        {renderRestaurantName()}
-        {renderRestaurantType()}
-        {renderDateOfVisit()}
-        {renderReviewText()}
+      <form id="add-review-form">
+        <fieldset>
+          <legend>Restaurant Details</legend>
+          {renderRestaurantName()}
+          {renderRestaurantType()}
+          {renderDateOfVisit()}
+        </fieldset>
+
+        <fieldset>
+          <legend>Review</legend>
+          {renderReviewText()}
+        </fieldset>
       </form>
-      <Button
-        disabled={!reviewData.place || !reviewData.reviewText}
-        onClick={handlePreview}
-      >
-        Preview
-      </Button>
+
+      <div className="form-actions">
+        <Button
+          disabled={!reviewData.place || !reviewData.reviewText}
+          onClick={handlePreview}
+          variant="contained"
+          color="primary"
+        >
+          Preview
+        </Button>
+      </div>
 
       {renderPulsingDots()}
-
     </div>
   );
 };
