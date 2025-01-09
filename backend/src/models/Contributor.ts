@@ -6,7 +6,7 @@ export interface IContributor extends Document {
   name: string;
 }
 
-const ContributorSchema: Schema = new Schema({
+const ContributorSchema: Schema<IContributor> = new Schema({
   id: { type: String, required: true, unique: true },
   userId: { type: String, required: true, ref: 'UserEntity' },
   name: { type: String, required: true },

@@ -1,3 +1,5 @@
+export * from './contributorInputs';
+export * from './contributors';
 export * from './filterResults';
 export * from './googlePlaces';
 export * from './handlers';

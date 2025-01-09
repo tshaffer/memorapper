@@ -2,6 +2,8 @@ import { Router } from 'express';
 import {
   addReviewsFromFileHandler,
   chatReviewHandler,
+  getContributors,
+  getContributorInputs,
   getPlaces,
   getReviews,
   getUsers,
@@ -25,6 +27,8 @@ router.get('/visitedRestaurant', getVisitedRestaurants);
 router.get('/desiredRestaurant', getDesiredRestaurants);
 router.get('/reviews', getReviews);
 router.get('/users', getUsers);
+router.get('/contributors', getContributors);
+router.get('/contributorInputs', getContributorInputs);
 
 router.post('/reviews/preview', previewReviewHandler);
 router.post('/reviews/chat', chatReviewHandler);
