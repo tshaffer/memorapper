@@ -32,7 +32,7 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     { contributorId: '1', rating: 8, comments: 'Great food!' },
     { contributorId: '2', rating: 9, comments: 'Amazing service!' },
   ]);
-  
+
   const isMobile = useMediaQuery('(max-width:768px)');
 
   const [isLoading, setIsLoading] = useState(false);
@@ -79,7 +79,7 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     //   )
     // );
   };
-  
+
   const handleSave = () => {
     console.log('Saving contributor inputs:', contributorInputs);
     // Add your backend save logic here.
@@ -320,7 +320,9 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
       id="form"
       className="tab-panel active"
       style={{
-        maxHeight: isMobile ? 'calc(60vh)' : 'auto',
+        maxHeight: isMobile ? 'calc(60vh)' : '80vh', // Fixed height for desktop
+        overflowY: 'auto', // Enable vertical scrolling
+        padding: '1rem',   // Optional: Add some padding for better visuals
       }}
     >
       <form id="add-review-form">
