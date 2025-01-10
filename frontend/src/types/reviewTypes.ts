@@ -1,4 +1,4 @@
-import { FreeformReviewProperties, ItemReview } from "./entities";
+import { ContributorInputByContributor, FreeformReviewProperties, ItemReview } from "./entities";
 import { WouldReturn } from "./enums";
 import { GooglePlace } from "./googlePlace";
 
@@ -20,4 +20,5 @@ export interface ReviewData {
   sessionId: string | null;
   restaurantName: string;
   chatHistory: ChatMessage[]; // Chat history
+  contributorInputByContributor?: ContributorInputByContributor;
 }

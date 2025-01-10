@@ -38,6 +38,10 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     setReviewData((prev) => ({ ...prev, place: { ...prev.place!, restaurantType: value } }));
   }
 
+  const handleContributorInfoChange = (newContributorInputByContributor: ContributorInputByContributor) => {
+    setReviewData((prev) => ({ ...prev, contributorInputByContributor: newContributorInputByContributor }));
+  }
+
   const generateSessionId = (): string => Math.random().toString(36).substring(2) + Date.now().toString(36);
 
   function generateContributorInputByContributor(
@@ -104,45 +108,28 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     setReviewData((prev) => ({ ...prev, restaurantName: name }));
   }
 
-  // const xhandleContributorInputChange = (contributorId: string, input: Partial<ContributorInput>) => {
-  //   setContributorInputByContributor(prev => ({
-  //     ...prev,
-  //     [contributorId]: {
-  //       ...prev[contributorId],
-  //       contributorId, // Ensure the `contributorId` is preserved
-  //       ...input, // Merge new input fields
-  //     },
-  //   }));
-  // };
-  // const handleContributorInputChange = (contributorId: string,input: Partial<ContributorInput>
-  // ) => {
-  //   setContributorInputs((prev) => ({
-  //     ...prev,
-  //     [contributorId]: {
-  //       ...prev[contributorId], // Preserve existing properties
-  //       ...input,              // Update the fields from input
-  //     },
-  //   }));
-  // };
   const handleContributorInputChange = (
     contributorId: string,
     input: Partial<ContributorInput>
   ) => {
-    setContributorInputByContributor((prev) => ({
-      ...prev,
+    const newContributorInputByContributor = {
+      ...contributorInputByContributor,
       [contributorId]: {
-        ...prev[contributorId], // Preserve existing properties
-        ...input,              // Update the fields from input
+        ...contributorInputByContributor[contributorId],
+        ...input,
       },
-    }));
+    };
+    handleContributorInfoChange(newContributorInputByContributor);
+    setContributorInputByContributor(newContributorInputByContributor);
   };
   
   const handlePreview = async () => {
     if (!reviewData.sessionId) return;
     try {
       setIsLoading(true);
-      await onSubmitPreview(reviewData);
-      props.onReceivedPreviewResponse();
+      console.log('Submitting review data:', reviewData);
+      // await onSubmitPreview(reviewData);
+      // props.onReceivedPreviewResponse();
     } catch (error) {
       console.error('Error previewing review:', error);
     }
