@@ -4,6 +4,39 @@ import { ContributorInputSchema } from './ContributorInput';
 import { MemoRappReview } from '../types/entities';
 import { WouldReturn } from '../types';
 
+const tedSchema = new Schema({
+  // `socialMediaHandles` is a map whose values are strings. A map's
+  // keys are always strings. You specify the type of values using `of`.
+  socialMediaHandles: {
+    type: Map,
+    of: String
+  }
+});
+
+const Ted = mongoose.model('Ted', tedSchema);
+// Map { 'github' => 'vkarpov15', 'twitter' => '@code_barbarian' }
+// console.log(new Ted({
+//   socialMediaHandles: {
+//     github: 'vkarpov15',
+//     twitter: '@code_barbarian'
+//   }
+// }).socialMediaHandles);
+
+
+const ted = new Ted({
+  socialMediaHandles: {}
+});
+
+// Good
+ted.socialMediaHandles!.set('github', 'vkarpov15');
+// Works too
+ted.set('socialMediaHandles.twitter', '@code_barbarian');
+
+ted.save();
+
+
+
+
 export interface IReview extends Omit<MemoRappReview, '_id'>, Document {}
 
 export type ReviewModel = Model<IReview>;
