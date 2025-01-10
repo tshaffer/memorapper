@@ -1,8 +1,37 @@
 // Review.ts
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { ContributorInputSchema } from './ContributorInput';
+import ContributorInput, { ContributorInputSchema } from './ContributorInput';
 import { MemoRappReview } from '../types/entities';
 import { WouldReturn } from '../types';
+
+export interface IPoop extends Document {}
+
+export type PoopModel = Model<IPoop>;
+
+const poopSchema = new Schema({
+  contributorInputByContributor: {
+    type: Map,
+    of: ContributorInputSchema
+  }
+});
+export const Poop: PoopModel = mongoose.model<IPoop>('poop', poopSchema);
+
+const poop = new Poop({
+  contributorInputByContributor: {}
+});
+
+poop.set('contributorInputByContributor.rating', '@code_barbarian');
+
+
+const contributorInput = new ContributorInput
+poop.contributorInputByContributor!.set('github', 
+  { contributorId: '1', rating: 5, comments: 'Great!' }
+);
+poop.set('socialMediaHandles.twitter', '@code_barbarian');
+
+poop.save();
+
+
 
 const tedSchema = new Schema({
   // `socialMediaHandles` is a map whose values are strings. A map's
@@ -27,9 +56,7 @@ const ted = new TedModel({
   socialMediaHandles: {}
 });
 
-// Good
 ted.socialMediaHandles!.set('github', 'vkarpov15');
-// Works too
 ted.set('socialMediaHandles.twitter', '@code_barbarian');
 
 ted.save();
