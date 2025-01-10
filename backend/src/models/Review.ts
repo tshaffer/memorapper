@@ -23,20 +23,25 @@ ted.save();
 const poopSchema = new Schema({
   contributorReviewByContributor: {
     type: Map,
-    of: String
+    // of: String
+    of: new Schema({
+      handle: String,
+      value: String,
+    })
+
   }
 });
 export const PoopModel = mongoose.model('Poop', poopSchema);
 const poop = new PoopModel({
   contributorReviewByContributor: {}
 });
-poop.contributorReviewByContributor!.set('1', 'vkarpov15');
-poop.contributorReviewByContributor!.set('2', 'flibbet');
+poop.contributorReviewByContributor!.set('1', { handle: 'h1',  value: 'bloink' });
+poop.contributorReviewByContributor!.set('2', { handle: 'h2',  value: 'flibdog' });
 poop.save();
 
 
 
-export interface IReview extends Omit<MemoRappReview, '_id'>, Document {}
+export interface IReview extends Omit<MemoRappReview, '_id'>, Document { }
 
 export type ReviewModel = Model<IReview>;
 
