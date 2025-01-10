@@ -9,7 +9,6 @@ import { Contributor, ContributorInput, RestaurantType, ReviewData, WouldReturn 
 import PulsingDots from '../../components/PulsingDots';
 import React from 'react';
 import { useUserContext } from '../../contexts/UserContext';
-import RatingsAndComments from '../../components/RatingsAndComments';
 
 interface ReviewEntryFormProps {
   reviewData: ReviewData;
@@ -102,11 +101,6 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     // );
   };
 
-  const handleSave = () => {
-    console.log('Saving contributor inputs:', contributorInputs);
-    // Add your backend save logic here.
-  };
-
   const handlePreview = async () => {
     if (!reviewData.sessionId) return;
     try {
@@ -179,12 +173,50 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
 
   const renderRatingsAndComments = (): JSX.Element => {
     return (
-      <RatingsAndComments
-        contributors={contributors}
-        contributorInputs={contributorInputs}
-        onContributorInputChange={handleContributorInputChange}
-        onSave={handleSave}
-      />
+      <div className="ratings-and-comments">
+        <fieldset className="ratings-comments-section">
+          <legend>Ratings and Comments by Contributors</legend>
+          {contributors.map((contributor) => {
+            const input = contributorInputs.find(
+              (ci) => ci.contributorId === contributor.id
+            ) || { rating: 0, comments: '' };
+
+            return (
+              <div key={contributor.id} className="contributor-section">
+                <div className="contributor-header">
+                  <h4>{contributor.name}</h4>
+                </div>
+                <div className="contributor-rating">
+                  <label htmlFor={`rating-${contributor.id}`}>Rating</label>
+                  <Rating
+                    id={`rating-${contributor.id}`}
+                    name={`rating-${contributor.id}`}
+                    value={input.rating}
+                    max={5}
+                    onChange={(event, newValue) =>
+                      handleContributorInputChange(contributor.id, 'rating', newValue || 0)
+                    }
+                  />
+                </div>
+                <div className="contributor-comments">
+                  <label htmlFor={`comments-${contributor.id}`}>Comments</label>
+                  <TextField
+                    id={`comments-${contributor.id}`}
+                    name={`comments-${contributor.id}`}
+                    fullWidth
+                    multiline
+                    rows={3}
+                    value={input.comments}
+                    onChange={(event) =>
+                      handleContributorInputChange(contributor.id, 'comments', event.target.value)
+                    }
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </fieldset>
+      </div>
     );
   };
 
