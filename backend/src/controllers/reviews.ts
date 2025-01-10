@@ -28,18 +28,19 @@ export const addReview = async (memoRappReview: MemoRappReview): Promise<IReview
       primaryRating: 5,
       wouldReturn: 0,
       reviewerId: '1',
-      contributorInputByContributor: {
-        '1': { contributorId: '1', rating: 5, comments: 'Great!' },
-        '2': { contributorId: '2', rating: 3, comments: 'Needs improvement.' },
-      },
+      contributorInputByContributor: new Map([
+        ['1', { contributorId: '1', rating: 5, comments: 'Great!' }],
+        ['2', { contributorId: '2', rating: 3, comments: 'Needs improvement.' }],
+      ]),
     },
     freeformReviewProperties: {
       reviewText: 'Salad was okay',
       itemReviews: [{ item: 'Salad', review: 'Okay' }],
     },
   });
+
   console.log('review:', review.toObject());
-  
+
   try {
     const savedReview = await review.save();
     console.log('savedReview:', savedReview);

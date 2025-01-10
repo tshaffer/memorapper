@@ -14,18 +14,42 @@ ContributorInputByContributorSchema.add({
   of: ContributorInputSchema,
 });
 
-const StructuredReviewPropertiesSchema: Schema = new Schema({
-  dateOfVisit: { type: String, required: true },
-  primaryRating: { type: Number, required: true },
-  secondaryRating: { type: Number },
-  wouldReturn: {
-    type: Number,
-    enum: [0, 1, 2, 3],
-    default: WouldReturn.Undefined,
+const StructuredReviewPropertiesSchema: Schema = new Schema(
+  {
+    dateOfVisit: { type: String, required: true },
+    primaryRating: { type: Number, required: true },
+    secondaryRating: { type: Number },
+    wouldReturn: {
+      type: Number,
+      enum: [0, 1, 2, 3],
+      default: WouldReturn.Undefined,
+    },
+    reviewerId: { type: String, required: true },
+    contributorInputByContributor: ContributorInputByContributorSchema,
   },
-  reviewerId: { type: String, required: true },
-  contributorInputByContributor: ContributorInputByContributorSchema,
-});
+  {
+    toObject: {
+      transform: function (doc, ret) {
+        if (ret.contributorInputByContributor instanceof Map) {
+          ret.contributorInputByContributor = Object.fromEntries(
+            ret.contributorInputByContributor.entries()
+          );
+        }
+        return ret;
+      },
+    },
+    toJSON: {
+      transform: function (doc, ret) {
+        if (ret.contributorInputByContributor instanceof Map) {
+          ret.contributorInputByContributor = Object.fromEntries(
+            ret.contributorInputByContributor.entries()
+          );
+        }
+        return ret;
+      },
+    },
+  }
+);
 
 const ItemReviewSchema: Schema = new Schema({
   item: { type: String, required: true },
