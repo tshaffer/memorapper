@@ -4,63 +4,35 @@ import ContributorInput, { ContributorInputSchema } from './ContributorInput';
 import { MemoRappReview } from '../types/entities';
 import { WouldReturn } from '../types';
 
-export interface IPoop extends Document {}
-
-export type PoopModel = Model<IPoop>;
-
-const poopSchema = new Schema({
-  contributorInputByContributor: {
-    type: Map,
-    of: ContributorInputSchema
-  }
-});
-export const Poop: PoopModel = mongoose.model<IPoop>('poop', poopSchema);
-
-const poop = new Poop({
-  contributorInputByContributor: {}
-});
-
-poop.set('contributorInputByContributor.rating', '@code_barbarian');
-
-
-const contributorInput = new ContributorInput
-poop.contributorInputByContributor!.set('github', 
-  { contributorId: '1', rating: 5, comments: 'Great!' }
-);
-poop.set('socialMediaHandles.twitter', '@code_barbarian');
-
-poop.save();
-
 
 
 const tedSchema = new Schema({
-  // `socialMediaHandles` is a map whose values are strings. A map's
-  // keys are always strings. You specify the type of values using `of`.
   socialMediaHandles: {
     type: Map,
     of: String
   }
 });
-
 export const TedModel = mongoose.model('Ted', tedSchema);
-// Map { 'github' => 'vkarpov15', 'twitter' => '@code_barbarian' }
-// console.log(new Ted({
-//   socialMediaHandles: {
-//     github: 'vkarpov15',
-//     twitter: '@code_barbarian'
-//   }
-// }).socialMediaHandles);
-
-
 const ted = new TedModel({
   socialMediaHandles: {}
 });
-
 ted.socialMediaHandles!.set('github', 'vkarpov15');
 ted.set('socialMediaHandles.twitter', '@code_barbarian');
-
 ted.save();
 
+const poopSchema = new Schema({
+  contributorReviewByContributor: {
+    type: Map,
+    of: String
+  }
+});
+export const PoopModel = mongoose.model('Poop', poopSchema);
+const poop = new PoopModel({
+  contributorReviewByContributor: {}
+});
+poop.contributorReviewByContributor!.set('github', 'vkarpov15');
+poop.set('contributorReviewByContributor.twitter', '@code_barbarian');
+poop.save();
 
 
 
