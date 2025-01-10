@@ -9,16 +9,10 @@ export type ReviewModel = Model<IReview>;
 
 const ContributorInputByContributorSchema: Schema = new Schema(
   {
-    // Dynamic object structure where keys are `contributorId` (string)
+    contributorId: ContributorInputSchema,
   },
-  { _id: false } // Prevent creating an additional `_id` for this nested schema
+  { _id: false }
 );
-
-ContributorInputByContributorSchema.add({
-  // The schema doesn't natively support dynamic keys directly; mongoose uses `Map`.
-  type: Map,
-  of: ContributorInputSchema, // Values follow the ContributorInputSchema
-});
 
 const StructuredReviewPropertiesSchema: Schema = new Schema({
   dateOfVisit: { type: String, required: true },
@@ -52,12 +46,3 @@ const ReviewSchema: Schema = new Schema({
 const Review: ReviewModel = mongoose.model<IReview>('Review', ReviewSchema);
 
 export default Review;
-
-
-// Define the ContributorInputByContributorSchema
-// Allow arbitrary string keys with `ContributorInput` as the value
-ContributorInputByContributorSchema.add({
-  // The schema doesn't natively support dynamic keys directly; mongoose uses `Map`.
-  type: Map,
-  of: ContributorInputSchema, // Values follow the ContributorInputSchema
-});
