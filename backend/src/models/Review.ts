@@ -8,11 +8,15 @@ export interface IReview extends Omit<MemoRappReview, "_id">, Document {}
 export type ReviewModel = Model<IReview>;
 
 const ContributorInputByContributorSchema: Schema = new Schema(
-  {
-    contributorId: ContributorInputSchema,
-  },
-  { _id: false }
+  {}, // No fixed fields since this is dynamic
+  { _id: false } // Prevent creating an `_id` for this schema
 );
+
+// Use Map to define dynamic keys
+ContributorInputByContributorSchema.add({
+  type: Map,
+  of: ContributorInputSchema, // Each value follows ContributorInputSchema
+});
 
 const StructuredReviewPropertiesSchema: Schema = new Schema({
   dateOfVisit: { type: String, required: true },
@@ -20,11 +24,11 @@ const StructuredReviewPropertiesSchema: Schema = new Schema({
   secondaryRating: { type: Number },
   wouldReturn: {
     type: Number,
-    enum: [0, 1, 2, 3], // Explicitly define numeric values
+    enum: [0, 1, 2, 3],
     default: WouldReturn.Undefined,
   },
   reviewerId: { type: String, required: true },
-  contributorInputByContributor: ContributorInputByContributorSchema,
+  contributorInputByContributor: ContributorInputByContributorSchema, // Use the fixed schema here
 });
 
 const ItemReviewSchema: Schema = new Schema({
