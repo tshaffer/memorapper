@@ -21,8 +21,8 @@ const poop = new PoopModel({
 const ci1: ContributorInput = { contributorId: '1', rating: 5, comments: 'Great!' };
 const ci2: ContributorInput = { contributorId: '2', rating: 3, comments: 'Needs improvement.' };
 
-poop.contributorReviewByContributor!.set('1', { contributorId: '1',  contributorInput: ci1 });
-poop.contributorReviewByContributor!.set('2', { contributorId: '2',  contributorInput: ci2 });
+poop.contributorReviewByContributor!.set('1', { contributorId: '1', contributorInput: ci1 });
+poop.contributorReviewByContributor!.set('2', { contributorId: '2', contributorInput: ci2 });
 poop.save();
 
 
@@ -34,7 +34,9 @@ export type ReviewModel = Model<IReview>;
 const ContributorInputByContributorSchema: Schema = new Schema({}, { _id: false });
 ContributorInputByContributorSchema.add({
   type: Map,
-  of: ContributorInputSchema,
+  of: new Schema({
+    contributorId: String, ContributorInputSchema,
+  })
 });
 
 const StructuredReviewPropertiesSchema: Schema = new Schema(
@@ -93,3 +95,15 @@ const ReviewSchema: Schema = new Schema({
 const Review: ReviewModel = mongoose.model<IReview>('Review', ReviewSchema);
 
 export default Review;
+
+const tedSchema = new Schema({
+  googlePlaceId: { type: String, required: true },
+  contributorReviewByContributor: {
+    type: Map,
+    of: new Schema({
+      contributorId: String,
+      contributorInput: ContributorInputSchema,
+    })
+  }
+});
+export const TedModel = mongoose.model('Ted', tedSchema);
