@@ -23,20 +23,19 @@ ted.save();
 const poopSchema = new Schema({
   contributorReviewByContributor: {
     type: Map,
-    // of: String
     of: new Schema({
-      handle: String,
-      value: String,
+      contributorId: String,
+      // value: String,
+      contributorInput: ContributorInputSchema,
     })
-
   }
 });
 export const PoopModel = mongoose.model('Poop', poopSchema);
 const poop = new PoopModel({
   contributorReviewByContributor: {}
 });
-poop.contributorReviewByContributor!.set('1', { handle: 'h1',  value: 'bloink' });
-poop.contributorReviewByContributor!.set('2', { handle: 'h2',  value: 'flibdog' });
+poop.contributorReviewByContributor!.set('1', { contributorId: '1',  contributorInput: { contributorId: '1', rating: 5, comments: 'Great!' } });
+poop.contributorReviewByContributor!.set('2', { contributorId: '2',  contributorInput: { contributorId: '2', rating: 3, comments: 'Needs improvement.' } });
 poop.save();
 
 
