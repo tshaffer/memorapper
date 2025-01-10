@@ -1,7 +1,6 @@
 import React from 'react';
 import Rating from '@mui/material/Rating';
 import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
 import { Contributor, ContributorInput } from '../types';
 
 import '../styles/reviewEntryForm.css';
@@ -14,14 +13,12 @@ interface RatingsAndCommentsProps {
     field: 'rating' | 'comments',
     value: number | string
   ) => void;
-  onSave: () => void; // Callback to save all inputs
 }
 
 const RatingsAndComments: React.FC<RatingsAndCommentsProps> = ({
   contributors,
   contributorInputs,
   onContributorInputChange,
-  onSave,
 }) => {
   const renderRatingsAndComments = (): JSX.Element => (
     <fieldset className="ratings-comments-section">
@@ -71,14 +68,6 @@ const RatingsAndComments: React.FC<RatingsAndCommentsProps> = ({
   return (
     <div className="ratings-and-comments">
       {renderRatingsAndComments()}
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={onSave}
-        style={{ marginTop: '1rem' }}
-      >
-        Save Ratings and Comments
-      </Button>
     </div>
   );
 };
