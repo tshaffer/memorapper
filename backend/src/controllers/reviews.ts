@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Review, { IReview } from "../models/Review";
+import Review, { IReview, TedModel } from "../models/Review";
 import { MemoRappReview } from "../types";
 
 export const getReviews = async (request: Request, response: Response, next: any) => {
@@ -21,25 +21,31 @@ export const getReviews = async (request: Request, response: Response, next: any
 
 export const testAddReviewHandler = async (req: Request, res: Response): Promise<any> => {
 
-  const review = new Review({
-    googlePlaceId: 'ChIJbXQkXe6wj4ARdvBYlDi9YNM',
-    structuredReviewProperties: {
-      dateOfVisit: '2025-01-10',
-      primaryRating: 5,
-      wouldReturn: 0,
-      reviewerId: '1',
-      contributorInputByContributor: new Map([
-        ['1', { contributorId: '1', rating: 5, comments: 'Great!' }],
-        ['2', { contributorId: '2', rating: 3, comments: 'Needs improvement.' }],
-      ]),
-    },
-    freeformReviewProperties: {
-      reviewText: 'Salad was okay',
-      itemReviews: [{ item: 'Salad', review: 'Okay' }],
-    },
-  });
+  const teds: any[] = await TedModel.find({}).exec();
 
-  console.log('review:', review.toObject());
+  console.log('teds:');
+  teds.forEach(element => {
+    console.log(element.toObject());
+  });
+  // const review = new Review({
+  //   googlePlaceId: 'ChIJbXQkXe6wj4ARdvBYlDi9YNM',
+  //   structuredReviewProperties: {
+  //     dateOfVisit: '2025-01-10',
+  //     primaryRating: 5,
+  //     wouldReturn: 0,
+  //     reviewerId: '1',
+  //     contributorInputByContributor: new Map([
+  //       ['1', { contributorId: '1', rating: 5, comments: 'Great!' }],
+  //       ['2', { contributorId: '2', rating: 3, comments: 'Needs improvement.' }],
+  //     ]),
+  //   },
+  //   freeformReviewProperties: {
+  //     reviewText: 'Salad was okay',
+  //     itemReviews: [{ item: 'Salad', review: 'Okay' }],
+  //   },
+  // });
+
+  // console.log('review:', review.toObject());
 
   res.sendStatus(200);
 };

@@ -13,7 +13,7 @@ const tedSchema = new Schema({
   }
 });
 
-const Ted = mongoose.model('Ted', tedSchema);
+export const TedModel = mongoose.model('Ted', tedSchema);
 // Map { 'github' => 'vkarpov15', 'twitter' => '@code_barbarian' }
 // console.log(new Ted({
 //   socialMediaHandles: {
@@ -23,7 +23,7 @@ const Ted = mongoose.model('Ted', tedSchema);
 // }).socialMediaHandles);
 
 
-const ted = new Ted({
+const ted = new TedModel({
   socialMediaHandles: {}
 });
 
