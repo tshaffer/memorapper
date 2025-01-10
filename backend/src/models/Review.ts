@@ -51,7 +51,14 @@ const StructuredReviewPropertiesSchema: Schema = new Schema(
       default: WouldReturn.Undefined,
     },
     reviewerId: { type: String, required: true },
-    contributorInputByContributor: ContributorInputByContributorSchema,
+    // contributorInputByContributor: ContributorInputByContributorSchema,
+    contributorInputByContributor: {
+      type: Map,
+      of: new Schema({
+        contributorId: String,
+        contributorInput: ContributorInputSchema,
+      })
+    },
   }
 );
 
@@ -86,6 +93,7 @@ const TedStructuredReviewPropertiesSchema: Schema = new Schema(
       default: WouldReturn.Undefined,
     },
     reviewerId: { type: String, required: true },
+    // contributorInputByContributor: ContributorInputByContributorSchema,
     contributorInputByContributor: {
       type: Map,
       of: new Schema({

@@ -25,8 +25,8 @@ export const testAddReviewHandler = async (req: Request, res: Response): Promise
   const ci2: ContributorInput = { contributorId: '2', rating: 2, comments: 'Needs improvement.' };
 
   const contributorInputByContributor: Map<string, any> = new Map();
-  contributorInputByContributor.set('1', { contributorId: '1', contributorInput: ci1 });
-  contributorInputByContributor.set('2', { contributorId: '2', contributorInput: ci2 });
+  contributorInputByContributor.set('3', { contributorId: '1', contributorInput: ci1 });
+  contributorInputByContributor.set('4', { contributorId: '2', contributorInput: ci2 });
 
   const tedStructuredReviewProperties = {
     dateOfVisit: '2025-01-10',
@@ -57,6 +57,14 @@ export const testAddReviewHandler = async (req: Request, res: Response): Promise
 
 export const addReview = async (memoRappReview: MemoRappReview): Promise<IReview | null> => {
 
+  const ci1: ContributorInput = { contributorId: '1', rating: 4, comments: 'Great!' };
+  const ci2: ContributorInput = { contributorId: '2', rating: 5, comments: 'Needs improvement.' };
+
+  const contributorInputByContributor: Map<string, any> = new Map();
+  contributorInputByContributor.set('1', { contributorId: '1', contributorInput: ci1 });
+  contributorInputByContributor.set('2', { contributorId: '2', contributorInput: ci2 });
+
+
   const review = new Review({
     googlePlaceId: 'ChIJbXQkXe6wj4ARdvBYlDi9YNM',
     structuredReviewProperties: {
@@ -64,10 +72,11 @@ export const addReview = async (memoRappReview: MemoRappReview): Promise<IReview
       primaryRating: 5,
       wouldReturn: 0,
       reviewerId: '1',
-      contributorInputByContributor: new Map([
-        ['1', { contributorId: '1', rating: 5, comments: 'Great!' }],
-        ['2', { contributorId: '2', rating: 3, comments: 'Needs improvement.' }],
-      ]),
+      contributorInputByContributor,
+      // contributorInputByContributor: new Map([
+      //   ['1', { contributorId: '1', rating: 5, comments: 'Great!' }],
+      //   ['2', { contributorId: '2', rating: 3, comments: 'Needs improvement.' }],
+      // ]),
     },
     freeformReviewProperties: {
       reviewText: 'Salad was okay',
