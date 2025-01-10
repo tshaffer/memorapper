@@ -42,7 +42,7 @@ const RatingsAndComments: React.FC<RatingsAndCommentsProps> = ({
                 id={`rating-${contributor.id}`}
                 name={`rating-${contributor.id}`}
                 value={input.rating}
-                max={10}
+                max={5}
                 onChange={(event, newValue) =>
                   onContributorInputChange(contributor.id, 'rating', newValue || 0)
                 }

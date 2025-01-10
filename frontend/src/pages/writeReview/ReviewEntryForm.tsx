@@ -20,7 +20,7 @@ interface ReviewEntryFormProps {
 
 const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormProps) => {
 
-  const { users, currentUser } = useUserContext();
+  const { currentUser } = useUserContext();
 
   const { reviewData, setReviewData, onSubmitPreview } = props;
 
@@ -107,14 +107,6 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     // Add your backend save logic here.
   };
 
-  const handlePrimaryRatingChange = (_: Event, value: number | number[]) => {
-    setReviewData((prev) => ({ ...prev, primaryRating: value as number }));
-  };
-
-  const handleSecondaryRatingChange = (_: Event, value: number | number[]) => {
-    setReviewData((prev) => ({ ...prev, secondaryRating: value as number }));
-  };
-
   const handlePreview = async () => {
     if (!reviewData.sessionId) return;
     try {
@@ -140,7 +132,6 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
 
   const renderRestaurantType = (): JSX.Element => {
     const value = reviewData?.place?.restaurantType || RestaurantType.Restaurant;
-
     return (
       <div className="form-group">
         <label htmlFor="restaurant-type">Restaurant Type</label>
@@ -202,141 +193,6 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     return <PulsingDots />;
   };
 
-  const renderReviewer = (): JSX.Element => {
-    return (
-      <>
-        <label>Reviewer:</label>
-        <Select
-          value={reviewData.reviewerId ? reviewData.reviewerId : currentUser?.id}
-          onChange={(event) => handleChange('reviewerId', event.target.value)}
-        >
-          {
-            users.map((user) => (
-              <MenuItem key={user.id} value={user.id}>
-                {user.userName}
-              </MenuItem>
-            ))
-          }
-        </Select>
-      </>
-    );
-  }
-
-  const renderRatings = (): JSX.Element => {
-    const { settings } = useUserContext();
-    return (
-      <>
-        <label>Ratings</label>
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "fit-content(300px) 200px", // First column auto-sizes up to a maximum of 300px
-            gridAutoRows: "auto", // Each row's height adjusts to its content
-            gap: 2, // Optional: spacing between items
-          }}
-        >
-          {/* Primary Rating */}
-          <Box
-            sx={{
-              border: "1px solid",
-              padding: "0px 15px 0px 10px",
-              display: "flex",
-              justifyContent: "left",
-              alignItems: "center", // Optional: centers vertically if needed
-            }}
-          >
-            <FormLabel>{settings.ratingsUI.primaryRatingLabel}</FormLabel>
-          </Box>
-          <Box
-            sx={{
-              border: "1px solid",
-              padding: 1,
-              display: "flex", // Use flexbox
-              justifyContent: "center", // Horizontally center the content
-            }}
-          >
-            <Slider
-              sx={{ width: '150px' }}
-              defaultValue={5}
-              value={reviewData.primaryRating || 0}
-              valueLabelDisplay="auto"
-              step={1}
-              marks
-              min={0}
-              max={10}
-              onChange={handlePrimaryRatingChange}
-            />
-          </Box>
-          {/* Secondary Rating */}
-          {settings.ratingsUI.showSecondaryRating && (
-            <>
-              <Box
-                sx={{
-                  border: "1px solid",
-                  padding: "0px 15px 0px 10px",
-                  display: "flex",
-                  justifyContent: "left",
-                  alignItems: "center", // Optional: centers vertically if needed
-                }}
-              >
-                <FormLabel>{settings.ratingsUI.secondaryRatingLabel}</FormLabel>
-              </Box>
-              <Box
-                sx={{
-                  border: "1px solid",
-                  padding: 1,
-                  display: "flex", // Use flexbox
-                  justifyContent: "center", // Horizontally center the content
-                }}
-              >
-                <Slider
-                  sx={{ width: '150px' }}
-                  defaultValue={5}
-                  value={reviewData.secondaryRating || 0}
-                  valueLabelDisplay="auto"
-                  step={1}
-                  marks
-                  min={0}
-                  max={10}
-                  onChange={handleSecondaryRatingChange}
-                />
-              </Box>
-            </>
-          )}
-        </Box>
-      </>
-    );
-  }
-
-  const renderWouldReturn = (): JSX.Element => {
-    return (
-      <FormControl component="fieldset" style={{ marginTop: 20, width: '100%' }}>
-        <FormLabel component="legend">Would Return</FormLabel>
-        <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
-          <RadioGroup
-            row
-            name="would-return"
-            value={reviewData.wouldReturn}
-            onChange={(e) => handleChange('wouldReturn', parseInt(e.target.value))}
-          >
-            <FormControlLabel value={WouldReturn.Yes} control={<Radio />} label="Yes" />
-            <FormControlLabel value={WouldReturn.No} control={<Radio />} label="No" />
-            <FormControlLabel value={WouldReturn.NotSure} control={<Radio />} label="Not Sure" />
-          </RadioGroup>
-          <Button onClick={() => handleChange('wouldReturn', null)} size="small">
-            Clear
-          </Button>
-        </Box>
-      </FormControl>
-    );
-  }
-
-
-  /*
-        {renderReviewer()}
-        {renderRatings()}
-        {renderWouldReturn()}
-  */
   return (
     <div
       id="form"
