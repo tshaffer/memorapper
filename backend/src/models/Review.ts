@@ -30,8 +30,8 @@ export const PoopModel = mongoose.model('Poop', poopSchema);
 const poop = new PoopModel({
   contributorReviewByContributor: {}
 });
-poop.contributorReviewByContributor!.set('github', 'vkarpov15');
-poop.set('contributorReviewByContributor.twitter', '@code_barbarian');
+poop.contributorReviewByContributor!.set('1', 'vkarpov15');
+poop.contributorReviewByContributor!.set('2', 'flibbet');
 poop.save();
 
 
