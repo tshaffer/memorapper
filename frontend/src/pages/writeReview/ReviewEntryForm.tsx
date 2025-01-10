@@ -127,9 +127,8 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     if (!reviewData.sessionId) return;
     try {
       setIsLoading(true);
-      console.log('Submitting review data:', reviewData);
-      // await onSubmitPreview(reviewData);
-      // props.onReceivedPreviewResponse();
+      await onSubmitPreview(reviewData);
+      props.onReceivedPreviewResponse();
     } catch (error) {
       console.error('Error previewing review:', error);
     }

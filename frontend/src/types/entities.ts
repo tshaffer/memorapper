@@ -101,6 +101,7 @@ export interface StructuredReviewProperties {
   secondaryRating?: number;
   wouldReturn: WouldReturn | null;
   reviewerId: string;
+  contributorInputByContributor?: ContributorInputByContributor;
 }
 
 export interface FreeformReviewProperties {

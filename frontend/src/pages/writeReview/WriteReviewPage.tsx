@@ -85,6 +85,7 @@ const WriteReviewPage = () => {
       secondaryRating: reviewData.secondaryRating,
       wouldReturn: reviewData.wouldReturn!,
       reviewerId: reviewData.reviewerId,
+      contributorInputByContributor: reviewData.contributorInputByContributor,
     };
     const submitBody: SubmitReviewBody = {
       _id: reviewData._id,
