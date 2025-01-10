@@ -179,7 +179,8 @@ export const chatReviewHandler = async (
 export const submitReviewHandler = async (req: Request, res: Response): Promise<any> => {
 
   const body: SubmitReviewBody = req.body;
-
+  console.log('Submit review request:', body); // Debugging log
+  
   try {
     const newReview = await submitReview(body);
     return res.status(201).json({ message: 'Review saved successfully!', review: newReview });

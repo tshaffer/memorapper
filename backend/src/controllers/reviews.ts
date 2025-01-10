@@ -21,16 +21,43 @@ export const getReviews = async (request: Request, response: Response, next: any
 
 export const addReview = async (memoRappReview: MemoRappReview): Promise<IReview | null> => {
 
-  const newReview: IReview = new Review(memoRappReview);
-
-  console.log('memoRappReview:', memoRappReview);
-  console.log('newReview:', newReview);
-
+  const review = new Review({
+    googlePlaceId: 'ChIJbXQkXe6wj4ARdvBYlDi9YNM',
+    structuredReviewProperties: {
+      dateOfVisit: '2025-01-10',
+      primaryRating: 5,
+      wouldReturn: 0,
+      reviewerId: '1',
+      contributorInputByContributor: {
+        '1': { contributorId: '1', rating: 5, comments: 'Great!' },
+        '2': { contributorId: '2', rating: 3, comments: 'Needs improvement.' },
+      },
+    },
+    freeformReviewProperties: {
+      reviewText: 'Salad was okay',
+      itemReviews: [{ item: 'Salad', review: 'Okay' }],
+    },
+  });
+  console.log('review:', review.toObject());
+  
   try {
-    const savedReview: IReview | null = await newReview.save();
+    const savedReview = await review.save();
+    console.log('savedReview:', savedReview);
     return savedReview;
   } catch (error: any) {
     console.error('Error saving review:', error);
     throw new Error('An error occurred while saving the review.');
   }
 }
+
+/*
+  // const newReview: IReview = new Review(memoRappReview);
+
+  // console.log('memoRappReview:', memoRappReview);
+  // console.log('newReview:', newReview);
+  // console.log('newReview.toObject():', newReview.toObject());
+
+  // try {
+  //   const savedReview: IReview | null = await newReview.save();
+  //   return savedReview;
+*/

@@ -1,21 +1,17 @@
+// Review.ts
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { ContributorInputSchema } from './ContributorInput'; // Import ContributorInputSchema
+import { ContributorInputSchema } from './ContributorInput';
 import { MemoRappReview } from '../types/entities';
 import { WouldReturn } from '../types';
 
-export interface IReview extends Omit<MemoRappReview, "_id">, Document {}
+export interface IReview extends Omit<MemoRappReview, '_id'>, Document {}
 
 export type ReviewModel = Model<IReview>;
 
-const ContributorInputByContributorSchema: Schema = new Schema(
-  {}, // No fixed fields since this is dynamic
-  { _id: false } // Prevent creating an `_id` for this schema
-);
-
-// Use Map to define dynamic keys
+const ContributorInputByContributorSchema: Schema = new Schema({}, { _id: false });
 ContributorInputByContributorSchema.add({
   type: Map,
-  of: ContributorInputSchema, // Each value follows ContributorInputSchema
+  of: ContributorInputSchema,
 });
 
 const StructuredReviewPropertiesSchema: Schema = new Schema({
@@ -28,12 +24,12 @@ const StructuredReviewPropertiesSchema: Schema = new Schema({
     default: WouldReturn.Undefined,
   },
   reviewerId: { type: String, required: true },
-  contributorInputByContributor: ContributorInputByContributorSchema, // Use the fixed schema here
+  contributorInputByContributor: ContributorInputByContributorSchema,
 });
 
 const ItemReviewSchema: Schema = new Schema({
   item: { type: String, required: true },
-  review: { type: String, required: true }
+  review: { type: String, required: true },
 });
 
 const FreeformReviewPropertiesSchema: Schema = new Schema({
@@ -42,9 +38,9 @@ const FreeformReviewPropertiesSchema: Schema = new Schema({
 });
 
 const ReviewSchema: Schema = new Schema({
-  googlePlaceId: { type: String, required: true},
+  googlePlaceId: { type: String, required: true },
   structuredReviewProperties: StructuredReviewPropertiesSchema,
-  freeformReviewProperties: FreeformReviewPropertiesSchema
+  freeformReviewProperties: FreeformReviewPropertiesSchema,
 });
 
 const Review: ReviewModel = mongoose.model<IReview>('Review', ReviewSchema);

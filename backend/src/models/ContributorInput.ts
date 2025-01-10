@@ -1,7 +1,8 @@
+// ContributorInput.ts
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IContributorInput extends Document {
-  contributorId: string; // Foreign key to Contributor
+  contributorId: string;
   rating: number;
   comments: string;
 }
@@ -15,3 +16,4 @@ export const ContributorInputSchema: Schema<IContributorInput> = new Schema({
 const ContributorInputModel: Model<IContributorInput> = mongoose.model<IContributorInput>('ContributorInput', ContributorInputSchema);
 
 export default ContributorInputModel;
+
