@@ -69,12 +69,15 @@ export interface UnvisitedPlace {
   rating: number;
 }
 
+export type ContributorInputByContributor = Record<string, ContributorInput>;
+
 interface StructuredReviewProperties {
   dateOfVisit: string;
   primaryRating: number;
   secondaryRating?: number;
   wouldReturn: WouldReturn | null;
   reviewerId: string;
+  contributorInputByContributor?: ContributorInputByContributor;
 }
 
 export interface FreeformReviewProperties {
