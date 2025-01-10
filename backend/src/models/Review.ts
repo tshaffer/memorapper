@@ -35,7 +35,8 @@ const ContributorInputByContributorSchema: Schema = new Schema({}, { _id: false 
 ContributorInputByContributorSchema.add({
   type: Map,
   of: new Schema({
-    contributorId: String, ContributorInputSchema,
+    contributorId: String,
+    ContributorInputSchema,
   })
 });
 
@@ -51,28 +52,6 @@ const StructuredReviewPropertiesSchema: Schema = new Schema(
     },
     reviewerId: { type: String, required: true },
     contributorInputByContributor: ContributorInputByContributorSchema,
-  },
-  {
-    toObject: {
-      transform: function (doc, ret) {
-        if (ret.contributorInputByContributor instanceof Map) {
-          ret.contributorInputByContributor = Object.fromEntries(
-            ret.contributorInputByContributor.entries()
-          );
-        }
-        return ret;
-      },
-    },
-    toJSON: {
-      transform: function (doc, ret) {
-        if (ret.contributorInputByContributor instanceof Map) {
-          ret.contributorInputByContributor = Object.fromEntries(
-            ret.contributorInputByContributor.entries()
-          );
-        }
-        return ret;
-      },
-    },
   }
 );
 
@@ -107,7 +86,7 @@ const TedStructuredReviewPropertiesSchema: Schema = new Schema(
       default: WouldReturn.Undefined,
     },
     reviewerId: { type: String, required: true },
-    contributorReviewByContributor: {
+    contributorInputByContributor: {
       type: Map,
       of: new Schema({
         contributorId: String,
