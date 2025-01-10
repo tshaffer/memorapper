@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Review, { IReview, TedModel } from "../models/Review";
+import Review, { IReview, } from "../models/Review";
 import { MemoRappReview } from "../types";
 
 export const getReviews = async (request: Request, response: Response, next: any) => {
@@ -21,12 +21,12 @@ export const getReviews = async (request: Request, response: Response, next: any
 
 export const testAddReviewHandler = async (req: Request, res: Response): Promise<any> => {
 
-  const teds: any[] = await TedModel.find({}).exec();
+  // const teds: any[] = await TedModel.find({}).exec();
 
   console.log('teds:');
-  teds.forEach(element => {
-    console.log(element.toObject());
-  });
+  // teds.forEach(element => {
+  //   console.log(element.toObject());
+  // });
   // const review = new Review({
   //   googlePlaceId: 'ChIJbXQkXe6wj4ARdvBYlDi9YNM',
   //   structuredReviewProperties: {

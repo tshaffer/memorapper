@@ -1,31 +1,15 @@
 // Review.ts
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import ContributorInput, { ContributorInputSchema } from './ContributorInput';
-import { MemoRappReview } from '../types/entities';
+import { ContributorInputSchema } from './ContributorInput';
+import { ContributorInput, MemoRappReview } from '../types/entities';
 import { WouldReturn } from '../types';
 
-
-
-const tedSchema = new Schema({
-  socialMediaHandles: {
-    type: Map,
-    of: String
-  }
-});
-export const TedModel = mongoose.model('Ted', tedSchema);
-const ted = new TedModel({
-  socialMediaHandles: {}
-});
-ted.socialMediaHandles!.set('github', 'vkarpov15');
-ted.set('socialMediaHandles.twitter', '@code_barbarian');
-ted.save();
 
 const poopSchema = new Schema({
   contributorReviewByContributor: {
     type: Map,
     of: new Schema({
       contributorId: String,
-      // value: String,
       contributorInput: ContributorInputSchema,
     })
   }
@@ -34,8 +18,11 @@ export const PoopModel = mongoose.model('Poop', poopSchema);
 const poop = new PoopModel({
   contributorReviewByContributor: {}
 });
-poop.contributorReviewByContributor!.set('1', { contributorId: '1',  contributorInput: { contributorId: '1', rating: 5, comments: 'Great!' } });
-poop.contributorReviewByContributor!.set('2', { contributorId: '2',  contributorInput: { contributorId: '2', rating: 3, comments: 'Needs improvement.' } });
+const ci1: ContributorInput = { contributorId: '1', rating: 5, comments: 'Great!' };
+const ci2: ContributorInput = { contributorId: '2', rating: 3, comments: 'Needs improvement.' };
+
+poop.contributorReviewByContributor!.set('1', { contributorId: '1',  contributorInput: ci1 });
+poop.contributorReviewByContributor!.set('2', { contributorId: '2',  contributorInput: ci2 });
 poop.save();
 
 
