@@ -33,6 +33,7 @@ export const testAddReviewHandler = async (req: Request, res: Response): Promise
     primaryRating: 5,
     wouldReturn: 0,
     reviewerId: '1',
+    contributorReviewByContributor,
   };
 
   const freeformReviewProperties: any = {
@@ -42,14 +43,14 @@ export const testAddReviewHandler = async (req: Request, res: Response): Promise
 
   const ted = new TedModel({
     googlePlaceId: '69',
-    contributorReviewByContributor,
+    // contributorReviewByContributor,
     freeformReviewProperties,
     tedStructuredReviewProperties
   });
   console.log('ted:', ted.toObject());
-  const c = ted.contributorReviewByContributor!;
-  const co1 = (c.get('1')! as any).toObject();
-  const co2 = (c.get('2')! as any).toObject();
+  // const c = ted.contributorReviewByContributor!;
+  // const co1 = (c.get('1')! as any).toObject();
+  // const co2 = (c.get('2')! as any).toObject();
 
   // console.log('contributorReviewByContributor:', ted.contributorReviewByContributor!.toObject());
 

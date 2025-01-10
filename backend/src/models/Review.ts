@@ -107,20 +107,19 @@ const TedStructuredReviewPropertiesSchema: Schema = new Schema(
       default: WouldReturn.Undefined,
     },
     reviewerId: { type: String, required: true },
-    // contributorInputByContributor: ContributorInputByContributorSchema,
+    contributorReviewByContributor: {
+      type: Map,
+      of: new Schema({
+        contributorId: String,
+        contributorInput: ContributorInputSchema,
+      })
+    },
   },
 );
 
 
 const tedSchema = new Schema({
   googlePlaceId: { type: String, required: true },
-  contributorReviewByContributor: {
-    type: Map,
-    of: new Schema({
-      contributorId: String,
-      contributorInput: ContributorInputSchema,
-    })
-  },
   freeformReviewProperties: FreeformReviewPropertiesSchema,
   tedStructuredReviewProperties: TedStructuredReviewPropertiesSchema
 });
