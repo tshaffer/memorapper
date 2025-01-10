@@ -22,6 +22,8 @@ export interface ContributorInput {
   comments: string;
 }
 
+export type ContributorInputByContributor = Record<string, ContributorInput>;
+
 export interface VisitedRestaurant {
   _id?: string;
   googlePlaceId: string;

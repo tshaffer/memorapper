@@ -5,7 +5,7 @@ import RestaurantName from '../../components/RestaurantName';
 import '../../styles/multiPanelStyles.css';
 import '../../styles/reviewEntryForm.css';
 import { useEffect, useState } from 'react';
-import { Contributor, ContributorInput, RestaurantType, ReviewData, WouldReturn } from '../../types';
+import { Contributor, ContributorInput, ContributorInputByContributor, RestaurantType, ReviewData, WouldReturn } from '../../types';
 import PulsingDots from '../../components/PulsingDots';
 import React from 'react';
 import { useUserContext } from '../../contexts/UserContext';
@@ -26,7 +26,7 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
   const isMobile = useMediaQuery('(max-width:768px)');
 
   const [contributors, setContributors] = useState<Contributor[]>([]);
-  const [contributorInputs, setContributorInputs] = useState<ContributorInput[]>([]);
+  const [contributorInputByContributor, setContributorInputByContributor] = useState<ContributorInputByContributor>({});
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -39,6 +39,23 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
   }
 
   const generateSessionId = (): string => Math.random().toString(36).substring(2) + Date.now().toString(36);
+
+  function generateContributorInputByContributor(
+    contributors: Contributor[],
+    contributorInputs: ContributorInput[]
+  ): ContributorInputByContributor {
+    // Create a map of ContributorInputs by contributorId
+    const result: ContributorInputByContributor = {};
+
+    // Populate the result object
+    contributorInputs.forEach(input => {
+      if (contributors.some(contributor => contributor.id === input.contributorId)) {
+        result[input.contributorId] = input;
+      }
+    });
+
+    return result;
+  }
 
   useEffect(() => {
     if (!reviewData.sessionId) {
@@ -67,7 +84,8 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
       const contributors = await fetchContributors();
       setContributors(contributors);
       const contributorInputs = await fetchContributorInputs();
-      setContributorInputs(contributorInputs);
+      const contributorInputByContributor = generateContributorInputByContributor(contributors, contributorInputs);
+      setContributorInputByContributor(contributorInputByContributor);
     };
 
     fetchData();
@@ -86,21 +104,39 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     setReviewData((prev) => ({ ...prev, restaurantName: name }));
   }
 
+  // const xhandleContributorInputChange = (contributorId: string, input: Partial<ContributorInput>) => {
+  //   setContributorInputByContributor(prev => ({
+  //     ...prev,
+  //     [contributorId]: {
+  //       ...prev[contributorId],
+  //       contributorId, // Ensure the `contributorId` is preserved
+  //       ...input, // Merge new input fields
+  //     },
+  //   }));
+  // };
+  // const handleContributorInputChange = (contributorId: string,input: Partial<ContributorInput>
+  // ) => {
+  //   setContributorInputs((prev) => ({
+  //     ...prev,
+  //     [contributorId]: {
+  //       ...prev[contributorId], // Preserve existing properties
+  //       ...input,              // Update the fields from input
+  //     },
+  //   }));
+  // };
   const handleContributorInputChange = (
     contributorId: string,
-    field: 'rating' | 'comments',
-    value: number | string
+    input: Partial<ContributorInput>
   ) => {
-    console.log('handleContributorInputChange', contributorId, field, value);
-    // setContributorInputs((prevInputs) =>
-    //   prevInputs.map((input) =>
-    //     input.contributorId === contributorId
-    //       ? { ...input, [field]: value }
-    //       : input
-    //   )
-    // );
+    setContributorInputByContributor((prev) => ({
+      ...prev,
+      [contributorId]: {
+        ...prev[contributorId], // Preserve existing properties
+        ...input,              // Update the fields from input
+      },
+    }));
   };
-
+  
   const handlePreview = async () => {
     if (!reviewData.sessionId) return;
     try {
@@ -177,10 +213,7 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
         <fieldset className="ratings-comments-section">
           <legend>Ratings and Comments by Contributors</legend>
           {contributors.map((contributor) => {
-            const input = contributorInputs.find(
-              (ci) => ci.contributorId === contributor.id
-            ) || { rating: 0, comments: '' };
-
+            const input = contributorInputByContributor[contributor.id] || { rating: 0, comments: '' };
             return (
               <div key={contributor.id} className="contributor-section">
                 <div className="contributor-header">
@@ -194,7 +227,7 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
                     value={input.rating}
                     max={5}
                     onChange={(event, newValue) =>
-                      handleContributorInputChange(contributor.id, 'rating', newValue || 0)
+                      handleContributorInputChange(contributor.id, { rating: (newValue || 0) })
                     }
                   />
                 </div>
@@ -208,7 +241,7 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
                     rows={3}
                     value={input.comments}
                     onChange={(event) =>
-                      handleContributorInputChange(contributor.id, 'comments', event.target.value)
+                      handleContributorInputChange(contributor.id, { comments: event.target.value })
                     }
                   />
                 </div>
