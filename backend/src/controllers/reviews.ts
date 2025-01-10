@@ -24,13 +24,19 @@ export const testAddReviewHandler = async (req: Request, res: Response): Promise
   const ci1: ContributorInput = { contributorId: '1', rating: 5, comments: 'Great!' };
   const ci2: ContributorInput = { contributorId: '2', rating: 3, comments: 'Needs improvement.' };
 
+  const contributorReviewByContributor: Map<string, any> = new Map();
+  contributorReviewByContributor.set('1', { contributorId: '1', contributorInput: ci1 });
+  contributorReviewByContributor.set('2', { contributorId: '2', contributorInput: ci2 });
 
-  const m: Map<string, any> = new Map();
-  m.set('1', { contributorId: '1', contributorInput: ci1 });
-  m.set('2', { contributorId: '2', contributorInput: ci2 });
+  const freeformReviewProperties: any = {
+    reviewText: 'Salad was okay',
+    itemReviews: [{ item: 'Salad', review: 'Okay' }],
+  };
+
   const ted = new TedModel({
     googlePlaceId: '69',
-    contributorReviewByContributor: m,
+    contributorReviewByContributor,
+    freeformReviewProperties,
   });
   console.log('ted:', ted.toObject());
   const c = ted.contributorReviewByContributor!;

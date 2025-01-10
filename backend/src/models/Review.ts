@@ -104,6 +104,7 @@ const tedSchema = new Schema({
       contributorId: String,
       contributorInput: ContributorInputSchema,
     })
-  }
+  },
+  freeformReviewProperties: FreeformReviewPropertiesSchema,
 });
 export const TedModel = mongoose.model('Ted', tedSchema);
