@@ -28,6 +28,13 @@ export const testAddReviewHandler = async (req: Request, res: Response): Promise
   contributorReviewByContributor.set('1', { contributorId: '1', contributorInput: ci1 });
   contributorReviewByContributor.set('2', { contributorId: '2', contributorInput: ci2 });
 
+  const tedStructuredReviewProperties = {
+    dateOfVisit: '2025-01-10',
+    primaryRating: 5,
+    wouldReturn: 0,
+    reviewerId: '1',
+  };
+
   const freeformReviewProperties: any = {
     reviewText: 'Salad was okay',
     itemReviews: [{ item: 'Salad', review: 'Okay' }],
@@ -37,6 +44,7 @@ export const testAddReviewHandler = async (req: Request, res: Response): Promise
     googlePlaceId: '69',
     contributorReviewByContributor,
     freeformReviewProperties,
+    tedStructuredReviewProperties
   });
   console.log('ted:', ted.toObject());
   const c = ted.contributorReviewByContributor!;

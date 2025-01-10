@@ -96,6 +96,22 @@ const Review: ReviewModel = mongoose.model<IReview>('Review', ReviewSchema);
 
 export default Review;
 
+const TedStructuredReviewPropertiesSchema: Schema = new Schema(
+  {
+    dateOfVisit: { type: String, required: true },
+    primaryRating: { type: Number, required: true },
+    secondaryRating: { type: Number },
+    wouldReturn: {
+      type: Number,
+      enum: [0, 1, 2, 3],
+      default: WouldReturn.Undefined,
+    },
+    reviewerId: { type: String, required: true },
+    // contributorInputByContributor: ContributorInputByContributorSchema,
+  },
+);
+
+
 const tedSchema = new Schema({
   googlePlaceId: { type: String, required: true },
   contributorReviewByContributor: {
@@ -106,5 +122,6 @@ const tedSchema = new Schema({
     })
   },
   freeformReviewProperties: FreeformReviewPropertiesSchema,
+  tedStructuredReviewProperties: TedStructuredReviewPropertiesSchema
 });
 export const TedModel = mongoose.model('Ted', tedSchema);
