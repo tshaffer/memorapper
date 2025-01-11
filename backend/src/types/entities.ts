@@ -2,6 +2,12 @@ import { RestaurantType, WouldReturn } from "./enums";
 import { GooglePlace } from "./googlePlace";
 import { AddressComponent } from "./place";
 
+export class SerializableMap<K, V> extends Map<K, V> {
+  toJSON() {
+    return [...this]; // Convert the Map to an array of key-value pairs
+  }
+}
+
 export interface UserEntity {
   id: string;
   userName: string;
@@ -20,6 +26,13 @@ export interface ContributorInput {
   rating: number;
   comments: string;
 }
+
+export interface ContributorInputMapValue {
+  contributorId: string; // Foreign key to Contributor
+  contributorInput: ContributorInput; // The input data for the contributor
+}
+
+export type ContributorInputByContributor = SerializableMap<string, ContributorInputMapValue>;
 
 export interface VisitedRestaurant {
   _id?: string;
@@ -68,8 +81,6 @@ export interface UnvisitedPlace {
   comments: string;
   rating: number;
 }
-
-export type ContributorInputByContributor = Record<string, ContributorInput>;
 
 interface StructuredReviewProperties {
   dateOfVisit: string;

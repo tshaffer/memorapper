@@ -3,7 +3,7 @@ import getOpenAIClient from '../services/openai';
 import { Request, Response } from 'express';
 import Review, { IReview } from "../models/Review";
 import { extractItemReviews } from '../utilities';
-import { ChatRequestBody, ChatResponse, FreeformReviewProperties, ItemReview, MemoRappReview, PreviewRequestBody, PreviewResponse, SubmitReviewBody } from '../types';
+import { ChatRequestBody, ChatResponse, FreeformReviewProperties, ItemReview, MemoRappReview, PreviewRequestBody, PreviewResponse, SerializableMap, SubmitReviewBody } from '../types';
 import { addPlace, getPlace } from './places';
 import { IMongoPlace } from '../models';
 import { addReview } from './reviews';
@@ -180,7 +180,9 @@ export const submitReviewHandler = async (req: Request, res: Response): Promise<
 
   const body: SubmitReviewBody = req.body;
   console.log('Submit review request:', body); // Debugging log
-  
+  body.structuredReviewProperties.contributorInputByContributor = new SerializableMap(
+    body.structuredReviewProperties.contributorInputByContributor
+  );
   try {
     const newReview = await submitReview(body);
     return res.status(201).json({ message: 'Review saved successfully!', review: newReview });

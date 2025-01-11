@@ -130,23 +130,24 @@ const WriteReviewPage = () => {
     const serialized = JSON.stringify(submitBody);
     console.log(serialized);
 
-    debugger;
+    // debugger;
 
-    const deserialized = JSON.parse(serialized);
-    deserialized.structuredReviewProperties.contributorInputByContributor = new SerializableMap(
-      deserialized.structuredReviewProperties.contributorInputByContributor
-    );
-    console.log(deserialized);
+    // const deserialized = JSON.parse(serialized);
+    // deserialized.structuredReviewProperties.contributorInputByContributor = new SerializableMap(
+    //   deserialized.structuredReviewProperties.contributorInputByContributor
+    // );
+    // console.log(deserialized);
 
-    return;
+    // return;
 
     try {
       const response = await fetch('/api/reviews/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...submitBody,
-        }),
+        // body: JSON.stringify({
+        //   ...submitBody,
+        // }),
+        body: serialized
       });
       const data = await response.json();
       console.log('Review submitted:', data);
