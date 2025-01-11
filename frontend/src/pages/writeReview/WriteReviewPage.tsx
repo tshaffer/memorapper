@@ -70,12 +70,12 @@ class SerializableMap<K, V> extends Map<K, V> {
 
     const ci1: ContributorInput = { contributorId: '1', rating: 1, comments: 'Great!' };
     const ci2: ContributorInput = { contributorId: '2', rating: 2, comments: 'Needs improvement.' };
-  
+
     // const xcontributorInputByContributor: SerializableMap<string, ContributorInputMapValue> = new Map();
     const contributorInputByContributor = new SerializableMap<string, ContributorInputMapValue>();
     contributorInputByContributor.set('3', { contributorId: '1', contributorInput: ci1 });
     contributorInputByContributor.set('4', { contributorId: '2', contributorInput: ci2 });
-  
+
     const myObject = {
       dateOfVisit: '2025-01-10',
       primaryRating: 5,
@@ -83,20 +83,26 @@ class SerializableMap<K, V> extends Map<K, V> {
       reviewerId: '1',
       contributorInputByContributor,
     };
-  
+
     const serialized = JSON.stringify(myObject);
-    console.log(serialized);    
+    console.log(serialized);
+
+    const deserialized = JSON.parse(serialized);
+    deserialized.contributorInputByContributor = new SerializableMap(
+      deserialized.contributorInputByContributor
+    );
+    console.log(deserialized);
   }
 
-      // const myObject = {
-    //   id: 1,
-    //   name: "Test Object",
-    //   myMap: new SerializableMap<string, string>([
-    //     ["key1", "value1"],
-    //     ["key2", "value2"],
-    //   ]),
-    // };
-    
+  // const myObject = {
+  //   id: 1,
+  //   name: "Test Object",
+  //   myMap: new SerializableMap<string, string>([
+  //     ["key1", "value1"],
+  //     ["key2", "value2"],
+  //   ]),
+  // };
+
 
   const oldhandleSubmitPreview = async (formData: Omit<ReviewData, 'chatHistory'>) => {
     setReviewData((prev) => ({ ...prev, ...formData }));
