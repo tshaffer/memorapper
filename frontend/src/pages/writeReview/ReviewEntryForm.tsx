@@ -5,7 +5,7 @@ import RestaurantName from '../../components/RestaurantName';
 import '../../styles/multiPanelStyles.css';
 import '../../styles/reviewEntryForm.css';
 import { useEffect, useState } from 'react';
-import { Contributor, ContributorInput, ContributorInputByContributor, RestaurantType, ReviewData, WouldReturn } from '../../types';
+import { Contributor, ContributorInput, ContributorInputByContributor, ContributorInputMapValue, RestaurantType, ReviewData, SerializableMap, WouldReturn } from '../../types';
 import PulsingDots from '../../components/PulsingDots';
 import React from 'react';
 import { useUserContext } from '../../contexts/UserContext';
@@ -26,7 +26,9 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
   const isMobile = useMediaQuery('(max-width:768px)');
 
   const [contributors, setContributors] = useState<Contributor[]>([]);
-  const [contributorInputByContributor, setContributorInputByContributor] = useState<ContributorInputByContributor>({});
+  const [contributorInputByContributor, setContributorInputByContributor] = useState<ContributorInputByContributor>(
+    new SerializableMap()
+  );
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -48,13 +50,18 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     contributors: Contributor[],
     contributorInputs: ContributorInput[]
   ): ContributorInputByContributor {
-    // Create a map of ContributorInputs by contributorId
-    const result: ContributorInputByContributor = {};
+    // Create a new SerializableMap instance
+    const result = new SerializableMap<string, ContributorInputMapValue>();
 
-    // Populate the result object
+    // Populate the map with contributor inputs
     contributorInputs.forEach(input => {
-      if (contributors.some(contributor => contributor.id === input.contributorId)) {
-        result[input.contributorId] = input;
+      // Check if the contributor exists in the contributors array
+      const contributor = contributors.find(contributor => contributor.id === input.contributorId);
+      if (contributor) {
+        result.set(input.contributorId, {
+          contributorId: input.contributorId,
+          contributorInput: input,
+        });
       }
     });
 
@@ -112,17 +119,51 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     contributorId: string,
     input: Partial<ContributorInput>
   ) => {
-    const newContributorInputByContributor = {
-      ...contributorInputByContributor,
-      [contributorId]: {
-        ...contributorInputByContributor[contributorId],
+    if (!contributorInputByContributor) {
+      console.error('contributorInputByContributor is undefined.');
+      return;
+    }
+
+    // Clone the existing SerializableMap
+    const newContributorInputByContributor = new SerializableMap(
+      [...contributorInputByContributor]
+    );
+
+    // Get the current ContributorInputMapValue
+    const current = newContributorInputByContributor.get(contributorId);
+
+    if (current) {
+      // Update the current input
+      const updatedContributorInput: ContributorInput = {
+        ...current.contributorInput,
         ...input,
-      },
-    };
+      };
+
+      // Set the updated ContributorInputMapValue
+      newContributorInputByContributor.set(contributorId, {
+        contributorId,
+        contributorInput: updatedContributorInput,
+      });
+    } else {
+      // Handle the case where no existing input is found for the contributorId
+      console.warn(`No existing ContributorInput found for contributorId: ${contributorId}`);
+      const newContributorInput: ContributorInput = {
+        contributorId,
+        rating: input.rating ?? 0, // Provide default values if necessary
+        comments: input.comments ?? '',
+      };
+
+      newContributorInputByContributor.set(contributorId, {
+        contributorId,
+        contributorInput: newContributorInput,
+      });
+    }
+
+    // Update state and invoke change handler
     handleContributorInfoChange(newContributorInputByContributor);
     setContributorInputByContributor(newContributorInputByContributor);
   };
-  
+
   const handlePreview = async () => {
     if (!reviewData.sessionId) return;
     try {
@@ -199,7 +240,10 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
         <fieldset className="ratings-comments-section">
           <legend>Ratings and Comments by Contributors</legend>
           {contributors.map((contributor) => {
-            const input = contributorInputByContributor[contributor.id] || { rating: 0, comments: '' };
+            const input = contributorInputByContributor?.get(contributor.id)?.contributorInput || {
+              rating: 0,
+              comments: '',
+            };
             return (
               <div key={contributor.id} className="contributor-section">
                 <div className="contributor-header">

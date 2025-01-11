@@ -5,15 +5,9 @@ import ReviewEntryForm from "./ReviewEntryForm";
 import PreviewTab from "./PreviewTab";
 import ChatTab from "./ChatTab";
 import { Box, Button } from "@mui/material";
-import { ChatMessage, ChatRequestBody, ChatResponse, ContributorInput, ContributorInputMapValue, EditableReview, GooglePlace, MemoRappReview, PreviewRequestBody, PreviewResponse, ReviewData, StructuredReviewProperties, SubmitReviewBody, WouldReturn } from "../../types";
+import { ChatMessage, ChatRequestBody, ChatResponse, ContributorInput, ContributorInputMapValue, EditableReview, GooglePlace, MemoRappReview, PreviewRequestBody, PreviewResponse, ReviewData, SerializableMap, StructuredReviewProperties, SubmitReviewBody, WouldReturn } from "../../types";
 import { getFormattedDate } from "../../utilities";
 import { useUserContext } from '../../contexts/UserContext';
-
-class SerializableMap<K, V> extends Map<K, V> {
-  toJSON() {
-    return [...this]; // Convert the Map to an array of key-value pairs
-  }
-}
 
 const WriteReviewPage = () => {
 
@@ -58,20 +52,11 @@ const WriteReviewPage = () => {
     setActiveTab("preview");
   }
 
-  /*
-class SerializableMap<K, V> extends Map<K, V> {
-  toJSON() {
-    return [...this]; // Convert the Map to an array of key-value pairs
-  }
-}
-  */
-
-  const handleSubmitPreview = async (formData: Omit<ReviewData, 'chatHistory'>) => {
+  const testhandleSubmitPreview = async (formData: Omit<ReviewData, 'chatHistory'>) => {
 
     const ci1: ContributorInput = { contributorId: '1', rating: 1, comments: 'Great!' };
     const ci2: ContributorInput = { contributorId: '2', rating: 2, comments: 'Needs improvement.' };
 
-    // const xcontributorInputByContributor: SerializableMap<string, ContributorInputMapValue> = new Map();
     const contributorInputByContributor = new SerializableMap<string, ContributorInputMapValue>();
     contributorInputByContributor.set('3', { contributorId: '1', contributorInput: ci1 });
     contributorInputByContributor.set('4', { contributorId: '2', contributorInput: ci2 });
@@ -94,17 +79,7 @@ class SerializableMap<K, V> extends Map<K, V> {
     console.log(deserialized);
   }
 
-  // const myObject = {
-  //   id: 1,
-  //   name: "Test Object",
-  //   myMap: new SerializableMap<string, string>([
-  //     ["key1", "value1"],
-  //     ["key2", "value2"],
-  //   ]),
-  // };
-
-
-  const oldhandleSubmitPreview = async (formData: Omit<ReviewData, 'chatHistory'>) => {
+  const handleSubmitPreview = async (formData: Omit<ReviewData, 'chatHistory'>) => {
     setReviewData((prev) => ({ ...prev, ...formData }));
 
     const previewBody: PreviewRequestBody = {
