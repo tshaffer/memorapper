@@ -57,13 +57,16 @@ export const testAddReviewHandler = async (req: Request, res: Response): Promise
 
 export const addReview = async (memoRappReview: MemoRappReview): Promise<IReview | null> => {
 
-  const ci1: ContributorInput = { contributorId: '1', rating: 4, comments: 'Great!' };
-  const ci2: ContributorInput = { contributorId: '2', rating: 5, comments: 'Needs improvement.' };
+  const ci1: ContributorInput = { contributorId: '1', rating: 1, comments: 'Smelly!' };
+  const ci2: ContributorInput = { contributorId: '2', rating: 2, comments: 'Tastes like undies.' };
 
   const contributorInputByContributor: Map<string, any> = new Map();
   contributorInputByContributor.set('1', { contributorId: '1', contributorInput: ci1 });
   contributorInputByContributor.set('2', { contributorId: '2', contributorInput: ci2 });
 
+
+  console.log('contributorInputByContributor:', contributorInputByContributor);
+  console.log('memorappReview:', memoRappReview.structuredReviewProperties.contributorInputByContributor);  // NOT A MAP
 
   const review = new Review({
     googlePlaceId: 'ChIJbXQkXe6wj4ARdvBYlDi9YNM',
