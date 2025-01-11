@@ -24,6 +24,11 @@ export interface ContributorInput {
 
 export type ContributorInputByContributor = Record<string, ContributorInput>;
 
+export interface ContributorInputMapValue {
+  contributorId: string; // Foreign key to Contributor
+  contributorInput: ContributorInput; // The input data for the contributor
+}
+
 export interface VisitedRestaurant {
   _id?: string;
   googlePlaceId: string;
