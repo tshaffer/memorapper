@@ -19,94 +19,15 @@ export const getReviews = async (request: Request, response: Response, next: any
   }
 }
 
-export const testAddReviewHandler = async (req: Request, res: Response): Promise<any> => {
-
-  const ci1: ContributorInput = { contributorId: '1', rating: 1, comments: 'Great!' };
-  const ci2: ContributorInput = { contributorId: '2', rating: 2, comments: 'Needs improvement.' };
-
-  const contributorInputByContributor: Map<string, any> = new Map();
-  contributorInputByContributor.set('3', { contributorId: '1', contributorInput: ci1 });
-  contributorInputByContributor.set('4', { contributorId: '2', contributorInput: ci2 });
-
-  const tedStructuredReviewProperties = {
-    dateOfVisit: '2025-01-10',
-    primaryRating: 5,
-    wouldReturn: 0,
-    reviewerId: '1',
-    contributorInputByContributor,
-  };
-
-  const freeformReviewProperties: any = {
-    reviewText: 'Salad was okay',
-    itemReviews: [{ item: 'Salad', review: 'Okay' }],
-  };
-
-  const ted = new TedModel({
-    googlePlaceId: '69',
-    freeformReviewProperties,
-    tedStructuredReviewProperties
-  });
-  console.log('ted:', ted.toObject());
-
-  const savedReview = await ted.save();
-  console.log('savedReview:', savedReview);
-
-  res.sendStatus(200);
-};
-
-
 export const addReview = async (memoRappReview: MemoRappReview): Promise<IReview | null> => {
 
-  const ci1: ContributorInput = { contributorId: '1', rating: 1, comments: 'Smelly!' };
-  const ci2: ContributorInput = { contributorId: '2', rating: 2, comments: 'Tastes like undies.' };
-
-  const contributorInputByContributor: Map<string, any> = new Map();
-  contributorInputByContributor.set('1', { contributorId: '1', contributorInput: ci1 });
-  contributorInputByContributor.set('2', { contributorId: '2', contributorInput: ci2 });
-
-
-  console.log('contributorInputByContributor:', contributorInputByContributor);
-  console.log('memorappReview:', memoRappReview.structuredReviewProperties.contributorInputByContributor);  // NOT A MAP
-
-  const review = new Review({
-    googlePlaceId: 'ChIJbXQkXe6wj4ARdvBYlDi9YNM',
-    structuredReviewProperties: {
-      dateOfVisit: '2025-01-10',
-      primaryRating: 5,
-      wouldReturn: 0,
-      reviewerId: '1',
-      contributorInputByContributor,
-      // contributorInputByContributor: new Map([
-      //   ['1', { contributorId: '1', rating: 5, comments: 'Great!' }],
-      //   ['2', { contributorId: '2', rating: 3, comments: 'Needs improvement.' }],
-      // ]),
-    },
-    freeformReviewProperties: {
-      reviewText: 'Salad was okay',
-      itemReviews: [{ item: 'Salad', review: 'Okay' }],
-    },
-  });
-
-  console.log('review:', review.toObject());
+  const review: IReview = new Review(memoRappReview);
 
   try {
-    const savedReview = await review.save();
-    console.log('savedReview:', savedReview);
+    const savedReview: IReview = await review.save();
     return savedReview;
   } catch (error: any) {
     console.error('Error saving review:', error);
     throw new Error('An error occurred while saving the review.');
   }
 }
-
-/*
-  // const newReview: IReview = new Review(memoRappReview);
-
-  // console.log('memoRappReview:', memoRappReview);
-  // console.log('newReview:', newReview);
-  // console.log('newReview.toObject():', newReview.toObject());
-
-  // try {
-  //   const savedReview: IReview | null = await newReview.save();
-  //   return savedReview;
-*/

@@ -16,7 +16,6 @@ import {
   getVisitedRestaurants,
   getDesiredRestaurants,
   submitDesiredRestaurantHandler,
-  testAddReviewHandler
 } from '../controllers';
 
 const router = Router();
@@ -41,7 +40,5 @@ router.post('/submitDesiredRestaurant', submitDesiredRestaurantHandler);
 router.post('/reviews/nlQuery', nlQueryHandler);
 
 router.post('/reviews/searchAndFilter', searchAndFilterHandler);
-
-router.post('/testAddReview', testAddReviewHandler);
 
 export default router;
