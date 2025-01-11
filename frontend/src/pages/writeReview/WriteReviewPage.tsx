@@ -53,6 +53,59 @@ const WriteReviewPage = () => {
   }
 
   const handleSubmitPreview = async (formData: Omit<ReviewData, 'chatHistory'>) => {
+
+    const myObject = {
+      id: 1,
+      name: "Test Object",
+      myMap: new Map([
+        ["key1", "value1"],
+        ["key2", "value2"],
+      ]),
+    };
+    
+    // Transform the Map to an array or object before serialization
+    const transformed = {
+      ...myObject,
+      myMap: [...myObject.myMap], // Convert Map to array of key-value pairs
+    };
+    
+    const serialized = JSON.stringify(transformed);
+    console.log(serialized);
+    // Output: {"id":1,"name":"Test Object","myMap":[["key1","value1"],["key2","value2"]]}
+
+
+
+    // Output: {"id":1,"name":"Test Object","myMap":[["key1","value1"],["key2","value2"]]}
+        
+    // const serialized = JSON.stringify(myObject);
+    // console.log(serialized);
+
+    // const myObject = {
+    //   id: 1,
+    //   name: "Test Object",
+    //   myMap: new Map([
+    //     ["key1", "value1"],
+    //     ["key2", "value2"],
+    //   ]),
+    // };
+    
+    // // Add a custom toJSON method for the Map
+    // myObject.myMap.toJSON = function () {
+    //   return [...this]; // Convert Map to an array of key-value pairs
+    // };
+    
+    // // Serialize the object
+    // const serialized = JSON.stringify(myObject);
+    // console.log(serialized);
+    // // Output: {"id":1,"name":"Test Object","myMap":[["key1","value1"],["key2","value2"]]}
+    
+    // const deserialized = JSON.parse(serialized);
+    // deserialized.myMap = new Map(deserialized.myMap);
+    // console.log(deserialized.myMap.get("key1")); // "value1"
+    
+  }
+
+  const oldhandleSubmitPreview = async (formData: Omit<ReviewData, 'chatHistory'>) => {
     setReviewData((prev) => ({ ...prev, ...formData }));
 
     const previewBody: PreviewRequestBody = {
