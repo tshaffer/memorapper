@@ -23,3 +23,14 @@ export enum RestaurantType {
   ItalianRestaurant = 6,
   DessertShop = 7,
 }
+
+export enum PlaceType {
+  Generic = 0,
+  CoffeeShop = 1,
+  Bar = 2,
+  Bakery = 3,
+  Taqueria = 4,
+  PizzaPlace = 5,
+  ItalianRestaurant = 6,
+  DessertShop = 7,
+}

@@ -1,10 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { DistanceAwayFilterValues, Filters, RatingsUI, Settings, UserEntity } from '../types';
+import { Account, DistanceAwayFilterValues, Filters, RatingsUI, Settings, UserEntity } from '../types';
 
 interface UserContextValue {
+  accounts: Account[];
+  currentAccount: Account | null;
   users: UserEntity[];
   currentUser: UserEntity | null;
   settings: Settings; // Updated to use the new Settings structure
+  setCurrentAccount: (account: Account | null) => void;
   setCurrentUser: (user: UserEntity | null) => void;
   setFilters: (filters: Filters) => void;
   setRatingsUI: (ratingsUI: RatingsUI) => void; // Function to update ratings UI
@@ -16,6 +19,8 @@ interface UserContextValue {
 const UserContext = createContext<UserContextValue | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [currentAccount, setCurrentAccount] = useState<Account | null>(null);
   const [users, setUsers] = useState<UserEntity[]>([]);
   const [currentUser, setCurrentUser] = useState<UserEntity | null>(null);
 
@@ -81,12 +86,37 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     fetchUsers();
   }, []);
 
+
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/accounts');
+        if (!response.ok) {
+          throw new Error('Failed to fetch accounts');
+        }
+        const data = await response.json();
+        setAccounts(data.accounts as Account[]);
+        setError(null);
+      } catch (err: any) {
+        setError(err.message || 'Something went wrong');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAccounts();
+  }, []);
+
   return (
     <UserContext.Provider
       value={{
+        accounts,
+        currentAccount,
         users,
         currentUser,
         settings,
+        setCurrentAccount,
         setCurrentUser,
         setFilters,
         setRatingsUI,

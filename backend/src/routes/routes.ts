@@ -16,7 +16,12 @@ import {
   getVisitedRestaurants,
   getDesiredRestaurants,
   submitDesiredRestaurantHandler,
+  getAccounts,
+  getAccountUsers,
+  getAccountUserInputs,
+  previewHandler,
 } from '../controllers';
+import { reviewHandler } from '../controllers/review';
 
 const router = Router();
 
@@ -40,5 +45,11 @@ router.post('/submitDesiredRestaurant', submitDesiredRestaurantHandler);
 router.post('/reviews/nlQuery', nlQueryHandler);
 
 router.post('/reviews/searchAndFilter', searchAndFilterHandler);
+
+router.get('/accounts', getAccounts);
+router.get('/accountUsers', getAccountUsers);
+router.get('/accountUserInputs', getAccountUserInputs);
+router.post('/preview', previewHandler);
+router.post('/review', reviewHandler);
 
 export default router;

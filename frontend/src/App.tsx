@@ -13,10 +13,11 @@ import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } f
 import { Menu, MenuItem } from '@mui/material';
 import Map from './pages/maps/Map';
 import WriteReviewPage from './pages/writeReview/WriteReviewPage';
+import NewWriteReviewPage from './pages/newWriteReviews/NewWriteReviewPage';
 import RestaurantDetails from './pages/reviews/RestaurantDetails';
 import Search from './pages/reviews/Search';
 import { useUserContext } from './contexts/UserContext';
-import { DistanceAwayFilterValues, Settings, UserEntity } from './types';
+import { Account, DistanceAwayFilterValues, Settings, UserEntity } from './types';
 import SettingsDialog from './components/SettingsDialog';
 import DesiredRestaurantForm from './pages/desiredRestaurants/DesiredRestaurantForm';
 
@@ -33,16 +34,38 @@ const activeButtonStyle: React.CSSProperties = {
 };
 
 const App: React.FC = () => {
-  const { users, currentUser, setCurrentUser, settings, setSettings, setFilters, setRatingsUI, loading, error } = useUserContext();
+  const { accounts, currentAccount, setCurrentAccount, users, currentUser, setCurrentUser, settings, setSettings, setFilters, setRatingsUI, loading, error } = useUserContext();
   const isMobile = useMediaQuery('(max-width:768px)');
   const location = useLocation(); // Track the current route
 
   useEffect(() => {
+    const getCurrentAccount = (): Account | null => {
+      const storedAccountId: string | null = localStorage.getItem('accountId');
+      if (accounts) {
+        for (const account of accounts) {
+          if (!storedAccountId && account.accountName === 'Anonymous') {
+            return account;
+          }
+          if (account.accountId === storedAccountId) {
+            return account;
+          }
+        }
+      }
+
+      const defaultAccount: Account | null = accounts ? accounts.find((account) => account.accountId === '1') || null : null;
+      if (defaultAccount) {
+        localStorage.setItem('accountId', defaultAccount.accountId);
+      } else {
+        localStorage.setItem('accountId', '1');
+      }
+      return defaultAccount;
+    }
+
     const getCurrentUser = (): UserEntity | null => {
-      const storedUserId: string | null = localStorage.getItem('userId');
+      const storedUserId: string | null = localStorage.getItem('accountId');
       if (users) {
         for (const user of users) {
-          if (!storedUserId && user.userName === 'Guest') {
+          if (!storedUserId && user.userName === 'Anonymous') {
             return user;
           }
           if (user.id === storedUserId) {
@@ -87,6 +110,9 @@ const App: React.FC = () => {
       }
     }
 
+    const currentAccount: Account | null = getCurrentAccount();
+    setCurrentAccount(currentAccount);
+
     const currentUser: UserEntity | null = getCurrentUser();
     setCurrentUser(currentUser);
 
@@ -95,7 +121,7 @@ const App: React.FC = () => {
     setFilters(appSettings.filters);
     setRatingsUI(appSettings.ratingsUI);
 
-  }, [users]);
+  }, [users, accounts]);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [settingsAnchorEl, setSettingsAnchorEl] = useState<null | HTMLElement>(null);
@@ -140,6 +166,8 @@ const App: React.FC = () => {
     content = <p>Error: {error}</p>;
   } else if (!users || users.length === 0) {
     content = <p>Error: no users found</p>;
+  } else if (!accounts || accounts.length === 0) {
+    content = <p>Error: no accounts found</p>;
   } else {
     content = (
       <Routes>
@@ -148,6 +176,7 @@ const App: React.FC = () => {
         <Route path="/restaurantDetails" element={<RestaurantDetails />} />
         <Route path="/map" element={<Map />} />
         <Route path="/map/:_id" element={<Map />} />
+        <Route path="/new-write-review" element={<NewWriteReviewPage />} />
         <Route path="/write-review" element={<WriteReviewPage />} />
         <Route path="/write-review/:_id" element={<WriteReviewPage />} />
         <Route path="/add-place" element={<DesiredRestaurantForm />} />
@@ -182,6 +211,9 @@ const App: React.FC = () => {
                 <IconButton color="inherit" component={Link} to="/search">
                   <ReviewsIcon />
                 </IconButton>
+                <IconButton color="inherit" component={Link} to="/new-write-review">
+                  <EditIcon />
+                </IconButton>
                 <IconButton color="inherit" component={Link} to="/write-review">
                   <EditIcon />
                 </IconButton>
@@ -205,6 +237,13 @@ const App: React.FC = () => {
                   to="/search"
                 >
                   All Reviews
+                </Button>
+                <Button
+                  style={isActive('/new-write-review') ? activeButtonStyle : { color: 'white' }}
+                  component={Link}
+                  to="/new-write-review"
+                >
+                  New Write Review
                 </Button>
                 <Button
                   style={isActive('/write-review') ? activeButtonStyle : { color: 'white' }}

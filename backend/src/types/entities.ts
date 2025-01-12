@@ -1,12 +1,7 @@
+import { SerializableMap } from "./baseTypes";
 import { RestaurantType, WouldReturn } from "./enums";
 import { GooglePlace } from "./googlePlace";
 import { AddressComponent } from "./place";
-
-export class SerializableMap<K, V> extends Map<K, V> {
-  toJSON() {
-    return [...this]; // Convert the Map to an array of key-value pairs
-  }
-}
 
 export interface UserEntity {
   id: string;
