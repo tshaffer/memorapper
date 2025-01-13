@@ -20,6 +20,7 @@ import { useUserContext } from './contexts/UserContext';
 import { Account, DistanceAwayFilterValues, Settings, UserEntity } from './types';
 import SettingsDialog from './components/SettingsDialog';
 import DesiredRestaurantForm from './pages/desiredRestaurants/DesiredRestaurantForm';
+import NewMap from './pages/newMaps/NewMap';
 
 // soft orange: #FFA07A
 // other possibilities
@@ -176,6 +177,7 @@ const App: React.FC = () => {
         <Route path="/restaurantDetails" element={<RestaurantDetails />} />
         <Route path="/map" element={<Map />} />
         <Route path="/map/:_id" element={<Map />} />
+        <Route path="/new-map" element={<NewMap />} />
         <Route path="/new-write-review" element={<NewWriteReviewPage />} />
         <Route path="/write-review" element={<WriteReviewPage />} />
         <Route path="/write-review/:_id" element={<WriteReviewPage />} />
@@ -230,6 +232,13 @@ const App: React.FC = () => {
                   to="/map"
                 >
                   Home
+                </Button>
+                <Button
+                  style={(isActive('/new-map') || isActive('/new-map')) ? activeButtonStyle : { color: 'white' }}
+                  component={Link}
+                  to="/new-map"
+                >
+                  New Map
                 </Button>
                 <Button
                   style={isActive('/search') ? activeButtonStyle : { color: 'white' }}
