@@ -30,7 +30,7 @@ router.get('/health', healthHandler);
 router.get('/test', testHandler);
 router.get('/places', getPlaces);
 router.get('/visitedRestaurant', getVisitedRestaurants);
-router.get('/desiredRestaurant', getDesiredRestaurants);
+router.get('/desiredRestaurants', getDesiredRestaurants);
 router.get('/reviews', getReviews);
 router.get('/users', getUsers);
 router.get('/contributors', getContributors);

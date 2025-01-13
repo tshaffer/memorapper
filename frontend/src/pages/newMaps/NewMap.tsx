@@ -87,7 +87,7 @@ const NewMapPage: React.FC = () => {
     };
 
     const fetchUnvisitedPlaces = async (): Promise<GooglePlace[]> => {
-      const response = await fetch('/api/unvisitedPlaces');
+      const response = await fetch('/api/desiredRestaurants');
       const data = await response.json();
       setUnvisitedPlaces(data.googlePlaces);
       return data.googlePlaces;

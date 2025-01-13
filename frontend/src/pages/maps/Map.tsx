@@ -1,3 +1,4 @@
+// import pizza
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Paper, Box, IconButton, useMediaQuery } from '@mui/material';
@@ -73,7 +74,7 @@ const MapPage: React.FC = () => {
     };
 
     const fetchUnvisitedPlaces = async (): Promise<GooglePlace[]> => {
-      const response = await fetch('/api/unvisitedPlaces');
+      const response = await fetch('/api/desiredRestaurants');
       const data = await response.json();
       setUnvisitedPlaces(data.googlePlaces);
       return data.googlePlaces;
@@ -81,7 +82,7 @@ const MapPage: React.FC = () => {
 
     const fetchUnvisitedPlacesToVisit = async (): Promise<UnvisitedPlace[]> => {
       const unvisitedPlacesToVisit: UnvisitedPlace[] = [];
-      const response = await fetch('/api/unvisitedPlacesToVisit');
+      const response = await fetch('/api/desiredRestaurants');
       const data = await response.json();
       const unvisitedPlacesToVisitFromDb: UnvisitedPlaceFromDb[] = data.unvisitedPlacesToVisit;
       for (const unvisitedPlaceToVisitFromDb of unvisitedPlacesToVisitFromDb) {
