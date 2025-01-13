@@ -21,8 +21,8 @@ import {
 import FiltersDialog from '../../components/FiltersDialog';
 import PulsingDots from '../../components/PulsingDots';
 import { useUserContext } from '../../contexts/UserContext';
-import NewMapWithMarkers from '../../components/NewMapWIthMarkers';
 import { newFilterResults } from '../../utilities/newFilterResults';
+import NewMapWithMarkers from '../../components/NewMapWIthMarkers';
 
 const NewMapPage: React.FC = () => {
   const { _id } = useParams<{ _id: string }>();
