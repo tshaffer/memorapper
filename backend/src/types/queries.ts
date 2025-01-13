@@ -23,7 +23,7 @@ interface WouldReturnQuery {
   notSure: boolean;
 }
 
-interface DistanceAwayQuery {
+export interface DistanceAwayQuery {
   lat: number;
   lng: number;
   radius: number;

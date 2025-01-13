@@ -1,7 +1,9 @@
-import { SerializableMap } from "./baseTypes";
+import { IMongoPlace } from "../models";
+import { IAccountPlaceReview } from "../models/AccountPlaceReview";
 import { ItemReview } from "./entities";
+import { SearchDistanceFilter } from "./enums";
 import { GooglePlace } from "./googlePlace";
-
+import { DistanceAwayQuery } from './queries';
 export interface Account {
   accountId: string; // unique key
   accountName: string;
@@ -62,10 +64,29 @@ export interface NewSubmitReviewBody {
   accountId: string;
   place: GooglePlace;
   accountUserInputs: AccountUserInput[];
-  // accountUserInputByAccountUser: AccountUserInputByAccountUser;
   dateOfVisit: string;
   reviewText: string;
   itemReviews: ItemReview[];
   sessionId: string;
 }
 
+export interface NewSearchQuery {
+  query: string;
+  distanceAway: DistanceAwayQuery;
+  isOpenNow: boolean;
+}
+
+export interface NewFilterResultsParams {
+  distanceAwayFilter: SearchDistanceFilter;
+  openNowFilter: boolean;
+}
+
+export interface NewSearchResponse {
+  places: GooglePlace[];
+  reviews: AccountPlaceReview[];
+}
+
+export interface NewQueryResponse {
+  places: IMongoPlace[];
+  reviews: IAccountPlaceReview[];
+}

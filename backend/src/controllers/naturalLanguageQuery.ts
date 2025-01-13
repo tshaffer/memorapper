@@ -1,7 +1,8 @@
 import getOpenAIClient from '../services/openai';
 import Review, { IReview } from '../models/Review';
 import MongoPlaceModel, { IMongoPlace } from '../models/MongoPlace';
-import { ParsedQuery, QueryResponse, StructuredQueryParams, WouldReturn } from '../types';
+import { NewQueryResponse, ParsedQuery, QueryResponse, StructuredQueryParams, WouldReturn } from '../types';
+import { IAccountPlaceReview } from '../models/AccountPlaceReview';
 
 export const buildStructuredQueryParamsFromParsedQuery = (parsedQuery: ParsedQuery): StructuredQueryParams => {
   const { queryParameters } = parsedQuery;
@@ -214,6 +215,75 @@ export const performNaturalLanguageQuery = async (
     dateOfVisit: review.structuredReviewProperties.dateOfVisit,
     wouldReturn: review.structuredReviewProperties.wouldReturn,
     googlePlaceId: review.googlePlaceId,
+  }));
+
+  // Step 2: Call OpenAI API
+  const response = await getOpenAIClient().chat.completions.create({
+    model: "gpt-4",
+    messages: [
+      {
+        role: "system",
+        content: `You are a helpful assistant that retrieves relevant places and reviews based on a natural language query. Respond with JSON data only, without additional commentary.`,
+      },
+      {
+        role: "user",
+        content: `Find relevant places and reviews for the query: "${query}". 
+        The places are: ${JSON.stringify(placeData)}. 
+        The reviews are: ${JSON.stringify(reviewData)}.
+
+        Return the results in the following JSON format:
+        {
+          "places": [
+            { "id": "place_id_1" },
+            { "id": "place_id_2" },
+            ...
+          ],
+          "reviews": [
+            { "id": "review_id_1" },
+            { "id": "review_id_2" },
+            ...
+          ]
+        }`,
+      },
+    ],
+  });
+
+  // Step 3: Parse the JSON response
+  const result = JSON.parse(response.choices[0].message?.content || "{}");
+  const relevantPlaceIds = result.places?.map((place: { id: string }) => place.id) || [];
+  const relevantReviewIds = result.reviews?.map((review: { id: string }) => review.id) || [];
+
+  // Step 4: Filter places and reviews based on IDs
+  const filteredPlaces = places.filter(place => relevantPlaceIds.includes(place.googlePlaceId));
+  const filteredReviews = reviews.filter(review => relevantReviewIds.includes(review._id!.toString()));
+
+  // Step 5: Return the filtered data
+  return {
+    places: filteredPlaces,
+    reviews: filteredReviews,
+  };
+};
+
+export const newPerformNaturalLanguageQuery = async (
+  query: string,
+  places: IMongoPlace[],
+  reviews: IAccountPlaceReview[]
+): Promise<NewQueryResponse> => {
+  console.log("performNaturalLanguageQuery:", query);
+
+  // Step 1: Prepare data for OpenAI query
+  const placeData = places.map(place => ({
+    id: place.googlePlaceId,
+    name: place.name,
+    address: place.formatted_address,
+    location: place.geometry?.location,
+  }));
+
+  const reviewData = reviews.map(review => ({
+    id: review._id,
+    text: review.reviewText,
+    dateOfVisit: review.dateOfVisit,
+    googlePlaceId: review.placeId,
   }));
 
   // Step 2: Call OpenAI API

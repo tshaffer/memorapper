@@ -22,6 +22,7 @@ import {
   previewHandler,
 } from '../controllers';
 import { reviewHandler } from '../controllers/review';
+import { newSearchAndFilterHandler } from '../controllers/newSearchAndFilter';
 
 const router = Router();
 
@@ -51,5 +52,6 @@ router.get('/accountUsers', getAccountUsers);
 router.get('/accountUserInputs', getAccountUserInputs);
 router.post('/preview', previewHandler);
 router.post('/review', reviewHandler);
+router.post('/searchAndFilter', newSearchAndFilterHandler);
 
 export default router;
