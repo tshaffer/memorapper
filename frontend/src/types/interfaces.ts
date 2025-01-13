@@ -1,4 +1,5 @@
 import { ItemReview } from "./entities";
+import { DistanceAwayFilterValues } from "./enums";
 import { GooglePlace } from "./googlePlace";
 
 export interface Account {
@@ -58,4 +59,14 @@ export interface NewSubmitReviewBody {
   itemReviews: ItemReview[];
   sessionId: string;
 }
+
+export interface NewFilterResultsParams {
+  distanceAwayFilter: DistanceAwayFilterValues;
+  openNowFilter: boolean;
+}
+
+export interface NewExtendedGooglePlace extends GooglePlace {
+  reviews: AccountPlaceReview[];
+}
+
 

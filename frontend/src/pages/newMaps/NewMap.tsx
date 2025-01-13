@@ -3,12 +3,26 @@ import { useParams } from 'react-router-dom';
 import { Paper, Box, IconButton, useMediaQuery } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import LocationAutocomplete from '../../components/LocationAutocomplete';
-import MapWithMarkers from '../../components/MapWIthMarkers';
-import { ExtendedGooglePlace, ExtendedGooglePlaceToVisit, FilterResultsParams, Filters, UnvisitedPlace, UnvisitedPlaceFromDb, GooglePlace, MemoRappReview, SearchQuery, SearchResponse } from '../../types';
+import {
+  ExtendedGooglePlace,
+  ExtendedGooglePlaceToVisit,
+  FilterResultsParams,
+  Filters,
+  UnvisitedPlace,
+  UnvisitedPlaceFromDb,
+  GooglePlace,
+  MemoRappReview,
+  SearchQuery,
+  SearchResponse,
+  NewFilterResultsParams,
+  AccountPlaceReview,
+  NewExtendedGooglePlace
+} from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
 import PulsingDots from '../../components/PulsingDots';
-import { filterResults } from '../../utilities';
 import { useUserContext } from '../../contexts/UserContext';
+import NewMapWithMarkers from '../../components/NewMapWIthMarkers';
+import { newFilterResults } from '../../utilities/newFilterResults';
 
 const NewMapPage: React.FC = () => {
   const { _id } = useParams<{ _id: string }>();
@@ -24,7 +38,7 @@ const NewMapPage: React.FC = () => {
   const [unvisitedPlaces, setUnvisitedPlaces] = useState<GooglePlace[]>([]);
   const [unvisitedPlacesToVisit, setUnvisitedPlacesToVisit] = useState<UnvisitedPlace[]>([]);
 
-  const [reviews, setReviews] = useState<MemoRappReview[]>([]);
+  const [reviews, setReviews] = useState<AccountPlaceReview[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -79,41 +93,10 @@ const NewMapPage: React.FC = () => {
       return data.googlePlaces;
     };
 
-    const fetchUnvisitedPlacesToVisit = async (): Promise<UnvisitedPlace[]> => {
-      const unvisitedPlacesToVisit: UnvisitedPlace[] = [];
-      const response = await fetch('/api/unvisitedPlacesToVisit');
-      const data = await response.json();
-      const unvisitedPlacesToVisitFromDb: UnvisitedPlaceFromDb[] = data.unvisitedPlacesToVisit;
-      for (const unvisitedPlaceToVisitFromDb of unvisitedPlacesToVisitFromDb) {
-        const unvisitedPlaceToVisit: UnvisitedPlace = {
-          _id: unvisitedPlaceToVisitFromDb._id,
-          place: null,
-          comments: unvisitedPlaceToVisitFromDb.comments,
-          rating: unvisitedPlaceToVisitFromDb.rating,
-        };
-        const placeId = unvisitedPlaceToVisitFromDb.place_id;
-        const googlePlace = places.find((place) => place.googlePlaceId === placeId);
-        if (googlePlace) {
-          unvisitedPlaceToVisit.place = googlePlace;
-        }
-        unvisitedPlacesToVisit.push(unvisitedPlaceToVisit);
-      }
-      setUnvisitedPlacesToVisit(unvisitedPlacesToVisit);
-      return data.unvisitedPlacesToVisit;
-    };
-
-    const fetchReviews = async (): Promise<MemoRappReview[]> => {
-      const response = await fetch('/api/reviews');
-      const data = await response.json();
-      setReviews(data.memoRappReviews);
-      return data.memoRappReviews;
-    };
-
     const fetchData = async () => {
       const location = await fetchCurrentLocation();
       const places = await fetchPlaces();
-      const reviews = await fetchReviews();
-      filterOnEntry(places, reviews, location!, settings.filters);
+      filterOnEntry(places, location!, settings.filters);
     };
 
     const fetchUnvisitedPlacesFromBackend = async () => {
@@ -142,10 +125,10 @@ const NewMapPage: React.FC = () => {
     }
   }, [_id, places]);
 
-  const getReviewsForPlace = (placeId: string): MemoRappReview[] =>
-    reviews.filter((review) => review.place_id === placeId);
+  const getReviewsForPlace = (placeId: string): AccountPlaceReview[] =>
+    reviews.filter((review) => review.placeId === placeId);
 
-  const getExtendedGooglePlaces = (inputPlaces: GooglePlace[]): ExtendedGooglePlace[] =>
+  const getExtendedGooglePlaces = (inputPlaces: GooglePlace[]): NewExtendedGooglePlace[] =>
     inputPlaces.map((place) => ({
       ...place,
       reviews: getReviewsForPlace(place.googlePlaceId),
@@ -182,7 +165,7 @@ const NewMapPage: React.FC = () => {
     const requestBody = { searchQuery };
 
     try {
-      const apiResponse = await fetch('/api/reviews/searchAndFilter', {
+      const apiResponse = await fetch('/api/searchAndFilter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody),
@@ -198,20 +181,19 @@ const NewMapPage: React.FC = () => {
   }
 
   const filterOnEntry = (
-    places: any, reviews: any, location: google.maps.LatLngLiteral, filters: Filters,
+    places: any, location: google.maps.LatLngLiteral, filters: Filters,
   ) => {
 
-    const { distanceAwayFilter, isOpenNowFilterEnabled, wouldReturnFilter } = filters;
+    const { distanceAwayFilter, isOpenNowFilterEnabled } = filters;
 
-    const filter: FilterResultsParams = {
+    const filter: NewFilterResultsParams = {
       distanceAwayFilter,
       openNowFilter: isOpenNowFilterEnabled,
-      wouldReturnFilter,
     };
 
-    const filterResultsValue: SearchResponse = filterResults(filter, places, reviews, location);
+    const filteredPlaces: GooglePlace[] = newFilterResults(filter, places, location);
 
-    setFilteredPlaces(filterResultsValue.places);
+    setFilteredPlaces(filteredPlaces);
   }
 
   const handleSetFilters = async (
@@ -269,7 +251,7 @@ const NewMapPage: React.FC = () => {
           width: '100%',
         }}
       >
-        <MapWithMarkers
+        <NewMapWithMarkers
           key={JSON.stringify({ googlePlaces: filteredPlaces, specifiedLocation: mapLocation })} // Forces re-render on prop change
           initialCenter={mapLocation!}
           locations={getExtendedGooglePlaces(filteredPlaces)}

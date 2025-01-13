@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ExtendedGooglePlace, ExtendedGooglePlaceToVisit, RestaurantType } from '../types';
+import { ExtendedGooglePlaceToVisit, NewExtendedGooglePlace, RestaurantType } from '../types';
 import { AdvancedMarker, APIProvider, Map, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace } from '../utilities';
 import '../App.css';
-import RestaurantInfoWindow from './RestaurantInfoWindow';
+import NewRestaurantInfoWindow from './NewRestaurantInfoWindow';
 import RestaurantToVisitInfoWindow from './RestaurantToVisitInfoWindow';
 
 import { Icon, IconifyIcon } from '@iconify/react';
@@ -53,14 +53,14 @@ const textStyle = (color: string): React.CSSProperties => ({
 
 interface MapWithMarkersProps {
   initialCenter: google.maps.LatLngLiteral;
-  locations: ExtendedGooglePlace[];
+  locations: NewExtendedGooglePlace[];
   locationsToVisit: ExtendedGooglePlaceToVisit[];
   blueDotLocation?: google.maps.LatLngLiteral;
 }
 
 const NewMapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, locations, locationsToVisit, blueDotLocation }) => {
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
-  const [selectedLocation, setSelectedLocation] = useState<ExtendedGooglePlace | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<NewExtendedGooglePlace | null>(null);
   const [selectedLocationToVisit, setSelectedLocationToVisit] = useState<ExtendedGooglePlaceToVisit | null>(null);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
 
@@ -111,7 +111,7 @@ const NewMapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, locat
     }} />
   );
 
-  const handleMarkerClick = (location: ExtendedGooglePlace) => {
+  const handleMarkerClick = (location: NewExtendedGooglePlace) => {
     setSelectedLocation(location);
     setSelectedLocationToVisit(null);
   };
@@ -146,7 +146,7 @@ const NewMapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, locat
     return restaurantIcon;
   }
 
-  const renderMarker = (location: ExtendedGooglePlace, index: number): JSX.Element => (
+  const renderMarker = (location: NewExtendedGooglePlace, index: number): JSX.Element => (
     <AdvancedMarker
       key={`location-${index}`}
       position={getLatLngFromPlace(location)}
@@ -204,7 +204,7 @@ const NewMapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, locat
           </AdvancedMarker>
         )}
         {selectedLocation && (
-          <RestaurantInfoWindow location={selectedLocation} onClose={handleCloseInfoWindow} />
+          <NewRestaurantInfoWindow location={selectedLocation} onClose={handleCloseInfoWindow} />
         )}
         {selectedLocationToVisit && (
           <RestaurantToVisitInfoWindow location={selectedLocationToVisit} onClose={handleCloseInfoWindow} />
