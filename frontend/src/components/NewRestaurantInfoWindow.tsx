@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import directionsIcon from '@iconify/icons-mdi/directions';
-import { Account, AccountPlaceReview, AccountUserInput, AccountUserInterfaceRef, ExtendedGooglePlace, MemoRappReview, NewExtendedGooglePlace, RestaurantVisitInstance, UserPlaceSummary } from '../types';
+import { Account, AccountPlaceReview, AccountUser, AccountUserInput, AccountUserInterfaceRef, NewExtendedGooglePlace, UserPlaceSummary } from '../types';
 import { InfoWindow } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace, restaurantTypeLabelFromRestaurantType } from '../utilities';
 import '../App.css';
-import '../styles/reviewEntryForm.css';
 import { Typography, useMediaQuery } from '@mui/material';
 import Rating from '@mui/material/Rating';
 
@@ -22,6 +21,7 @@ const NewRestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location
 
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [accountUsers, setAccountUsers] = useState<AccountUser[]>([]);
   const [userPlaceSummaries, setUserPlaceSummaries] = useState<UserPlaceSummary[]>([]);
   const [accountUserInputs, setAccountUserInputs] = useState<AccountUserInput[]>([]);
   const [accountPlaceReviews, setAccountPlaceReviews] = useState<AccountPlaceReview[]>([]);
@@ -58,6 +58,13 @@ const NewRestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location
       return data.accounts;
     }
 
+    const fetchAccountUsers = async (): Promise<AccountUser[]> => {
+      const response = await fetch('/api/accountUsers');
+      const data = await response.json();
+      setAccountUsers(data.accountUsers);
+      return data.accountUsers;
+    }
+
     const fetchUserPlaceSummaries = async (): Promise<UserPlaceSummary[]> => {
       const response = await fetch('/api/userPlaceSummaries');
       const data = await response.json();
@@ -90,6 +97,7 @@ const NewRestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location
     */
     const fetchData = async () => {
       await fetchAccounts();
+      await fetchAccountUsers();
       await fetchUserPlaceSummaries();
       await fetchAccountUserInputs();
       await fetchAccountPlaceReviews();
@@ -168,23 +176,35 @@ const NewRestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location
     // navigate(`/restaurantDetails`, { state: { place: location, reviews } });
   }
 
-  const renderAccountUserInput = (accountUserInputId: string): JSX.Element | null => {
+  const renderAccountUserInput = (accountUserInputRef: AccountUserInterfaceRef): JSX.Element | null => {
+    const accountUserId = accountUserInputRef.accountUserId;
+    let matchedUserAccount: AccountUser | null = null;
+    for (const account of accountUsers) {
+      if (account.accountUserId === accountUserId) {
+        matchedUserAccount = account;
+        break;
+      }
+    }
+    if (!matchedUserAccount) {
+      return null;
+    }
+    const accountUserInputId = accountUserInputRef.accountUserInputId;
     for (const accountUserInput of accountUserInputs) {
       if (accountUserInput.accountUserInputId === accountUserInputId) {
         console.log('accountUserInput:');
         console.log(accountUserInput);
         return (
-          // <Typography variant="body2" style={{ margin: '0 0 8px 0' }}>
-          //   Rating: {accountUserInput.rating}
-          // </Typography>
-          <div className="contributor-rating">
-            <label >Rating</label>
-            <Rating
-              value={accountUserInput.rating}
-              max={5}
-              readOnly
-            />
-          </div>
+          <>
+            <div>
+              <label>{matchedUserAccount.userName}</label>
+              <Rating
+                value={accountUserInput.rating}
+                max={5}
+                readOnly
+              />
+            </div>
+            <Typography variant="body2">{accountUserInput.comments}</Typography>
+          </>
         )
       }
     }
@@ -203,14 +223,13 @@ const NewRestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location
     console.log('find accountUserInputs for this restaurant, account');
     const accountUserInputElements: JSX.Element[] = [];
     for (const accountUserInputRef of accountUserInputRefs) {
-      const accountUserInputId = accountUserInputRef.accountUserInputId;
-      const accountUserInputElement = renderAccountUserInput(accountUserInputId);
+      // const accountUserInputId = accountUserInputRef.accountUserInputId;
+      const accountUserInputElement = renderAccountUserInput(accountUserInputRef);
       if (accountUserInputElement) {
         accountUserInputElements.push(accountUserInputElement);
       }
-      return accountUserInputElements;
     }
-    return null;
+    return accountUserInputElements;
   }
 
   return (
