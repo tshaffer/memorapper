@@ -93,10 +93,18 @@ const NewMapPage: React.FC = () => {
       return data.googlePlaces;
     };
 
+    const fetchReviews = async (): Promise<AccountPlaceReview[]> => {
+      const response = await fetch('/api/accountPlaceReviews');
+      const data = await response.json();
+      setReviews(data.accountPlaceReviews);
+      return data.accountPlaceReview;
+    };
+
     const fetchData = async () => {
       const location = await fetchCurrentLocation();
       const places = await fetchPlaces();
       filterOnEntry(places, location!, settings.filters);
+      await fetchReviews();
     };
 
     const fetchUnvisitedPlacesFromBackend = async () => {

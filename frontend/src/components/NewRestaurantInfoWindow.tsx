@@ -46,6 +46,8 @@ const NewRestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location
     // debugger;
     const { reviews, googlePlaceId, name, address_components, formatted_address, website, opening_hours, price_level, vicinity, restaurantType } = location;
 
+    console.log('reviews:', reviews);
+
     const fetchAccounts = async (): Promise<Account[]> => {
       const response = await fetch('/api/accounts');
       const data = await response.json();
@@ -119,7 +121,7 @@ const NewRestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location
       }
     }
 
-    debugger;
+    // debugger;
 
     console.log('Number of visits:', restaurantVisitInstances.length);
     for (const restaurantVisitInstance of restaurantVisitInstances) {
