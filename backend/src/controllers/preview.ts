@@ -1,14 +1,9 @@
-import { ChatCompletionMessageParam } from 'openai/resources/chat';
 import getOpenAIClient from '../services/openai';
 import { Request, Response } from 'express';
 import { extractItemReviews } from '../utilities';
 import { ChatGPTOutput, ItemReview, NewPreviewResponse, PreviewRequestBody } from '../types';
 
-// Store conversations for each session
-interface ReviewConversations {
-  [sessionId: string]: ChatCompletionMessageParam[];
-}
-const reviewConversations: ReviewConversations = {};
+import { reviewConversations } from '../data/data';
 
 export const previewHandler = async (
   req: Request<{}, {}, PreviewRequestBody>,

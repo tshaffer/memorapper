@@ -1,3 +1,4 @@
+export * from './chat';
 export * from './contributorInputs';
 export * from './contributors';
 export * from './filterResults';

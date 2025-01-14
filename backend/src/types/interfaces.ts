@@ -90,3 +90,10 @@ export interface NewQueryResponse {
   places: IMongoPlace[];
   reviews: IAccountPlaceReview[];
 }
+
+export interface NewChatResponse {
+  reviewText: string;
+  itemReviews: ItemReview[];
+  updatedReviewText: string;
+}
+

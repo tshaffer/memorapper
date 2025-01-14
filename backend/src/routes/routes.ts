@@ -22,6 +22,7 @@ import {
   previewHandler,
   getAccountPlaceReviews,
   getUserPlaceSummaries,
+  chatHandler,
 } from '../controllers';
 import { reviewHandler } from '../controllers/review';
 import { newSearchAndFilterHandler } from '../controllers/newSearchAndFilter';
@@ -57,6 +58,7 @@ router.get('/userPlaceSummaries', getUserPlaceSummaries);
 
 router.post('/preview', previewHandler);
 router.post('/review', reviewHandler);
+router.post('/chat', chatHandler);
 router.post('/searchAndFilter', newSearchAndFilterHandler);
 
 export default router;
