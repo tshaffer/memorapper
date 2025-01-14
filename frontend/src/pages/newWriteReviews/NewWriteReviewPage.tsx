@@ -5,7 +5,7 @@ import PreviewTab from "./NewPreviewTab";
 import ChatTab from "./NewChatTab";
 import NewReviewEntryForm from './NewReviewEntryForm';
 import { Box, Button } from "@mui/material";
-import { NewSubmitReviewBody, AccountPlaceReview, ChatGPTOutput, ChatMessage, EditableReview, GooglePlace, MemoRappReview, NewPreviewResponse, NewReviewData, PreviewRequestBody } from "../../types";
+import { NewSubmitReviewBody, AccountPlaceReview, ChatGPTOutput, ChatMessage, EditableReview, GooglePlace, MemoRappReview, NewPreviewResponse, NewReviewData, PreviewRequestBody, ChatRequestBody, NewChatResponse } from "../../types";
 import { getFormattedDate } from "../../utilities";
 import { useUserContext } from '../../contexts/UserContext';
 
@@ -84,9 +84,6 @@ const WriteReviewPage = () => {
 
   }
 
-  const handleSendChatMessage = async (chatInput: string) => {
-  }
-
   const handleSubmitReview = async () => {
     const body: NewSubmitReviewBody = {
       _id: newReviewData._id,
@@ -117,32 +114,35 @@ const WriteReviewPage = () => {
     } catch (error) {
       console.error('Error submitting review:', error);
     }
-
   }
   
-  /*
   const handleSendChatMessage = async (chatInput: string) => {
     const chatRequestBody: ChatRequestBody = {
       userInput: chatInput,
-      sessionId: reviewData.sessionId!,
-      reviewText: reviewData.reviewText!,
+      sessionId: newReviewData.sessionId!,
+      reviewText: newReviewData.reviewText!,
     };
-    const response: Response = await fetch('/api/reviews/chat', {
+    const response: Response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(chatRequestBody),
     });
-    const chatResponse: ChatResponse = (await response.json()) as ChatResponse;
-    const { freeformReviewProperties, updatedReviewText } = chatResponse;
+    const chatResponse: NewChatResponse = (await response.json()) as NewChatResponse;
+    const { updatedReviewText, itemReviews, reviewText } = chatResponse;
 
-    setReviewData((prev) => ({
+    const chatGPTOutput: ChatGPTOutput = {
+      reviewText,
+      itemReviews,
+    }
+
+    setNewReviewData((prev) => ({
       ...prev,
       reviewText: updatedReviewText,
-      itemReviews: freeformReviewProperties.itemReviews,
-      chatHistory: [...reviewData.chatHistory, { role: 'user', message: chatInput }, { role: 'ai', message: freeformReviewProperties }]
+      itemReviews: itemReviews,
+      chatHistory: [...newReviewData.chatHistory, { role: 'user', message: chatInput }, { role: 'ai', message: chatGPTOutput }]
     }));
   };
-*/
+
 
   return (
     <div className="container">
