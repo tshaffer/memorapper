@@ -69,4 +69,9 @@ export interface NewExtendedGooglePlace extends GooglePlace {
   reviews: AccountPlaceReview[];
 }
 
+export interface RestaurantVisitInstance {
+  dateOfVisit: string;
+  reviewText: string;
+  itemReviews: ItemReview[];
+}
 

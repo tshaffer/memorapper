@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import directionsIcon from '@iconify/icons-mdi/directions';
-import { AccountPlaceReview, ExtendedGooglePlace, MemoRappReview, NewExtendedGooglePlace } from '../types';
+import { AccountPlaceReview, AccountUserInput, ExtendedGooglePlace, MemoRappReview, NewExtendedGooglePlace, RestaurantVisitInstance, UserPlaceSummary } from '../types';
 import { InfoWindow } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace, restaurantTypeLabelFromRestaurantType } from '../utilities';
 import '../App.css';
@@ -19,6 +19,9 @@ const NewRestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location
   const navigate = useNavigate();
 
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
+  const [userPlaceSummaries, setUserPlaceSummaries] = useState<UserPlaceSummary[]>([]);
+  const [accountUserInputs, setAccountUserInputs] = useState<AccountUserInput[]>([]);
+  const [accountPlaceReviews, setAccountPlaceReviews] = useState<AccountPlaceReview[]>([]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -35,6 +38,66 @@ const NewRestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location
     }
   }, []);
 
+
+  useEffect(() => {
+    if (!location) {
+      return;
+    }
+    // debugger;
+    const { reviews, googlePlaceId, name, address_components, formatted_address, website, opening_hours, price_level, vicinity, restaurantType } = location;
+
+    const fetchUserPlaceSummaries = async (): Promise<UserPlaceSummary[]> => {
+      const response = await fetch('/api/userPlaceSummaries');
+      const data = await response.json();
+      setUserPlaceSummaries(data.userPlaceSummaries);
+      return data.userPlaceSummaries;
+    };
+
+    const fetchAccountUserInputs = async (): Promise<AccountUserInput[]> => {
+      const response = await fetch('/api/accountUserInputs');
+      const data = await response.json();
+      setAccountUserInputs(data.accountUserInputs);
+      return data.accountUserInputs;
+    };
+
+    const fetchAccountPlaceReviews = async (): Promise<AccountPlaceReview[]> => {
+      const response = await fetch('/api/accountPlaceReviews');
+      const data = await response.json();
+      setAccountPlaceReviews(data.accountPlaceReviews);
+      return data.accountPlaceReviews;
+    };
+
+    const restaurantVisitInstances: RestaurantVisitInstance[] = [];
+    for (const review of reviews) {
+      const { dateOfVisit, reviewText, itemReviews } = review;
+      restaurantVisitInstances.push({ dateOfVisit, reviewText, itemReviews });
+    }
+
+    const fetchData = async () => {
+      await fetchUserPlaceSummaries();
+      await fetchAccountUserInputs();
+      await fetchAccountPlaceReviews();
+    };
+
+    fetchData();
+
+    console.log('Restaurant name:', name);
+    console.log('Type:', restaurantTypeLabelFromRestaurantType(restaurantType));
+    console.log('Address:', formatted_address);
+    console.log('Website:', website);
+
+    console.log('Number of visits:', restaurantVisitInstances.length);
+    for (const restaurantVisitInstance of restaurantVisitInstances) {
+      console.log('Date of visit:', restaurantVisitInstance.dateOfVisit);
+      console.log('Review:', restaurantVisitInstance.reviewText);
+      console.log('Number of items:', restaurantVisitInstance.itemReviews.length);
+      for (const itemReview of restaurantVisitInstance.itemReviews) {
+        console.log('Item:', itemReview.item);
+        console.log('Review:', itemReview.review);
+      }
+    }
+
+  }, []);
 
   const handleShowDirections = () => {
     if (location && currentLocation) {

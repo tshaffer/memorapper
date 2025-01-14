@@ -20,6 +20,8 @@ import {
   getAccountUsers,
   getAccountUserInputs,
   previewHandler,
+  getAccountPlaceReviews,
+  getUserPlaceSummaries,
 } from '../controllers';
 import { reviewHandler } from '../controllers/review';
 import { newSearchAndFilterHandler } from '../controllers/newSearchAndFilter';
@@ -49,7 +51,10 @@ router.post('/reviews/searchAndFilter', searchAndFilterHandler);
 
 router.get('/accounts', getAccounts);
 router.get('/accountUsers', getAccountUsers);
+router.get('/accountPlaceReviews', getAccountPlaceReviews);
 router.get('/accountUserInputs', getAccountUserInputs);
+router.get('/userPlaceSummaries', getUserPlaceSummaries);
+
 router.post('/preview', previewHandler);
 router.post('/review', reviewHandler);
 router.post('/searchAndFilter', newSearchAndFilterHandler);
