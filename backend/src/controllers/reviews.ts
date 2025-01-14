@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Review, { IReview, TedModel, } from "../models/Review";
+import Review, { IReview, } from "../models/Review";
 import { ContributorInput, MemoRappReview } from "../types";
 
 export const getReviews = async (request: Request, response: Response, next: any) => {
