@@ -85,16 +85,7 @@ const NewRestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location
       setAccountPlaceReviews(data.accountPlaceReviews);
       return data.accountPlaceReviews;
     };
-    /*
-        const restaurantVisitInstances: RestaurantVisitInstance[] = [];
-        for (const review of reviews) {
-          const { dateOfVisit, reviewText, itemReviews } = review;
-          restaurantVisitInstances.push({ dateOfVisit, reviewText, itemReviews });
-        }
-    
-        let localAccounts: Account[] = [];
-        let localUserPlaceSummaries: UserPlaceSummary[] = [];
-    */
+
     const fetchData = async () => {
       await fetchAccounts();
       await fetchAccountUsers();
@@ -104,47 +95,6 @@ const NewRestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location
     };
 
     fetchData();
-
-    // console.log('Restaurant name:', name);
-    // console.log('Type:', restaurantTypeLabelFromRestaurantType(restaurantType));
-    // console.log('Address:', formatted_address);
-    // console.log('Website:', website);
-
-    // let matchingAccount: Account | undefined;
-    // let matchingUserPlaceSummary: UserPlaceSummary | undefined;
-
-    // // get user place summary for this place and account
-    // for (const localUserPlaceSummary of localUserPlaceSummaries) {
-    //   if (localUserPlaceSummary.placeId === googlePlaceId) {
-    //     const accountId = localUserPlaceSummary.accountId;
-    //     for (const account of localAccounts) {
-    //       if (account.accountId === accountId) {
-    //         matchingAccount = account;
-    //         matchingUserPlaceSummary = localUserPlaceSummary;
-    //         console.log('Matching account:', account);
-    //         console.log('Matching user place summary:', localUserPlaceSummary);
-    //         debugger;
-    //         break;
-    //       }
-    //     }
-
-    //     // const accountUserInputs = localUserPlaceSummary.accountUserInputs;
-    //   }
-    // }
-
-    // // debugger;
-
-    // console.log('Number of visits:', restaurantVisitInstances.length);
-    // for (const restaurantVisitInstance of restaurantVisitInstances) {
-    //   console.log('Date of visit:', restaurantVisitInstance.dateOfVisit);
-    //   console.log('Review:', restaurantVisitInstance.reviewText);
-    //   console.log('Number of items:', restaurantVisitInstance.itemReviews.length);
-    //   for (const itemReview of restaurantVisitInstance.itemReviews) {
-    //     console.log('Item:', itemReview.item);
-    //     console.log('Review:', itemReview.review);
-    //   }
-    // }
-
   }, []);
 
   const getUserPlaceSummary = (): UserPlaceSummary | null => {
@@ -223,7 +173,6 @@ const NewRestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location
     console.log('find accountUserInputs for this restaurant, account');
     const accountUserInputElements: JSX.Element[] = [];
     for (const accountUserInputRef of accountUserInputRefs) {
-      // const accountUserInputId = accountUserInputRef.accountUserInputId;
       const accountUserInputElement = renderAccountUserInput(accountUserInputRef);
       if (accountUserInputElement) {
         accountUserInputElements.push(accountUserInputElement);
