@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import directionsIcon from '@iconify/icons-mdi/directions';
-import { AccountPlaceReview, AccountUserInput, ExtendedGooglePlace, MemoRappReview, NewExtendedGooglePlace, RestaurantVisitInstance, UserPlaceSummary } from '../types';
+import { Account, AccountPlaceReview, AccountUserInput, ExtendedGooglePlace, MemoRappReview, NewExtendedGooglePlace, RestaurantVisitInstance, UserPlaceSummary } from '../types';
 import { InfoWindow } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace, restaurantTypeLabelFromRestaurantType } from '../utilities';
 import '../App.css';
@@ -46,6 +46,13 @@ const NewRestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location
     // debugger;
     const { reviews, googlePlaceId, name, address_components, formatted_address, website, opening_hours, price_level, vicinity, restaurantType } = location;
 
+    const fetchAccounts = async (): Promise<Account[]> => {
+      const response = await fetch('/api/accounts');
+      const data = await response.json();
+      const accounts: Account[] = data.account;
+      return accounts;
+    }
+
     const fetchUserPlaceSummaries = async (): Promise<UserPlaceSummary[]> => {
       const response = await fetch('/api/userPlaceSummaries');
       const data = await response.json();
@@ -73,8 +80,12 @@ const NewRestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location
       restaurantVisitInstances.push({ dateOfVisit, reviewText, itemReviews });
     }
 
+    let localAccounts: Account[] = [];
+    let localUserPlaceSummaries: UserPlaceSummary[] = [];
+
     const fetchData = async () => {
-      await fetchUserPlaceSummaries();
+      localAccounts = await fetchAccounts();
+      localUserPlaceSummaries = await fetchUserPlaceSummaries();
       await fetchAccountUserInputs();
       await fetchAccountPlaceReviews();
     };
@@ -85,6 +96,30 @@ const NewRestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location
     console.log('Type:', restaurantTypeLabelFromRestaurantType(restaurantType));
     console.log('Address:', formatted_address);
     console.log('Website:', website);
+
+    let matchingAccount: Account | undefined;
+    let matchingUserPlaceSummary: UserPlaceSummary | undefined;
+
+    // get user place summary for this place and account
+    for (const localUserPlaceSummary of localUserPlaceSummaries) {
+      if (localUserPlaceSummary.placeId === googlePlaceId) {
+        const accountId = localUserPlaceSummary.accountId;
+        for (const account of localAccounts) {
+          if (account.accountId === accountId) {
+            matchingAccount = account;
+            matchingUserPlaceSummary = localUserPlaceSummary;
+            console.log('Matching account:', account);
+            console.log('Matching user place summary:', localUserPlaceSummary);
+            debugger;
+            break;
+          }
+        }
+
+        // const accountUserInputs = localUserPlaceSummary.accountUserInputs;
+      }
+    }
+
+    debugger;
 
     console.log('Number of visits:', restaurantVisitInstances.length);
     for (const restaurantVisitInstance of restaurantVisitInstances) {
