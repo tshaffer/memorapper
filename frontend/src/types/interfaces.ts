@@ -20,16 +20,16 @@ export interface AccountUserInput {
   comments: string;
 }
 
+export interface AccountUserInterfaceRef {
+  accountUserInputId: string; // unique key
+  accountUserId: string; // Foreign key to AccountUser
+}
+
 export interface UserPlaceSummary {
   userPlaceSummaryId: string; // unique key
   accountId: string; // Foreign key to Account
   placeId: string; // Foreign key to Place
-  accountUserInputs: [
-    {
-      accountUserId: string; // Foreign key to AccountUser
-      accountUserInputId: string; // Foreign key to AccountUserInput
-    }
-  ]
+  accountUserInputs: AccountUserInterfaceRef[];
 }
 
 export interface AccountPlaceReview {
