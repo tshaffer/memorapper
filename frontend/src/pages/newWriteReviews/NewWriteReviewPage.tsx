@@ -109,8 +109,8 @@ const WriteReviewPage = () => {
         headers: { 'Content-Type': 'application/json' },
         body: serialized
       });
-      const data = await response.json();
-      console.log('Review submitted:', data);
+      // const data = await response.json();
+      // console.log('Review submitted:', data);
 
       resetNewReviewData();
 
