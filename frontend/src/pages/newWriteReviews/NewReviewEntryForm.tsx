@@ -11,7 +11,9 @@ import {
   AccountUser,
   AccountUserInput,
   RestaurantType,
-  NewReviewData} from '../../types';
+  NewReviewData,
+  UserPlaceSummary
+} from '../../types';
 import PulsingDots from '../../components/PulsingDots';
 import React from 'react';
 import { useUserContext } from '../../contexts/UserContext';
@@ -34,6 +36,7 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
 
   const [accountUsers, setAccountUsers] = useState<AccountUser[]>([]);
   const [accountUserInputs, setAccountUserInputs] = useState<AccountUserInput[]>([]);
+  const [userPlaceSummaries, setUserPlaceSummaries] = useState<UserPlaceSummary[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -74,17 +77,74 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
       return data.accountUserInputs;
     }
 
+    const fetchUserPlaceSummaries = async (): Promise<UserPlaceSummary[]> => {
+      const response = await fetch('/api/userPlaceSummaries');
+      const data = await response.json();
+      return data.userPlaceSummaries;
+    };
+
+
+    const newfetchAccountUserInputs = async (): Promise<AccountUserInput[]> => {
+
+      // Fetch all accountUserInputs
+      const response = await fetch('/api/accountUserInputs');
+      const data = await response.json();
+
+      // Extract the current account ID
+      const currentAccountId = currentAccount?.accountId;
+
+      // Fetch accountUsers that belong to the current account
+      const accountUsersForCurrentAccount = accountUsers.filter(
+        (accountUser) => accountUser.accountId === currentAccountId
+      );
+
+      // Create a set of accountUserIds for filtering
+      const accountUserIds = new Set(accountUsersForCurrentAccount.map((user) => user.accountUserId));
+
+      // Filter accountUserInputs by matching accountUserId
+      const filteredAccountUserInputs = data.accountUserInputs.filter(
+        (input: AccountUserInput) => accountUserIds.has(input.accountUserId)
+      );
+
+      console.log('filteredAccountUserInputs:', filteredAccountUserInputs);
+      return filteredAccountUserInputs;
+    };
+
     const fetchData = async () => {
       const accountUsers = await fetchAccountUsers();
       setAccountUsers(accountUsers);
       const accountUserInputs = await fetchAccountUserInputs();
       setAccountUserInputs(accountUserInputs);
+      const userPlaceSummaries = await fetchUserPlaceSummaries();
+      setUserPlaceSummaries(userPlaceSummaries);
     };
 
     fetchData();
 
   }, []);
 
+
+  const getAccountUserInputsForCurrentAccount = (): AccountUserInput[] => {
+    const currentAccountId = currentAccount?.accountId;
+    return accountUserInputs.filter((input) => {
+      const accountUser = accountUsers.find((user) => user.accountUserId === input.accountUserId);
+      return accountUser?.accountId === currentAccountId;
+    });
+  }
+
+  const getAccountUserInputsForCurrentPlace = (): AccountUserInput[] => {
+    if (!reviewData.place) return [];
+    if (userPlaceSummaries.length === 0) return [];
+    const userPlaceSummary = userPlaceSummaries.find((summary) => summary.placeId === reviewData.place?.googlePlaceId);
+      return [];
+  }
+
+  // const getAccountUserInputsForCurrentAccountAndCurrentPlace = (): AccountUserInput[] => {
+  //   if (!reviewData.place) return [];
+  //   const accountUserInputsForCurrentAccount: AccountUserInput[] = getAccountUserInputsForCurrentAccount();
+
+  //   return accountUserInputsForCurrentAccount.filter((input) => input.placeId === reviewData.place?.placeId);
+  // }
 
   const restaurantTypeOptions = Object.keys(RestaurantType)
     .filter((key) => isNaN(Number(key)))
@@ -119,7 +179,7 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
         console.log('newAccountUserInputs:', newAccountUserInputs);
         setAccountUserInputs(newAccountUserInputs);
         handleAccountUserInputsChange(newAccountUserInputs);
-    return;
+        return;
       }
     }
     const newAccountUserInput: AccountUserInput = {
@@ -214,6 +274,11 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
   }
 
   const renderRatingsAndComments = (): JSX.Element => {
+    console.log('reviewData:', reviewData);
+    console.log('accountUserInputs:', accountUserInputs);
+    const accountUserInputsForCurrentAccount = getAccountUserInputsForCurrentAccount();
+    console.log('accountUserInputsForCurrentAccount:', accountUserInputsForCurrentAccount);
+
     return (
       <div className="ratings-and-comments">
         <fieldset className="ratings-comments-section">
@@ -223,7 +288,7 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
               accountUserInputId: uuidv4(),
               accountUserId: accountUser.accountUserId,
               rating: 0,
-              comments: '', 
+              comments: '',
             };
             return (
               <div key={accountUser.accountUserId} className="contributor-section">
