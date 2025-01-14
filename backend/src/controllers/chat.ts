@@ -50,7 +50,25 @@ export const chatHandler = async (
     }
 
     // Updated parsing logic
-    const structuredDataMatch = messageContent.match(/^Updated Structured Data:\s*([\s\S]*?)Updated Review Text:/m);
+    // const structuredDataMatch = messageContent.match(/^Updated Structured Data:\s*([\s\S]*?)Updated Review Text:/m);
+    const structuredDataMatch = messageContent.match(/1\. Updated Structured Data:\s*([\s\S]*?)2\. Updated Review Text:/m);
+
+    if (structuredDataMatch) {
+      const structuredData = structuredDataMatch[1].trim();
+      console.log('Extracted Structured Data:', structuredData);
+    } else {
+      console.error('Failed to extract structured data from the response.');
+    }
+
+    const reviewTextMatch = messageContent.match(/2\. Updated Review Text:\s*(.*)/s);
+
+    if (reviewTextMatch) {
+      const updatedReviewText = reviewTextMatch[1].trim();
+      console.log('Extracted Review Text:', updatedReviewText);
+    } else {
+      console.error('Failed to extract updated review text from the response.');
+    }
+    
     const updatedReviewTextMatch = messageContent.match(/Updated Review Text:\s*([\s\S]+)/s);
 
     const structuredDataText = structuredDataMatch ? structuredDataMatch[1].trim() : "No Updated Structured Data available";
