@@ -6,7 +6,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Button, Typography, useMediaQuery } from '@mui/material';
+import { Button, Rating, Typography, useMediaQuery } from '@mui/material';
 import '../../styles/multiPanelStyles.css';
 import '../../styles/previewForm.css';
 import { AccountUser, AccountUserInput, NewReviewData } from '../../types';
@@ -130,8 +130,14 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
                 <div className="contributor-header compact">
                   <h5>{accountUser.userName}</h5>
                 </div>
-                <div className="contributor-rating compact">
-                  <span className="rating-label">Rating:</span> {input.rating} / 5
+                <div className="contributor-rating">
+                  <label htmlFor={`rating-${accountUser.accountUserId}`}>Rating</label>
+                  <Rating
+                    id={`rating-${accountUser.accountUserId}`}
+                    name={`rating-${accountUser.accountUserId}`}
+                    value={input.rating}
+                    max={5}
+                  />
                 </div>
                 <div className="contributor-comments compact">
                   <span className="comments-label">Comments:</span> {input.comments || 'No comments provided'}
