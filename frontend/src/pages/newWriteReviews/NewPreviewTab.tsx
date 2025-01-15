@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Dialog from '@mui/material/Dialog';
@@ -7,10 +8,12 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Button, Typography, useMediaQuery } from '@mui/material';
 import '../../styles/multiPanelStyles.css';
-import { NewReviewData } from '../../types';
+import '../../styles/previewForm.css';
+import { AccountUser, AccountUserInput, NewReviewData } from '../../types';
 import { formatDateToMMDDYYYY, restaurantTypeLabelFromRestaurantType } from '../../utilities';
 import PulsingDots from '../../components/PulsingDots';
 import { useUserContext } from '../../contexts/UserContext';
+import React from 'react';
 
 interface PreviewTabProps {
   reviewData: NewReviewData;
@@ -19,7 +22,7 @@ interface PreviewTabProps {
 
 const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
 
-  const { users } = useUserContext();
+  const { currentAccount, } = useUserContext();
 
   const { reviewData, onSubmitReview } = props;
 
@@ -27,9 +30,42 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
 
   const { place, dateOfVisit, reviewText, itemReviews } = reviewData;
 
+  const [accountUsers, setAccountUsers] = useState<AccountUser[]>([]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+
+    const fetchAccountUsers = async (): Promise<AccountUser[]> => {
+      const response = await fetch('/api/accountUsers');
+      const data = await response.json();
+      const allAccountUsers: AccountUser[] = data.accountUsers;
+      const accountUsersForCurrentAccount: AccountUser[] = allAccountUsers.filter((accountUser) => accountUser.accountId === currentAccount?.accountId);
+      return accountUsersForCurrentAccount;
+    }
+
+    const fetchData = async () => {
+      const accountUsers = await fetchAccountUsers();
+      setAccountUsers(accountUsers);
+    };
+
+    fetchData();
+
+  }, []);
+
+  const getAccountUserInput = (accountUserId: string): AccountUserInput | null => {
+    if (!reviewData || !reviewData.accountUserInputs) return null;
+
+    for (const accountUserInput of reviewData.accountUserInputs) {
+      if (accountUserInput.accountUserId === accountUserId) {
+        return accountUserInput;
+      }
+    }
+    return null;
+  }
+
 
   const getReturnString = () => {
     return 'Not specified';
@@ -77,9 +113,36 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
     );
   }
 
-  const renderRatingsAndComments = (): string => {
-    return 'Excellent';
-  }
+  const renderRatingsAndComments = (): JSX.Element => {
+    return (
+      <div className="ratings-and-comments-preview">
+        <fieldset className="ratings-comments-section compact">
+          <legend>Ratings and Comments</legend>
+          {accountUsers.map((accountUser) => {
+            const input: AccountUserInput = getAccountUserInput(accountUser.accountUserId) || {
+              accountUserInputId: uuidv4(),
+              accountUserId: accountUser.accountUserId,
+              rating: 0,
+              comments: '',
+            };
+            return (
+              <div key={accountUser.accountUserId} className="contributor-section compact">
+                <div className="contributor-header compact">
+                  <h5>{accountUser.userName}</h5>
+                </div>
+                <div className="contributor-rating compact">
+                  <span className="rating-label">Rating:</span> {input.rating} / 5
+                </div>
+                <div className="contributor-comments compact">
+                  <span className="comments-label">Comments:</span> {input.comments || 'No comments provided'}
+                </div>
+              </div>
+            );
+          })}
+        </fieldset>
+      </div>
+    );
+  };
 
   const renderReviewPreview = () => {
 
@@ -117,7 +180,7 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
           <Typography><strong>Restaurant Name:</strong> {place.name || 'Not provided'}</Typography>
           <Typography><strong>Restaurant Type:</strong> {restaurantTypeLabelFromRestaurantType(place.restaurantType)}</Typography>
           <Typography><strong>Date of Visit:</strong> {formatDateToMMDDYYYY(dateOfVisit!) || 'Not provided'}</Typography>
-          <Typography><strong>Ratings and Comments:</strong> {renderRatingsAndComments()}</Typography>
+          {renderRatingsAndComments()}
           <Typography><strong>Review Text:</strong></Typography>
           <Typography>{reviewText}</Typography>
           <h3

@@ -1,0 +1,35 @@
+.ratings-and-comments-preview {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.ratings-comments-section.compact {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  border: none;
+}
+
+.contributor-section.compact {
+  margin-bottom: 0.5rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.contributor-header.compact h5 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.contributor-rating.compact,
+.contributor-comments.compact {
+  margin: 0.25rem 0;
+  font-size: 0.875rem;
+}
+
+.rating-label,
+.comments-label {
+  font-weight: bold;
+}

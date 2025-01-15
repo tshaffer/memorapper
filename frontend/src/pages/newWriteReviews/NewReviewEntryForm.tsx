@@ -212,7 +212,6 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
   }
 
   const renderRatingsAndComments = (): JSX.Element => {
-    console.log('renderRatingsAndComments, reviewData:', reviewData);
     return (
       <div className="ratings-and-comments">
         <fieldset className="ratings-comments-section">
