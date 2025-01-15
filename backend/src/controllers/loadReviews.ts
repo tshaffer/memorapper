@@ -2,68 +2,32 @@ import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
 import { Request, Response } from 'express';
-import { FreeformReviewProperties, GooglePlaceDetails, GooglePlaceDetailsResponse, GooglePlace, GooglePlacesResponse, MemoRappReview, WouldReturn, RestaurantType } from '../types';
-import { parsePreview } from './manageReview';
+import { GooglePlace, GooglePlacesResponse, RestaurantType, ChatGPTOutput, NewSubmitReviewBody } from '../types';
 import { addPlace } from './places';
-import { IMongoPlace, IReview } from '../models';
-import { addReview } from './reviews';
+
+import { parsePreview } from './preview';
 const GOOGLE_PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 const GOOGLE_PLACES_URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json';
-const GOOGLE_PLACE_DETAILS_BASE_URL = 'https://maps.googleapis.com/maps/api/place/details/json';
-
-interface TestReview {
-  restaurantName: string;
-  dateOfVisit: string;
-  wouldReturn: WouldReturn | null;
-  reviewText: string;
-  restaurantType: RestaurantType;
-  reviewerId: string;
-  primaryRating: number;
-  secondaryRating?: number;
-};
-
-const generateSessionId = () => Math.random().toString(36).substring(2) + Date.now().toString(36);
-
-const addTestReview = async (
-  restaurantName: string,
-  dateOfVisit: string,
-  wouldReturn: WouldReturn | null,
-  reviewText: string,
-  restaurantType: RestaurantType,
-  reviewerId: string,
-  primaryRating: number,
-  secondaryRating?: number,
-): Promise<void> => {
-  const sessionId: string = generateSessionId();
-
-  const freeformReviewProperties: FreeformReviewProperties = await parsePreview(sessionId, reviewText);
-
-  const place: GooglePlace = await getRestaurantProperties(restaurantName);
-  place.restaurantType = restaurantType;
-
-  const newMongoPlace: IMongoPlace | null = await addPlace(place);
-
-  const googlePlaceId: string = place.googlePlaceId;
-  const addReviewBody: MemoRappReview = {
-    googlePlaceId,
-    structuredReviewProperties: {
-      dateOfVisit,
-      wouldReturn,
-      reviewerId,
-      primaryRating,
-      secondaryRating,
-    },
-    freeformReviewProperties: freeformReviewProperties,
-  };
-  const newReview: IReview | null = await addReview(addReviewBody);
-  console.log('newReview:', newReview?.toObject());
-
-  return Promise.resolve();
-}
+import {
+  IMongoPlace,
+} from '../models';
+import { newSubmitReview } from './review';
+import { v4 as uuidv4 } from 'uuid';
 
 interface AddReviewFromFileBody {
   fileName: string;
 }
+
+interface TestReview {
+  accountId: string;
+  accountUserInputs: any[];
+  dateOfVisit: string;
+  restaurantName: string;
+  restaurantType: number;
+  reviewText: string;
+};
+
+const generateSessionId = () => Math.random().toString(36).substring(2) + Date.now().toString(36);
 
 export const addReviewsFromFileHandler = async (
   request: Request<{}, {}, AddReviewFromFileBody>,
@@ -78,10 +42,13 @@ export const addReviewsFromFileHandler = async (
   try {
     const data = fs.readFileSync(reviewsFilePath, 'utf8');
     const reviews: TestReview[] = JSON.parse(data);
-
+    console.log(reviews);
     for (const review of reviews) {
-      const { restaurantName, reviewText, dateOfVisit, wouldReturn, restaurantType, reviewerId, primaryRating, secondaryRating }: TestReview = review;
-      await addTestReview(restaurantName, dateOfVisit, wouldReturn, reviewText, restaurantType, reviewerId, primaryRating, secondaryRating);
+      const { accountId, accountUserInputs, dateOfVisit, restaurantName, restaurantType, reviewText }: TestReview = review;
+      for (const accountUserInput of accountUserInputs) {
+        accountUserInput.accountUserInputId = uuidv4();
+      }
+      await addTestReview(accountId, accountUserInputs, dateOfVisit, restaurantName, restaurantType, reviewText);
       console.log('review added for ' + restaurantName);
     }
     console.log('All reviews loaded:');
@@ -90,6 +57,39 @@ export const addReviewsFromFileHandler = async (
     console.error("Error adding reviews:", error);
     response.status(500).json({ error: "Error adding reviews" });
   }
+}
+
+const addTestReview = async (
+  accountId: string,
+  accountUserInputs: any[],
+  dateOfVisit: string,
+  restaurantName: string,
+  restaurantType: number,
+  reviewText: string
+): Promise<void> => {
+
+  const chatGPTOutput: ChatGPTOutput = await parsePreview('xyz', reviewText);
+  console.log('chatGPTOutput:', chatGPTOutput);
+  
+  const { itemReviews } = chatGPTOutput;
+
+  const place: GooglePlace = await getRestaurantProperties(restaurantName);
+  place.restaurantType = restaurantType;
+  console.log('place:', place);
+
+  const newMongoPlace: IMongoPlace | null = await addPlace(place);
+  console.log('newMongoPlace:', newMongoPlace);
+
+  const submitReviewBody: NewSubmitReviewBody = {
+    accountId,
+    place,
+    accountUserInputs,
+    dateOfVisit,
+    reviewText,
+    itemReviews,
+    sessionId: generateSessionId(),
+  };
+  await newSubmitReview(submitReviewBody);
 }
 
 const getRestaurantProperties = async (restaurantName: string): Promise<GooglePlace> => {
@@ -147,10 +147,10 @@ const getRestaurantType = (googlePlaceResult: google.maps.places.PlaceResult): R
     }
   }
 
-  return RestaurantType.Generic
+  return RestaurantType.Restaurant;
 }
 
-export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.PlaceResult): GooglePlace {
+function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.PlaceResult): GooglePlace {
   const googlePlace: GooglePlace = {
     googlePlaceId: googlePlaceResult.place_id!,
     name: googlePlaceResult.name!,
@@ -158,14 +158,14 @@ export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.
     formatted_address: googlePlaceResult.formatted_address!,
     geometry: {
       location: {
-        lat: googlePlaceResult.geometry!.location!.lat(),
-        lng: googlePlaceResult.geometry!.location!.lng()
+        lat: googlePlaceResult.geometry!.location!.lat as unknown as number,
+        lng: googlePlaceResult.geometry!.location!.lng as unknown as number
       },
       viewport: {
-        east: googlePlaceResult.geometry!.viewport!.getNorthEast().lng(),
-        north: googlePlaceResult.geometry!.viewport!.getNorthEast().lat(),
-        south: googlePlaceResult.geometry!.viewport!.getSouthWest().lat(),
-        west: googlePlaceResult.geometry!.viewport!.getSouthWest().lng(),
+        east: (googlePlaceResult.geometry!.viewport! as any).northeast.lng,
+        north: (googlePlaceResult.geometry!.viewport! as any).northeast.lat,
+        south: (googlePlaceResult.geometry!.viewport! as any).southwest.lat,
+        west: (googlePlaceResult.geometry!.viewport! as any).southwest.lng,
       },
     },
     website: googlePlaceResult.website || '',
@@ -175,16 +175,5 @@ export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.
     restaurantType: getRestaurantType(googlePlaceResult),
   };
   return googlePlace;
-
-  // const keys = Object.keys(googlePlaceTemplate) as (keyof GooglePlace)[];
-
-  // const result = Object.fromEntries(
-  //   keys
-  //     .filter(key => key in googlePlaceResult)
-  //     .map(key => [key, googlePlaceResult[key]])
-  // ) as unknown as GooglePlace;
-
-  // return result;
-
 }
 

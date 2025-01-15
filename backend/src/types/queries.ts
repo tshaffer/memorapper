@@ -1,7 +1,3 @@
-import { MemoRappReview } from "./entities";
-import { SearchDistanceFilter } from "./enums";
-import { GooglePlace } from "./googlePlace";
-
 interface DateRange {
   start: string;
   end: string;
@@ -12,15 +8,7 @@ interface QueryParameters {
   radius?: number;
   dateRange: DateRange;
   restaurantName?: string;
-  wouldReturn: boolean | null;
   itemsOrdered: any;
-}
-
-
-interface WouldReturnQuery {
-  yes: boolean;
-  no: boolean;
-  notSure: boolean;
 }
 
 export interface DistanceAwayQuery {
@@ -29,33 +17,12 @@ export interface DistanceAwayQuery {
   radius: number;
 }
 
-interface WouldReturnFilter {
-  enabled: boolean;
-  values: {
-    yes: boolean;
-    no: boolean;
-    notSure: boolean;
-  };
-}
-
-export interface FilterResultsParams {
-  distanceAwayFilter: SearchDistanceFilter;
-  openNowFilter: boolean;
-  wouldReturnFilter: WouldReturnFilter;
-}
-
-export interface PlacesReviewsCollection {
-  places: GooglePlace[];
-  reviews: MemoRappReview[];
-}
-
 export interface StructuredQueryParams {
   distanceAwayQuery?: {
     lat: number;
     lng: number;
     radius: number; // in miles
   };
-  wouldReturn?: WouldReturnQuery;
   placeName?: string; // Partial name match for places
   reviewDateRange?: {
     start?: string; // ISO date string
@@ -71,14 +38,8 @@ export interface ParsedQuery {
   queryParameters: QueryParameters;
 }
 
-export interface SearchResponse {
-  places: GooglePlace[];
-  reviews: MemoRappReview[];
-}
-
 export interface SearchQuery {
   query: string;
   distanceAway: DistanceAwayQuery;
   isOpenNow: boolean;
-  wouldReturn: WouldReturnFilter;
 }

@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
 import MongoPlaceModel, { IMongoPlace } from "../models/MongoPlace";
-import { DesiredRestaurant, GoogleGeometry, GooglePlace, MongoGeometry, MongoPlace, SubmitVisitedRestaurantRequestBody, VisitedRestaurant, SubmitDesiredRestaurantRequestBody } from "../types";
+import { DesiredRestaurant, GoogleGeometry, GooglePlace, MongoGeometry, MongoPlace, SubmitDesiredRestaurantRequestBody } from "../types";
 import { getMongoGeometryFromGoogleGeometry } from "./googlePlaces";
 import { convertMongoPlacesToGooglePlaces } from '../utilities';
-import VisitedRestaurantModel, { IVisitedRestaurant } from '../models/VisitedRestaurant';
 import DesiredRestaurantModel, { IDesiredRestaurant } from '../models/DesiredRestaurant';
 
 export const getPlace = async (placeId: any): Promise<IMongoPlace | null> => {
@@ -67,21 +66,6 @@ export function convertMongoGeometryToGoogleGeometry(mongoGeometry: MongoGeometr
 }
 
 
-export const getVisitedRestaurants = async (request: Request, response: Response, next: any): Promise<void> => {
-  try {
-    const mongoPlaces: IMongoPlace[] = await MongoPlaceModel.find({}).exec();
-    const visitedRestaurants: IVisitedRestaurant[] = await VisitedRestaurantModel.find({}).exec();
-    const visitedPlaces: IMongoPlace[] = mongoPlaces.filter(
-      (mongoPlace) => visitedRestaurants.some((visitedRestaurant) => visitedRestaurant.googlePlaceId === mongoPlace.googlePlaceId)
-    );
-    const googlePlaces: GooglePlace[] = convertMongoPlacesToGooglePlaces(visitedPlaces);
-    response.status(200).json({ googlePlaces });
-  } catch (error) {
-    console.error('Error retrieving reviews:', error);
-    response.status(500).json({ error: 'An error occurred while retrieving the reviews.' });
-  }
-}
-
 export const getDesiredRestaurants = async (request: Request, response: Response, next: any): Promise<void> => {
   try {
     const mongoPlaces: IMongoPlace[] = await MongoPlaceModel.find({}).exec();
@@ -94,70 +78,6 @@ export const getDesiredRestaurants = async (request: Request, response: Response
   } catch (error) {
     console.error('Error retrieving reviews:', error);
     response.status(500).json({ error: 'An error occurred while retrieving the reviews.' });
-  }
-}
-
-export const submitVisitedRestaurantHandler = async (req: Request, res: Response): Promise<any> => {
-
-  const body: SubmitVisitedRestaurantRequestBody = req.body;
-
-  try {
-    const newReview = await submitVisitedRestaurant(body);
-    return res.status(201).json({ message: 'Review saved successfully!', review: newReview });
-  } catch (error) {
-    console.error('Error saving review:', error);
-    return res.status(500).json({ error: 'An error occurred while saving the review.' });
-  }
-};
-
-export const submitVisitedRestaurant = async (visitedRestaurant: SubmitVisitedRestaurantRequestBody): Promise<IVisitedRestaurant | null> => {
-
-  const { _id, googlePlace } = visitedRestaurant;
-  const googlePlaceId = googlePlace.googlePlaceId;
-
-  let mongoPlace: IMongoPlace | null = await getPlace(googlePlaceId);
-  if (!mongoPlace) {
-    mongoPlace = await addPlace(googlePlace);
-    if (!mongoPlace) {
-      throw new Error('Error saving place.');
-    }
-  }
-
-  const addVisitedRestaurantEntity: VisitedRestaurant = {
-    _id,
-    googlePlaceId,
-  };
-
-  let savedVisitedRestaurant: IVisitedRestaurant | null;
-
-  if (_id) {
-    // If _id is provided, update the existing document
-    savedVisitedRestaurant = await VisitedRestaurantModel.findByIdAndUpdate(_id, addVisitedRestaurantEntity, {
-      new: true,    // Return the updated document
-      runValidators: true // Ensure the updated data complies with schema validation
-    });
-
-    if (!savedVisitedRestaurant) {
-      throw new Error('Visited restaurant not found for update.');
-    }
-  } else {
-    const newVisitedRestaurant: IVisitedRestaurant | null = await addVisitedRestaurant(addVisitedRestaurantEntity);
-    console.log('newVisitedRestaurant:', newVisitedRestaurant?.toObject());
-  }
-
-  return null;
-}
-
-export const addVisitedRestaurant = async (visitedRestaurant: VisitedRestaurant): Promise<IVisitedRestaurant | null> => {
-
-  const newVisitedRestaurant: IVisitedRestaurant = new VisitedRestaurantModel(visitedRestaurant);
-
-  try {
-    const savedVisitedRestaurant: IVisitedRestaurant | null = await newVisitedRestaurant.save();
-    return savedVisitedRestaurant;
-  } catch (error: any) {
-    console.error('Error saving review:', error);
-    throw new Error('An error occurred while saving the review.');
   }
 }
 

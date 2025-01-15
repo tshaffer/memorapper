@@ -1,11 +1,7 @@
 import getOpenAIClient from '../services/openai';
 import { Request, Response } from 'express';
-import Review, { IReview } from "../models/Review";
 import { extractItemReviews } from '../utilities';
-import { ChatRequestBody, ChatResponse, FreeformReviewProperties, ItemReview, MemoRappReview, NewChatResponse, PreviewRequestBody, PreviewResponse, SerializableMap, SubmitReviewBody } from '../types';
-import { addPlace, getPlace } from './places';
-import { IMongoPlace } from '../models';
-import { addReview } from './reviews';
+import { ChatRequestBody, ItemReview, NewChatResponse } from '../types';
 
 import { reviewConversations } from '../data/data';
 

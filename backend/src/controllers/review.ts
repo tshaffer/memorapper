@@ -1,9 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ChatCompletionMessageParam } from 'openai/resources/chat';
-import getOpenAIClient from '../services/openai';
 import { Request, Response } from 'express';
-import { extractItemReviews } from '../utilities';
-import { AccountPlaceReview, AccountUserInput, ChatGPTOutput, ItemReview, NewPreviewResponse, NewSubmitReviewBody, PreviewRequestBody, SerializableMap, UserPlaceSummary } from '../types';
+import { AccountPlaceReview, AccountUserInput, NewSubmitReviewBody, UserPlaceSummary } from '../types';
 import { IMongoPlace } from '../models';
 import { addPlace, getPlace } from './places';
 import AccountPlaceReviewModel, { IAccountPlaceReview } from '../models/AccountPlaceReview';
@@ -26,7 +23,7 @@ export const reviewHandler = async (
     return res.status(500).json({ error: 'An error occurred while saving the review.' });
   }
 }
-const newSubmitReview = async (submitReviewBody: NewSubmitReviewBody): Promise<void> => {
+export const newSubmitReview = async (submitReviewBody: NewSubmitReviewBody): Promise<void> => {
 
   const { _id, accountId, place, accountUserInputs, dateOfVisit, reviewText, itemReviews, sessionId } = submitReviewBody;
   

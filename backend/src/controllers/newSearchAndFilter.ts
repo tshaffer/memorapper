@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { IMongoPlace } from "../models";
 import MongoPlaceModel from "../models/MongoPlace";
-import { QueryResponse, GooglePlace, ParsedQuery, StructuredQueryParams, SearchQuery, NewSearchQuery, NewFilterResultsParams, NewSearchResponse, NewQueryResponse } from "../types";
+import { GooglePlace, ParsedQuery, SearchQuery, NewSearchQuery, NewFilterResultsParams, NewSearchResponse, NewQueryResponse, StructuredQueryParams } from "../types";
 import { convertMongoPlacesToGooglePlaces } from "../utilities";
-import { buildStructuredQueryParamsFromParsedQuery, newPerformNaturalLanguageQuery, parseQueryWithChatGPT, performHybridQuery, performNaturalLanguageQuery, performStructuredQuery } from './naturalLanguageQuery';
+import { buildStructuredQueryParamsFromParsedQuery, newPerformHybridQuery, newPerformNaturalLanguageQuery, parseQueryWithChatGPT, performNewStructuredQuery } from './naturalLanguageQuery';
 import AccountPlaceReviewModel, { IAccountPlaceReview } from '../models/AccountPlaceReview';
 import { newFilterResults } from './newFilterResults';
 
@@ -34,11 +34,11 @@ export const newSearchAndFilterHandler = async (
 
       let naturalLanguageResponse: NewQueryResponse = { places: [], reviews: [] };
 
-      // if (queryType === 'structured') {
-      //   const structuredQueryParams: StructuredQueryParams =
-      //     buildStructuredQueryParamsFromParsedQuery(parsedQuery);
-      //   naturalLanguageResponse = await performStructuredQuery(structuredQueryParams);
-      // } else if (queryType === 'full-text') {
+      if (queryType === 'structured') {
+        const structuredQueryParams: StructuredQueryParams =
+          buildStructuredQueryParamsFromParsedQuery(parsedQuery);
+        naturalLanguageResponse = await performNewStructuredQuery(structuredQueryParams);
+      } else if (queryType === 'full-text') {
         const places = await MongoPlaceModel.find({});
         const reviews = await AccountPlaceReviewModel.find({});
         naturalLanguageResponse = await newPerformNaturalLanguageQuery(
@@ -46,18 +46,20 @@ export const newSearchAndFilterHandler = async (
           places,
           reviews
         );
-      // } else {
-      //   const structuredQueryParams: StructuredQueryParams =
-      //     buildStructuredQueryParamsFromParsedQuery(parsedQuery);
-      //   naturalLanguageResponse = await performHybridQuery(
-      //     query,
-      //     structuredQueryParams
-      //   );
-      // }
+      } else {
+        const structuredQueryParams: StructuredQueryParams =
+          buildStructuredQueryParamsFromParsedQuery(parsedQuery);
+        naturalLanguageResponse = await newPerformHybridQuery(
+          query,
+          structuredQueryParams
+        );
+      }
+
 
       nlPlaces = naturalLanguageResponse.places;
       nlReviews = naturalLanguageResponse.reviews;
     }
+
 
     // Step 2: Perform structured filtering using natural language query results
     const filterResultsParams: NewFilterResultsParams = {
@@ -68,6 +70,7 @@ export const newSearchAndFilterHandler = async (
     const searchResponse: NewSearchResponse = await (newFilterResults(filterResultsParams, googlePlaces, nlReviews, { lat: distanceAway.lat, lng: distanceAway.lng }));
 
     res.status(200).json(searchResponse);
+
 
   } catch (error) {
     console.error('Error handling unified query:', error);

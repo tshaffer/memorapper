@@ -1,4 +1,4 @@
-import { GooglePlace, SearchResponse, NewFilterResultsParams, AccountPlaceReview, NewSearchResponse } from "../types";
+import { GooglePlace, NewFilterResultsParams, AccountPlaceReview, NewSearchResponse } from "../types";
 
 export const newFilterResults = async (
   filter: NewFilterResultsParams,
@@ -26,12 +26,10 @@ export const newFilterResults = async (
   // Extract the filtered place IDs for review filtering
   const filteredPlaceIds = new Set(filteredPlaces.map((place) => place.googlePlaceId));
 
-  // Filter reviews based on filtered places and wouldReturnFilter
+  // Filter reviews based on filtered places
   const filteredReviews = reviews.filter((review) => {
     // Check if the review belongs to a filtered place
     if (!filteredPlaceIds.has(review.placeId)) return false;
-
-    // Apply wouldReturnFilter if enabled
     return true;
   });
 

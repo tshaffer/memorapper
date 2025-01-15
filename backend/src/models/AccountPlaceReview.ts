@@ -1,12 +1,3 @@
-/*
-export interface AccountPlaceReview {
-  accountPlaceReviewId: string;
-  accountId: string;
-  dateOfVisit: string;
-  reviewText: string;
-  itemReviews: ItemReview[];
-}
-*/
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { AccountPlaceReview } from '../types';
 

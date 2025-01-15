@@ -42,14 +42,6 @@ export interface AccountPlaceReview {
   itemReviews: ItemReview[];
 }
 
-// export interface AccountUserInputMapValue {
-//   accountUserId: string; // Foreign key to AccountUser
-//   accountUserInput: AccountUserInput;
-// }
-
-// export type AccountUserInputByAccountUser = SerializableMap<string, AccountUserInputMapValue>;
-
-
 export interface ChatGPTOutput {
   reviewText: string;
   itemReviews: ItemReview[];

@@ -2,20 +2,6 @@ import { convertMongoGeometryToGoogleGeometry } from "../controllers";
 import { IMongoPlace } from "../models";
 import { GooglePlace, ItemReview, MongoPlace } from "../types";
 
-// Extract a field from the response based on a keyword
-export const extractFieldFromResponse = (response: string, fieldName: string): string => {
-  const regex = new RegExp(`${fieldName}:\\s*(.*)`, 'i');
-  const match = response.match(regex);
-  return match ? match[1].trim() : '';
-};
-
-// Extract a list of items from the response based on a keyword
-export const extractListFromResponse = (response: string, fieldName: string): string[] => {
-  const regex = new RegExp(`${fieldName}:\\s*(.*)`, 'i');
-  const match = response.match(regex);
-  return match ? match[1].split(',').map(item => item.trim()) : [];
-};
-
 export function extractItemReviews(responseText: string): ItemReview[] {
   console.log('extractItemReviews responseText:', responseText);
   const fieldName = "Item reviews";
@@ -46,10 +32,6 @@ export function extractItemReviews(responseText: string): ItemReview[] {
     item: match[1]?.trim() || "",
     review: "",
   }));
-}
-
-export function removeSquareBrackets(text: string): string {
-  return text.replace(/^\[|\]$/g, '').trim();
 }
 
 export function convertMongoPlacesToGooglePlaces(mongoPlaces: IMongoPlace[]): GooglePlace[] {

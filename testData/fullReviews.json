@@ -1,0 +1,22 @@
+[
+  {
+    "accountId": "1",
+    "restaurantName": "Cafe Iveta Westside",
+    "dateOfVisit": "2024-08-30",
+    "reviewText": "The Chicken Pesto sandwich is tasty. Order it without the roasted red peppers (as they're slimy) and ask for 'Light on the mayo'. I'm not that crazy about their lattes. Outdoor seating it nice.",
+    "restaurantType": 0,
+
+    "accountUserInputs": [
+      {
+        "accountUserId": "1",
+        "rating": 5,
+        "comments": "love the soup"
+      },
+      {
+        "accountUserId": "2",
+        "rating": 5,
+        "comments": ""
+      }
+    ]
+  }
+]

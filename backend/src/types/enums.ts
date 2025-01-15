@@ -1,10 +1,3 @@
-export enum WouldReturn {
-  Yes = 0,
-  No = 1,
-  NotSure = 2,
-  Undefined = 3,
-}
-
 export enum SearchDistanceFilter {
   HalfMile = 0.5,
   OneMile = 1,
@@ -14,18 +7,7 @@ export enum SearchDistanceFilter {
 }
 
 export enum RestaurantType {
-  Generic = 0,
-  CoffeeShop = 1,
-  Bar = 2,
-  Bakery = 3,
-  Taqueria = 4,
-  PizzaPlace = 5,
-  ItalianRestaurant = 6,
-  DessertShop = 7,
-}
-
-export enum PlaceType {
-  Generic = 0,
+  Restaurant = 0,
   CoffeeShop = 1,
   Bar = 2,
   Bakery = 3,

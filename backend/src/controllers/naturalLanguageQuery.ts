@@ -1,21 +1,12 @@
 import getOpenAIClient from '../services/openai';
-import Review, { IReview } from '../models/Review';
 import MongoPlaceModel, { IMongoPlace } from '../models/MongoPlace';
-import { NewQueryResponse, ParsedQuery, QueryResponse, StructuredQueryParams, WouldReturn } from '../types';
-import { IAccountPlaceReview } from '../models/AccountPlaceReview';
+import { NewQueryResponse, ParsedQuery, StructuredQueryParams } from '../types';
+import AccountPlaceReview, { IAccountPlaceReview } from '../models/AccountPlaceReview';
 
 export const buildStructuredQueryParamsFromParsedQuery = (parsedQuery: ParsedQuery): StructuredQueryParams => {
   const { queryParameters } = parsedQuery;
-  const { location, radius, restaurantName, dateRange, wouldReturn, itemsOrdered } = queryParameters;
+  const { restaurantName, dateRange, itemsOrdered } = queryParameters;
   const structuredQueryParams: StructuredQueryParams = {};
-
-  // if (location) {
-  //   structuredQueryParams.distanceAwayQuery = { lat: 0, lng: 0, radius: 0 };
-  // }
-
-  // if (wouldReturn) {
-  //   structuredQueryParams.wouldReturn = { yes: false, no: false, notSpecified: false };
-  // }
 
   if (restaurantName) {
     structuredQueryParams.placeName = restaurantName;
@@ -47,7 +38,6 @@ export const parseQueryWithChatGPT = async (query: string): Promise<ParsedQuery>
         - radius: a distance in meters, if provided (e.g., "within 10 miles")
         - date range: start and end dates for queries related to dates, formatted as YYYY-MM-DD
         - restaurantName: the name of a specific restaurant (e.g., "La Costena")
-        - wouldReturn: whether the reviewer set Would Return (if it explicitly or implicitly indicates a return intent). The value can be true, false, or null.
         - itemsOrdered: specific items ordered, if mentioned (e.g., "Caesar Salad")
 
         Determine the queryType based on the following:
@@ -63,7 +53,6 @@ export const parseQueryWithChatGPT = async (query: string): Promise<ParsedQuery>
             "radius": Distance in meters,
             "dateRange": { "start": "YYYY-MM-DD", "end": "YYYY-MM-DD" },
             "restaurantName": "Restaurant Name",
-            "wouldReturn": true or false or null,
             "itemsOrdered": ["Item1", "Item2", ...]
           }
         }
@@ -72,16 +61,16 @@ export const parseQueryWithChatGPT = async (query: string): Promise<ParsedQuery>
 
         Example inputs and outputs:
         Input: "Show me reviews for restaurants in Mountain View within the past month"
-        Output: { "queryType": "structured", "queryParameters": { "location": "Mountain View", "radius": null, "dateRange": { "start": "YYYY-MM-01", "end": "YYYY-MM-DD" }, "restaurantName": null, "wouldReturn": null, "itemsOrdered": null } }
+        Output: { "queryType": "structured", "queryParameters": { "location": "Mountain View", "radius": null, "dateRange": { "start": "YYYY-MM-01", "end": "YYYY-MM-DD" }, "restaurantName": null, "itemsOrdered": null } }
 
         Input: "What did I say about the Caesar Salad at Doppio Zero?"
-        Output: { "queryType": "structured", "queryParameters": { "location": null, "radius": null, "dateRange": null, "restaurantName": "Doppio Zero", "wouldReturn": null, "itemsOrdered": ["Caesar Salad"] } }
+        Output: { "queryType": "structured", "queryParameters": { "location": null, "radius": null, "dateRange": null, "restaurantName": "Doppio Zero", "itemsOrdered": ["Caesar Salad"] } }
 
         Input: "Would I return to La Costena for the tacos?"
-        Output: { "queryType": "structured", "queryParameters": { "location": null, "radius": null, "dateRange": null, "restaurantName": "La Costena", "wouldReturn": true, "itemsOrdered": ["tacos"] } }
+        Output: { "queryType": "structured", "queryParameters": { "location": null, "radius": null, "dateRange": null, "restaurantName": "La Costena", "itemsOrdered": ["tacos"] } }
 
         Input: "Show me reviews from August 2024 where the reviewer mentioned that parking was difficult"
-        Output: { "queryType": "hybrid", "queryParameters": { "location": null, "radius": null, "dateRange": { "start": "2024-08-01", "end": "2024-08-31" }, "restaurantName": null, "wouldReturn": null, "itemsOrdered": null } }
+        Output: { "queryType": "hybrid", "queryParameters": { "location": null, "radius": null, "dateRange": { "start": "2024-08-01", "end": "2024-08-31" }, "restaurantName": null, "itemsOrdered": null } }
         `
       },
       { role: "user", content: query },
@@ -92,10 +81,9 @@ export const parseQueryWithChatGPT = async (query: string): Promise<ParsedQuery>
   return JSON.parse(parsedContent) as ParsedQuery;
 };
 
-export const performStructuredQuery = async (queryParams: StructuredQueryParams): Promise<QueryResponse> => {
+export const performNewStructuredQuery = async (queryParams: StructuredQueryParams): Promise<NewQueryResponse> => {
   const {
     distanceAwayQuery,
-    wouldReturn,
     placeName,
     reviewDateRange,
     itemsOrdered,
@@ -108,18 +96,6 @@ export const performStructuredQuery = async (queryParams: StructuredQueryParams)
     // Step 0: Initialize queries
     let placeQuery: any = {};
     let reviewQuery: any = {};
-
-    // Step 1: Construct the Would Return filter for reviews
-    if (wouldReturn) {
-      const returnFilter: WouldReturn[] = [];
-      if (wouldReturn.yes) returnFilter.push(WouldReturn.Yes);
-      if (wouldReturn.no) returnFilter.push(WouldReturn.No);
-      if (wouldReturn.notSure) returnFilter.push(WouldReturn.NotSure);
-
-      if (returnFilter.length > 0) {
-        reviewQuery['structuredReviewProperties.wouldReturn'] = { $in: returnFilter };
-      }
-    }
 
     // Step 2: Add reviewDateRange filter if provided
     if (reviewDateRange?.start || reviewDateRange?.end) {
@@ -145,10 +121,10 @@ export const performStructuredQuery = async (queryParams: StructuredQueryParams)
     }
 
     // Fetch reviews matching reviewQuery
-    let reviews: IReview[] = await Review.find(reviewQuery);
+    let reviews: IAccountPlaceReview[] = await AccountPlaceReview.find(reviewQuery);
 
     // Step 5: Extract unique place IDs from the filtered reviews
-    const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.googlePlaceId)));
+    const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.placeId)));
     if (placeIdsWithReviews.length === 0) {
       return { places: [], reviews: [] };
     }
@@ -181,7 +157,7 @@ export const performStructuredQuery = async (queryParams: StructuredQueryParams)
 
     // Step 7: Refine reviews to only those belonging to filtered places
     const filteredPlaceIds = places.map((place) => place.googlePlaceId);
-    reviews = reviews.filter((review) => filteredPlaceIds.includes(review.googlePlaceId));
+    reviews = reviews.filter((review) => filteredPlaceIds.includes(review.placeId));
 
     // Combine results
     return {
@@ -194,82 +170,12 @@ export const performStructuredQuery = async (queryParams: StructuredQueryParams)
   }
 };
 
-export const performNaturalLanguageQuery = async (
-  query: string,
-  places: IMongoPlace[],
-  reviews: IReview[]
-): Promise<QueryResponse> => {
-  console.log("performNaturalLanguageQuery:", query);
-
-  // Step 1: Prepare data for OpenAI query
-  const placeData = places.map(place => ({
-    id: place.googlePlaceId,
-    name: place.name,
-    address: place.formatted_address,
-    location: place.geometry?.location,
-  }));
-
-  const reviewData = reviews.map(review => ({
-    id: review._id,
-    text: review.freeformReviewProperties.reviewText,
-    dateOfVisit: review.structuredReviewProperties.dateOfVisit,
-    wouldReturn: review.structuredReviewProperties.wouldReturn,
-    googlePlaceId: review.googlePlaceId,
-  }));
-
-  // Step 2: Call OpenAI API
-  const response = await getOpenAIClient().chat.completions.create({
-    model: "gpt-4",
-    messages: [
-      {
-        role: "system",
-        content: `You are a helpful assistant that retrieves relevant places and reviews based on a natural language query. Respond with JSON data only, without additional commentary.`,
-      },
-      {
-        role: "user",
-        content: `Find relevant places and reviews for the query: "${query}". 
-        The places are: ${JSON.stringify(placeData)}. 
-        The reviews are: ${JSON.stringify(reviewData)}.
-
-        Return the results in the following JSON format:
-        {
-          "places": [
-            { "id": "place_id_1" },
-            { "id": "place_id_2" },
-            ...
-          ],
-          "reviews": [
-            { "id": "review_id_1" },
-            { "id": "review_id_2" },
-            ...
-          ]
-        }`,
-      },
-    ],
-  });
-
-  // Step 3: Parse the JSON response
-  const result = JSON.parse(response.choices[0].message?.content || "{}");
-  const relevantPlaceIds = result.places?.map((place: { id: string }) => place.id) || [];
-  const relevantReviewIds = result.reviews?.map((review: { id: string }) => review.id) || [];
-
-  // Step 4: Filter places and reviews based on IDs
-  const filteredPlaces = places.filter(place => relevantPlaceIds.includes(place.googlePlaceId));
-  const filteredReviews = reviews.filter(review => relevantReviewIds.includes(review._id!.toString()));
-
-  // Step 5: Return the filtered data
-  return {
-    places: filteredPlaces,
-    reviews: filteredReviews,
-  };
-};
-
 export const newPerformNaturalLanguageQuery = async (
   query: string,
   places: IMongoPlace[],
   reviews: IAccountPlaceReview[]
 ): Promise<NewQueryResponse> => {
-  console.log("performNaturalLanguageQuery:", query);
+  console.log("newPerformNaturalLanguageQuery:", query);
 
   // Step 1: Prepare data for OpenAI query
   const placeData = places.map(place => ({
@@ -333,13 +239,12 @@ export const newPerformNaturalLanguageQuery = async (
   };
 };
 
-export const performHybridQuery = async (
+export const newPerformHybridQuery = async (
   query: string,
   queryParams: StructuredQueryParams
-): Promise<QueryResponse> => {
+): Promise<NewQueryResponse> => {
   const {
     distanceAwayQuery,
-    wouldReturn,
     placeName,
     reviewDateRange,
     itemsOrdered,
@@ -355,14 +260,6 @@ export const performHybridQuery = async (
     let reviewQuery: any = {};
 
     // Would Return filter
-    if (wouldReturn) {
-      const returnFilter: WouldReturn[] = [];
-      if (wouldReturn.yes) returnFilter.push(WouldReturn.Yes);
-      if (wouldReturn.no) returnFilter.push(WouldReturn.No);
-      if (wouldReturn.notSure) returnFilter.push(WouldReturn.NotSure);
-      reviewQuery['structuredReviewProperties.wouldReturn'] = { $in: returnFilter };
-    }
-
     // Date range filter
     if (reviewDateRange?.start || reviewDateRange?.end) {
       reviewQuery['structuredReviewProperties.dateOfVisit'] = {};
@@ -387,10 +284,10 @@ export const performHybridQuery = async (
     }
 
     // Fetch structured reviews
-    let reviews: IReview[] = await Review.find(reviewQuery);
+    let reviews: IAccountPlaceReview[] = await AccountPlaceReview.find(reviewQuery);
 
     // Extract unique place IDs from the filtered reviews
-    const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.googlePlaceId)));
+    const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.placeId)));
     if (placeIdsWithReviews.length === 0) {
       return { places: [], reviews: [] };
     }
@@ -423,22 +320,15 @@ export const performHybridQuery = async (
 
     // Refine reviews to those matching structured places
     const filteredPlaceIds = places.map((place) => place.googlePlaceId);
-    reviews = reviews.filter((review) => filteredPlaceIds.includes(review.googlePlaceId));
+    reviews = reviews.filter((review) => filteredPlaceIds.includes(review.placeId));
 
     // Step 2: Perform natural language query using OpenAI
-    const placeData = places.map((place) => ({
-      id: place.googlePlaceId,
-      name: place.name,
-      address: place.formatted_address,
-      location: place.geometry?.location,
-    }));
 
     const reviewData = reviews.map((review) => ({
       id: review._id,
-      text: review.freeformReviewProperties.reviewText,
-      dateOfVisit: review.structuredReviewProperties.dateOfVisit,
-      wouldReturn: review.structuredReviewProperties.wouldReturn,
-      googlePlaceId: review.googlePlaceId,
+      text: review.reviewText,
+      dateOfVisit: review.dateOfVisit,
+      googlePlaceId: review.placeId,
     }));
 
     const response = await getOpenAIClient().chat.completions.create({
