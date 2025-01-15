@@ -130,7 +130,7 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
                 <div className="contributor-header compact">
                   <h5>{accountUser.userName}</h5>
                 </div>
-                <div className="contributor-rating">
+                <div className="contributor-rating compact">
                   <label htmlFor={`rating-${accountUser.accountUserId}`}>Rating</label>
                   <Rating
                     id={`rating-${accountUser.accountUserId}`}
