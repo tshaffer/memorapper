@@ -15,7 +15,7 @@ export interface AccountDialogProps extends AccountDialogPropsFromParent {
 
 function AccountDialog(props: AccountDialogProps) {
 
-  const { currentUser } = useUserContext();
+  const { currentAccount } = useUserContext();
 
   const { open, onSignout, onClose } = props;
 
@@ -28,21 +28,17 @@ function AccountDialog(props: AccountDialogProps) {
     onClose();
   };
 
-  let currentUserName: string = 'Nobody';
-  let currentEmailAddress: string = 'nobody@nowhere.com';
+  let currentAccountName: string = 'Nobody';
 
-  if (currentUser) {
-    currentUserName = currentUser.userName;
-    currentEmailAddress = currentUser.email;
+  if (currentAccount) {
+    currentAccountName = currentAccount.accountName;
   }
 
   return (
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Account</DialogTitle>
       <DialogContent>
-        {currentUserName}
-        <br />
-        {currentEmailAddress}
+        {currentAccountName}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleSignout}>Signout</Button>

@@ -1,3 +1,3 @@
-export * from './filterResults';
+export * from './newFilterResults';
 export * from './googleMapsConfig';
 export * from './utilities';

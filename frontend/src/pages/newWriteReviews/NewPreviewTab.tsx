@@ -67,23 +67,12 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
   }
 
 
-  const getReturnString = () => {
-    return 'Not specified';
-  }
-
-  const reviewerFromReviewerId = (): string => {
-    return '';
-    // let reviewer: UserEntity | undefined = users.find((user) => user.id === reviewerId);
-    // return reviewer!.userName;
-  }
-
   const handleConfirmationClose = () => {
     setIsConfirmationOpen(false);
     navigate('/'); // Navigate to "/"
   };
 
   const handleSubmit = async () => {
-    // if (!freeformReviewProperties) return;
     try {
       setIsLoading(true);
       await onSubmitReview();

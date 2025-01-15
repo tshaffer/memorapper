@@ -4,19 +4,14 @@ import { Paper, Box, IconButton, useMediaQuery } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import LocationAutocomplete from '../../components/LocationAutocomplete';
 import {
-  ExtendedGooglePlace,
   ExtendedGooglePlaceToVisit,
-  FilterResultsParams,
   Filters,
   UnvisitedPlace,
-  UnvisitedPlaceFromDb,
   GooglePlace,
-  MemoRappReview,
-  SearchQuery,
-  SearchResponse,
   NewFilterResultsParams,
   AccountPlaceReview,
-  NewExtendedGooglePlace
+  NewExtendedGooglePlace,
+  NewSearchQuery
 } from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
 import PulsingDots from '../../components/PulsingDots';
@@ -166,7 +161,7 @@ const NewMapPage: React.FC = () => {
     setShowFiltersDialog(true);
   };
 
-  const executeSearchAndFilter = async (searchQuery: SearchQuery): Promise<void> => {
+  const executeSearchAndFilter = async (searchQuery: NewSearchQuery): Promise<void> => {
 
     console.log('executeSearchAndFilter:', searchQuery);
 
@@ -215,10 +210,9 @@ const NewMapPage: React.FC = () => {
 
     setIsLoading(true);
 
-    const searchQuery: SearchQuery = {
+    const searchQuery: NewSearchQuery = {
       query,
       isOpenNow: filters.isOpenNowFilterEnabled,
-      wouldReturn: filters.wouldReturnFilter,
       distanceAway: {
         lat: mapLocation!.lat,
         lng: mapLocation!.lng,

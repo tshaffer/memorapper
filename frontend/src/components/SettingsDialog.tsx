@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 
 import FiltersSettings from "./FilterSettings";
-import { Filters, Settings, RatingsUI } from "../types";
+import { Filters, Settings } from "../types";
 
 export interface SettingsDialogPropsFromParent {
   open: boolean;
@@ -27,7 +27,6 @@ export interface SettingsDialogProps extends SettingsDialogPropsFromParent {}
 
 const SettingsDialog: React.FC<SettingsDialogProps> = (props: SettingsDialogProps) => {
   const [filters, setFilters] = useState<Filters>(props.settings.filters);
-  const [ratingsUI, setRatingsUI] = useState<RatingsUI>(props.settings.ratingsUI);
 
   const handleUpdateFilters = (updatedFilters: Filters) => {
     setFilters(updatedFilters);
@@ -36,7 +35,6 @@ const SettingsDialog: React.FC<SettingsDialogProps> = (props: SettingsDialogProp
   const handleSetSettings = () => {
     const updatedSettings: Settings = {
       filters,
-      ratingsUI,
     };
     props.onSetSettings(updatedSettings);
     props.onClose();
@@ -51,59 +49,6 @@ const SettingsDialog: React.FC<SettingsDialogProps> = (props: SettingsDialogProp
       <DialogTitle>Settings</DialogTitle>
       <DialogContent style={{ paddingBottom: "0px" }}>
         <Box sx={{ padding: "8px", overflowY: "auto" }}>
-          {/* Ratings UI Section */}
-          <Box
-            sx={{
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-              padding: "16px",
-              marginBottom: "16px",
-            }}
-          >
-            <Typography variant="h6" component="div" gutterBottom>
-              Ratings UI
-            </Typography>
-            <TextField
-              label="Primary Rating Label"
-              value={ratingsUI.primaryRatingLabel}
-              onChange={(e) =>
-                setRatingsUI((prev) => ({
-                  ...prev,
-                  primaryRatingLabel: e.target.value,
-                }))
-              }
-              fullWidth
-              margin="dense"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={ratingsUI.showSecondaryRating}
-                  onChange={(e) =>
-                    setRatingsUI((prev) => ({
-                      ...prev,
-                      showSecondaryRating: e.target.checked,
-                    }))
-                  }
-                />
-              }
-              label="Show Secondary Rating"
-            />
-            <TextField
-              label="Secondary Rating Label"
-              value={ratingsUI.secondaryRatingLabel}
-              onChange={(e) =>
-                setRatingsUI((prev) => ({
-                  ...prev,
-                  secondaryRatingLabel: e.target.value,
-                }))
-              }
-              fullWidth
-              margin="dense"
-              disabled={!ratingsUI.showSecondaryRating} // Disable unless checkbox is checked
-            />
-          </Box>
-
           {/* Filter Settings Section */}
           <Box
             sx={{

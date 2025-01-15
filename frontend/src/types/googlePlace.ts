@@ -1,9 +1,5 @@
-import { BasePlace, MemoRappReview } from "./entities";
+import { BasePlace } from "./entities";
 import { AddressComponent, PlacePhoto } from "./place";
-
-export interface ExtendedGooglePlace extends GooglePlace {
-  reviews: MemoRappReview[];
-}
 
 export interface ExtendedGooglePlaceToVisit extends GooglePlace {
   comments: string;

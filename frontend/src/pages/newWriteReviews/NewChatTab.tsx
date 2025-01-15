@@ -1,7 +1,7 @@
 import { Box, Button, TextField, Typography, useMediaQuery } from '@mui/material';
 import '../../styles/multiPanelStyles.css';
 import '../../styles/chatStyles.css';
-import { ChatMessage, FreeformReviewProperties, ItemReview, NewReviewData, ReviewData, ReviewEntity, WouldReturn } from '../../types';
+import { ItemReview, NewChatMessage, NewChatResponse, NewReviewData } from '../../types';
 import { useState } from 'react';
 import { formatDateToMMDDYYYY } from '../../utilities';
 import PulsingDots from '../../components/PulsingDots';
@@ -67,7 +67,7 @@ const ChatTab: React.FC<ChatTabProps> = (props: ChatTabProps) => {
     }
   }
 
-  const renderAIResponse = (freeformReviewProperties: FreeformReviewProperties): JSX.Element => {
+  const renderAIResponse = (chatResponse: NewChatResponse): JSX.Element => {
     const getReturnString = () => {
       return 'Not specified';
     }
@@ -79,7 +79,7 @@ const ChatTab: React.FC<ChatTabProps> = (props: ChatTabProps) => {
           <Typography><strong>Would Return:</strong> {getReturnString()}</Typography>
           <Typography><strong>Items Ordered:</strong></Typography>
           <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
-            {renderItemReviews(freeformReviewProperties.itemReviews)}
+            {renderItemReviews(chatResponse.itemReviews)}
           </ul>
           <Typography><strong>Retrieved Location:</strong>{reviewData.place?.formatted_address}</Typography>
         </Box>
@@ -87,7 +87,7 @@ const ChatTab: React.FC<ChatTabProps> = (props: ChatTabProps) => {
     )
   };
 
-  const renderChatQuestionAndResponse = (chatMessage: ChatMessage, index: number): JSX.Element => {
+  const renderChatQuestionAndResponse = (chatMessage: NewChatMessage, index: number): JSX.Element => {
     console.log('renderChatQuestionAndResponse::chatMessage:', chatMessage, 'index:', index);
     return (
       <Box
@@ -100,7 +100,7 @@ const ChatTab: React.FC<ChatTabProps> = (props: ChatTabProps) => {
         {typeof chatMessage.message === 'string' ? (
           renderChatQuestion(chatMessage.message)
         ) : (
-          renderAIResponse(chatMessage.message as ReviewEntity)
+          renderAIResponse(chatMessage.message as NewChatResponse)
         )}
       </Box>
 

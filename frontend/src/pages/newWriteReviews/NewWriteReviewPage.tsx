@@ -5,31 +5,32 @@ import PreviewTab from "./NewPreviewTab";
 import ChatTab from "./NewChatTab";
 import NewReviewEntryForm from './NewReviewEntryForm';
 import { Box, Button } from "@mui/material";
-import { NewSubmitReviewBody, AccountPlaceReview, ChatGPTOutput, ChatMessage, EditableReview, GooglePlace, MemoRappReview, NewPreviewResponse, NewReviewData, PreviewRequestBody, ChatRequestBody, NewChatResponse } from "../../types";
+import { NewSubmitReviewBody, AccountPlaceReview, ChatGPTOutput, NewChatMessage, GooglePlace, NewPreviewResponse, NewReviewData, PreviewRequestBody, ChatRequestBody, NewChatResponse } from "../../types";
 import { getFormattedDate } from "../../utilities";
 import { useUserContext } from '../../contexts/UserContext';
 
 const WriteReviewPage = () => {
 
-  const { currentUser } = useUserContext();
+  const { currentAccount } = useUserContext();
 
   const { _id } = useParams<{ _id: string }>();
   const location = useLocation();
-  const editableReview = location.state as EditableReview | null;
+  // const editableReview = location.state as EditableReview | null;
 
   let place: GooglePlace | null = null;
   let accountPlaceReview: AccountPlaceReview | null = null;
-  let review: MemoRappReview | null = null;
-  if (editableReview) {
-    place = editableReview.place;
-    review = editableReview.review;
-  }
+  // let review: MemoRappReview | null = null;
+  // if (editableReview) {
+  //   place = editableReview.place;
+  //   // review = editableReview.review;
+  // }
 
   const initialNewReviewData: NewReviewData = {
     _id: _id ? _id : '',
-    accountId: currentUser!.id,
+    accountId: currentAccount!.accountId,
     place,
-    restaurantName: place ? place.name : '',
+    // restaurantName: place ? place.name : '',
+    restaurantName: '',
     reviewText: '',
     dateOfVisit: getFormattedDate(),
     itemReviews: [],
@@ -70,9 +71,9 @@ const WriteReviewPage = () => {
     const chatGPTOutput: ChatGPTOutput = (data as any).chatGPTOutput;
     console.log('chatGPTOutput:', chatGPTOutput);
 
-    const chatHistory: ChatMessage[] = newReviewData.chatHistory;
-    const userChatMessage: ChatMessage = { role: 'user', message: newReviewData.reviewText! };
-    const aiChatMessage: ChatMessage = { role: 'ai', message: chatGPTOutput };
+    const chatHistory: NewChatMessage[] = newReviewData.chatHistory;
+    const userChatMessage: NewChatMessage = { role: 'user', message: newReviewData.reviewText! };
+    const aiChatMessage: NewChatMessage = { role: 'ai', message: chatGPTOutput };
     chatHistory.push(userChatMessage, aiChatMessage);
 
     setNewReviewData((prev) => ({

@@ -22,7 +22,7 @@ export const newFilterResults = (
     return true;
   });
 
-  // Filter reviews based on filtered places and wouldReturnFilter
+  // Filter reviews based on filtered places
   return filteredPlaces;
 };
 

@@ -1,16 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Account, DistanceAwayFilterValues, Filters, RatingsUI, Settings, UserEntity } from '../types';
+import { Account, DistanceAwayFilterValues, Filters, Settings } from '../types';
 
 interface UserContextValue {
   accounts: Account[];
   currentAccount: Account | null;
-  users: UserEntity[];
-  currentUser: UserEntity | null;
-  settings: Settings; // Updated to use the new Settings structure
   setCurrentAccount: (account: Account | null) => void;
-  setCurrentUser: (user: UserEntity | null) => void;
+
+  settings: Settings; // Updated to use the new Settings structure
   setFilters: (filters: Filters) => void;
-  setRatingsUI: (ratingsUI: RatingsUI) => void; // Function to update ratings UI
   setSettings: (settings: Settings) => void;
   loading: boolean;
   error: string | null;
@@ -21,26 +18,11 @@ const UserContext = createContext<UserContextValue | undefined>(undefined);
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [currentAccount, setCurrentAccount] = useState<Account | null>(null);
-  const [users, setUsers] = useState<UserEntity[]>([]);
-  const [currentUser, setCurrentUser] = useState<UserEntity | null>(null);
 
   const [settings, setSettingsState] = useState<Settings>({
     filters: {
       distanceAwayFilter: DistanceAwayFilterValues.AnyDistance,
       isOpenNowFilterEnabled: false,
-      wouldReturnFilter: {
-        enabled: false,
-        values: {
-          yes: false,
-          no: false,
-          notSure: false,
-        },
-      },
-    },
-    ratingsUI: {
-      showSecondaryRating: false,
-      primaryRatingLabel: 'Rating',
-      secondaryRatingLabel: '',
     },
   });
 
@@ -51,41 +33,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }));
   };
 
-  const setRatingsUI = (newRatingsUI: RatingsUI) => {
-    setSettingsState((prevSettings) => ({
-      ...prevSettings,
-      ratingsUI: newRatingsUI,
-    }));
-  };
-
   const setSettings = (newSettings: Settings) => {
     setSettingsState(newSettings);
   };
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/users');
-        if (!response.ok) {
-          throw new Error('Failed to fetch users');
-        }
-        const data = await response.json();
-        setUsers(data.users as UserEntity[]);
-        setError(null);
-      } catch (err: any) {
-        setError(err.message || 'Something went wrong');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -113,13 +66,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         accounts,
         currentAccount,
-        users,
-        currentUser,
         settings,
         setCurrentAccount,
-        setCurrentUser,
         setFilters,
-        setRatingsUI,
         setSettings,
         loading,
         error,

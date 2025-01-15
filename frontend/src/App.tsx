@@ -4,20 +4,15 @@ import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import HomeIcon from '@mui/icons-material/Home';
 import GoogleMapsProvider from './components/GoogleMapsProvider';
-import ReviewsIcon from '@mui/icons-material/Reviews';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 import './App.css';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } from '@mui/material';
 import { Menu, MenuItem } from '@mui/material';
-import Map from './pages/maps/Map';
-import WriteReviewPage from './pages/writeReview/WriteReviewPage';
 import NewWriteReviewPage from './pages/newWriteReviews/NewWriteReviewPage';
-import RestaurantDetails from './pages/reviews/RestaurantDetails';
-import Search from './pages/reviews/Search';
 import { useUserContext } from './contexts/UserContext';
-import { Account, DistanceAwayFilterValues, Settings, UserEntity } from './types';
+import { Account, DistanceAwayFilterValues, Settings, } from './types';
 import SettingsDialog from './components/SettingsDialog';
 import DesiredRestaurantForm from './pages/desiredRestaurants/DesiredRestaurantForm';
 import NewMap from './pages/newMaps/NewMap';
@@ -35,7 +30,7 @@ const activeButtonStyle: React.CSSProperties = {
 };
 
 const App: React.FC = () => {
-  const { accounts, currentAccount, setCurrentAccount, users, currentUser, setCurrentUser, settings, setSettings, setFilters, setRatingsUI, loading, error } = useUserContext();
+  const { accounts, currentAccount, setCurrentAccount, settings, setSettings, setFilters, loading, error } = useUserContext();
   const isMobile = useMediaQuery('(max-width:768px)');
   const location = useLocation(); // Track the current route
 
@@ -57,29 +52,10 @@ const App: React.FC = () => {
       if (defaultAccount) {
         localStorage.setItem('accountId', defaultAccount.accountId);
       } else {
+        // SHOULDN'T NEED TO DO THIS!!
         localStorage.setItem('accountId', '1');
       }
       return defaultAccount;
-    }
-
-    const getCurrentUser = (): UserEntity | null => {
-      const storedUserId: string | null = localStorage.getItem('accountId');
-      if (users) {
-        for (const user of users) {
-          if (!storedUserId && user.userName === 'Anonymous') {
-            return user;
-          }
-          if (user.id === storedUserId) {
-            return user;
-          }
-        }
-      }
-
-      const defaultUser: UserEntity | null = users ? users.find((user) => user.id === '0') || null : null;
-      if (defaultUser) {
-        localStorage.setItem('userId', defaultUser.id);
-      }
-      return defaultUser;
     }
 
     const getAppSettings = (): Settings => {
@@ -91,20 +67,7 @@ const App: React.FC = () => {
           filters: {
             distanceAwayFilter: DistanceAwayFilterValues.AnyDistance,
             isOpenNowFilterEnabled: false,
-            wouldReturnFilter: {
-              enabled: false,
-              values: {
-                yes: false,
-                no: false,
-                notSure: false,
-              },
-            }
           },
-          ratingsUI: {
-            primaryRatingLabel: 'Rating',
-            showSecondaryRating: false,
-            secondaryRatingLabel: '',
-          }
         };
         localStorage.setItem("appSettings", JSON.stringify(settings));
         return settings;
@@ -114,15 +77,11 @@ const App: React.FC = () => {
     const currentAccount: Account | null = getCurrentAccount();
     setCurrentAccount(currentAccount);
 
-    const currentUser: UserEntity | null = getCurrentUser();
-    setCurrentUser(currentUser);
-
     const appSettings: Settings = getAppSettings();
     setSettings(appSettings);
     setFilters(appSettings.filters);
-    setRatingsUI(appSettings.ratingsUI);
 
-  }, [users, accounts]);
+  }, [accounts]);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [settingsAnchorEl, setSettingsAnchorEl] = useState<null | HTMLElement>(null);
@@ -135,10 +94,10 @@ const App: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const handleSignIn = (userId: string) => {
-    const selectedUser = users.find((user) => user.id === userId) || null;
-    setCurrentUser(selectedUser);
-    localStorage.setItem('userId', userId);
+  const handleSignIn = (accountId: string) => {
+    const selectedAccount = accounts.find((account) => account.accountId === accountId) || null;
+    setCurrentAccount(selectedAccount);
+    localStorage.setItem('accountId', accountId);
     handleCloseAccountDropdown();
   };
 
@@ -165,22 +124,16 @@ const App: React.FC = () => {
     content = <p>Loading users...</p>;
   } else if (error) {
     content = <p>Error: {error}</p>;
-  } else if (!users || users.length === 0) {
-    content = <p>Error: no users found</p>;
   } else if (!accounts || accounts.length === 0) {
     content = <p>Error: no accounts found</p>;
   } else {
     content = (
       <Routes>
-        <Route path="/" element={<Map />} />
-        <Route path="/search" element={<Search />} />
-        <Route path="/restaurantDetails" element={<RestaurantDetails />} />
-        <Route path="/map" element={<Map />} />
-        <Route path="/map/:_id" element={<Map />} />
+        <Route path="/" element={<NewMap />} />
         <Route path="/new-map" element={<NewMap />} />
+        <Route path="/new-map/:_id" element={<NewMap />} />
         <Route path="/new-write-review" element={<NewWriteReviewPage />} />
-        <Route path="/write-review" element={<WriteReviewPage />} />
-        <Route path="/write-review/:_id" element={<WriteReviewPage />} />
+        <Route path="/new-write-review/:_id" element={<NewWriteReviewPage />} />
         <Route path="/add-place" element={<DesiredRestaurantForm />} />
         <Route path="/add-place/:_id" element={<DesiredRestaurantForm />} />
       </Routes>
@@ -207,16 +160,10 @@ const App: React.FC = () => {
             {isMobile ? (
               // Render icons for mobile
               <>
-                <IconButton color="inherit" component={Link} to="/map">
+                <IconButton color="inherit" component={Link} to="/new-map">
                   <HomeIcon />
                 </IconButton>
-                <IconButton color="inherit" component={Link} to="/search">
-                  <ReviewsIcon />
-                </IconButton>
                 <IconButton color="inherit" component={Link} to="/new-write-review">
-                  <EditIcon />
-                </IconButton>
-                <IconButton color="inherit" component={Link} to="/write-review">
                   <EditIcon />
                 </IconButton>
                 <IconButton color="inherit" component={Link} to="/add-place">
@@ -227,37 +174,16 @@ const App: React.FC = () => {
               // Render labels for desktop
               <>
                 <Button
-                  style={(isActive('/map') || isActive('/')) ? activeButtonStyle : { color: 'white' }}
-                  component={Link}
-                  to="/map"
-                >
-                  Home
-                </Button>
-                <Button
                   style={(isActive('/new-map') || isActive('/new-map')) ? activeButtonStyle : { color: 'white' }}
                   component={Link}
                   to="/new-map"
                 >
-                  New Map
-                </Button>
-                <Button
-                  style={isActive('/search') ? activeButtonStyle : { color: 'white' }}
-                  component={Link}
-                  to="/search"
-                >
-                  All Reviews
+                  Home
                 </Button>
                 <Button
                   style={isActive('/new-write-review') ? activeButtonStyle : { color: 'white' }}
                   component={Link}
                   to="/new-write-review"
-                >
-                  New Write Review
-                </Button>
-                <Button
-                  style={isActive('/write-review') ? activeButtonStyle : { color: 'white' }}
-                  component={Link}
-                  to="/write-review"
                 >
                   Write Review
                 </Button>
@@ -283,10 +209,10 @@ const App: React.FC = () => {
           {content}
         </Box>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseAccountDropdown}>
-          <MenuItem disabled>{currentUser ? `Signed in as: ${currentUser.userName}` : 'Not signed in'}</MenuItem>
-          {users.map((user) => (
-            <MenuItem key={user.id} onClick={() => handleSignIn(user.id)}>
-              {user.userName}
+          <MenuItem disabled>{currentAccount ? `Signed in as: ${currentAccount.accountName}` : 'Not signed in'}</MenuItem>
+          {accounts.map((account) => (
+            <MenuItem key={account.accountId} onClick={() => handleSignIn(account.accountId)}>
+              {account.accountName}
             </MenuItem>
           ))}
         </Menu>

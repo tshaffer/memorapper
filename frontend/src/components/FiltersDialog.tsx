@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Box, Button, TextField, Tooltip, Typography, useMediaQuery } from '@mui/material';
 
 import FiltersSettings from "./FilterSettings";
-import { Filters, WouldReturnFilter } from "../types";
+import { Filters } from "../types";
 
 export interface FiltersDialogPropsFromParent {
   open: boolean;
@@ -25,23 +25,20 @@ const FiltersDialog: React.FC<FiltersDialogProps> = (props: FiltersDialogProps) 
 
   const [query, setQuery] = useState('');
   const [distanceAwayFilter, setDistanceAwayFilter] = useState<number>(props.filters.distanceAwayFilter);
-  const [wouldReturnFilter, setWouldReturnFilter] = useState<WouldReturnFilter>(props.filters.wouldReturnFilter);
   const [isOpenNowFilterEnabled, setIsOpenNowFilterEnabled] = useState(props.filters.isOpenNowFilterEnabled);
 
   useEffect(() => {
     setDistanceAwayFilter(props.filters.distanceAwayFilter);
-    setWouldReturnFilter(props.filters.wouldReturnFilter);
     setIsOpenNowFilterEnabled(props.filters.isOpenNowFilterEnabled);
-  }, [props.filters.distanceAwayFilter, props.filters.wouldReturnFilter, props.filters.isOpenNowFilterEnabled]);
+  }, [props.filters.distanceAwayFilter, props.filters.isOpenNowFilterEnabled]);
 
   const handleUpdateFilters = (filters: Filters) => {
     setDistanceAwayFilter(filters.distanceAwayFilter);
     setIsOpenNowFilterEnabled(filters.isOpenNowFilterEnabled);
-    setWouldReturnFilter(filters.wouldReturnFilter);
   }
 
   function handleSetFilters(): void {
-    props.onSetFilters(query, { distanceAwayFilter, isOpenNowFilterEnabled, wouldReturnFilter });
+    props.onSetFilters(query, { distanceAwayFilter, isOpenNowFilterEnabled });
     props.onClose();
   }
 
@@ -81,7 +78,6 @@ const FiltersDialog: React.FC<FiltersDialogProps> = (props: FiltersDialogProps) 
           <FiltersSettings
             filters={{
               distanceAwayFilter: distanceAwayFilter,
-              wouldReturnFilter: wouldReturnFilter,
               isOpenNowFilterEnabled: isOpenNowFilterEnabled,
             }}
             onUpdateFilters={handleUpdateFilters}
