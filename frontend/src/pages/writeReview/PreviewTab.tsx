@@ -9,7 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { Button, Rating, Typography, useMediaQuery } from '@mui/material';
 import '../../styles/multiPanelStyles.css';
 import '../../styles/previewForm.css';
-import { AccountUser, AccountUserInput, ReviewData } from '../../types';
+import { Diner, DinerRestaurantReview, ReviewData } from '../../types';
 import { formatDateToMMDDYYYY, restaurantTypeLabelFromRestaurantType } from '../../utilities';
 import PulsingDots from '../../components/PulsingDots';
 import { useUserContext } from '../../contexts/UserContext';
@@ -30,7 +30,7 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
 
   const { place, dateOfVisit, reviewText, itemReviews } = reviewData;
 
-  const [accountUsers, setAccountUsers] = useState<AccountUser[]>([]);
+  const [accountUsers, setAccountUsers] = useState<Diner[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
@@ -38,11 +38,11 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
 
   React.useEffect(() => {
 
-    const fetchAccountUsers = async (): Promise<AccountUser[]> => {
+    const fetchAccountUsers = async (): Promise<Diner[]> => {
       const response = await fetch('/api/accountUsers');
       const data = await response.json();
-      const allAccountUsers: AccountUser[] = data.accountUsers;
-      const accountUsersForCurrentAccount: AccountUser[] = allAccountUsers.filter((accountUser) => accountUser.accountId === currentAccount?.accountId);
+      const allAccountUsers: Diner[] = data.accountUsers;
+      const accountUsersForCurrentAccount: Diner[] = allAccountUsers.filter((accountUser) => accountUser.diningGroupId === currentAccount?.diningGroupId);
       return accountUsersForCurrentAccount;
     }
 
@@ -55,11 +55,11 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
 
   }, []);
 
-  const getAccountUserInput = (accountUserId: string): AccountUserInput | null => {
-    if (!reviewData || !reviewData.accountUserInputs) return null;
+  const getAccountUserInput = (accountUserId: string): DinerRestaurantReview | null => {
+    if (!reviewData || !reviewData.dinerRestaurantReviews) return null;
 
-    for (const accountUserInput of reviewData.accountUserInputs) {
-      if (accountUserInput.accountUserId === accountUserId) {
+    for (const accountUserInput of reviewData.dinerRestaurantReviews) {
+      if (accountUserInput.dinerId === accountUserId) {
         return accountUserInput;
       }
     }
@@ -108,22 +108,22 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
         <fieldset className="ratings-comments-section compact">
           <legend>Ratings and Comments</legend>
           {accountUsers.map((accountUser) => {
-            const input: AccountUserInput = getAccountUserInput(accountUser.accountUserId) || {
-              accountUserInputId: uuidv4(),
-              accountUserId: accountUser.accountUserId,
+            const input: DinerRestaurantReview = getAccountUserInput(accountUser.dinerId) || {
+              dinerRestaurantReviewId: uuidv4(),
+              dinerId: accountUser.dinerId,
               rating: 0,
               comments: '',
             };
             return (
-              <div key={accountUser.accountUserId} className="contributor-section compact">
+              <div key={accountUser.dinerId} className="contributor-section compact">
                 <div className="contributor-header compact">
-                  <h5>{accountUser.userName}</h5>
+                  <h5>{accountUser.dinerName}</h5>
                 </div>
                 <div className="contributor-rating compact">
-                  <label htmlFor={`rating-${accountUser.accountUserId}`}>Rating</label>
+                  <label htmlFor={`rating-${accountUser.dinerId}`}>Rating</label>
                   <Rating
-                    id={`rating-${accountUser.accountUserId}`}
-                    name={`rating-${accountUser.accountUserId}`}
+                    id={`rating-${accountUser.dinerId}`}
+                    name={`rating-${accountUser.dinerId}`}
                     value={input.rating}
                     max={5}
                   />

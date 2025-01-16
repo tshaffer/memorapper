@@ -2,38 +2,38 @@ import { ItemReview } from "./entities";
 import { DistanceAwayFilterValues } from "./enums";
 import { GooglePlace } from "./googlePlace";
 
-export interface Account {
-  accountId: string; // unique key
-  accountName: string;
+export interface DiningGroup {
+  diningGroupId: string; // unique key
+  diningGroupName: string;
 }
 
-export interface AccountUser {
-  accountUserId: string; // unique key
-  accountId: string; // Foreign key to Account
-  userName: string;
+export interface Diner {
+  dinerId: string; // unique key
+  diningGroupId: string; // Foreign key to Account
+  dinerName: string;
 }
 
-export interface AccountUserInput {
-  accountUserInputId: string; // unique key
-  accountUserId: string; // Foreign key to AccountUser
+export interface DinerRestaurantReview {
+  dinerRestaurantReviewId: string; // unique key
+  dinerId: string; // Foreign key to AccountUser
   rating: number;
   comments: string;
 }
 
-export interface AccountUserInterfaceRef {
-  accountUserInputId: string; // unique key
-  accountUserId: string; // Foreign key to AccountUser
+export interface DinerRestaurantReviewRef {
+  dinerRestaurantReviewId: string; // unique key
+  dinerId: string; // Foreign key to AccountUser
 }
 
-export interface UserPlaceSummary {
-  userPlaceSummaryId: string; // unique key
-  accountId: string; // Foreign key to Account
+export interface RestaurantReview {
+  restaurantReviewId: string; // unique key
+  diningGroupId: string; // Foreign key to Account
   placeId: string; // Foreign key to Place
-  accountUserInputs: AccountUserInterfaceRef[];
+  dinerRestaurantReviews: DinerRestaurantReviewRef[];
 }
 
-export interface AccountPlaceReview {
-  accountId: string;
+export interface VisitReview {
+  diningGroupId: string;
   placeId: string;
   dateOfVisit: string;
   reviewText: string;
@@ -51,9 +51,9 @@ export interface PreviewResponse {
 
 export interface SubmitReviewBody {
   _id?: string;
-  accountId: string;
+  diningGroupId: string;
   place: GooglePlace;
-  accountUserInputs: AccountUserInput[];
+  dinerRestaurantReviews: DinerRestaurantReview[];
   dateOfVisit: string;
   reviewText: string;
   itemReviews: ItemReview[];
@@ -66,7 +66,7 @@ export interface FilterResultsParams {
 }
 
 export interface ExtendedGooglePlace extends GooglePlace {
-  reviews: AccountPlaceReview[];
+  reviews: VisitReview[];
 }
 
 export interface RestaurantVisitInstance {
@@ -88,9 +88,9 @@ export type ChatMessage = {
 
 export interface ReviewData {
   _id: string;
-  accountId: string;
+  diningGroupid: string;
   place: GooglePlace | null;
-  accountUserInputs: AccountUserInput[];
+  dinerRestaurantReviews: DinerRestaurantReview[];
   dateOfVisit: string | null;
   reviewText: string | null;
   itemReviews: ItemReview[];

@@ -31,7 +31,7 @@ function AccountDialog(props: AccountDialogProps) {
   let currentAccountName: string = 'Nobody';
 
   if (currentAccount) {
-    currentAccountName = currentAccount.accountName;
+    currentAccountName = currentAccount.diningGroupName;
   }
 
   return (

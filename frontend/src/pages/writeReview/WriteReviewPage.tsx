@@ -5,7 +5,7 @@ import PreviewTab from "./PreviewTab";
 import ChatTab from "./ChatTab";
 import NewReviewEntryForm from './ReviewEntryForm';
 import { Box, Button } from "@mui/material";
-import { SubmitReviewBody, AccountPlaceReview, ChatGPTOutput, ChatMessage, GooglePlace, PreviewResponse, ReviewData, PreviewRequestBody, ChatRequestBody, ChatResponse } from "../../types";
+import { SubmitReviewBody, VisitReview, ChatGPTOutput, ChatMessage, GooglePlace, PreviewResponse, ReviewData, PreviewRequestBody, ChatRequestBody, ChatResponse } from "../../types";
 import { getFormattedDate } from "../../utilities";
 import { useUserContext } from '../../contexts/UserContext';
 
@@ -18,7 +18,7 @@ const WriteReviewPage = () => {
   // const editableReview = location.state as EditableReview | null;
 
   let place: GooglePlace | null = null;
-  let accountPlaceReview: AccountPlaceReview | null = null;
+  let accountPlaceReview: VisitReview | null = null;
   // let review: MemoRappReview | null = null;
   // if (editableReview) {
   //   place = editableReview.place;
@@ -27,7 +27,7 @@ const WriteReviewPage = () => {
 
   const initialNewReviewData: ReviewData = {
     _id: _id ? _id : '',
-    accountId: currentAccount!.accountId,
+    diningGroupid: currentAccount!.diningGroupId,
     place,
     // restaurantName: place ? place.name : '',
     restaurantName: '',
@@ -36,7 +36,7 @@ const WriteReviewPage = () => {
     itemReviews: [],
     sessionId: '',
     chatHistory: [],
-    accountUserInputs: [],
+    dinerRestaurantReviews: [],
   };
 
   const [newReviewData, setNewReviewData] = useState<ReviewData>(initialNewReviewData);
@@ -88,9 +88,9 @@ const WriteReviewPage = () => {
   const handleSubmitReview = async () => {
     const body: SubmitReviewBody = {
       _id: newReviewData._id,
-      accountId: newReviewData.accountId,
+      diningGroupId: newReviewData.diningGroupid,
       place: newReviewData.place!,
-      accountUserInputs: newReviewData.accountUserInputs!,
+      dinerRestaurantReviews: newReviewData.dinerRestaurantReviews!,
       dateOfVisit: newReviewData.dateOfVisit!,
       reviewText: newReviewData.reviewText!,
       itemReviews: newReviewData.itemReviews,

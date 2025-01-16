@@ -8,8 +8,8 @@ import '../../styles/multiPanelStyles.css';
 import '../../styles/reviewEntryForm.css';
 import { useEffect, useState } from 'react';
 import {
-  AccountUser,
-  AccountUserInput,
+  Diner,
+  DinerRestaurantReview,
   RestaurantType,
   ReviewData,
 } from '../../types';
@@ -33,7 +33,7 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
-  const [accountUsers, setAccountUsers] = useState<AccountUser[]>([]);
+  const [accountUsers, setAccountUsers] = useState<Diner[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -56,11 +56,11 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
 
   useEffect(() => {
 
-    const fetchAccountUsers = async (): Promise<AccountUser[]> => {
+    const fetchAccountUsers = async (): Promise<Diner[]> => {
       const response = await fetch('/api/accountUsers');
       const data = await response.json();
-      const allAccountUsers: AccountUser[] = data.accountUsers;
-      const accountUsersForCurrentAccount: AccountUser[] = allAccountUsers.filter((accountUser) => accountUser.accountId === currentAccount?.accountId);
+      const allAccountUsers: Diner[] = data.accountUsers;
+      const accountUsersForCurrentAccount: Diner[] = allAccountUsers.filter((accountUser) => accountUser.diningGroupId === currentAccount?.diningGroupId);
       return accountUsersForCurrentAccount;
     }
 
@@ -87,26 +87,26 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
 
   const handleAccountUserInputChange = (
     accountUserId: string,
-    input: Partial<AccountUserInput>
+    input: Partial<DinerRestaurantReview>
   ) => {
     console.log('accountUserId:', accountUserId);
     console.log('input:', input);
 
-    let matchedAccountUserInput: AccountUserInput | null = null;
-    for (const accountUserInput of reviewData.accountUserInputs) {
-      if (accountUserInput.accountUserId === accountUserId) {
+    let matchedAccountUserInput: DinerRestaurantReview | null = null;
+    for (const accountUserInput of reviewData.dinerRestaurantReviews) {
+      if (accountUserInput.dinerId === accountUserId) {
         matchedAccountUserInput = accountUserInput;
         break;
       }
     }
     if (!matchedAccountUserInput) {
-      const newAccountUserInput: AccountUserInput = {
-        accountUserInputId: uuidv4(),
-        accountUserId,
+      const newAccountUserInput: DinerRestaurantReview = {
+        dinerRestaurantReviewId: uuidv4(),
+        dinerId: accountUserId,
         rating: input.rating ?? 0,
         comments: input.comments ?? '',
       };
-      const newAccountUserInputs = [...reviewData.accountUserInputs, newAccountUserInput];
+      const newAccountUserInputs = [...reviewData.dinerRestaurantReviews, newAccountUserInput];
       console.log('newAccountUserInputs:', newAccountUserInputs);
       const newReviewData = { ...reviewData, accountUserInputs: newAccountUserInputs };
       setReviewData(newReviewData);
@@ -117,8 +117,8 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
         ...input,
       };
       console.log('updatedAccountUserInput:', updatedAccountUserInput);
-      const newAccountUserInputs = reviewData.accountUserInputs.map((accountUserInput) => {
-        if (accountUserInput.accountUserId === accountUserId) {
+      const newAccountUserInputs = reviewData.dinerRestaurantReviews.map((accountUserInput) => {
+        if (accountUserInput.dinerId === accountUserId) {
           return updatedAccountUserInput;
         }
         return accountUserInput;
@@ -200,11 +200,11 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
     </div>
   );
 
-  const getAccountUserInput = (accountUserId: string): AccountUserInput | null => {
-    if (!reviewData || !reviewData.accountUserInputs) return null;
+  const getAccountUserInput = (accountUserId: string): DinerRestaurantReview | null => {
+    if (!reviewData || !reviewData.dinerRestaurantReviews) return null;
 
-    for (const accountUserInput of reviewData.accountUserInputs) {
-      if (accountUserInput.accountUserId === accountUserId) {
+    for (const accountUserInput of reviewData.dinerRestaurantReviews) {
+      if (accountUserInput.dinerId === accountUserId) {
         return accountUserInput;
       }
     }
@@ -217,40 +217,40 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
         <fieldset className="ratings-comments-section">
           <legend>Ratings and Comments by Users</legend>
           {accountUsers.map((accountUser) => {
-            const input: AccountUserInput = getAccountUserInput(accountUser.accountUserId) || {
-              accountUserInputId: uuidv4(),
-              accountUserId: accountUser.accountUserId,
+            const input: DinerRestaurantReview = getAccountUserInput(accountUser.dinerId) || {
+              dinerRestaurantReviewId: uuidv4(),
+              dinerId: accountUser.dinerId,
               rating: 0,
               comments: '',
             };
             return (
-              <div key={accountUser.accountUserId} className="contributor-section">
+              <div key={accountUser.dinerId} className="contributor-section">
                 <div className="contributor-header">
-                  <h4>{accountUser.userName}</h4>
+                  <h4>{accountUser.dinerName}</h4>
                 </div>
                 <div className="contributor-rating">
-                  <label htmlFor={`rating-${accountUser.accountUserId}`}>Rating</label>
+                  <label htmlFor={`rating-${accountUser.dinerId}`}>Rating</label>
                   <Rating
-                    id={`rating-${accountUser.accountUserId}`}
-                    name={`rating-${accountUser.accountUserId}`}
+                    id={`rating-${accountUser.dinerId}`}
+                    name={`rating-${accountUser.dinerId}`}
                     value={input.rating}
                     max={5}
                     onChange={(event, newValue) =>
-                      handleAccountUserInputChange(accountUser.accountUserId, { rating: (newValue || 0) })
+                      handleAccountUserInputChange(accountUser.dinerId, { rating: (newValue || 0) })
                     }
                   />
                 </div>
                 <div className="contributor-comments">
-                  <label htmlFor={`comments-${accountUser.accountUserId}`}>Comments</label>
+                  <label htmlFor={`comments-${accountUser.dinerId}`}>Comments</label>
                   <TextField
-                    id={`comments-${accountUser.accountUserId}`}
-                    name={`comments-${accountUser.accountUserId}`}
+                    id={`comments-${accountUser.dinerId}`}
+                    name={`comments-${accountUser.dinerId}`}
                     fullWidth
                     multiline
                     rows={3}
                     value={input.comments}
                     onChange={(event) =>
-                      handleAccountUserInputChange(accountUser.accountUserId, { comments: event.target.value })
+                      handleAccountUserInputChange(accountUser.dinerId, { comments: event.target.value })
                     }
                   />
                 </div>

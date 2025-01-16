@@ -9,7 +9,7 @@ import {
   UnvisitedPlace,
   GooglePlace,
   FilterResultsParams,
-  AccountPlaceReview,
+  VisitReview,
   ExtendedGooglePlace,
   SearchQuery
 } from '../../types';
@@ -33,7 +33,7 @@ const MapPage: React.FC = () => {
   const [unvisitedPlaces, setUnvisitedPlaces] = useState<GooglePlace[]>([]);
   const [unvisitedPlacesToVisit, setUnvisitedPlacesToVisit] = useState<UnvisitedPlace[]>([]);
 
-  const [reviews, setReviews] = useState<AccountPlaceReview[]>([]);
+  const [reviews, setReviews] = useState<VisitReview[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -88,7 +88,7 @@ const MapPage: React.FC = () => {
       return data.googlePlaces;
     };
 
-    const fetchReviews = async (): Promise<AccountPlaceReview[]> => {
+    const fetchReviews = async (): Promise<VisitReview[]> => {
       const response = await fetch('/api/accountPlaceReviews');
       const data = await response.json();
       setReviews(data.accountPlaceReviews);
@@ -128,7 +128,7 @@ const MapPage: React.FC = () => {
     }
   }, [_id, places]);
 
-  const getReviewsForPlace = (placeId: string): AccountPlaceReview[] =>
+  const getReviewsForPlace = (placeId: string): VisitReview[] =>
     reviews.filter((review) => review.placeId === placeId);
 
   const getExtendedGooglePlaces = (inputPlaces: GooglePlace[]): ExtendedGooglePlace[] =>

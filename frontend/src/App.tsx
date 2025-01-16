@@ -12,7 +12,7 @@ import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } f
 import { Menu, MenuItem } from '@mui/material';
 import WriteReviewPage from './pages/writeReview/WriteReviewPage';
 import { useUserContext } from './contexts/UserContext';
-import { Account, DistanceAwayFilterValues, Settings, } from './types';
+import { DiningGroup, DistanceAwayFilterValues, Settings, } from './types';
 import SettingsDialog from './components/SettingsDialog';
 import DesiredRestaurantForm from './pages/desiredRestaurants/DesiredRestaurantForm';
 import Map from './pages/maps/Map';
@@ -35,22 +35,22 @@ const App: React.FC = () => {
   const location = useLocation(); // Track the current route
 
   useEffect(() => {
-    const getCurrentAccount = (): Account | null => {
+    const getCurrentAccount = (): DiningGroup | null => {
       const storedAccountId: string | null = localStorage.getItem('accountId');
       if (accounts) {
         for (const account of accounts) {
-          if (!storedAccountId && account.accountName === 'Anonymous') {
+          if (!storedAccountId && account.diningGroupName === 'Anonymous') {
             return account;
           }
-          if (account.accountId === storedAccountId) {
+          if (account.diningGroupId === storedAccountId) {
             return account;
           }
         }
       }
 
-      const defaultAccount: Account | null = accounts ? accounts.find((account) => account.accountId === '1') || null : null;
+      const defaultAccount: DiningGroup | null = accounts ? accounts.find((account) => account.diningGroupId === '1') || null : null;
       if (defaultAccount) {
-        localStorage.setItem('accountId', defaultAccount.accountId);
+        localStorage.setItem('accountId', defaultAccount.diningGroupId);
       } else {
         // SHOULDN'T NEED TO DO THIS!!
         localStorage.setItem('accountId', '1');
@@ -74,7 +74,7 @@ const App: React.FC = () => {
       }
     }
 
-    const currentAccount: Account | null = getCurrentAccount();
+    const currentAccount: DiningGroup | null = getCurrentAccount();
     setCurrentAccount(currentAccount);
 
     const appSettings: Settings = getAppSettings();
@@ -95,7 +95,7 @@ const App: React.FC = () => {
   };
 
   const handleSignIn = (accountId: string) => {
-    const selectedAccount = accounts.find((account) => account.accountId === accountId) || null;
+    const selectedAccount = accounts.find((account) => account.diningGroupId === accountId) || null;
     setCurrentAccount(selectedAccount);
     localStorage.setItem('accountId', accountId);
     handleCloseAccountDropdown();
@@ -209,10 +209,10 @@ const App: React.FC = () => {
           {content}
         </Box>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseAccountDropdown}>
-          <MenuItem disabled>{currentAccount ? `Signed in as: ${currentAccount.accountName}` : 'Not signed in'}</MenuItem>
+          <MenuItem disabled>{currentAccount ? `Signed in as: ${currentAccount.diningGroupName}` : 'Not signed in'}</MenuItem>
           {accounts.map((account) => (
-            <MenuItem key={account.accountId} onClick={() => handleSignIn(account.accountId)}>
-              {account.accountName}
+            <MenuItem key={account.diningGroupId} onClick={() => handleSignIn(account.diningGroupId)}>
+              {account.diningGroupName}
             </MenuItem>
           ))}
         </Menu>
