@@ -31,7 +31,7 @@ export interface RestaurantReview {
   restaurantReviewId: string; // unique key
   diningGroupId: string; // Foreign key to Account
   placeId: string; // Foreign key to Place
-  accountUserInputs: DinerRestaurantReview[];
+  dinerRestaurantReviews: DinerRestaurantReview[];
 }
 
 export interface VisitReview {

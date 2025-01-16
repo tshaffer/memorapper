@@ -58,7 +58,7 @@ export const newSubmitReview = async (submitReviewBody: SubmitReviewBody): Promi
     restaurantReviewId: uuidv4(),
     diningGroupId: accountId,
     placeId: googlePlaceId,
-    accountUserInputs
+    dinerRestaurantReviews: accountUserInputs
   };
 
   const newUserPlaceSummary: IRestaurantReview | null = await addNewUserPlaceSummary(userPlaceSummary);

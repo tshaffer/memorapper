@@ -7,7 +7,7 @@ export const RestaurantReviewSchema: Schema<IRestaurantReview> = new Schema({
   restaurantReviewId: { type: String, required: true, unique: true },
   diningGroupId: { type: String, required: true, ref: 'DiningGroup' },
   placeId: { type: String, required: true, ref: 'MongoPlace' },
-  accountUserInputs: [
+  dinerRestaurantReviews: [
     {
       dinerId: { type: String, required: true, ref: 'Diner' },
       dinerRestaurantReviewId: { type: String, required: true, ref: 'DinerRestaurantReview' }

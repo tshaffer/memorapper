@@ -5,7 +5,7 @@ export interface IDiner extends Diner, Document { }
 
 const DinerSchema: Schema = new Schema({
   dinerId: { type: String, required: true, unique: true },
-  diningGroupId: { type: String, required: true, ref: 'Account' },
+  diningGroupId: { type: String, required: true, ref: 'DiningGroup' },
   dinerName: { type: String, required: true },
 });
 
