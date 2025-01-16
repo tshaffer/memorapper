@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Box } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Box, useMediaQuery } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
 import DirectionsIcon from '@mui/icons-material/Directions';
 import MapIcon from '@mui/icons-material/Map';
 
+import LocationAutocomplete from '../../components/LocationAutocomplete';
+import FiltersDialog from '../../components/FiltersDialog';
+import PulsingDots from '../../components/PulsingDots';
+
 import '../../App.css';
 
-import { DesiredRestaurant } from '../../types';
+import { DesiredRestaurant, Filters, GooglePlace, SearchQuery } from '../../types';
 import { getCityNameFromPlace } from '../../utilities';
+import { useUserContext } from '../../contexts/UserContext';
 
 const smallColumnStyle: React.CSSProperties = {
   width: '35px',
@@ -20,8 +26,17 @@ const smallColumnStyle: React.CSSProperties = {
 
 const NewRestaurants = () => {
 
+  const { settings, setFilters } = useUserContext();
+
+  const isMobile = useMediaQuery('(max-width:768px)');
+
+  const [showFiltersDialog, setShowFiltersDialog] = React.useState(false);
+
   const [newRestaurants, setNewRestaurants] = useState<DesiredRestaurant[]>([]);
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
+  const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [filteredPlaces, setFilteredPlaces] = useState<GooglePlace[]>([]);
 
   const [selectedPlace, setSelectedPlace] = useState<DesiredRestaurant | null>(null);
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
@@ -104,6 +119,28 @@ const NewRestaurants = () => {
     // }
   };
 
+  const executeSearchAndFilter = async (searchQuery: SearchQuery): Promise<void> => {
+
+    console.log('executeSearchAndFilter:', searchQuery);
+
+    const requestBody = { searchQuery };
+
+    try {
+      const apiResponse = await fetch('/api/searchAndFilter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody),
+      });
+
+      const data: any = await apiResponse.json();
+      console.log('searchAndFilter results:', data);
+
+      setFilteredPlaces(data.places);
+    } catch (error) {
+      console.error('Error executing filter query:', error);
+    }
+  }
+
   const handlePlaceClick = (newRestaurant: DesiredRestaurant) => {
     console.log('handlePlaceClick place: ', newRestaurant);
     setSelectedPlaceId(newRestaurant.googlePlace!.googlePlaceId); // Update selected place ID
@@ -125,6 +162,52 @@ const NewRestaurants = () => {
       const url = `https://www.google.com/maps/dir/?api=1&origin=${currentLocation.lat},${currentLocation.lng}&destination=${destinationLatLng.lat},${destinationLatLng.lng}&destination_place_id=${destination.googlePlace!.name}`;
       window.open(url, '_blank');
     }
+  };
+
+  const handleSetMapLocation = (location: google.maps.LatLngLiteral): void => {
+    setMapLocation(location);
+  }
+
+  const handleOpenFiltersDialog = () => {
+    setShowFiltersDialog(true);
+  };
+
+    const handleSetFilters = async (
+      query: string,
+      filters: Filters,
+    ) => {
+  
+      handleCloseFiltersDialog();
+  
+      setFilters(filters);
+  
+      setIsLoading(true);
+  
+      const searchQuery: SearchQuery = {
+        query,
+        isOpenNow: filters.isOpenNowFilterEnabled,
+        distanceAway: {
+          lat: mapLocation!.lat,
+          lng: mapLocation!.lng,
+          radius: filters.distanceAwayFilter,
+        }
+      };
+  
+      await executeSearchAndFilter(searchQuery);
+  
+      setIsLoading(false);
+    }
+  
+    const handleCloseFiltersDialog = () => {
+      setShowFiltersDialog(false);
+    };
+  
+  
+  const renderPulsingDots = (): JSX.Element | null => {
+    if (!isLoading) {
+      return null;
+    }
+    return (<PulsingDots />);
   };
 
   const renderPlacesTable = (): JSX.Element | null => {
@@ -166,7 +249,7 @@ const NewRestaurants = () => {
                     onClick={() => handlePlaceClick(place)}
                     sx={{
                       backgroundColor:
-                      place.googlePlace?.googlePlaceId === selectedPlaceId ? '#f0f8ff' : 'inherit', // Highlight selected row
+                        place.googlePlace?.googlePlaceId === selectedPlaceId ? '#f0f8ff' : 'inherit', // Highlight selected row
                       cursor: 'pointer', // Indicate clickable rows
                     }}
                   >
@@ -201,9 +284,68 @@ const NewRestaurants = () => {
 
 
   return (
-    <React.Fragment>
+    <Paper
+      id="map-page"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        padding: isMobile ? '2px' : '24px',
+        minHeight: '100%',
+        height: '100%',
+        overflow: 'hidden',
+      }}
+    >
+
+      <Box
+        id="map-page-header"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          marginBottom: 2,
+          width: '100%',
+        }}
+      >
+        {/* LocationAutocomplete */}
+        <Box
+          id="map-page-locationAutocomplete-container"
+          sx={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 0 }}
+        >
+          <LocationAutocomplete
+            onSetMapLocation={(location) => handleSetMapLocation(location)} />
+        </Box>
+
+        {/* Filters Button */}
+        <Box
+          sx={{
+            flexShrink: 0, // Prevent shrinking of the button
+          }}
+        >
+          <IconButton
+            onClick={handleOpenFiltersDialog}
+            sx={{
+              backgroundColor: '#007bff',
+              color: '#fff',
+              padding: isMobile ? '6px' : '8px',
+              fontSize: isMobile ? '18px' : '24px',
+              '&:hover': { backgroundColor: '#0056b3' },
+            }}
+          >
+            <SearchIcon />
+          </IconButton>
+        </Box>
+      </Box>
+
+      {renderPulsingDots()}
       {renderPlacesTable()}
-    </React.Fragment>
+      {/* Filters Dialog */}
+      <FiltersDialog
+        open={showFiltersDialog}
+        filters={settings.filters}
+        onSetFilters={handleSetFilters}
+        onClose={handleCloseFiltersDialog}
+      />
+    </Paper>
   )
 }
 
