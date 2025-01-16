@@ -5,7 +5,7 @@ export interface IDesiredRestaurant extends Omit<DesiredRestaurant, "_id">, Docu
 
 const DesiredRestaurantSchema: Schema = new Schema({
   googlePlaceId: { type: String, required: true },
-  comments: { type: String, required: true },
+  comments: { type: String },
   interestLevel: { type: Number, required: true },
 });
 

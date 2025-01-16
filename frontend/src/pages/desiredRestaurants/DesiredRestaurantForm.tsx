@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import '../../styles/multiPanelStyles.css';
-import { Box, Button, MenuItem, Select, Slider, TextField, useMediaQuery } from "@mui/material";
+import { Box, Button, MenuItem, Rating, Select, Slider, TextField, useMediaQuery } from "@mui/material";
 import { RestaurantType, DesiredRestaurant, GooglePlace, EditableDesiredRestaurant, SubmitDesiredRestaurantRequestBody } from "../../types";
 import RestaurantName from '../../components/RestaurantName';
 import PulsingDots from '../../components/PulsingDots';
@@ -28,7 +28,7 @@ const DesiredRestaurantForm = () => {
     googlePlace,
     restaurantName,
     comments,
-    interestLevel: editableDesiredRestaurant ? editableDesiredRestaurant.interestLevel : 0,
+    interestLevel: editableDesiredRestaurant ? editableDesiredRestaurant.interestLevel : 3,
   };
 
   const [desiredRestaurantData, setDesiredRestaurantData] = useState<DesiredRestaurant>(initialDesiredRestaurantData);
@@ -116,37 +116,12 @@ const DesiredRestaurantForm = () => {
   const renderRating = (): JSX.Element => {
     return (
       <>
-        <label>Rating</label>
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "fit-content(300px) 200px", // First column auto-sizes up to a maximum of 300px
-            gridAutoRows: "auto", // Each row's height adjusts to its content
-            gap: 2, // Optional: spacing between items
-          }}
-        >
-          {/* Primary Rating */}
-          <Box
-            sx={{
-              border: "1px solid",
-              padding: 1,
-              display: "flex", // Use flexbox
-              justifyContent: "center", // Horizontally center the content
-            }}
-          >
-            <Slider
-              sx={{ width: '150px' }}
-              defaultValue={5}
-              value={desiredRestaurantData.interestLevel || 5}
-              valueLabelDisplay="auto"
-              step={1}
-              marks
-              min={0}
-              max={10}
-              onChange={(_, value) => handleChange('interestLevel', value as number)}
-            />
-          </Box>
-        </Box>
+        <label >Rating</label>
+        <Rating
+          value={desiredRestaurantData.interestLevel || 5}
+          max={5}
+          onChange={(_, value) => handleChange('interestLevel', value as number)}
+        />
       </>
     );
   }
