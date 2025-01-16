@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
-import { Account, AccountPlaceReview, AccountUser, AccountUserInput, UserPlaceSummary } from "../types";
-import AccountModel from '../models/Account';
-import AccountUserModel from '../models/AccountUser';
-import AccountUserInputModel from '../models/AccountUserInput';
-import AccountPlaceReviewModel from '../models/AccountPlaceReview';
-import UserPlaceSummaryModel from '../models/UserPlaceSummary';
+import { DiningGroup, VisitReview, Diner, DinerRestaurantReview, RestaurantReview } from "../types";
+import DiningGroupModel from '../models/DiningGroup';
+import DinerModel from '../models/Diner';
+import DinerRestaurantReviewModel from '../models/DinerRetaurantReview';
+import VisitReviewModel from '../models/VisitReview';
+import UserPlaceSummaryModel from '../models/RestaurantReview';
 
 export const getAccounts = async (request: Request, response: Response) => {
   try {
-    const accounts: Account[] = await AccountModel.find({}).exec();
+    const accounts: DiningGroup[] = await DiningGroupModel.find({}).exec();
     response.status(200).json({ accounts });
     return;
   } catch (error) {
@@ -20,7 +20,7 @@ export const getAccounts = async (request: Request, response: Response) => {
 
 export const getAccountUsers = async (request: Request, response: Response) => {
   try {
-    const accountUsers: AccountUser[] = await AccountUserModel.find({}).exec();
+    const accountUsers: Diner[] = await DinerModel.find({}).exec();
     response.status(200).json({ accountUsers });
     return;
   } catch (error) {
@@ -32,7 +32,7 @@ export const getAccountUsers = async (request: Request, response: Response) => {
 
 export const getAccountUserInputs = async (request: Request, response: Response) => {
   try {
-    const accountUserInputs: AccountUserInput[] = await AccountUserInputModel.find({}).exec();
+    const accountUserInputs: DinerRestaurantReview[] = await DinerRestaurantReviewModel.find({}).exec();
     response.status(200).json({ accountUserInputs });
     return;
   } catch (error) {
@@ -44,7 +44,7 @@ export const getAccountUserInputs = async (request: Request, response: Response)
 
 export const getAccountPlaceReviews = async (request: Request, response: Response) => {
   try {
-    const accountPlaceReviews: AccountPlaceReview[] = await AccountPlaceReviewModel.find({}).exec();
+    const accountPlaceReviews: VisitReview[] = await VisitReviewModel.find({}).exec();
     response.status(200).json({ accountPlaceReviews });
     return;
   } catch (error) {
@@ -56,7 +56,7 @@ export const getAccountPlaceReviews = async (request: Request, response: Respons
 
 export const getUserPlaceSummaries = async (request: Request, response: Response) => {
   try {
-    const userPlaceSummaries: UserPlaceSummary[] = await UserPlaceSummaryModel.find({}).exec();
+    const userPlaceSummaries: RestaurantReview[] = await UserPlaceSummaryModel.find({}).exec();
     response.status(200).json({ userPlaceSummaries });
     return;
   } catch (error) {

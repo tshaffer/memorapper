@@ -1,9 +1,9 @@
-import { GooglePlace, FilterResultsParams, AccountPlaceReview, SearchResponse } from "../types";
+import { GooglePlace, FilterResultsParams, VisitReview, SearchResponse } from "../types";
 
 export const filterResults = async (
   filter: FilterResultsParams,
   places: GooglePlace[],
-  reviews: AccountPlaceReview[],
+  reviews: VisitReview[],
   mapLocation: google.maps.LatLngLiteral,
 ): Promise<SearchResponse> => {
   const { distanceAwayFilter, openNowFilter }: FilterResultsParams = filter;

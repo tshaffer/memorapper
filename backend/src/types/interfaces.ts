@@ -1,40 +1,41 @@
 import { IMongoPlace } from "../models";
-import { IAccountPlaceReview } from "../models/AccountPlaceReview";
+import { IVisitReview } from "../models/VisitReview";
 import { ItemReview } from "./entities";
 import { SearchDistanceFilter } from "./enums";
 import { GooglePlace } from "./googlePlace";
-export interface Account {
-  accountId: string; // unique key
-  accountName: string;
+
+export interface DiningGroup {
+  diningGroupId: string; // unique key
+  diningGroupName: string;
 }
 
-export interface AccountUser {
-  accountUserId: string; // unique key
-  accountId: string; // Foreign key to Account
-  userName: string;
+export interface Diner {
+  dinerId: string; // unique key
+  diningGroupId: string; // Foreign key to Account
+  dinerName: string;
 }
 
-export interface AccountUserInput {
-  accountUserInputId: string; // unique key
-  accountUserId: string; // Foreign key to AccountUser
+export interface DinerRestaurantReview {
+  dinerRestaurantReviewId: string; // unique key
+  dinerId: string; // Foreign key to AccountUser
   rating: number;
   comments: string;
 }
 
-export interface AccountUserInputById {
-  accountUserId: string; // Foreign key to AccountUser
-  accountUserInputId: string; // Foreign key to AccountUserInput
+export interface DinerRestaurantReview {
+  dinerId: string; // Foreign key to AccountUser
+  dinerRestaurantReviewId: string; // Foreign key to AccountUserInput
 }
 
-export interface UserPlaceSummary {
-  userPlaceSummaryId: string; // unique key
-  accountId: string; // Foreign key to Account
+export interface RestaurantReview {
+  restaurantReviewId: string; // unique key
+  diningGroupId: string; // Foreign key to Account
   placeId: string; // Foreign key to Place
-  accountUserInputs: AccountUserInputById[];
+  accountUserInputs: DinerRestaurantReview[];
 }
 
-export interface AccountPlaceReview {
-  accountId: string;
+export interface VisitReview {
+  diningGroupId: string;
   placeId: string;
   dateOfVisit: string;
   reviewText: string;
@@ -54,7 +55,7 @@ export interface SubmitReviewBody {
   _id?: string;
   accountId: string;
   place: GooglePlace;
-  accountUserInputs: AccountUserInput[];
+  accountUserInputs: DinerRestaurantReview[];
   dateOfVisit: string;
   reviewText: string;
   itemReviews: ItemReview[];
@@ -68,12 +69,12 @@ export interface FilterResultsParams {
 
 export interface SearchResponse {
   places: GooglePlace[];
-  reviews: AccountPlaceReview[];
+  reviews: VisitReview[];
 }
 
 export interface QueryResponse {
   places: IMongoPlace[];
-  reviews: IAccountPlaceReview[];
+  reviews: IVisitReview[];
 }
 
 export interface ChatResponse {

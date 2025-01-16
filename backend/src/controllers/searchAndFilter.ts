@@ -4,7 +4,7 @@ import MongoPlaceModel from "../models/MongoPlace";
 import { GooglePlace, ParsedQuery, SearchQuery, FilterResultsParams, SearchResponse, QueryResponse, StructuredQueryParams } from "../types";
 import { convertMongoPlacesToGooglePlaces } from "../utilities";
 import { buildStructuredQueryParamsFromParsedQuery, newPerformHybridQuery, newPerformNaturalLanguageQuery, parseQueryWithChatGPT, performNewStructuredQuery } from './naturalLanguageQuery';
-import AccountPlaceReviewModel, { IAccountPlaceReview } from '../models/AccountPlaceReview';
+import VisitReviewModel, { IVisitReview } from '../models/VisitReview';
 import { filterResults } from './filterResults';
 
 export const searchAndFilterHandler = async (
@@ -19,12 +19,12 @@ export const searchAndFilterHandler = async (
   try {
 
     let nlPlaces: IMongoPlace[] = [];
-    let nlReviews: IAccountPlaceReview[] = [];
+    let nlReviews: IVisitReview[] = [];
 
     if (!query) {
 
       nlPlaces = await MongoPlaceModel.find({});
-      nlReviews = await AccountPlaceReviewModel.find({});
+      nlReviews = await VisitReviewModel.find({});
 
     } else {
 
@@ -40,7 +40,7 @@ export const searchAndFilterHandler = async (
         naturalLanguageResponse = await performNewStructuredQuery(structuredQueryParams);
       } else if (queryType === 'full-text') {
         const places = await MongoPlaceModel.find({});
-        const reviews = await AccountPlaceReviewModel.find({});
+        const reviews = await VisitReviewModel.find({});
         naturalLanguageResponse = await newPerformNaturalLanguageQuery(
           query,
           places,

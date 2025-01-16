@@ -1,7 +1,7 @@
 import getOpenAIClient from '../services/openai';
 import MongoPlaceModel, { IMongoPlace } from '../models/MongoPlace';
 import { QueryResponse, ParsedQuery, StructuredQueryParams } from '../types';
-import AccountPlaceReview, { IAccountPlaceReview } from '../models/AccountPlaceReview';
+import AccountPlaceReview, { IVisitReview } from '../models/VisitReview';
 
 export const buildStructuredQueryParamsFromParsedQuery = (parsedQuery: ParsedQuery): StructuredQueryParams => {
   const { queryParameters } = parsedQuery;
@@ -121,7 +121,7 @@ export const performNewStructuredQuery = async (queryParams: StructuredQueryPara
     }
 
     // Fetch reviews matching reviewQuery
-    let reviews: IAccountPlaceReview[] = await AccountPlaceReview.find(reviewQuery);
+    let reviews: IVisitReview[] = await AccountPlaceReview.find(reviewQuery);
 
     // Step 5: Extract unique place IDs from the filtered reviews
     const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.placeId)));
@@ -173,7 +173,7 @@ export const performNewStructuredQuery = async (queryParams: StructuredQueryPara
 export const newPerformNaturalLanguageQuery = async (
   query: string,
   places: IMongoPlace[],
-  reviews: IAccountPlaceReview[]
+  reviews: IVisitReview[]
 ): Promise<QueryResponse> => {
   console.log("newPerformNaturalLanguageQuery:", query);
 
@@ -284,7 +284,7 @@ export const newPerformHybridQuery = async (
     }
 
     // Fetch structured reviews
-    let reviews: IAccountPlaceReview[] = await AccountPlaceReview.find(reviewQuery);
+    let reviews: IVisitReview[] = await AccountPlaceReview.find(reviewQuery);
 
     // Extract unique place IDs from the filtered reviews
     const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.placeId)));
