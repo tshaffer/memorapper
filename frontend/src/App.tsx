@@ -15,6 +15,8 @@ import { useUserContext } from './contexts/UserContext';
 import { DiningGroup, DistanceAwayFilterValues, Settings, } from './types';
 import SettingsDialog from './components/SettingsDialog';
 import DesiredRestaurantForm from './pages/desiredRestaurants/DesiredRestaurantForm';
+import NewRestaurants from './pages/newRestaurants/NewRestaurants';
+
 import Map from './pages/maps/Map';
 
 // soft orange: #FFA07A
@@ -134,6 +136,7 @@ const App: React.FC = () => {
         <Route path="/map/:_id" element={<Map />} />
         <Route path="/write-review" element={<WriteReviewPage />} />
         <Route path="/write-review/:_id" element={<WriteReviewPage />} />
+        <Route path="/new-restaurants" element={<NewRestaurants />} />
         <Route path="/add-place" element={<DesiredRestaurantForm />} />
         <Route path="/add-place/:_id" element={<DesiredRestaurantForm />} />
       </Routes>
@@ -188,11 +191,18 @@ const App: React.FC = () => {
                   Write Review
                 </Button>
                 <Button
+                  style={isActive('/new-restaurants') ? activeButtonStyle : { color: 'white' }}
+                  component={Link}
+                  to="/new-restaurants"
+                >
+                  New Restaurants
+                </Button>
+                <Button
                   style={isActive('/add-place') ? activeButtonStyle : { color: 'white' }}
                   component={Link}
                   to="/add-place"
                 >
-                  Add Place
+                  Add Restaurant
                 </Button>
               </>
             )}

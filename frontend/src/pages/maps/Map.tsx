@@ -11,7 +11,8 @@ import {
   FilterResultsParams,
   VisitReview,
   ExtendedGooglePlace,
-  SearchQuery
+  SearchQuery,
+  DesiredRestaurant
 } from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
 import PulsingDots from '../../components/PulsingDots';
@@ -30,8 +31,7 @@ const MapPage: React.FC = () => {
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [places, setPlaces] = useState<GooglePlace[]>([]);
   const [filteredPlaces, setFilteredPlaces] = useState<GooglePlace[]>([]);
-  const [unvisitedPlaces, setUnvisitedPlaces] = useState<GooglePlace[]>([]);
-  const [unvisitedPlacesToVisit, setUnvisitedPlacesToVisit] = useState<UnvisitedPlace[]>([]);
+  const [newRestaurants, setNewRestaurants] = useState<DesiredRestaurant[]>([]);
 
   const [reviews, setReviews] = useState<VisitReview[]>([]);
 
@@ -81,11 +81,11 @@ const MapPage: React.FC = () => {
       return data.googlePlaces;
     };
 
-    const fetchUnvisitedPlaces = async (): Promise<GooglePlace[]> => {
+    const fetchNewRestaurants = async (): Promise<DesiredRestaurant[]> => {
       const response = await fetch('/api/desiredRestaurants');
       const data = await response.json();
-      setUnvisitedPlaces(data.googlePlaces);
-      return data.googlePlaces;
+      setNewRestaurants(data.desiredRestaurants);
+      return data.desiredRestaurants;
     };
 
     const fetchReviews = async (): Promise<VisitReview[]> => {
@@ -102,13 +102,8 @@ const MapPage: React.FC = () => {
       await fetchReviews();
     };
 
-    const fetchUnvisitedPlacesFromBackend = async () => {
-      const unvisitedPlaces = await fetchUnvisitedPlaces();
-      setUnvisitedPlaces(unvisitedPlaces);
-    }
-
     fetchData();
-    fetchUnvisitedPlacesFromBackend();
+    fetchNewRestaurants();
 
   }, [_id]);
 
@@ -139,18 +134,18 @@ const MapPage: React.FC = () => {
 
   const getExtendedGooglePlaceToVisit = (place: GooglePlace): ExtendedGooglePlaceToVisit => {
     const googlePlaceId = place.googlePlaceId;
-    const unvisitedPlace: UnvisitedPlace | undefined = unvisitedPlacesToVisit.find((unvisitedPlaceToVisit) => unvisitedPlaceToVisit.place!.googlePlaceId === googlePlaceId);
+    const unvisitedPlace: DesiredRestaurant | undefined = newRestaurants.find((unvisitedPlaceToVisit) => unvisitedPlaceToVisit.googlePlace!.googlePlaceId === googlePlaceId);
     return {
       ...place,
       comments: unvisitedPlace?.comments || '',
-      rating: unvisitedPlace?.rating || 0,
+      rating: unvisitedPlace?.interestLevel || 0,
     };
   }
 
   const getExtendedGooglePlacesToVisit = (): ExtendedGooglePlaceToVisit[] => {
     const extendedGooglePlacesToVisit: ExtendedGooglePlaceToVisit[] = [];
-    for (const unvisitedPlace of unvisitedPlaces) {
-      const extendedGooglePlaceToVisit: ExtendedGooglePlaceToVisit = getExtendedGooglePlaceToVisit(unvisitedPlace);
+    for (const unvisitedPlace of newRestaurants) {
+      const extendedGooglePlaceToVisit: ExtendedGooglePlaceToVisit = getExtendedGooglePlaceToVisit(unvisitedPlace.googlePlace!);
       extendedGooglePlacesToVisit.push(extendedGooglePlaceToVisit);
     }
     return extendedGooglePlacesToVisit;
