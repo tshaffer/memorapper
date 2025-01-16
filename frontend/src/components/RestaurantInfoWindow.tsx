@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import directionsIcon from '@iconify/icons-mdi/directions';
-import { Account, AccountPlaceReview, AccountUser, AccountUserInput, AccountUserInterfaceRef, NewExtendedGooglePlace, UserPlaceSummary } from '../types';
+import { Account, AccountPlaceReview, AccountUser, AccountUserInput, AccountUserInterfaceRef, ExtendedGooglePlace, UserPlaceSummary } from '../types';
 import { InfoWindow } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace, restaurantTypeLabelFromRestaurantType } from '../utilities';
 import '../App.css';
@@ -10,7 +10,7 @@ import { Typography, useMediaQuery } from '@mui/material';
 import Rating from '@mui/material/Rating';
 
 interface RestaurantInfoWindowProps {
-  location: NewExtendedGooglePlace;
+  location: ExtendedGooglePlace;
   onClose: () => void;
 }
 

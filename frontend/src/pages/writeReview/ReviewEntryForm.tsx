@@ -11,16 +11,16 @@ import {
   AccountUser,
   AccountUserInput,
   RestaurantType,
-  NewReviewData,
+  ReviewData,
 } from '../../types';
 import PulsingDots from '../../components/PulsingDots';
 import React from 'react';
 import { useUserContext } from '../../contexts/UserContext';
 
 interface ReviewEntryFormProps {
-  reviewData: NewReviewData;
-  setReviewData: React.Dispatch<React.SetStateAction<NewReviewData>>;
-  onSubmitPreview: (formData: Omit<NewReviewData, 'chatHistory'>) => void;
+  reviewData: ReviewData;
+  setReviewData: React.Dispatch<React.SetStateAction<ReviewData>>;
+  onSubmitPreview: (formData: Omit<ReviewData, 'chatHistory'>) => void;
   onReceivedPreviewResponse: () => any;
 }
 
@@ -37,7 +37,7 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (field: keyof NewReviewData, value: any) => {
+  const handleChange = (field: keyof ReviewData, value: any) => {
     setReviewData((prev) => ({ ...prev, [field]: value }));
   };
 

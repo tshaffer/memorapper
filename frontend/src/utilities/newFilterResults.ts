@@ -1,11 +1,11 @@
-import { GooglePlace, NewFilterResultsParams } from "../types";
+import { GooglePlace, FilterResultsParams } from "../types";
 
 export const newFilterResults = (
-  filter: NewFilterResultsParams,
+  filter: FilterResultsParams,
   places: GooglePlace[],
   mapLocation: google.maps.LatLngLiteral,
 ): GooglePlace[] => {
-  const { distanceAwayFilter, openNowFilter }: NewFilterResultsParams = filter;
+  const { distanceAwayFilter, openNowFilter }: FilterResultsParams = filter;
 
   const filteredPlaces: GooglePlace[] = places.filter((place: GooglePlace) => {
     if (!place.geometry || !place.geometry.location) return false;

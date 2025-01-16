@@ -1,15 +1,15 @@
 import { Box, Button, TextField, Typography, useMediaQuery } from '@mui/material';
 import '../../styles/multiPanelStyles.css';
 import '../../styles/chatStyles.css';
-import { ItemReview, NewChatMessage, NewChatResponse, NewReviewData } from '../../types';
+import { ItemReview, ChatMessage, ChatResponse, ReviewData } from '../../types';
 import { useState } from 'react';
 import { formatDateToMMDDYYYY } from '../../utilities';
 import PulsingDots from '../../components/PulsingDots';
 
 interface ChatTabProps {
-  reviewData: NewReviewData;
+  reviewData: ReviewData;
   onSendChatMessage: (message: string) => void;
-  setNewReviewData: React.Dispatch<React.SetStateAction<NewReviewData>>;
+  setNewReviewData: React.Dispatch<React.SetStateAction<ReviewData>>;
 }
 
 const ChatTab: React.FC<ChatTabProps> = (props: ChatTabProps) => {
@@ -67,7 +67,7 @@ const ChatTab: React.FC<ChatTabProps> = (props: ChatTabProps) => {
     }
   }
 
-  const renderAIResponse = (chatResponse: NewChatResponse): JSX.Element => {
+  const renderAIResponse = (chatResponse: ChatResponse): JSX.Element => {
     const getReturnString = () => {
       return 'Not specified';
     }
@@ -87,7 +87,7 @@ const ChatTab: React.FC<ChatTabProps> = (props: ChatTabProps) => {
     )
   };
 
-  const renderChatQuestionAndResponse = (chatMessage: NewChatMessage, index: number): JSX.Element => {
+  const renderChatQuestionAndResponse = (chatMessage: ChatMessage, index: number): JSX.Element => {
     console.log('renderChatQuestionAndResponse::chatMessage:', chatMessage, 'index:', index);
     return (
       <Box
@@ -100,7 +100,7 @@ const ChatTab: React.FC<ChatTabProps> = (props: ChatTabProps) => {
         {typeof chatMessage.message === 'string' ? (
           renderChatQuestion(chatMessage.message)
         ) : (
-          renderAIResponse(chatMessage.message as NewChatResponse)
+          renderAIResponse(chatMessage.message as ChatResponse)
         )}
       </Box>
 

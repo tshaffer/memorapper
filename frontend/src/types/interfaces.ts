@@ -45,11 +45,11 @@ export interface ChatGPTOutput {
   itemReviews: ItemReview[];
 }
 
-export interface NewPreviewResponse {
+export interface PreviewResponse {
   chatGPTOutput: ChatGPTOutput;
 }
 
-export interface NewSubmitReviewBody {
+export interface SubmitReviewBody {
   _id?: string;
   accountId: string;
   place: GooglePlace;
@@ -60,12 +60,12 @@ export interface NewSubmitReviewBody {
   sessionId: string;
 }
 
-export interface NewFilterResultsParams {
+export interface FilterResultsParams {
   distanceAwayFilter: DistanceAwayFilterValues;
   openNowFilter: boolean;
 }
 
-export interface NewExtendedGooglePlace extends GooglePlace {
+export interface ExtendedGooglePlace extends GooglePlace {
   reviews: AccountPlaceReview[];
 }
 
@@ -75,18 +75,18 @@ export interface RestaurantVisitInstance {
   itemReviews: ItemReview[];
 }
 
-export interface NewChatResponse {
+export interface ChatResponse {
   reviewText: string;
   itemReviews: ItemReview[];
   updatedReviewText: string;
 }
 
-export type NewChatMessage = {
+export type ChatMessage = {
   role: 'user' | 'ai';
   message: string | ChatGPTOutput;
 };
 
-export interface NewReviewData {
+export interface ReviewData {
   _id: string;
   accountId: string;
   place: GooglePlace | null;
@@ -96,10 +96,10 @@ export interface NewReviewData {
   itemReviews: ItemReview[];
   sessionId: string | null;
   restaurantName: string;
-  chatHistory: NewChatMessage[]; // Chat history
+  chatHistory: ChatMessage[]; // Chat history
 }
 
-export interface NewSearchQuery {
+export interface SearchQuery {
   query: string;
   distanceAway: DistanceAwayQuery;
   isOpenNow: boolean;

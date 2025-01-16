@@ -5,7 +5,7 @@ import PreviewTab from "./PreviewTab";
 import ChatTab from "./ChatTab";
 import NewReviewEntryForm from './ReviewEntryForm';
 import { Box, Button } from "@mui/material";
-import { NewSubmitReviewBody, AccountPlaceReview, ChatGPTOutput, NewChatMessage, GooglePlace, NewPreviewResponse, NewReviewData, PreviewRequestBody, ChatRequestBody, NewChatResponse } from "../../types";
+import { SubmitReviewBody, AccountPlaceReview, ChatGPTOutput, ChatMessage, GooglePlace, PreviewResponse, ReviewData, PreviewRequestBody, ChatRequestBody, ChatResponse } from "../../types";
 import { getFormattedDate } from "../../utilities";
 import { useUserContext } from '../../contexts/UserContext';
 
@@ -25,7 +25,7 @@ const WriteReviewPage = () => {
   //   // review = editableReview.review;
   // }
 
-  const initialNewReviewData: NewReviewData = {
+  const initialNewReviewData: ReviewData = {
     _id: _id ? _id : '',
     accountId: currentAccount!.accountId,
     place,
@@ -39,7 +39,7 @@ const WriteReviewPage = () => {
     accountUserInputs: [],
   };
 
-  const [newReviewData, setNewReviewData] = useState<NewReviewData>(initialNewReviewData);
+  const [newReviewData, setNewReviewData] = useState<ReviewData>(initialNewReviewData);
   const resetNewReviewData = () => setNewReviewData(initialNewReviewData);
 
   const [activeTab, setActiveTab] = useState("form");
@@ -52,7 +52,7 @@ const WriteReviewPage = () => {
     setActiveTab("preview");
   }
 
-  const newHandleSubmitPreview = async (formData: Omit<NewReviewData, 'chatHistory'>) => {
+  const newHandleSubmitPreview = async (formData: Omit<ReviewData, 'chatHistory'>) => {
     console.log('newHandleSubmitPreview:');
     setNewReviewData((prev) => ({ ...prev, ...formData }));
 
@@ -65,15 +65,15 @@ const WriteReviewPage = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(previewBody),
     });
-    const data: NewPreviewResponse = await response.json();
+    const data: PreviewResponse = await response.json();
     console.log('newHandleSubmitPreview data:', data);
 
     const chatGPTOutput: ChatGPTOutput = (data as any).chatGPTOutput;
     console.log('chatGPTOutput:', chatGPTOutput);
 
-    const chatHistory: NewChatMessage[] = newReviewData.chatHistory;
-    const userChatMessage: NewChatMessage = { role: 'user', message: newReviewData.reviewText! };
-    const aiChatMessage: NewChatMessage = { role: 'ai', message: chatGPTOutput };
+    const chatHistory: ChatMessage[] = newReviewData.chatHistory;
+    const userChatMessage: ChatMessage = { role: 'user', message: newReviewData.reviewText! };
+    const aiChatMessage: ChatMessage = { role: 'ai', message: chatGPTOutput };
     chatHistory.push(userChatMessage, aiChatMessage);
 
     setNewReviewData((prev) => ({
@@ -86,7 +86,7 @@ const WriteReviewPage = () => {
   }
 
   const handleSubmitReview = async () => {
-    const body: NewSubmitReviewBody = {
+    const body: SubmitReviewBody = {
       _id: newReviewData._id,
       accountId: newReviewData.accountId,
       place: newReviewData.place!,
@@ -116,7 +116,7 @@ const WriteReviewPage = () => {
       console.error('Error submitting review:', error);
     }
   }
-  
+
   const handleSendChatMessage = async (chatInput: string) => {
     const chatRequestBody: ChatRequestBody = {
       userInput: chatInput,
@@ -128,7 +128,7 @@ const WriteReviewPage = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(chatRequestBody),
     });
-    const chatResponse: NewChatResponse = (await response.json()) as NewChatResponse;
+    const chatResponse: ChatResponse = (await response.json()) as ChatResponse;
     const { updatedReviewText, itemReviews, reviewText } = chatResponse;
 
     const chatGPTOutput: ChatGPTOutput = {

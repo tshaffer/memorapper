@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ExtendedGooglePlaceToVisit, NewExtendedGooglePlace, RestaurantType } from '../types';
+import { ExtendedGooglePlaceToVisit, ExtendedGooglePlace, RestaurantType } from '../types';
 import { AdvancedMarker, APIProvider, Map, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace } from '../utilities';
 import '../App.css';
@@ -53,14 +53,14 @@ const textStyle = (color: string): React.CSSProperties => ({
 
 interface MapWithMarkersProps {
   initialCenter: google.maps.LatLngLiteral;
-  locations: NewExtendedGooglePlace[];
+  locations: ExtendedGooglePlace[];
   locationsToVisit: ExtendedGooglePlaceToVisit[];
   blueDotLocation?: google.maps.LatLngLiteral;
 }
 
 const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, locations, locationsToVisit, blueDotLocation }) => {
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
-  const [selectedLocation, setSelectedLocation] = useState<NewExtendedGooglePlace | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<ExtendedGooglePlace | null>(null);
   const [selectedLocationToVisit, setSelectedLocationToVisit] = useState<ExtendedGooglePlaceToVisit | null>(null);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
 
@@ -87,7 +87,7 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
-// }, [zoom]);
+  // }, [zoom]);
 
 
   useEffect(() => {
@@ -111,7 +111,7 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
     }} />
   );
 
-  const handleMarkerClick = (location: NewExtendedGooglePlace) => {
+  const handleMarkerClick = (location: ExtendedGooglePlace) => {
     setSelectedLocation(location);
     setSelectedLocationToVisit(null);
   };
@@ -146,7 +146,7 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
     return restaurantIcon;
   }
 
-  const renderMarker = (location: NewExtendedGooglePlace, index: number): JSX.Element => (
+  const renderMarker = (location: ExtendedGooglePlace, index: number): JSX.Element => (
     <AdvancedMarker
       key={`location-${index}`}
       position={getLatLngFromPlace(location)}

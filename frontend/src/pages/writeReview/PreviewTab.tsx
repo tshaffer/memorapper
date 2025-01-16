@@ -9,14 +9,14 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { Button, Rating, Typography, useMediaQuery } from '@mui/material';
 import '../../styles/multiPanelStyles.css';
 import '../../styles/previewForm.css';
-import { AccountUser, AccountUserInput, NewReviewData } from '../../types';
+import { AccountUser, AccountUserInput, ReviewData } from '../../types';
 import { formatDateToMMDDYYYY, restaurantTypeLabelFromRestaurantType } from '../../utilities';
 import PulsingDots from '../../components/PulsingDots';
 import { useUserContext } from '../../contexts/UserContext';
 import React from 'react';
 
 interface PreviewTabProps {
-  reviewData: NewReviewData;
+  reviewData: ReviewData;
   onSubmitReview: () => void;
 }
 

@@ -8,10 +8,10 @@ import {
   Filters,
   UnvisitedPlace,
   GooglePlace,
-  NewFilterResultsParams,
+  FilterResultsParams,
   AccountPlaceReview,
-  NewExtendedGooglePlace,
-  NewSearchQuery
+  ExtendedGooglePlace,
+  SearchQuery
 } from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
 import PulsingDots from '../../components/PulsingDots';
@@ -131,7 +131,7 @@ const MapPage: React.FC = () => {
   const getReviewsForPlace = (placeId: string): AccountPlaceReview[] =>
     reviews.filter((review) => review.placeId === placeId);
 
-  const getExtendedGooglePlaces = (inputPlaces: GooglePlace[]): NewExtendedGooglePlace[] =>
+  const getExtendedGooglePlaces = (inputPlaces: GooglePlace[]): ExtendedGooglePlace[] =>
     inputPlaces.map((place) => ({
       ...place,
       reviews: getReviewsForPlace(place.googlePlaceId),
@@ -161,7 +161,7 @@ const MapPage: React.FC = () => {
     setShowFiltersDialog(true);
   };
 
-  const executeSearchAndFilter = async (searchQuery: NewSearchQuery): Promise<void> => {
+  const executeSearchAndFilter = async (searchQuery: SearchQuery): Promise<void> => {
 
     console.log('executeSearchAndFilter:', searchQuery);
 
@@ -189,7 +189,7 @@ const MapPage: React.FC = () => {
 
     const { distanceAwayFilter, isOpenNowFilterEnabled } = filters;
 
-    const filter: NewFilterResultsParams = {
+    const filter: FilterResultsParams = {
       distanceAwayFilter,
       openNowFilter: isOpenNowFilterEnabled,
     };
@@ -210,7 +210,7 @@ const MapPage: React.FC = () => {
 
     setIsLoading(true);
 
-    const searchQuery: NewSearchQuery = {
+    const searchQuery: SearchQuery = {
       query,
       isOpenNow: filters.isOpenNowFilterEnabled,
       distanceAway: {
