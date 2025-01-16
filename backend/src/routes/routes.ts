@@ -13,9 +13,9 @@ import {
   getAccountPlaceReviews,
   getUserPlaceSummaries,
   chatHandler,
+  searchAndFilterHandler,
 } from '../controllers';
 import { reviewHandler } from '../controllers/review';
-import { newSearchAndFilterHandler } from '../controllers/newSearchAndFilter';
 
 const router = Router();
 
@@ -38,6 +38,6 @@ router.get('/userPlaceSummaries', getUserPlaceSummaries);
 router.post('/preview', previewHandler);
 router.post('/review', reviewHandler);
 router.post('/chat', chatHandler);
-router.post('/searchAndFilter', newSearchAndFilterHandler);
+router.post('/searchAndFilter', searchAndFilterHandler);
 
 export default router;

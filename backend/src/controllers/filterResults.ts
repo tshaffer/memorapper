@@ -1,6 +1,6 @@
 import { GooglePlace, NewFilterResultsParams, AccountPlaceReview, NewSearchResponse } from "../types";
 
-export const newFilterResults = async (
+export const filterResults = async (
   filter: NewFilterResultsParams,
   places: GooglePlace[],
   reviews: AccountPlaceReview[],

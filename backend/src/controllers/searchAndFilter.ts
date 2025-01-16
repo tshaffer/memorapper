@@ -5,9 +5,9 @@ import { GooglePlace, ParsedQuery, SearchQuery, NewSearchQuery, NewFilterResults
 import { convertMongoPlacesToGooglePlaces } from "../utilities";
 import { buildStructuredQueryParamsFromParsedQuery, newPerformHybridQuery, newPerformNaturalLanguageQuery, parseQueryWithChatGPT, performNewStructuredQuery } from './naturalLanguageQuery';
 import AccountPlaceReviewModel, { IAccountPlaceReview } from '../models/AccountPlaceReview';
-import { newFilterResults } from './newFilterResults';
+import { filterResults } from './filterResults';
 
-export const newSearchAndFilterHandler = async (
+export const searchAndFilterHandler = async (
   req: Request<{}, {}, {
     searchQuery: SearchQuery,
   }>,
@@ -67,7 +67,7 @@ export const newSearchAndFilterHandler = async (
       openNowFilter: isOpenNow,
     };
     const googlePlaces: GooglePlace[] = convertMongoPlacesToGooglePlaces(nlPlaces);
-    const searchResponse: NewSearchResponse = await (newFilterResults(filterResultsParams, googlePlaces, nlReviews, { lat: distanceAway.lat, lng: distanceAway.lng }));
+    const searchResponse: NewSearchResponse = await (filterResults(filterResultsParams, googlePlaces, nlReviews, { lat: distanceAway.lat, lng: distanceAway.lng }));
 
     res.status(200).json(searchResponse);
 
