@@ -30,32 +30,32 @@ const activeButtonStyle: React.CSSProperties = {
 };
 
 const App: React.FC = () => {
-  const { accounts, currentAccount, setCurrentAccount, settings, setSettings, setFilters, loading, error } = useUserContext();
+  const { diningGroups: diningGroups, currentDiningGroup, setCurrentDiningGroup, settings, setSettings, setFilters, loading, error } = useUserContext();
   const isMobile = useMediaQuery('(max-width:768px)');
   const location = useLocation(); // Track the current route
 
   useEffect(() => {
-    const getCurrentAccount = (): DiningGroup | null => {
-      const storedAccountId: string | null = localStorage.getItem('accountId');
-      if (accounts) {
-        for (const account of accounts) {
-          if (!storedAccountId && account.diningGroupName === 'Anonymous') {
-            return account;
+    const getCurrentDiningGroup = (): DiningGroup | null => {
+      const storedDiningGroupId: string | null = localStorage.getItem('diningGroupId');
+      if (diningGroups) {
+        for (const diningGroup of diningGroups) {
+          if (!storedDiningGroupId && diningGroup.diningGroupName === 'Anonymous') {
+            return diningGroup;
           }
-          if (account.diningGroupId === storedAccountId) {
-            return account;
+          if (diningGroup.diningGroupId === storedDiningGroupId) {
+            return diningGroup;
           }
         }
       }
 
-      const defaultAccount: DiningGroup | null = accounts ? accounts.find((account) => account.diningGroupId === '1') || null : null;
-      if (defaultAccount) {
-        localStorage.setItem('accountId', defaultAccount.diningGroupId);
+      const defaultDiningGroup: DiningGroup | null = diningGroups ? diningGroups.find((diningGroup) => diningGroup.diningGroupId === '1') || null : null;
+      if (defaultDiningGroup) {
+        localStorage.setItem('diningGroupId', defaultDiningGroup.diningGroupId);
       } else {
         // SHOULDN'T NEED TO DO THIS!!
-        localStorage.setItem('accountId', '1');
+        localStorage.setItem('diningGroupId', '1');
       }
-      return defaultAccount;
+      return defaultDiningGroup;
     }
 
     const getAppSettings = (): Settings => {
@@ -74,31 +74,31 @@ const App: React.FC = () => {
       }
     }
 
-    const currentAccount: DiningGroup | null = getCurrentAccount();
-    setCurrentAccount(currentAccount);
+    const currentDiningGroup: DiningGroup | null = getCurrentDiningGroup();
+    setCurrentDiningGroup(currentDiningGroup);
 
     const appSettings: Settings = getAppSettings();
     setSettings(appSettings);
     setFilters(appSettings.filters);
 
-  }, [accounts]);
+  }, [diningGroups]);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [settingsAnchorEl, setSettingsAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleOpenAccountDropdown = (event: React.MouseEvent<HTMLElement>) => {
+  const handleOpenDiningGroupDropdown = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleCloseAccountDropdown = () => {
+  const handleCloseDiningGroupDropdown = () => {
     setAnchorEl(null);
   };
 
-  const handleSignIn = (accountId: string) => {
-    const selectedAccount = accounts.find((account) => account.diningGroupId === accountId) || null;
-    setCurrentAccount(selectedAccount);
-    localStorage.setItem('accountId', accountId);
-    handleCloseAccountDropdown();
+  const handleSignIn = (diningGroupId: string) => {
+    const selectedDiningGroup = diningGroups.find((diningGroup) => diningGroup.diningGroupId === diningGroupId) || null;
+    setCurrentDiningGroup(selectedDiningGroup);
+    localStorage.setItem('diningGroupId', diningGroupId);
+    handleCloseDiningGroupDropdown();
   };
 
   const handleOpenSettingsDialog = (event: React.MouseEvent<HTMLElement>) => {
@@ -124,8 +124,8 @@ const App: React.FC = () => {
     content = <p>Loading users...</p>;
   } else if (error) {
     content = <p>Error: {error}</p>;
-  } else if (!accounts || accounts.length === 0) {
-    content = <p>Error: no accounts found</p>;
+  } else if (!diningGroups || diningGroups.length === 0) {
+    content = <p>Error: no diningGroups found</p>;
   } else {
     content = (
       <Routes>
@@ -196,7 +196,7 @@ const App: React.FC = () => {
                 </Button>
               </>
             )}
-            <IconButton onClick={handleOpenAccountDropdown} color="inherit">
+            <IconButton onClick={handleOpenDiningGroupDropdown} color="inherit">
               <AccountCircleIcon />
             </IconButton>
             <IconButton onClick={handleOpenSettingsDialog} color="inherit">
@@ -208,11 +208,11 @@ const App: React.FC = () => {
         <Box id="mainAppContentArea" sx={{ flexGrow: 1, overflow: 'hidden' }}>
           {content}
         </Box>
-        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseAccountDropdown}>
-          <MenuItem disabled>{currentAccount ? `Signed in as: ${currentAccount.diningGroupName}` : 'Not signed in'}</MenuItem>
-          {accounts.map((account) => (
-            <MenuItem key={account.diningGroupId} onClick={() => handleSignIn(account.diningGroupId)}>
-              {account.diningGroupName}
+        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseDiningGroupDropdown}>
+          <MenuItem disabled>{currentDiningGroup ? `Signed in as: ${currentDiningGroup.diningGroupName}` : 'Not signed in'}</MenuItem>
+          {diningGroups.map((diningGroup) => (
+            <MenuItem key={diningGroup.diningGroupId} onClick={() => handleSignIn(diningGroup.diningGroupId)}>
+              {diningGroup.diningGroupName}
             </MenuItem>
           ))}
         </Menu>

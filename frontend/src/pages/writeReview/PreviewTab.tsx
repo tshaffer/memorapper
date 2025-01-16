@@ -22,7 +22,7 @@ interface PreviewTabProps {
 
 const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
 
-  const { currentAccount, } = useUserContext();
+  const { currentDiningGroup } = useUserContext();
 
   const { reviewData, onSubmitReview } = props;
 
@@ -30,7 +30,7 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
 
   const { place, dateOfVisit, reviewText, itemReviews } = reviewData;
 
-  const [accountUsers, setAccountUsers] = useState<Diner[]>([]);
+  const [diners, setDiners] = useState<Diner[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
@@ -38,29 +38,29 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
 
   React.useEffect(() => {
 
-    const fetchAccountUsers = async (): Promise<Diner[]> => {
-      const response = await fetch('/api/accountUsers');
+    const fetchDiners = async (): Promise<Diner[]> => {
+      const response = await fetch('/api/diners');
       const data = await response.json();
-      const allAccountUsers: Diner[] = data.accountUsers;
-      const accountUsersForCurrentAccount: Diner[] = allAccountUsers.filter((accountUser) => accountUser.diningGroupId === currentAccount?.diningGroupId);
-      return accountUsersForCurrentAccount;
+      const allDiners: Diner[] = data.diners;
+      const dinersForCurrentDiningGroup: Diner[] = allDiners.filter((diner) => diner.diningGroupId === currentDiningGroup?.diningGroupId);
+      return dinersForCurrentDiningGroup;
     }
 
     const fetchData = async () => {
-      const accountUsers = await fetchAccountUsers();
-      setAccountUsers(accountUsers);
+      const diners = await fetchDiners();
+      setDiners(diners);
     };
 
     fetchData();
 
   }, []);
 
-  const getAccountUserInput = (accountUserId: string): DinerRestaurantReview | null => {
+  const getDinerInput = (dinerId: string): DinerRestaurantReview | null => {
     if (!reviewData || !reviewData.dinerRestaurantReviews) return null;
 
-    for (const accountUserInput of reviewData.dinerRestaurantReviews) {
-      if (accountUserInput.dinerId === accountUserId) {
-        return accountUserInput;
+    for (const dinerRestaurantReview of reviewData.dinerRestaurantReviews) {
+      if (dinerRestaurantReview.dinerId === dinerId) {
+        return dinerRestaurantReview;
       }
     }
     return null;
@@ -107,23 +107,23 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
       <div className="ratings-and-comments-preview">
         <fieldset className="ratings-comments-section compact">
           <legend>Ratings and Comments</legend>
-          {accountUsers.map((accountUser) => {
-            const input: DinerRestaurantReview = getAccountUserInput(accountUser.dinerId) || {
+          {diners.map((diner) => {
+            const input: DinerRestaurantReview = getDinerInput(diner.dinerId) || {
               dinerRestaurantReviewId: uuidv4(),
-              dinerId: accountUser.dinerId,
+              dinerId: diner.dinerId,
               rating: 0,
               comments: '',
             };
             return (
-              <div key={accountUser.dinerId} className="contributor-section compact">
+              <div key={diner.dinerId} className="contributor-section compact">
                 <div className="contributor-header compact">
-                  <h5>{accountUser.dinerName}</h5>
+                  <h5>{diner.dinerName}</h5>
                 </div>
                 <div className="contributor-rating compact">
-                  <label htmlFor={`rating-${accountUser.dinerId}`}>Rating</label>
+                  <label htmlFor={`rating-${diner.dinerId}`}>Rating</label>
                   <Rating
-                    id={`rating-${accountUser.dinerId}`}
-                    name={`rating-${accountUser.dinerId}`}
+                    id={`rating-${diner.dinerId}`}
+                    name={`rating-${diner.dinerId}`}
                     value={input.rating}
                     max={5}
                   />

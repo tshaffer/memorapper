@@ -89,10 +89,10 @@ const MapPage: React.FC = () => {
     };
 
     const fetchReviews = async (): Promise<VisitReview[]> => {
-      const response = await fetch('/api/accountPlaceReviews');
+      const response = await fetch('/api/visitReviews');
       const data = await response.json();
-      setReviews(data.accountPlaceReviews);
-      return data.accountPlaceReview;
+      setReviews(data.visitReviews);
+      return data.visitReviews;
     };
 
     const fetchData = async () => {

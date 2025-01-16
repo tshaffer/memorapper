@@ -20,11 +20,11 @@ const RestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location, o
   const navigate = useNavigate();
 
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
-  const [accounts, setAccounts] = useState<DiningGroup[]>([]);
-  const [accountUsers, setAccountUsers] = useState<Diner[]>([]);
-  const [userPlaceSummaries, setUserPlaceSummaries] = useState<RestaurantReview[]>([]);
-  const [accountUserInputs, setAccountUserInputs] = useState<DinerRestaurantReview[]>([]);
-  const [accountPlaceReviews, setAccountPlaceReviews] = useState<VisitReview[]>([]);
+  const [diningGroups, setDiningGroups] = useState<DiningGroup[]>([]);
+  const [diners, setDiners] = useState<Diner[]>([]);
+  const [restaurantReviews, setRestaurantReviews] = useState<RestaurantReview[]>([]);
+  const [dinerRestaurantReviews, setDinerRestaurantReviews] = useState<DinerRestaurantReview[]>([]);
+  const [visitReviews, setVisitReviews] = useState<VisitReview[]>([]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -51,59 +51,59 @@ const RestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location, o
 
     console.log('reviews:', reviews);
 
-    const fetchAccounts = async (): Promise<DiningGroup[]> => {
-      const response = await fetch('/api/accounts');
+    const fetchDiningGroups = async (): Promise<DiningGroup[]> => {
+      const response = await fetch('/api/diningGroups');
       const data = await response.json();
-      setAccounts(data.accounts);
-      return data.accounts;
+      setDiningGroups(data.diningGroups);
+      return data.diningGroups;
     }
 
-    const fetchAccountUsers = async (): Promise<Diner[]> => {
-      const response = await fetch('/api/accountUsers');
+    const fetchDiners = async (): Promise<Diner[]> => {
+      const response = await fetch('/api/diners');
       const data = await response.json();
-      setAccountUsers(data.accountUsers);
-      return data.accountUsers;
+      setDiners(data.diners);
+      return data.diners;
     }
 
-    const fetchUserPlaceSummaries = async (): Promise<RestaurantReview[]> => {
-      const response = await fetch('/api/userPlaceSummaries');
+    const fetchRestaurantReviews = async (): Promise<RestaurantReview[]> => {
+      const response = await fetch('/api/restaurantReviews');
       const data = await response.json();
-      setUserPlaceSummaries(data.userPlaceSummaries);
-      return data.userPlaceSummaries;
+      setRestaurantReviews(data.restaurantReviews);
+      return data.restaurantReviews;
     };
 
-    const fetchAccountUserInputs = async (): Promise<DinerRestaurantReview[]> => {
-      const response = await fetch('/api/accountUserInputs');
+    const fetchDinerRestaurantReviews = async (): Promise<DinerRestaurantReview[]> => {
+      const response = await fetch('/api/dinerRestaurantReviews');
       const data = await response.json();
-      setAccountUserInputs(data.accountUserInputs);
-      return data.accountUserInputs;
+      setDinerRestaurantReviews(data.dinerRestaurantReviews);
+      return data.dinerRestaurantReviews;
     };
 
-    const fetchAccountPlaceReviews = async (): Promise<VisitReview[]> => {
-      const response = await fetch('/api/accountPlaceReviews');
+    const fetchVisitReviews = async (): Promise<VisitReview[]> => {
+      const response = await fetch('/api/visitReviews');
       const data = await response.json();
-      setAccountPlaceReviews(data.accountPlaceReviews);
-      return data.accountPlaceReviews;
+      setVisitReviews(data.visitReviews);
+      return data.visitReviews;
     };
 
     const fetchData = async () => {
-      await fetchAccounts();
-      await fetchAccountUsers();
-      await fetchUserPlaceSummaries();
-      await fetchAccountUserInputs();
-      await fetchAccountPlaceReviews();
+      await fetchDiningGroups();
+      await fetchDiners();
+      await fetchRestaurantReviews();
+      await fetchDinerRestaurantReviews();
+      await fetchVisitReviews();
     };
 
     fetchData();
   }, []);
 
-  const getUserPlaceSummary = (): RestaurantReview | null => {
-    for (const userPlaceSummary of userPlaceSummaries) {
-      if (userPlaceSummary.placeId === location.googlePlaceId) {
-        const accountId = userPlaceSummary.diningGroupId;
-        for (const account of accounts) {
-          if (account.diningGroupId === accountId) {
-            return userPlaceSummary;
+  const getRestaurantReview = (): RestaurantReview | null => {
+    for (const restaurantReview of restaurantReviews) {
+      if (restaurantReview.placeId === location.googlePlaceId) {
+        const diningGroupId = restaurantReview.diningGroupId;
+        for (const diningGroup of diningGroups) {
+          if (diningGroup.diningGroupId === diningGroupId) {
+            return restaurantReview;
           }
         }
       }
@@ -126,34 +126,34 @@ const RestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location, o
     // navigate(`/restaurantDetails`, { state: { place: location, reviews } });
   }
 
-  const renderAccountUserInput = (accountUserInputRef: DinerRestaurantReviewRef): JSX.Element | null => {
-    const accountUserId = accountUserInputRef.dinerId;
-    let matchedUserAccount: Diner | null = null;
-    for (const account of accountUsers) {
-      if (account.dinerId === accountUserId) {
-        matchedUserAccount = account;
+  const renderDinerRestaurantReview = (dinerReviewInputRef: DinerRestaurantReviewRef): JSX.Element | null => {
+    const dinerId = dinerReviewInputRef.dinerId;
+    let matchedDiner: Diner | null = null;
+    for (const diner of diners) {
+      if (diner.dinerId === dinerId) {
+        matchedDiner = diner;
         break;
       }
     }
-    if (!matchedUserAccount) {
+    if (!matchedDiner) {
       return null;
     }
-    const accountUserInputId = accountUserInputRef.dinerRestaurantReviewId;
-    for (const accountUserInput of accountUserInputs) {
-      if (accountUserInput.dinerRestaurantReviewId === accountUserInputId) {
-        console.log('accountUserInput:');
-        console.log(accountUserInput);
+    const dinerReviewInputId = dinerReviewInputRef.dinerRestaurantReviewId;
+    for (const dinerRestaurantReview of dinerRestaurantReviews) {
+      if (dinerRestaurantReview.dinerRestaurantReviewId === dinerReviewInputId) {
+        console.log('dinerRestaurantReview:');
+        console.log(dinerRestaurantReview);
         return (
           <>
             <div>
-              <label>{matchedUserAccount.dinerName}</label>
+              <label>{matchedDiner.dinerName}</label>
               <Rating
-                value={accountUserInput.rating}
+                value={dinerRestaurantReview.rating}
                 max={5}
                 readOnly
               />
             </div>
-            <Typography variant="body2">{accountUserInput.comments}</Typography>
+            <Typography variant="body2">{dinerRestaurantReview.comments}</Typography>
           </>
         )
       }
@@ -161,24 +161,23 @@ const RestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location, o
     return null;
   }
 
-  const renderUserPlaceSummary = (): JSX.Element[] | null => {
-    const userPlaceSummary = getUserPlaceSummary();
-    if (!userPlaceSummary) {
+  const renderRestaurantReview = (): JSX.Element[] | null => {
+    const restaurantReview = getRestaurantReview();
+    if (!restaurantReview) {
       return null;
     }
-    const accountUserInputRefs: DinerRestaurantReviewRef[] = userPlaceSummary.dinerRestaurantReviews;
-    if (accountUserInputRefs.length === 0) {
+    const dinerRestaurantReviewRefs: DinerRestaurantReviewRef[] = restaurantReview.dinerRestaurantReviews;
+    if (dinerRestaurantReviewRefs.length === 0) {
       return null;
     }
-    console.log('find accountUserInputs for this restaurant, account');
-    const accountUserInputElements: JSX.Element[] = [];
-    for (const accountUserInputRef of accountUserInputRefs) {
-      const accountUserInputElement = renderAccountUserInput(accountUserInputRef);
-      if (accountUserInputElement) {
-        accountUserInputElements.push(accountUserInputElement);
+    const dinerRestaurantReviewElements: JSX.Element[] = [];
+    for (const dinerRestaurantReviewRef of dinerRestaurantReviewRefs) {
+      const dinerRestaurantReviewElement = renderDinerRestaurantReview(dinerRestaurantReviewRef);
+      if (dinerRestaurantReviewElement) {
+        dinerRestaurantReviewElements.push(dinerRestaurantReviewElement);
       }
     }
-    return accountUserInputElements;
+    return dinerRestaurantReviewElements;
   }
 
   return (
@@ -252,7 +251,7 @@ const RestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location, o
         <Typography variant="body2" style={{ margin: '0 0 8px 0' }}>
           {restaurantTypeLabelFromRestaurantType(location.restaurantType)}
         </Typography>
-        {renderUserPlaceSummary()}
+        {renderRestaurantReview()}
       </div>
     </InfoWindow>
   );

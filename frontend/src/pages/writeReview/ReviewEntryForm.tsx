@@ -26,14 +26,13 @@ interface ReviewEntryFormProps {
 
 const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormProps) => {
 
-  const { currentAccount } = useUserContext();
-  // console.log('currentAccount:', currentAccount);
+  const { currentDiningGroup } = useUserContext();
 
   const { reviewData, setReviewData, onSubmitPreview } = props;
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
-  const [accountUsers, setAccountUsers] = useState<Diner[]>([]);
+  const [diners, setDiners] = useState<Diner[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -56,17 +55,17 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
 
   useEffect(() => {
 
-    const fetchAccountUsers = async (): Promise<Diner[]> => {
-      const response = await fetch('/api/accountUsers');
+    const fetchDiners = async (): Promise<Diner[]> => {
+      const response = await fetch('/api/diners');
       const data = await response.json();
-      const allAccountUsers: Diner[] = data.accountUsers;
-      const accountUsersForCurrentAccount: Diner[] = allAccountUsers.filter((accountUser) => accountUser.diningGroupId === currentAccount?.diningGroupId);
-      return accountUsersForCurrentAccount;
+      const allDiners: Diner[] = data.diners;
+      const dinersForCurrentDiningGroup: Diner[] = allDiners.filter((diner) => diner.diningGroupId === currentDiningGroup?.diningGroupId);
+      return dinersForCurrentDiningGroup;
     }
 
     const fetchData = async () => {
-      const accountUsers = await fetchAccountUsers();
-      setAccountUsers(accountUsers);
+      const diners = await fetchDiners();
+      setDiners(diners);
     };
 
     fetchData();
@@ -85,46 +84,41 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
     setReviewData((prev) => ({ ...prev, restaurantName: name }));
   }
 
-  const handleAccountUserInputChange = (
-    accountUserId: string,
+  const handleDinerRestaurantReviewChange = (
+    dinerId: string,
     input: Partial<DinerRestaurantReview>
   ) => {
-    console.log('accountUserId:', accountUserId);
-    console.log('input:', input);
 
-    let matchedAccountUserInput: DinerRestaurantReview | null = null;
-    for (const accountUserInput of reviewData.dinerRestaurantReviews) {
-      if (accountUserInput.dinerId === accountUserId) {
-        matchedAccountUserInput = accountUserInput;
+    let matchedDinerRestaurantReview: DinerRestaurantReview | null = null;
+    for (const dinerRestaurantReview of reviewData.dinerRestaurantReviews) {
+      if (dinerRestaurantReview.dinerId === dinerId) {
+        matchedDinerRestaurantReview = dinerRestaurantReview;
         break;
       }
     }
-    if (!matchedAccountUserInput) {
-      const newAccountUserInput: DinerRestaurantReview = {
+    if (!matchedDinerRestaurantReview) {
+      const newDinerRestaurantReview: DinerRestaurantReview = {
         dinerRestaurantReviewId: uuidv4(),
-        dinerId: accountUserId,
+        dinerId: dinerId,
         rating: input.rating ?? 0,
         comments: input.comments ?? '',
       };
-      const newAccountUserInputs = [...reviewData.dinerRestaurantReviews, newAccountUserInput];
-      console.log('newAccountUserInputs:', newAccountUserInputs);
-      const newReviewData = { ...reviewData, accountUserInputs: newAccountUserInputs };
+      const newDinerRestaurantReviews = [...reviewData.dinerRestaurantReviews, newDinerRestaurantReview];
+      const newReviewData = { ...reviewData, dinerRestaurantReviews: newDinerRestaurantReviews };
       setReviewData(newReviewData);
       return;
     } else {
-      const updatedAccountUserInput = {
-        ...matchedAccountUserInput,
+      const updatedDinerRestaurantReview = {
+        ...matchedDinerRestaurantReview,
         ...input,
       };
-      console.log('updatedAccountUserInput:', updatedAccountUserInput);
-      const newAccountUserInputs = reviewData.dinerRestaurantReviews.map((accountUserInput) => {
-        if (accountUserInput.dinerId === accountUserId) {
-          return updatedAccountUserInput;
+      const newDinerRestaurantReviews = reviewData.dinerRestaurantReviews.map((dinerRestaurantReview) => {
+        if (dinerRestaurantReview.dinerId === dinerId) {
+          return updatedDinerRestaurantReview;
         }
-        return accountUserInput;
+        return dinerRestaurantReview;
       });
-      console.log('newAccountUserInputs:', newAccountUserInputs);
-      const newReviewData = { ...reviewData, accountUserInputs: newAccountUserInputs };
+      const newReviewData = { ...reviewData, dinerRestaurantReviews: newDinerRestaurantReviews };
       setReviewData(newReviewData);
     }
 
@@ -200,12 +194,12 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
     </div>
   );
 
-  const getAccountUserInput = (accountUserId: string): DinerRestaurantReview | null => {
+  const getDinerRestaurantReview = (dinerId: string): DinerRestaurantReview | null => {
     if (!reviewData || !reviewData.dinerRestaurantReviews) return null;
 
-    for (const accountUserInput of reviewData.dinerRestaurantReviews) {
-      if (accountUserInput.dinerId === accountUserId) {
-        return accountUserInput;
+    for (const dinerRestaurantReview of reviewData.dinerRestaurantReviews) {
+      if (dinerRestaurantReview.dinerId === dinerId) {
+        return dinerRestaurantReview;
       }
     }
     return null;
@@ -216,41 +210,41 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
       <div className="ratings-and-comments">
         <fieldset className="ratings-comments-section">
           <legend>Ratings and Comments by Users</legend>
-          {accountUsers.map((accountUser) => {
-            const input: DinerRestaurantReview = getAccountUserInput(accountUser.dinerId) || {
+          {diners.map((diner) => {
+            const input: DinerRestaurantReview = getDinerRestaurantReview(diner.dinerId) || {
               dinerRestaurantReviewId: uuidv4(),
-              dinerId: accountUser.dinerId,
+              dinerId: diner.dinerId,
               rating: 0,
               comments: '',
             };
             return (
-              <div key={accountUser.dinerId} className="contributor-section">
+              <div key={diner.dinerId} className="contributor-section">
                 <div className="contributor-header">
-                  <h4>{accountUser.dinerName}</h4>
+                  <h4>{diner.dinerName}</h4>
                 </div>
                 <div className="contributor-rating">
-                  <label htmlFor={`rating-${accountUser.dinerId}`}>Rating</label>
+                  <label htmlFor={`rating-${diner.dinerId}`}>Rating</label>
                   <Rating
-                    id={`rating-${accountUser.dinerId}`}
-                    name={`rating-${accountUser.dinerId}`}
+                    id={`rating-${diner.dinerId}`}
+                    name={`rating-${diner.dinerId}`}
                     value={input.rating}
                     max={5}
                     onChange={(event, newValue) =>
-                      handleAccountUserInputChange(accountUser.dinerId, { rating: (newValue || 0) })
+                      handleDinerRestaurantReviewChange(diner.dinerId, { rating: (newValue || 0) })
                     }
                   />
                 </div>
                 <div className="contributor-comments">
-                  <label htmlFor={`comments-${accountUser.dinerId}`}>Comments</label>
+                  <label htmlFor={`comments-${diner.dinerId}`}>Comments</label>
                   <TextField
-                    id={`comments-${accountUser.dinerId}`}
-                    name={`comments-${accountUser.dinerId}`}
+                    id={`comments-${diner.dinerId}`}
+                    name={`comments-${diner.dinerId}`}
                     fullWidth
                     multiline
                     rows={3}
                     value={input.comments}
                     onChange={(event) =>
-                      handleAccountUserInputChange(accountUser.dinerId, { comments: event.target.value })
+                      handleDinerRestaurantReviewChange(diner.dinerId, { comments: event.target.value })
                     }
                   />
                 </div>

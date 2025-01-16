@@ -2,9 +2,9 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { DiningGroup, DistanceAwayFilterValues, Filters, Settings } from '../types';
 
 interface UserContextValue {
-  accounts: DiningGroup[];
-  currentAccount: DiningGroup | null;
-  setCurrentAccount: (account: DiningGroup | null) => void;
+  diningGroups: DiningGroup[];
+  currentDiningGroup: DiningGroup | null;
+  setCurrentDiningGroup: (diningGroup: DiningGroup | null) => void;
 
   settings: Settings; // Updated to use the new Settings structure
   setFilters: (filters: Filters) => void;
@@ -16,8 +16,8 @@ interface UserContextValue {
 const UserContext = createContext<UserContextValue | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [accounts, setAccounts] = useState<DiningGroup[]>([]);
-  const [currentAccount, setCurrentAccount] = useState<DiningGroup | null>(null);
+  const [diningGroups, setDiningGroups] = useState<DiningGroup[]>([]);
+  const [currentDiningGroup, setCurrentDiningGroup] = useState<DiningGroup | null>(null);
 
   const [settings, setSettingsState] = useState<Settings>({
     filters: {
@@ -41,15 +41,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchAccounts = async () => {
+    const fetchDiningGroups = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/accounts');
+        const response = await fetch('/api/diningGroups');
         if (!response.ok) {
-          throw new Error('Failed to fetch accounts');
+          throw new Error('Failed to fetch dining groups');
         }
         const data = await response.json();
-        setAccounts(data.accounts as DiningGroup[]);
+        setDiningGroups(data.diningGroups as DiningGroup[]);
         setError(null);
       } catch (err: any) {
         setError(err.message || 'Something went wrong');
@@ -58,16 +58,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     };
 
-    fetchAccounts();
+    fetchDiningGroups();
   }, []);
 
   return (
     <UserContext.Provider
       value={{
-        accounts,
-        currentAccount,
+        diningGroups: diningGroups,
+        currentDiningGroup: currentDiningGroup,
         settings,
-        setCurrentAccount,
+        setCurrentDiningGroup: setCurrentDiningGroup,
         setFilters,
         setSettings,
         loading,

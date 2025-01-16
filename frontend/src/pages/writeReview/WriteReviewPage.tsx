@@ -11,14 +11,14 @@ import { useUserContext } from '../../contexts/UserContext';
 
 const WriteReviewPage = () => {
 
-  const { currentAccount } = useUserContext();
+  const { currentDiningGroup: currentDiningGroup } = useUserContext();
 
   const { _id } = useParams<{ _id: string }>();
   const location = useLocation();
   // const editableReview = location.state as EditableReview | null;
 
   let place: GooglePlace | null = null;
-  let accountPlaceReview: VisitReview | null = null;
+  // let visitReview: VisitReview | null = null;
   // let review: MemoRappReview | null = null;
   // if (editableReview) {
   //   place = editableReview.place;
@@ -27,7 +27,7 @@ const WriteReviewPage = () => {
 
   const initialNewReviewData: ReviewData = {
     _id: _id ? _id : '',
-    diningGroupid: currentAccount!.diningGroupId,
+    diningGroupid: currentDiningGroup!.diningGroupId,
     place,
     // restaurantName: place ? place.name : '',
     restaurantName: '',

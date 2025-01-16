@@ -4,18 +4,18 @@ import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material
 import Button from '@mui/material/Button';
 import { useUserContext } from '../contexts/UserContext';
 
-export interface AccountDialogPropsFromParent {
+export interface DiningGroupDialogPropsFromParent {
   open: boolean;
   onSignout: () => void;
   onClose: () => void;
 }
 
-export interface AccountDialogProps extends AccountDialogPropsFromParent {
+export interface DiningGroupDialogProps extends DiningGroupDialogPropsFromParent {
 }
 
-function AccountDialog(props: AccountDialogProps) {
+function DiningGroupDialog(props: DiningGroupDialogProps) {
 
-  const { currentAccount } = useUserContext();
+  const { currentDiningGroup } = useUserContext();
 
   const { open, onSignout, onClose } = props;
 
@@ -28,17 +28,17 @@ function AccountDialog(props: AccountDialogProps) {
     onClose();
   };
 
-  let currentAccountName: string = 'Nobody';
+  let currentDiningGroupName: string = 'Nobody';
 
-  if (currentAccount) {
-    currentAccountName = currentAccount.diningGroupName;
+  if (currentDiningGroup) {
+    currentDiningGroupName = currentDiningGroup.diningGroupName;
   }
 
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle>Account</DialogTitle>
+      <DialogTitle>Dining Group</DialogTitle>
       <DialogContent>
-        {currentAccountName}
+        {currentDiningGroupName}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleSignout}>Signout</Button>
@@ -47,7 +47,7 @@ function AccountDialog(props: AccountDialogProps) {
   );
 }
 
-export default AccountDialog;
+export default DiningGroupDialog;
 
 
 
