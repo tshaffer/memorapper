@@ -17,9 +17,9 @@ import FiltersDialog from '../../components/FiltersDialog';
 import PulsingDots from '../../components/PulsingDots';
 import { useUserContext } from '../../contexts/UserContext';
 import { newFilterResults } from '../../utilities/newFilterResults';
-import NewMapWithMarkers from '../../components/NewMapWithMarkers';
+import MapWithMarkers from '../../components/MapWIthMarkers';
 
-const NewMapPage: React.FC = () => {
+const MapPage: React.FC = () => {
   const { _id } = useParams<{ _id: string }>();
   const { settings, setFilters } = useUserContext();
 
@@ -253,7 +253,7 @@ const NewMapPage: React.FC = () => {
           width: '100%',
         }}
       >
-        <NewMapWithMarkers
+        <MapWithMarkers
           key={JSON.stringify({ googlePlaces: filteredPlaces, specifiedLocation: mapLocation })} // Forces re-render on prop change
           initialCenter={mapLocation!}
           locations={getExtendedGooglePlaces(filteredPlaces)}
@@ -332,4 +332,4 @@ const NewMapPage: React.FC = () => {
   );
 };
 
-export default NewMapPage;
+export default MapPage;

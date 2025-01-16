@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useLocation, useParams } from "react-router-dom";
 import '../../styles/multiPanelStyles.css';
-import PreviewTab from "./NewPreviewTab";
-import ChatTab from "./NewChatTab";
-import NewReviewEntryForm from './NewReviewEntryForm';
+import PreviewTab from "./PreviewTab";
+import ChatTab from "./ChatTab";
+import NewReviewEntryForm from './ReviewEntryForm';
 import { Box, Button } from "@mui/material";
 import { NewSubmitReviewBody, AccountPlaceReview, ChatGPTOutput, NewChatMessage, GooglePlace, NewPreviewResponse, NewReviewData, PreviewRequestBody, ChatRequestBody, NewChatResponse } from "../../types";
 import { getFormattedDate } from "../../utilities";

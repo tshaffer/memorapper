@@ -14,7 +14,7 @@ interface RestaurantInfoWindowProps {
   onClose: () => void;
 }
 
-const NewRestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location, onClose }) => {
+const RestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location, onClose }) => {
 
   const isMobile = useMediaQuery('(max-width:768px)');
   const navigate = useNavigate();
@@ -258,5 +258,5 @@ const NewRestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location
   );
 }
 
-export default NewRestaurantInfoWindow;
+export default RestaurantInfoWindow;
 

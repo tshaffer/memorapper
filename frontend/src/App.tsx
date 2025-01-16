@@ -10,12 +10,12 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import './App.css';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } from '@mui/material';
 import { Menu, MenuItem } from '@mui/material';
-import NewWriteReviewPage from './pages/newWriteReviews/NewWriteReviewPage';
+import WriteReviewPage from './pages/writeReview/WriteReviewPage';
 import { useUserContext } from './contexts/UserContext';
 import { Account, DistanceAwayFilterValues, Settings, } from './types';
 import SettingsDialog from './components/SettingsDialog';
 import DesiredRestaurantForm from './pages/desiredRestaurants/DesiredRestaurantForm';
-import NewMap from './pages/newMaps/NewMap';
+import Map from './pages/maps/Map';
 
 // soft orange: #FFA07A
 // other possibilities
@@ -129,11 +129,11 @@ const App: React.FC = () => {
   } else {
     content = (
       <Routes>
-        <Route path="/" element={<NewMap />} />
-        <Route path="/new-map" element={<NewMap />} />
-        <Route path="/new-map/:_id" element={<NewMap />} />
-        <Route path="/new-write-review" element={<NewWriteReviewPage />} />
-        <Route path="/new-write-review/:_id" element={<NewWriteReviewPage />} />
+        <Route path="/" element={<Map />} />
+        <Route path="/map" element={<Map />} />
+        <Route path="/map/:_id" element={<Map />} />
+        <Route path="/write-review" element={<WriteReviewPage />} />
+        <Route path="/write-review/:_id" element={<WriteReviewPage />} />
         <Route path="/add-place" element={<DesiredRestaurantForm />} />
         <Route path="/add-place/:_id" element={<DesiredRestaurantForm />} />
       </Routes>
@@ -160,10 +160,10 @@ const App: React.FC = () => {
             {isMobile ? (
               // Render icons for mobile
               <>
-                <IconButton color="inherit" component={Link} to="/new-map">
+                <IconButton color="inherit" component={Link} to="/map">
                   <HomeIcon />
                 </IconButton>
-                <IconButton color="inherit" component={Link} to="/new-write-review">
+                <IconButton color="inherit" component={Link} to="/write-review">
                   <EditIcon />
                 </IconButton>
                 <IconButton color="inherit" component={Link} to="/add-place">
@@ -174,16 +174,16 @@ const App: React.FC = () => {
               // Render labels for desktop
               <>
                 <Button
-                  style={(isActive('/new-map') || isActive('/new-map')) ? activeButtonStyle : { color: 'white' }}
+                  style={(isActive('/map') || isActive('/map')) ? activeButtonStyle : { color: 'white' }}
                   component={Link}
-                  to="/new-map"
+                  to="/map"
                 >
                   Home
                 </Button>
                 <Button
-                  style={isActive('/new-write-review') ? activeButtonStyle : { color: 'white' }}
+                  style={isActive('/write-review') ? activeButtonStyle : { color: 'white' }}
                   component={Link}
-                  to="/new-write-review"
+                  to="/write-review"
                 >
                   Write Review
                 </Button>

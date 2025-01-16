@@ -3,7 +3,7 @@ import { ExtendedGooglePlaceToVisit, NewExtendedGooglePlace, RestaurantType } fr
 import { AdvancedMarker, APIProvider, Map, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace } from '../utilities';
 import '../App.css';
-import NewRestaurantInfoWindow from './NewRestaurantInfoWindow';
+import RestaurantInfoWindow from './RestaurantInfoWindow';
 import RestaurantToVisitInfoWindow from './RestaurantToVisitInfoWindow';
 
 import { Icon, IconifyIcon } from '@iconify/react';
@@ -58,7 +58,7 @@ interface MapWithMarkersProps {
   blueDotLocation?: google.maps.LatLngLiteral;
 }
 
-const NewMapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, locations, locationsToVisit, blueDotLocation }) => {
+const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, locations, locationsToVisit, blueDotLocation }) => {
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<NewExtendedGooglePlace | null>(null);
   const [selectedLocationToVisit, setSelectedLocationToVisit] = useState<ExtendedGooglePlaceToVisit | null>(null);
@@ -204,7 +204,7 @@ const NewMapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, locat
           </AdvancedMarker>
         )}
         {selectedLocation && (
-          <NewRestaurantInfoWindow location={selectedLocation} onClose={handleCloseInfoWindow} />
+          <RestaurantInfoWindow location={selectedLocation} onClose={handleCloseInfoWindow} />
         )}
         {selectedLocationToVisit && (
           <RestaurantToVisitInfoWindow location={selectedLocationToVisit} onClose={handleCloseInfoWindow} />
@@ -214,4 +214,4 @@ const NewMapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, locat
   );
 };
 
-export default NewMapWithMarkers;
+export default MapWithMarkers;
