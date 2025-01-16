@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import MongoPlaceModel, { IMongoPlace } from "../models/MongoPlace";
 import { DesiredRestaurant, GoogleGeometry, GooglePlace, MongoGeometry, MongoPlace, SubmitDesiredRestaurantRequestBody } from "../types";
 import { getMongoGeometryFromGoogleGeometry } from "./googlePlaces";
-import { convertMongoPlacesToGooglePlaces } from '../utilities';
+import { convertMongoPlacesToGooglePlaces, convertMongoPlaceToGooglePlace } from '../utilities';
 import DesiredRestaurantModel, { IDesiredRestaurant } from '../models/DesiredRestaurant';
 
 export const getPlace = async (placeId: any): Promise<IMongoPlace | null> => {
@@ -68,13 +68,22 @@ export function convertMongoGeometryToGoogleGeometry(mongoGeometry: MongoGeometr
 
 export const getDesiredRestaurants = async (request: Request, response: Response, next: any): Promise<void> => {
   try {
-    const mongoPlaces: IMongoPlace[] = await MongoPlaceModel.find({}).exec();
-    const desiredRestaurants: IDesiredRestaurant[] = await DesiredRestaurantModel.find({}).exec();
-    const visitedPlaces: IMongoPlace[] = mongoPlaces.filter(
-      (mongoPlace) => desiredRestaurants.some((visitedRestaurant) => visitedRestaurant.googlePlaceId === mongoPlace.googlePlaceId)
-    );
-    const googlePlaces: GooglePlace[] = convertMongoPlacesToGooglePlaces(visitedPlaces);
-    response.status(200).json({ googlePlaces });
+    const mongoPlaceDocuments: IMongoPlace[] = await MongoPlaceModel.find({}).exec();
+    const desiredRestaurantDocuments: IDesiredRestaurant[] = await DesiredRestaurantModel.find({}).exec();
+
+    const desiredRestaurants: DesiredRestaurant[] = [];
+
+    for (const desiredRestaurantDocument of desiredRestaurantDocuments) {
+      const desiredRestaurantGooglePlaceId = desiredRestaurantDocument.googlePlaceId;
+      for (const mongoPlaceDocument of mongoPlaceDocuments) {
+        if (mongoPlaceDocument.googlePlaceId === desiredRestaurantGooglePlaceId) {
+          const desiredRestaurant = desiredRestaurantDocument.toObject();
+          desiredRestaurant.googlePlace = convertMongoPlaceToGooglePlace(mongoPlaceDocument);
+          desiredRestaurants.push(desiredRestaurant);
+        }
+      }
+    }
+    response.status(200).json({ desiredRestaurants });
   } catch (error) {
     console.error('Error retrieving reviews:', error);
     response.status(500).json({ error: 'An error occurred while retrieving the reviews.' });

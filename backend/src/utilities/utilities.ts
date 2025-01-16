@@ -34,6 +34,15 @@ export function extractItemReviews(responseText: string): ItemReview[] {
   }));
 }
 
+export function convertMongoPlaceToGooglePlace(mongoPlace: IMongoPlace): GooglePlace {
+  const mongoPlaceObject: MongoPlace = mongoPlace.toObject();
+  const googlePlace: GooglePlace = {
+    ...mongoPlaceObject,
+    geometry: convertMongoGeometryToGoogleGeometry(mongoPlace.geometry!)
+  };
+  return googlePlace;
+}
+
 export function convertMongoPlacesToGooglePlaces(mongoPlaces: IMongoPlace[]): GooglePlace[] {
   return mongoPlaces.map((mongoPlace) => {
     const mongoPlaceObject: MongoPlace = mongoPlace.toObject();
