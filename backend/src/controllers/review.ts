@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Request, Response } from 'express';
-import { AccountPlaceReview, AccountUserInput, NewSubmitReviewBody, UserPlaceSummary } from '../types';
+import { AccountPlaceReview, AccountUserInput, SubmitReviewBody, UserPlaceSummary } from '../types';
 import { IMongoPlace } from '../models';
 import { addPlace, getPlace } from './places';
 import AccountPlaceReviewModel, { IAccountPlaceReview } from '../models/AccountPlaceReview';
@@ -8,11 +8,11 @@ import UserPlaceSummaryModel, { IUserPlaceSummary } from '../models/UserPlaceSum
 import AccountUserInputModel, { IAccountUserInput } from '../models/AccountUserInput';
 
 export const reviewHandler = async (
-  req: Request<{}, {}, NewSubmitReviewBody>,
+  req: Request<{}, {}, SubmitReviewBody>,
   res: Response
 ): Promise<any> => {
 
-  const body: NewSubmitReviewBody = req.body;
+  const body: SubmitReviewBody = req.body;
   console.log('Submit review request:', body); // Debugging log
 
   try {
@@ -23,10 +23,10 @@ export const reviewHandler = async (
     return res.status(500).json({ error: 'An error occurred while saving the review.' });
   }
 }
-export const newSubmitReview = async (submitReviewBody: NewSubmitReviewBody): Promise<void> => {
+export const newSubmitReview = async (submitReviewBody: SubmitReviewBody): Promise<void> => {
 
   const { _id, accountId, place, accountUserInputs, dateOfVisit, reviewText, itemReviews, sessionId } = submitReviewBody;
-  
+
   const googlePlaceId = place.googlePlaceId;
 
   let mongoPlace: IMongoPlace | null = await getPlace(googlePlaceId);
@@ -61,7 +61,7 @@ export const newSubmitReview = async (submitReviewBody: NewSubmitReviewBody): Pr
     accountUserInputs
   };
 
-  const newUserPlaceSummary: IUserPlaceSummary | null = await addNewUserPlaceSummary(userPlaceSummary); 
+  const newUserPlaceSummary: IUserPlaceSummary | null = await addNewUserPlaceSummary(userPlaceSummary);
   console.log('newUserPlaceSummary:', newUserPlaceSummary?.toObject());
 
   // Clear conversation history for the session after submission

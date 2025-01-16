@@ -1,6 +1,6 @@
 import getOpenAIClient from '../services/openai';
 import MongoPlaceModel, { IMongoPlace } from '../models/MongoPlace';
-import { NewQueryResponse, ParsedQuery, StructuredQueryParams } from '../types';
+import { QueryResponse, ParsedQuery, StructuredQueryParams } from '../types';
 import AccountPlaceReview, { IAccountPlaceReview } from '../models/AccountPlaceReview';
 
 export const buildStructuredQueryParamsFromParsedQuery = (parsedQuery: ParsedQuery): StructuredQueryParams => {
@@ -81,7 +81,7 @@ export const parseQueryWithChatGPT = async (query: string): Promise<ParsedQuery>
   return JSON.parse(parsedContent) as ParsedQuery;
 };
 
-export const performNewStructuredQuery = async (queryParams: StructuredQueryParams): Promise<NewQueryResponse> => {
+export const performNewStructuredQuery = async (queryParams: StructuredQueryParams): Promise<QueryResponse> => {
   const {
     distanceAwayQuery,
     placeName,
@@ -174,7 +174,7 @@ export const newPerformNaturalLanguageQuery = async (
   query: string,
   places: IMongoPlace[],
   reviews: IAccountPlaceReview[]
-): Promise<NewQueryResponse> => {
+): Promise<QueryResponse> => {
   console.log("newPerformNaturalLanguageQuery:", query);
 
   // Step 1: Prepare data for OpenAI query
@@ -242,7 +242,7 @@ export const newPerformNaturalLanguageQuery = async (
 export const newPerformHybridQuery = async (
   query: string,
   queryParams: StructuredQueryParams
-): Promise<NewQueryResponse> => {
+): Promise<QueryResponse> => {
   const {
     distanceAwayQuery,
     placeName,

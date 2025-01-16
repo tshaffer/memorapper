@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
 import { Request, Response } from 'express';
-import { GooglePlace, GooglePlacesResponse, RestaurantType, ChatGPTOutput, NewSubmitReviewBody } from '../types';
+import { GooglePlace, GooglePlacesResponse, RestaurantType, ChatGPTOutput, SubmitReviewBody } from '../types';
 import { addPlace } from './places';
 
 import { parsePreview } from './preview';
@@ -70,7 +70,7 @@ const addTestReview = async (
 
   const chatGPTOutput: ChatGPTOutput = await parsePreview('xyz', reviewText);
   console.log('chatGPTOutput:', chatGPTOutput);
-  
+
   const { itemReviews } = chatGPTOutput;
 
   const place: GooglePlace = await getRestaurantProperties(restaurantName);
@@ -80,7 +80,7 @@ const addTestReview = async (
   const newMongoPlace: IMongoPlace | null = await addPlace(place);
   console.log('newMongoPlace:', newMongoPlace);
 
-  const submitReviewBody: NewSubmitReviewBody = {
+  const submitReviewBody: SubmitReviewBody = {
     accountId,
     place,
     accountUserInputs,

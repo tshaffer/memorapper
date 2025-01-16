@@ -3,7 +3,6 @@ import { IAccountPlaceReview } from "../models/AccountPlaceReview";
 import { ItemReview } from "./entities";
 import { SearchDistanceFilter } from "./enums";
 import { GooglePlace } from "./googlePlace";
-import { DistanceAwayQuery } from './queries';
 export interface Account {
   accountId: string; // unique key
   accountName: string;
@@ -47,11 +46,11 @@ export interface ChatGPTOutput {
   itemReviews: ItemReview[];
 }
 
-export interface NewPreviewResponse {
+export interface PreviewResponse {
   chatGPTOutput: ChatGPTOutput;
 }
 
-export interface NewSubmitReviewBody {
+export interface SubmitReviewBody {
   _id?: string;
   accountId: string;
   place: GooglePlace;
@@ -62,28 +61,22 @@ export interface NewSubmitReviewBody {
   sessionId: string;
 }
 
-export interface NewSearchQuery {
-  query: string;
-  distanceAway: DistanceAwayQuery;
-  isOpenNow: boolean;
-}
-
-export interface NewFilterResultsParams {
+export interface FilterResultsParams {
   distanceAwayFilter: SearchDistanceFilter;
   openNowFilter: boolean;
 }
 
-export interface NewSearchResponse {
+export interface SearchResponse {
   places: GooglePlace[];
   reviews: AccountPlaceReview[];
 }
 
-export interface NewQueryResponse {
+export interface QueryResponse {
   places: IMongoPlace[];
   reviews: IAccountPlaceReview[];
 }
 
-export interface NewChatResponse {
+export interface ChatResponse {
   reviewText: string;
   itemReviews: ItemReview[];
   updatedReviewText: string;

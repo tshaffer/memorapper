@@ -1,7 +1,7 @@
 import getOpenAIClient from '../services/openai';
 import { Request, Response } from 'express';
 import { extractItemReviews } from '../utilities';
-import { ChatRequestBody, ItemReview, NewChatResponse } from '../types';
+import { ChatRequestBody, ItemReview, ChatResponse } from '../types';
 
 import { reviewConversations } from '../data/data';
 
@@ -64,7 +64,7 @@ export const chatHandler = async (
     } else {
       console.error('Failed to extract updated review text from the response.');
     }
-    
+
     const updatedReviewTextMatch = messageContent.match(/Updated Review Text:\s*([\s\S]+)/s);
 
     const structuredDataText = structuredDataMatch ? structuredDataMatch[1].trim() : "No Updated Structured Data available";
@@ -87,7 +87,7 @@ export const chatHandler = async (
       }
     }
 
-    const chatResponse: NewChatResponse = {
+    const chatResponse: ChatResponse = {
       reviewText: updatedReviewText,
       itemReviews: itemReviews || [],
       updatedReviewText,

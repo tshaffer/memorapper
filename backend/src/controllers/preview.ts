@@ -1,7 +1,7 @@
 import getOpenAIClient from '../services/openai';
 import { Request, Response } from 'express';
 import { extractItemReviews } from '../utilities';
-import { ChatGPTOutput, ItemReview, NewPreviewResponse, PreviewRequestBody } from '../types';
+import { ChatGPTOutput, ItemReview, PreviewResponse, PreviewRequestBody } from '../types';
 
 import { reviewConversations } from '../data/data';
 
@@ -17,7 +17,7 @@ export const previewHandler = async (
   try {
     const chatGPTOutput: ChatGPTOutput = await parsePreview(sessionId, reviewText);
     console.log('ChatGPTOutput:', chatGPTOutput); // Debugging log
-    const previewResponse: NewPreviewResponse = { chatGPTOutput };
+    const previewResponse: PreviewResponse = { chatGPTOutput };
     return res.json(previewResponse);
   } catch (error) {
     console.error('Error processing review preview:', error);

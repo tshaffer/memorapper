@@ -1,12 +1,12 @@
-import { GooglePlace, NewFilterResultsParams, AccountPlaceReview, NewSearchResponse } from "../types";
+import { GooglePlace, FilterResultsParams, AccountPlaceReview, SearchResponse } from "../types";
 
 export const filterResults = async (
-  filter: NewFilterResultsParams,
+  filter: FilterResultsParams,
   places: GooglePlace[],
   reviews: AccountPlaceReview[],
   mapLocation: google.maps.LatLngLiteral,
-): Promise<NewSearchResponse> => {
-  const { distanceAwayFilter, openNowFilter }: NewFilterResultsParams = filter;
+): Promise<SearchResponse> => {
+  const { distanceAwayFilter, openNowFilter }: FilterResultsParams = filter;
 
   const filteredPlaces: GooglePlace[] = places.filter((place: GooglePlace) => {
     if (!place.geometry || !place.geometry.location) return false;
