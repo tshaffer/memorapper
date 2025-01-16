@@ -15,7 +15,7 @@ export const RestaurantReviewSchema: Schema<IRestaurantReview> = new Schema({
   ]
 });
 
-const UserPlaceSummaryModel: Model<IRestaurantReview> = mongoose.model<IRestaurantReview>('RestaurantReview', RestaurantReviewSchema);
+const RestaurantReviewModel: Model<IRestaurantReview> = mongoose.model<IRestaurantReview>('RestaurantReview', RestaurantReviewSchema);
 
-export default UserPlaceSummaryModel;
+export default RestaurantReviewModel;
 

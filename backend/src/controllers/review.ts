@@ -4,7 +4,7 @@ import { VisitReview, DinerRestaurantReview, SubmitReviewBody, RestaurantReview 
 import { IMongoPlace } from '../models';
 import { addPlace, getPlace } from './places';
 import VisitReviewModel, { IVisitReview } from '../models/VisitReview';
-import UserPlaceSummaryModel, { IRestaurantReview } from '../models/RestaurantReview';
+import RestaurantReviewModel, { IRestaurantReview } from '../models/RestaurantReview';
 import DinerRestaurantReviewModel, { IDinerRestaurantReview } from '../models/DinerRetaurantReview';
 
 export const reviewHandler = async (
@@ -25,7 +25,7 @@ export const reviewHandler = async (
 }
 export const newSubmitReview = async (submitReviewBody: SubmitReviewBody): Promise<void> => {
 
-  const { _id, accountId, place, accountUserInputs, dateOfVisit, reviewText, itemReviews, sessionId } = submitReviewBody;
+  const { _id, diningGroupId, place, dinerRestaurantReviews, dateOfVisit, reviewText, itemReviews, sessionId } = submitReviewBody;
 
   const googlePlaceId = place.googlePlaceId;
 
@@ -38,31 +38,31 @@ export const newSubmitReview = async (submitReviewBody: SubmitReviewBody): Promi
     }
   }
 
-  const accountPlaceReview: VisitReview = {
-    diningGroupId: accountId,
+  const visitReview: VisitReview = {
+    diningGroupId,
     placeId: googlePlaceId,
     dateOfVisit,
     reviewText,
     itemReviews,
   };
 
-  const newAccountPlaceReview: IVisitReview | null = await addNewAccountPlaceReview(accountPlaceReview);
-  console.log('newReview:', newAccountPlaceReview?.toObject());
+  const newVisitReview: IVisitReview | null = await addNewVisitReview(visitReview);
+  console.log('newReview:', newVisitReview?.toObject());
 
-  for (const accountUserInput of accountUserInputs) {
-    const newAccountUserInput: IDinerRestaurantReview | null = await addNewAccountUserInput(accountUserInput);
-    console.log('newAccountUserInput:', newAccountUserInput?.toObject());
+  for (const dinerRestaurantReview of dinerRestaurantReviews) {
+    const newDinerRestaurantReview: IDinerRestaurantReview | null = await addNewDinerRestaurantReview(dinerRestaurantReview);
+    console.log('newDinerRestaurantReview:', newDinerRestaurantReview?.toObject());
   }
 
-  const userPlaceSummary: RestaurantReview = {
+  const restaurantReview: RestaurantReview = {
     restaurantReviewId: uuidv4(),
-    diningGroupId: accountId,
+    diningGroupId: diningGroupId,
     placeId: googlePlaceId,
-    dinerRestaurantReviews: accountUserInputs
+    dinerRestaurantReviews: dinerRestaurantReviews
   };
 
-  const newUserPlaceSummary: IRestaurantReview | null = await addNewUserPlaceSummary(userPlaceSummary);
-  console.log('newUserPlaceSummary:', newUserPlaceSummary?.toObject());
+  const newRestaurantReview: IRestaurantReview | null = await addNewRestaurantReview(restaurantReview);
+  console.log('newRestaurantReview:', newRestaurantReview?.toObject());
 
   // Clear conversation history for the session after submission
   // delete reviewConversations[sessionId];
@@ -70,12 +70,12 @@ export const newSubmitReview = async (submitReviewBody: SubmitReviewBody): Promi
   return;
 }
 
-export const addNewAccountPlaceReview = async (accountPlaceReview: VisitReview): Promise<IVisitReview | null> => {
+export const addNewVisitReview = async (visitReview: VisitReview): Promise<IVisitReview | null> => {
 
-  const accountPlaceReviewDoc: IVisitReview = new VisitReviewModel(accountPlaceReview);
+  const visitReviewDoc: IVisitReview = new VisitReviewModel(visitReview);
 
   try {
-    const savedReview: IVisitReview = await accountPlaceReviewDoc.save();
+    const savedReview: IVisitReview = await visitReviewDoc.save();
     return savedReview;
   } catch (error: any) {
     console.error('Error saving review:', error);
@@ -83,12 +83,12 @@ export const addNewAccountPlaceReview = async (accountPlaceReview: VisitReview):
   }
 }
 
-export const addNewAccountUserInput = async (accountUserInput: DinerRestaurantReview): Promise<IDinerRestaurantReview | null> => {
+export const addNewDinerRestaurantReview = async (dinerRestaurantReview: DinerRestaurantReview): Promise<IDinerRestaurantReview | null> => {
 
-  const accountUserInputDoc: IDinerRestaurantReview = new DinerRestaurantReviewModel(accountUserInput);
+  const dinerRestaurantReviewDoc: IDinerRestaurantReview = new DinerRestaurantReviewModel(dinerRestaurantReview);
 
   try {
-    const savedUserInput: IDinerRestaurantReview = await accountUserInputDoc.save();
+    const savedUserInput: IDinerRestaurantReview = await dinerRestaurantReviewDoc.save();
     return savedUserInput;
   } catch (error: any) {
     console.error('Error saving review:', error);
@@ -96,13 +96,13 @@ export const addNewAccountUserInput = async (accountUserInput: DinerRestaurantRe
   }
 }
 
-export const addNewUserPlaceSummary = async (userPlaceSummary: RestaurantReview): Promise<IRestaurantReview | null> => {
+export const addNewRestaurantReview = async (restaurantReview: RestaurantReview): Promise<IRestaurantReview | null> => {
 
-  const userPlaceSummaryDoc: IRestaurantReview = new UserPlaceSummaryModel(userPlaceSummary);
+  const restaurantReviewDoc: IRestaurantReview = new RestaurantReviewModel(restaurantReview);
 
   try {
-    const savedUserPlaceSummnary: IRestaurantReview = await userPlaceSummaryDoc.save();
-    return savedUserPlaceSummnary;
+    const savedRestaurantReviewSummary: IRestaurantReview = await restaurantReviewDoc.save();
+    return savedRestaurantReviewSummary;
   } catch (error: any) {
     console.error('Error saving review:', error);
     throw new Error('An error occurred while saving the review.');

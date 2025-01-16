@@ -1,7 +1,7 @@
 import getOpenAIClient from '../services/openai';
 import MongoPlaceModel, { IMongoPlace } from '../models/MongoPlace';
 import { QueryResponse, ParsedQuery, StructuredQueryParams } from '../types';
-import AccountPlaceReview, { IVisitReview } from '../models/VisitReview';
+import VisitReview, { IVisitReview } from '../models/VisitReview';
 
 export const buildStructuredQueryParamsFromParsedQuery = (parsedQuery: ParsedQuery): StructuredQueryParams => {
   const { queryParameters } = parsedQuery;
@@ -121,7 +121,7 @@ export const performNewStructuredQuery = async (queryParams: StructuredQueryPara
     }
 
     // Fetch reviews matching reviewQuery
-    let reviews: IVisitReview[] = await AccountPlaceReview.find(reviewQuery);
+    let reviews: IVisitReview[] = await VisitReview.find(reviewQuery);
 
     // Step 5: Extract unique place IDs from the filtered reviews
     const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.placeId)));
@@ -284,7 +284,7 @@ export const newPerformHybridQuery = async (
     }
 
     // Fetch structured reviews
-    let reviews: IVisitReview[] = await AccountPlaceReview.find(reviewQuery);
+    let reviews: IVisitReview[] = await VisitReview.find(reviewQuery);
 
     // Extract unique place IDs from the filtered reviews
     const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.placeId)));

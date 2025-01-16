@@ -19,8 +19,8 @@ interface AddReviewFromFileBody {
 }
 
 interface TestReview {
-  accountId: string;
-  accountUserInputs: any[];
+  diningGroupId: string;
+  dinerRestaurantReviews: any[];
   dateOfVisit: string;
   restaurantName: string;
   restaurantType: number;
@@ -44,11 +44,11 @@ export const addReviewsFromFileHandler = async (
     const reviews: TestReview[] = JSON.parse(data);
     console.log(reviews);
     for (const review of reviews) {
-      const { accountId, accountUserInputs, dateOfVisit, restaurantName, restaurantType, reviewText }: TestReview = review;
-      for (const accountUserInput of accountUserInputs) {
-        accountUserInput.accountUserInputId = uuidv4();
+      const { diningGroupId, dinerRestaurantReviews, dateOfVisit, restaurantName, restaurantType, reviewText }: TestReview = review;
+      for (const dinerRestaurantReview of dinerRestaurantReviews) {
+        dinerRestaurantReview.dinerRestaurantReviewId = uuidv4();
       }
-      await addTestReview(accountId, accountUserInputs, dateOfVisit, restaurantName, restaurantType, reviewText);
+      await addTestReview(diningGroupId, dinerRestaurantReviews, dateOfVisit, restaurantName, restaurantType, reviewText);
       console.log('review added for ' + restaurantName);
     }
     console.log('All reviews loaded:');
@@ -60,8 +60,8 @@ export const addReviewsFromFileHandler = async (
 }
 
 const addTestReview = async (
-  accountId: string,
-  accountUserInputs: any[],
+  diningGroupId: string,
+  dinerRestaurantReviews: any[],
   dateOfVisit: string,
   restaurantName: string,
   restaurantType: number,
@@ -81,9 +81,9 @@ const addTestReview = async (
   console.log('newMongoPlace:', newMongoPlace);
 
   const submitReviewBody: SubmitReviewBody = {
-    accountId,
+    diningGroupId,
     place,
-    accountUserInputs,
+    dinerRestaurantReviews,
     dateOfVisit,
     reviewText,
     itemReviews,

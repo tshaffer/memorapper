@@ -6,12 +6,12 @@ import {
   testHandler,
   getDesiredRestaurants,
   submitDesiredRestaurantHandler,
-  getAccounts,
-  getAccountUsers,
-  getAccountUserInputs,
+  getDiningGroups,
+  getDiners,
+  getDinerRestaurantReviews,
   previewHandler,
-  getAccountPlaceReviews,
-  getUserPlaceSummaries,
+  getVisitReviews,
+  getRestaurantReviews,
   chatHandler,
   searchAndFilterHandler,
 } from '../controllers';
@@ -29,11 +29,11 @@ router.post('/reviews/addReviewsFromFile', addReviewsFromFileHandler);
 router.post('/submitDesiredRestaurant', submitDesiredRestaurantHandler);
 
 
-router.get('/accounts', getAccounts);
-router.get('/accountUsers', getAccountUsers);
-router.get('/accountPlaceReviews', getAccountPlaceReviews);
-router.get('/accountUserInputs', getAccountUserInputs);
-router.get('/userPlaceSummaries', getUserPlaceSummaries);
+router.get('/diningGroups', getDiningGroups);
+router.get('/diners', getDiners);
+router.get('/visitReviews', getVisitReviews);
+router.get('/dinerRestaurantReviews', getDinerRestaurantReviews);
+router.get('/restaurantReviews', getRestaurantReviews);
 
 router.post('/preview', previewHandler);
 router.post('/review', reviewHandler);

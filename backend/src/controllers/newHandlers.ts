@@ -4,24 +4,24 @@ import DiningGroupModel from '../models/DiningGroup';
 import DinerModel from '../models/Diner';
 import DinerRestaurantReviewModel from '../models/DinerRetaurantReview';
 import VisitReviewModel from '../models/VisitReview';
-import UserPlaceSummaryModel from '../models/RestaurantReview';
+import RestaurantReviewModel from '../models/RestaurantReview';
 
-export const getAccounts = async (request: Request, response: Response) => {
+export const getDiningGroups = async (request: Request, response: Response) => {
   try {
-    const accounts: DiningGroup[] = await DiningGroupModel.find({}).exec();
-    response.status(200).json({ accounts });
+    const diningGroups: DiningGroup[] = await DiningGroupModel.find({}).exec();
+    response.status(200).json({ diningGroups });
     return;
   } catch (error) {
-    console.error('Error retrieving accounts:', error);
-    response.status(500).json({ error: 'An error occurred while retrieving accounts.' });
+    console.error('Error retrieving diningGroups:', error);
+    response.status(500).json({ error: 'An error occurred while retrieving diningGroups.' });
     return;
   }
 }
 
-export const getAccountUsers = async (request: Request, response: Response) => {
+export const getDiners = async (request: Request, response: Response) => {
   try {
-    const accountUsers: Diner[] = await DinerModel.find({}).exec();
-    response.status(200).json({ accountUsers });
+    const diners: Diner[] = await DinerModel.find({}).exec();
+    response.status(200).json({ diners });
     return;
   } catch (error) {
     console.error('Error retrieving account users:', error);
@@ -30,10 +30,10 @@ export const getAccountUsers = async (request: Request, response: Response) => {
   }
 }
 
-export const getAccountUserInputs = async (request: Request, response: Response) => {
+export const getDinerRestaurantReviews = async (request: Request, response: Response) => {
   try {
-    const accountUserInputs: DinerRestaurantReview[] = await DinerRestaurantReviewModel.find({}).exec();
-    response.status(200).json({ accountUserInputs });
+    const dinerRestaurantReviews: DinerRestaurantReview[] = await DinerRestaurantReviewModel.find({}).exec();
+    response.status(200).json({ dinerRestaurantReviews });
     return;
   } catch (error) {
     console.error('Error retrieving account user inputs:', error);
@@ -42,26 +42,26 @@ export const getAccountUserInputs = async (request: Request, response: Response)
   }
 }
 
-export const getAccountPlaceReviews = async (request: Request, response: Response) => {
+export const getVisitReviews = async (request: Request, response: Response) => {
   try {
-    const accountPlaceReviews: VisitReview[] = await VisitReviewModel.find({}).exec();
-    response.status(200).json({ accountPlaceReviews });
+    const visitReviews: VisitReview[] = await VisitReviewModel.find({}).exec();
+    response.status(200).json({ visitReviews });
     return;
   } catch (error) {
-    console.error('Error retrieving accountPlaceReviews:', error);
-    response.status(500).json({ error: 'An error occurred while retrieving accountPlaceReviews.' });
+    console.error('Error retrieving visitReviews:', error);
+    response.status(500).json({ error: 'An error occurred while retrieving visitReviews.' });
     return;
   }
 }
 
-export const getUserPlaceSummaries = async (request: Request, response: Response) => {
+export const getRestaurantReviews = async (request: Request, response: Response) => {
   try {
-    const userPlaceSummaries: RestaurantReview[] = await UserPlaceSummaryModel.find({}).exec();
-    response.status(200).json({ userPlaceSummaries });
+    const restaurantReviews: RestaurantReview[] = await RestaurantReviewModel.find({}).exec();
+    response.status(200).json({ restaurantReviews });
     return;
   } catch (error) {
-    console.error('Error retrieving userPlaceSummaries:', error);
-    response.status(500).json({ error: 'An error occurred while retrieving userPlaceSummaries.' });
+    console.error('Error retrieving restaurantReviews:', error);
+    response.status(500).json({ error: 'An error occurred while retrieving restaurantReviews.' });
     return;
   }
 }

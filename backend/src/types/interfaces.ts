@@ -24,7 +24,7 @@ export interface DinerRestaurantReview {
 
 export interface DinerRestaurantReview {
   dinerId: string; // Foreign key to AccountUser
-  dinerRestaurantReviewId: string; // Foreign key to AccountUserInput
+  dinerRestaurantReviewId: string; // Foreign key to DinerRestaurantReview
 }
 
 export interface RestaurantReview {
@@ -53,9 +53,9 @@ export interface PreviewResponse {
 
 export interface SubmitReviewBody {
   _id?: string;
-  accountId: string;
+  diningGroupId: string;
   place: GooglePlace;
-  accountUserInputs: DinerRestaurantReview[];
+  dinerRestaurantReviews: DinerRestaurantReview[];
   dateOfVisit: string;
   reviewText: string;
   itemReviews: ItemReview[];
