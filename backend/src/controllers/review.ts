@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Request, Response } from 'express';
-import { VisitReview, DinerRestaurantReview, SubmitReviewBody, RestaurantReview } from '../types';
+import { VisitReview, DinerRestaurantReview, SubmitReviewBody, ReviewedRestaurant } from '../types';
 import { IMongoPlace } from '../models';
 import { addPlace, getPlace } from './places';
 import VisitReviewModel, { IVisitReview } from '../models/VisitReview';
-import RestaurantReviewModel, { IRestaurantReview } from '../models/RestaurantReview';
+import ReviewedRestaurantModel, { IReviewedRestaurant } from '../models/ReviewedRestaurant';
 import DinerRestaurantReviewModel, { IDinerRestaurantReview } from '../models/DinerRetaurantReview';
 
 export const reviewHandler = async (
@@ -40,7 +40,7 @@ export const newSubmitReview = async (submitReviewBody: SubmitReviewBody): Promi
 
   const visitReview: VisitReview = {
     diningGroupId,
-    placeId: googlePlaceId,
+    googlePlaceId: googlePlaceId,
     dateOfVisit,
     reviewText,
     itemReviews,
@@ -51,18 +51,18 @@ export const newSubmitReview = async (submitReviewBody: SubmitReviewBody): Promi
 
   for (const dinerRestaurantReview of dinerRestaurantReviews) {
     const newDinerRestaurantReview: IDinerRestaurantReview | null = await addNewDinerRestaurantReview(dinerRestaurantReview);
-    console.log('newDinerRestaurantReview:', newDinerRestaurantReview?.toObject());
+    console.log('dinerRestaurantReview:', newDinerRestaurantReview?.toObject());
   }
 
-  const restaurantReview: RestaurantReview = {
-    restaurantReviewId: uuidv4(),
+  const reviewedRestaurant: ReviewedRestaurant = {
+    reviewedRestaurantId: uuidv4(),
     diningGroupId: diningGroupId,
-    placeId: googlePlaceId,
-    dinerRestaurantReviews: dinerRestaurantReviews
+    googlePlaceId: googlePlaceId,
+    dinerRestaurantReviews
   };
 
-  const newRestaurantReview: IRestaurantReview | null = await addNewRestaurantReview(restaurantReview);
-  console.log('newRestaurantReview:', newRestaurantReview?.toObject());
+  const newReviewedRestaurant: IReviewedRestaurant | null = await addNewReviewedRestaurant(reviewedRestaurant);
+  console.log('newReviewedRestaurant:', newReviewedRestaurant?.toObject());
 
   // Clear conversation history for the session after submission
   // delete reviewConversations[sessionId];
@@ -96,13 +96,13 @@ export const addNewDinerRestaurantReview = async (dinerRestaurantReview: DinerRe
   }
 }
 
-export const addNewRestaurantReview = async (restaurantReview: RestaurantReview): Promise<IRestaurantReview | null> => {
+export const addNewReviewedRestaurant = async (reviewedRestaurant: ReviewedRestaurant): Promise<IReviewedRestaurant | null> => {
 
-  const restaurantReviewDoc: IRestaurantReview = new RestaurantReviewModel(restaurantReview);
+  const reviewedRestaurantDoc: IReviewedRestaurant = new ReviewedRestaurantModel(reviewedRestaurant);
 
   try {
-    const savedRestaurantReviewSummary: IRestaurantReview = await restaurantReviewDoc.save();
-    return savedRestaurantReviewSummary;
+    const savedReviewedRestaurantSummary: IReviewedRestaurant = await reviewedRestaurantDoc.save();
+    return savedReviewedRestaurantSummary;
   } catch (error: any) {
     console.error('Error saving review:', error);
     throw new Error('An error occurred while saving the review.');

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Box, useMediaQuery } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import EditIcon from '@mui/icons-material/Edit';
 
 import DirectionsIcon from '@mui/icons-material/Directions';
 import MapIcon from '@mui/icons-material/Map';
@@ -12,7 +13,7 @@ import PulsingDots from '../../components/PulsingDots';
 
 import '../../App.css';
 
-import { DesiredRestaurant, Filters, GooglePlace, SearchQuery } from '../../types';
+import { NewRestaurant, Filters, GooglePlace, SearchQuery } from '../../types';
 import { getCityNameFromPlace } from '../../utilities';
 import { useUserContext } from '../../contexts/UserContext';
 
@@ -32,13 +33,13 @@ const NewRestaurants = () => {
 
   const [showFiltersDialog, setShowFiltersDialog] = React.useState(false);
 
-  const [newRestaurants, setNewRestaurants] = useState<DesiredRestaurant[]>([]);
+  const [newRestaurants, setNewRestaurants] = useState<NewRestaurant[]>([]);
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [filteredPlaces, setFilteredPlaces] = useState<GooglePlace[]>([]);
 
-  const [selectedPlace, setSelectedPlace] = useState<DesiredRestaurant | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<NewRestaurant | null>(null);
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
 
   const navigate = useNavigate();
@@ -61,11 +62,11 @@ const NewRestaurants = () => {
       }
     };
 
-    const fetchNewRestaurants = async (): Promise<DesiredRestaurant[]> => {
-      const response = await fetch('/api/desiredRestaurants');
+    const fetchNewRestaurants = async (): Promise<NewRestaurant[]> => {
+      const response = await fetch('/api/newRestaurants');
       const data = await response.json();
-      setNewRestaurants(data.desiredRestaurants);
-      return data.desiredRestaurants;
+      setNewRestaurants(data.newRestaurants);
+      return data.newRestaurants;
     };
 
     fetchNewRestaurants();
@@ -73,7 +74,7 @@ const NewRestaurants = () => {
 
   }, []);
 
-  const getSortedPlaces = (): DesiredRestaurant[] => {
+  const getSortedPlaces = (): NewRestaurant[] => {
 
     return newRestaurants;
     // const sortedPlaces = [...filteredPlaces]; // Clone the array to avoid mutating state
@@ -141,7 +142,7 @@ const NewRestaurants = () => {
     }
   }
 
-  const handlePlaceClick = (newRestaurant: DesiredRestaurant) => {
+  const handlePlaceClick = (newRestaurant: NewRestaurant) => {
     console.log('handlePlaceClick place: ', newRestaurant);
     setSelectedPlaceId(newRestaurant.googlePlace!.googlePlaceId); // Update selected place ID
     setSelectedPlace(newRestaurant);
@@ -155,7 +156,7 @@ const NewRestaurants = () => {
   };
 
   const handleShowDirections = (placeId: string) => {
-    const destination: DesiredRestaurant | undefined = newRestaurants.find(place => place.googlePlace!.googlePlaceId === placeId);
+    const destination: NewRestaurant | undefined = newRestaurants.find(place => place.googlePlace!.googlePlaceId === placeId);
     if (destination && currentLocation) {
       const destinationLocation: google.maps.LatLngLiteral = destination.googlePlace!.geometry!.location;
       const destinationLatLng: google.maps.LatLngLiteral = { lat: destinationLocation.lat, lng: destinationLocation.lng };
@@ -163,6 +164,12 @@ const NewRestaurants = () => {
       window.open(url, '_blank');
     }
   };
+
+  const handleEditNewRestaurant = (newRestaurant: NewRestaurant) => {
+    console.log('handleEditNewRestaurant', newRestaurant);
+    navigate(`/add-place/${newRestaurant._id}`, { state: newRestaurant });
+  };
+
 
   const handleSetMapLocation = (location: google.maps.LatLngLiteral): void => {
     setMapLocation(location);
@@ -172,37 +179,37 @@ const NewRestaurants = () => {
     setShowFiltersDialog(true);
   };
 
-    const handleSetFilters = async (
-      query: string,
-      filters: Filters,
-    ) => {
-  
-      handleCloseFiltersDialog();
-  
-      setFilters(filters);
-  
-      setIsLoading(true);
-  
-      const searchQuery: SearchQuery = {
-        query,
-        isOpenNow: filters.isOpenNowFilterEnabled,
-        distanceAway: {
-          lat: mapLocation!.lat,
-          lng: mapLocation!.lng,
-          radius: filters.distanceAwayFilter,
-        }
-      };
-  
-      await executeSearchAndFilter(searchQuery);
-  
-      setIsLoading(false);
-    }
-  
-    const handleCloseFiltersDialog = () => {
-      setShowFiltersDialog(false);
+  const handleSetFilters = async (
+    query: string,
+    filters: Filters,
+  ) => {
+
+    handleCloseFiltersDialog();
+
+    setFilters(filters);
+
+    setIsLoading(true);
+
+    const searchQuery: SearchQuery = {
+      query,
+      isOpenNow: filters.isOpenNowFilterEnabled,
+      distanceAway: {
+        lat: mapLocation!.lat,
+        lng: mapLocation!.lng,
+        radius: filters.distanceAwayFilter,
+      }
     };
-  
-  
+
+    await executeSearchAndFilter(searchQuery);
+
+    setIsLoading(false);
+  }
+
+  const handleCloseFiltersDialog = () => {
+    setShowFiltersDialog(false);
+  };
+
+
   const renderPulsingDots = (): JSX.Element | null => {
     if (!isLoading) {
       return null;
@@ -237,26 +244,27 @@ const NewRestaurants = () => {
               <TableRow className="table-head-fixed">
                 <TableCell align="center"></TableCell>
                 <TableCell align="center"></TableCell>
+                <TableCell align="center"></TableCell>
                 <TableCell>Restaurant</TableCell>
                 <TableCell>Location</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {sortedPlaces.map((place: DesiredRestaurant) => (
-                <React.Fragment key={place.googlePlace?.googlePlaceId}>
+              {sortedPlaces.map((newRestaurant: NewRestaurant) => (
+                <React.Fragment key={newRestaurant.googlePlace?.googlePlaceId}>
                   <TableRow
                     className="table-row-hover"
-                    onClick={() => handlePlaceClick(place)}
+                    onClick={() => handlePlaceClick(newRestaurant)}
                     sx={{
                       backgroundColor:
-                        place.googlePlace?.googlePlaceId === selectedPlaceId ? '#f0f8ff' : 'inherit', // Highlight selected row
+                        newRestaurant.googlePlace?.googlePlaceId === selectedPlaceId ? '#f0f8ff' : 'inherit', // Highlight selected row
                       cursor: 'pointer', // Indicate clickable rows
                     }}
                   >
                     <TableCell align="right" className="dimmed" style={smallColumnStyle}>
                       <IconButton onClick={(event) => {
                         event.stopPropagation();
-                        handleShowMap(place.googlePlace!.googlePlaceId)
+                        handleShowMap(newRestaurant.googlePlace!.googlePlaceId)
                       }}
                       >
                         <MapIcon />
@@ -265,20 +273,28 @@ const NewRestaurants = () => {
                     <TableCell align="right" className="dimmed" style={smallColumnStyle}>
                       <IconButton onClick={(event) => {
                         event.stopPropagation();
-                        handleShowDirections(place.googlePlace!.googlePlaceId)
+                        handleShowDirections(newRestaurant.googlePlace!.googlePlaceId)
                       }}>
                         <DirectionsIcon />
                       </IconButton>
                     </TableCell>
-                    <TableCell>{place.googlePlace!.name}</TableCell>
-                    <TableCell>{getCityNameFromPlace(place.googlePlace!) || 'Not provided'}</TableCell>
+                    <TableCell align="right" className="dimmed" style={smallColumnStyle}>
+                      <IconButton onClick={(event) => {
+                        event.stopPropagation();
+                        handleEditNewRestaurant(newRestaurant)
+                      }}>
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>{newRestaurant.googlePlace!.name}</TableCell>
+                    <TableCell>{getCityNameFromPlace(newRestaurant.googlePlace!) || 'Not provided'}</TableCell>
                   </TableRow>
                 </React.Fragment>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
-      </Box>
+      </Box >
     );
   };
 

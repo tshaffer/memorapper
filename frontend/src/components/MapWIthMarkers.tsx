@@ -1,68 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { ExtendedGooglePlaceToVisit, ExtendedGooglePlace, RestaurantType } from '../types';
-import { AdvancedMarker, APIProvider, Map, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
-import { getLatLngFromPlace } from '../utilities';
+import { ReviewedRestaurantWithPlace, ReviewedRestaurant, NewRestaurant, GooglePlace } from '../types';
+import { AdvancedMarker, APIProvider, Map } from '@vis.gl/react-google-maps';
 import '../App.css';
-import RestaurantInfoWindow from './RestaurantInfoWindow';
-import RestaurantToVisitInfoWindow from './RestaurantToVisitInfoWindow';
-
-import { Icon, IconifyIcon } from '@iconify/react';
 
 // // https://icon-sets.iconify.design/?query=<query>
-import restaurantIcon from '@iconify/icons-openmoji/fork-and-knife-with-plate';
-import bakeryIcon from '@iconify/icons-emojione/bread';
-import barIcon from '@iconify/icons-emojione/wine-glass';
-import pizzaIcon from '@iconify/icons-emojione/pizza';
-import pastaIcon from '@iconify/icons-emojione/spaghetti';
-import iceCreamIcon from '@iconify/icons-emojione/ice-cream';
-import burritoIcon from '@iconify/icons-noto/burrito';
-import coffeeIcon from '@iconify/icons-openmoji/electric-coffee-percolator';
+import ReviewedRestaurantMarker from './ReviewedRestaurantMarker';
+import NewRestaurantMarker from './NewRestaurantMarker';
+import ReviewedRestaurantInfoWindow from './ReviewedRestaurantInfoWindow';
+import NewRestaurantInfoWindow from './NewRestaurantInfoWindow';
 
 const DEFAULT_ZOOM = 14;
 
-const iconContainerStyle: React.CSSProperties = {
-  position: 'absolute',
-  top: '-16px',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '30px',
-  height: '30px',
-  backgroundColor: 'lightgray',
-  borderRadius: '50%',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-};
-
-const textStyle = (color: string): React.CSSProperties => ({
-  position: 'absolute',
-  right: '18px',
-  transform: 'translateY(-150%)',
-  whiteSpace: 'nowrap',
-  color, // Dynamic color
-  fontSize: '14px',
-  fontWeight: '500',
-  backgroundColor: 'transparent',
-  textShadow: `
-    1px 1px 0 white,
-    -1px 1px 0 white,
-    1px -1px 0 white,
-    -1px -1px 0 white
-  `,
-});
+const CustomBlueDot = () => (
+  <div style={{
+    width: '16px',
+    height: '16px',
+    backgroundColor: '#4285F4',
+    borderRadius: '50%',
+    border: '2px solid #FFFFFF',
+    boxShadow: '0 0 8px rgba(66, 133, 244, 0.5)',
+  }} />
+);
 
 interface MapWithMarkersProps {
   initialCenter: google.maps.LatLngLiteral;
-  locations: ExtendedGooglePlace[];
-  locationsToVisit: ExtendedGooglePlaceToVisit[];
+  reviewedRestaurants: ReviewedRestaurant[];
+  newRestaurants: NewRestaurant[];
   blueDotLocation?: google.maps.LatLngLiteral;
 }
 
-const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, locations, locationsToVisit, blueDotLocation }) => {
+const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, reviewedRestaurants, newRestaurants, blueDotLocation }) => {
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
-  const [selectedLocation, setSelectedLocation] = useState<ExtendedGooglePlace | null>(null);
-  const [selectedLocationToVisit, setSelectedLocationToVisit] = useState<ExtendedGooglePlaceToVisit | null>(null);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
+
+  const [selectedReviewedRestaurant, setSelectedReviewedRestaurant] = useState<ReviewedRestaurantWithPlace | null>(null);
+  const [selectedNewRestaurant, setSelectedNewRestaurant] = useState<NewRestaurant | null>(null);
 
   useEffect(() => {
 
@@ -100,81 +72,70 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
     }
   }, []);
 
-  const CustomBlueDot = () => (
-    <div style={{
-      width: '16px',
-      height: '16px',
-      backgroundColor: '#4285F4',
-      borderRadius: '50%',
-      border: '2px solid #FFFFFF',
-      boxShadow: '0 0 8px rgba(66, 133, 244, 0.5)',
-    }} />
-  );
+  const [places, setPlaces] = useState<GooglePlace[]>([]);
 
-  const handleMarkerClick = (location: ExtendedGooglePlace) => {
-    setSelectedLocation(location);
-    setSelectedLocationToVisit(null);
+  useEffect(() => {
+
+    const fetchPlaces = async () => {
+      const response = await fetch('/api/places');
+      const data = await response.json();
+      setPlaces(data.googlePlaces);
+    };
+
+    const fetchData = async () => {
+      await fetchPlaces();
+    };
+
+    fetchData();
+
+  }, []);
+
+  const getPlaceFromPlaceId = (placeId: string): GooglePlace | null => {
+    for (const place of places) {
+      if (place.googlePlaceId === placeId) {
+        return place;
+      }
+    };
+    return null;
+  }
+
+  const handleReviewedRestaurantClicked = (reviewedRestaurantWithPlace: ReviewedRestaurantWithPlace) => {
+    setSelectedReviewedRestaurant(reviewedRestaurantWithPlace);
+    setSelectedNewRestaurant(null);
   };
 
-  const handleLocationToVisitClick = (location: ExtendedGooglePlaceToVisit) => {
-    setSelectedLocationToVisit(location);
-    setSelectedLocation(null);
+  const handleNewRestaurantClick = (newRestaurant: NewRestaurant) => {
+    setSelectedNewRestaurant(newRestaurant);
+    setSelectedReviewedRestaurant(null);
   };
 
   const handleCloseInfoWindow = () => {
-    setSelectedLocation(null);
-    setSelectedLocationToVisit(null);
+    setSelectedReviewedRestaurant(null);
+    setSelectedNewRestaurant(null);
   };
 
-  const iconFromRestaurantType = (restaurantType: RestaurantType): IconifyIcon => {
-    switch (restaurantType) {
-      case RestaurantType.Bakery:
-        return bakeryIcon;
-      case RestaurantType.Bar:
-        return barIcon;
-      case RestaurantType.CoffeeShop:
-        return coffeeIcon;
-      case RestaurantType.PizzaPlace:
-        return pizzaIcon;
-      case RestaurantType.ItalianRestaurant:
-        return pastaIcon;
-      case RestaurantType.DessertShop:
-        return iceCreamIcon;
-      case RestaurantType.Taqueria:
-        return burritoIcon;
-    }
-    return restaurantIcon;
-  }
+  const renderReviewedRestaurantMarker = (reviewedRestaurant: ReviewedRestaurant, index: number): JSX.Element => {
+    const googlePlace = getPlaceFromPlaceId(reviewedRestaurant.googlePlaceId);
+    const reviewedRestaurantWithPlace: ReviewedRestaurantWithPlace = { ...reviewedRestaurant, googlePlace: googlePlace! };
+    return (
+      <ReviewedRestaurantMarker
+        key={`location-${index}`}
+        reviewedRestaurant={reviewedRestaurantWithPlace}
+        onMarkerClick={(reviewedRestaurantWithPlace) => handleReviewedRestaurantClicked(reviewedRestaurantWithPlace)}
+      >
+      </ReviewedRestaurantMarker>
+    );
+  };
 
-  const renderMarker = (location: ExtendedGooglePlace, index: number): JSX.Element => (
-    <AdvancedMarker
-      key={`location-${index}`}
-      position={getLatLngFromPlace(location)}
-      onClick={() => handleMarkerClick(location)}
-    >
-      <div style={{ position: 'relative' }}>
-        <div style={textStyle('red')}>{location.name}</div>
-        <div style={iconContainerStyle}>
-          <Icon icon={iconFromRestaurantType(location.restaurantType)} style={{ fontSize: '30px', color: 'red' }} />
-        </div>
-      </div>
-    </AdvancedMarker>
-  );
-
-  const renderLocationToVisitMarker = (location: ExtendedGooglePlaceToVisit, index: number): JSX.Element => (
-    <AdvancedMarker
-      key={`locationToVisit-${index}`}
-      position={getLatLngFromPlace(location)}
-      onClick={() => handleLocationToVisitClick(location)}
-    >
-      <div style={{ position: 'relative' }}>
-        <div style={textStyle('blue')}>{location.name}</div>
-        <div style={iconContainerStyle}>
-          <Icon icon={restaurantIcon} style={{ fontSize: '30px', color: 'blue' }} />
-        </div>
-      </div>
-    </AdvancedMarker>
-  );
+  const renderNewRestaurantMarker = (newRestaurant: NewRestaurant, index: number): JSX.Element => {
+    return (
+      <NewRestaurantMarker
+        newRestaurant={newRestaurant}
+        onMarkerClick={(clickedRestaurant: NewRestaurant) => handleNewRestaurantClick(clickedRestaurant)}
+      >
+      </NewRestaurantMarker>
+    );
+  };
 
   const googleMapsApiKey = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!;
 
@@ -196,18 +157,18 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, location
         rotateControl={false}
         scaleControl={false}
       >
-        {locations.map((location, index) => renderMarker(location, index))}
-        {locationsToVisit.map((location, index) => renderLocationToVisitMarker(location, index))}
+        {reviewedRestaurants.map((reviewedRestaurant, index) => renderReviewedRestaurantMarker(reviewedRestaurant, index))}
+        {newRestaurants.map((newRestaurant, index) => renderNewRestaurantMarker(newRestaurant, index))}
         {currentLocation && (
           <AdvancedMarker position={blueDotLocation || currentLocation}>
             <CustomBlueDot />
           </AdvancedMarker>
         )}
-        {selectedLocation && (
-          <RestaurantInfoWindow location={selectedLocation} onClose={handleCloseInfoWindow} />
+        {selectedReviewedRestaurant && (
+          <ReviewedRestaurantInfoWindow reviewedRestaurant={selectedReviewedRestaurant} onClose={handleCloseInfoWindow} />
         )}
-        {selectedLocationToVisit && (
-          <RestaurantToVisitInfoWindow location={selectedLocationToVisit} onClose={handleCloseInfoWindow} />
+        {selectedNewRestaurant && (
+          <NewRestaurantInfoWindow newRestaurant={selectedNewRestaurant} onClose={handleCloseInfoWindow} />
         )}
       </Map>
     </APIProvider>

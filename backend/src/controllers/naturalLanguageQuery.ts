@@ -124,7 +124,7 @@ export const performNewStructuredQuery = async (queryParams: StructuredQueryPara
     let reviews: IVisitReview[] = await VisitReview.find(reviewQuery);
 
     // Step 5: Extract unique place IDs from the filtered reviews
-    const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.placeId)));
+    const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.googlePlaceId)));
     if (placeIdsWithReviews.length === 0) {
       return { places: [], reviews: [] };
     }
@@ -157,7 +157,7 @@ export const performNewStructuredQuery = async (queryParams: StructuredQueryPara
 
     // Step 7: Refine reviews to only those belonging to filtered places
     const filteredPlaceIds = places.map((place) => place.googlePlaceId);
-    reviews = reviews.filter((review) => filteredPlaceIds.includes(review.placeId));
+    reviews = reviews.filter((review) => filteredPlaceIds.includes(review.googlePlaceId));
 
     // Combine results
     return {
@@ -189,7 +189,7 @@ export const newPerformNaturalLanguageQuery = async (
     id: review._id,
     text: review.reviewText,
     dateOfVisit: review.dateOfVisit,
-    googlePlaceId: review.placeId,
+    googlePlaceId: review.googlePlaceId,
   }));
 
   // Step 2: Call OpenAI API
@@ -287,7 +287,7 @@ export const newPerformHybridQuery = async (
     let reviews: IVisitReview[] = await VisitReview.find(reviewQuery);
 
     // Extract unique place IDs from the filtered reviews
-    const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.placeId)));
+    const placeIdsWithReviews = Array.from(new Set(reviews.map((review) => review.googlePlaceId)));
     if (placeIdsWithReviews.length === 0) {
       return { places: [], reviews: [] };
     }
@@ -320,7 +320,7 @@ export const newPerformHybridQuery = async (
 
     // Refine reviews to those matching structured places
     const filteredPlaceIds = places.map((place) => place.googlePlaceId);
-    reviews = reviews.filter((review) => filteredPlaceIds.includes(review.placeId));
+    reviews = reviews.filter((review) => filteredPlaceIds.includes(review.googlePlaceId));
 
     // Step 2: Perform natural language query using OpenAI
 
@@ -328,7 +328,7 @@ export const newPerformHybridQuery = async (
       id: review._id,
       text: review.reviewText,
       dateOfVisit: review.dateOfVisit,
-      googlePlaceId: review.placeId,
+      googlePlaceId: review.googlePlaceId,
     }));
 
     const response = await getOpenAIClient().chat.completions.create({

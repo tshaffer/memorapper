@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import directionsIcon from '@iconify/icons-mdi/directions';
-import { ExtendedGooglePlaceToVisit } from '../types';
+import { ExtendedGooglePlaceToVisit, GooglePlace, NewRestaurant } from '../types';
 import { InfoWindow } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace, restaurantTypeLabelFromRestaurantType } from '../utilities';
 import '../App.css';
 import { Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-interface RestaurantToVisitInfoWindowProps {
-  location: ExtendedGooglePlaceToVisit;
+interface NewRestaurantInfoWindowProps {
+  newRestaurant: NewRestaurant;
   onClose: () => void;
 }
 
-const RestaurantToVisitInfoWindow: React.FC<RestaurantToVisitInfoWindowProps> = ({ location, onClose }) => {
+const NewRestaurantInfoWindow: React.FC<NewRestaurantInfoWindowProps> = ({ newRestaurant, onClose }) => {
 
-  console.log('RestaurantToVisitInfoWindow location:', location);
+  const navigate = useNavigate();
 
+  const location: GooglePlace = newRestaurant.googlePlace!;
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
   useEffect(() => {
@@ -33,6 +35,11 @@ const RestaurantToVisitInfoWindow: React.FC<RestaurantToVisitInfoWindowProps> = 
     }
   }, []);
 
+  function handleNewRestaurantLinkClicked(): void {
+    console.log('handleNewRestaurantLinkClicked');
+    console.log(newRestaurant);
+    navigate(`/new-restaurant-details`, { state: newRestaurant });
+  }
 
   const handleShowDirections = () => {
     if (location && currentLocation) {
@@ -42,6 +49,8 @@ const RestaurantToVisitInfoWindow: React.FC<RestaurantToVisitInfoWindowProps> = 
       window.open(url, '_blank');
     }
   };
+
+  console.log('NewRestaurntInfoWindow:', location);
 
   return (
     <InfoWindow
@@ -75,18 +84,18 @@ const RestaurantToVisitInfoWindow: React.FC<RestaurantToVisitInfoWindowProps> = 
             gap: '8px', // Space between the link and the icon
           }}
         >
-          <Typography
+          <h4
             style={{
               margin: '0',
               color: 'blue', // Typical link color
               textDecoration: 'underline', // Typical link underline
               cursor: 'pointer', // Indicate it's clickable
               fontWeight: 'bold', // Make the link more prominent
-            }}>
-            <a href={location.website} target="_blank" rel="noreferrer">
-              {location.name}
-            </a>
-          </Typography>
+            }}
+            onClick={() => handleNewRestaurantLinkClicked()}
+          >
+            {location.name}
+          </h4>
           <div
             onClick={handleShowDirections}
             style={{
@@ -115,15 +124,15 @@ const RestaurantToVisitInfoWindow: React.FC<RestaurantToVisitInfoWindowProps> = 
           {restaurantTypeLabelFromRestaurantType(location.restaurantType)}
         </Typography>
         <Typography variant="body2" style={{ margin: '0 0 8px 0' }}>
-          Rating: {location.rating}
+          Rating: {newRestaurant.interestLevel}
         </Typography>
         <Typography variant="body2" style={{ margin: '0 0 8px 0' }}>
-          {location.comments}
+          {newRestaurant.comments}
         </Typography>
       </div>
     </InfoWindow>
   );
 }
 
-export default RestaurantToVisitInfoWindow;
+export default NewRestaurantInfoWindow;
 

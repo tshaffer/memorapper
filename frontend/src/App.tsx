@@ -11,13 +11,15 @@ import './App.css';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } from '@mui/material';
 import { Menu, MenuItem } from '@mui/material';
 import WriteReviewPage from './pages/writeReview/WriteReviewPage';
+import RestaurantDetails from './pages/reviews/RestaurantDetails';
 import { useUserContext } from './contexts/UserContext';
 import { DiningGroup, DistanceAwayFilterValues, Settings, } from './types';
 import SettingsDialog from './components/SettingsDialog';
-import DesiredRestaurantForm from './pages/desiredRestaurants/DesiredRestaurantForm';
+import NewRestaurantForm from './pages/newRestaurants/NewRestaurantForm';
 import NewRestaurants from './pages/newRestaurants/NewRestaurants';
 
 import Map from './pages/maps/Map';
+import NewRestaurantDetails from './pages/reviews/NewRestaurantDetails';
 
 // soft orange: #FFA07A
 // other possibilities
@@ -134,11 +136,13 @@ const App: React.FC = () => {
         <Route path="/" element={<Map />} />
         <Route path="/map" element={<Map />} />
         <Route path="/map/:_id" element={<Map />} />
+        <Route path="/restaurantDetails" element={<RestaurantDetails />} />
+        <Route path="/new-restaurant-details" element={<NewRestaurantDetails />} />
         <Route path="/write-review" element={<WriteReviewPage />} />
         <Route path="/write-review/:_id" element={<WriteReviewPage />} />
         <Route path="/new-restaurants" element={<NewRestaurants />} />
-        <Route path="/add-place" element={<DesiredRestaurantForm />} />
-        <Route path="/add-place/:_id" element={<DesiredRestaurantForm />} />
+        <Route path="/add-place" element={<NewRestaurantForm />} />
+        <Route path="/add-place/:_id" element={<NewRestaurantForm />} />
       </Routes>
     );
   }
@@ -181,7 +185,7 @@ const App: React.FC = () => {
                   component={Link}
                   to="/map"
                 >
-                  Home
+                  Map
                 </Button>
                 <Button
                   style={isActive('/write-review') ? activeButtonStyle : { color: 'white' }}

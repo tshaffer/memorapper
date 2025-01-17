@@ -11,32 +11,32 @@ export interface DiningGroup {
 
 export interface Diner {
   dinerId: string; // unique key
-  diningGroupId: string; // Foreign key to Account
+  diningGroupId: string; // Foreign key to DiningGroup
   dinerName: string;
 }
 
 export interface DinerRestaurantReview {
   dinerRestaurantReviewId: string; // unique key
-  dinerId: string; // Foreign key to AccountUser
+  dinerId: string; // Foreign key to Diner
   rating: number;
   comments: string;
 }
 
 export interface DinerRestaurantReview {
-  dinerId: string; // Foreign key to AccountUser
   dinerRestaurantReviewId: string; // Foreign key to DinerRestaurantReview
+  dinerId: string; // Foreign key to Diner
 }
 
-export interface RestaurantReview {
-  restaurantReviewId: string; // unique key
-  diningGroupId: string; // Foreign key to Account
-  placeId: string; // Foreign key to Place
+export interface ReviewedRestaurant {
+  reviewedRestaurantId: string; // unique key
+  diningGroupId: string; // Foreign key to Diner
+  googlePlaceId: string; // Foreign key to Place
   dinerRestaurantReviews: DinerRestaurantReview[];
 }
 
 export interface VisitReview {
   diningGroupId: string;
-  placeId: string;
+  googlePlaceId: string;
   dateOfVisit: string;
   reviewText: string;
   itemReviews: ItemReview[];

@@ -1,2 +1,2 @@
-export * from './DesiredRestaurant';
+export * from './NewRestaurant';
 export * from './MongoPlace';

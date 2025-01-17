@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { DiningGroup, VisitReview, Diner, DinerRestaurantReview, RestaurantReview } from "../types";
+import { DiningGroup, VisitReview, Diner, DinerRestaurantReview, ReviewedRestaurant } from "../types";
 import DiningGroupModel from '../models/DiningGroup';
 import DinerModel from '../models/Diner';
 import DinerRestaurantReviewModel from '../models/DinerRetaurantReview';
 import VisitReviewModel from '../models/VisitReview';
-import RestaurantReviewModel from '../models/RestaurantReview';
+import ReviewedRestaurantModel from '../models/ReviewedRestaurant';
 
 export const getDiningGroups = async (request: Request, response: Response) => {
   try {
@@ -54,14 +54,14 @@ export const getVisitReviews = async (request: Request, response: Response) => {
   }
 }
 
-export const getRestaurantReviews = async (request: Request, response: Response) => {
+export const getReviewedRestaurants = async (request: Request, response: Response) => {
   try {
-    const restaurantReviews: RestaurantReview[] = await RestaurantReviewModel.find({}).exec();
-    response.status(200).json({ restaurantReviews });
+    const reviewedRestaurants: ReviewedRestaurant[] = await ReviewedRestaurantModel.find({}).exec();
+    response.status(200).json({ reviewedRestaurants });
     return;
   } catch (error) {
-    console.error('Error retrieving restaurantReviews:', error);
-    response.status(500).json({ error: 'An error occurred while retrieving restaurantReviews.' });
+    console.error('Error retrieving reviewedRestaurants:', error);
+    response.status(500).json({ error: 'An error occurred while retrieving reviewedRestaurants.' });
     return;
   }
 }

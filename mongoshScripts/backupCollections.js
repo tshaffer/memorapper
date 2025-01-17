@@ -1,7 +1,7 @@
 use memorappy;
 
 const collections = [
-  "desiredrestaurants",
+  "newrestaurants",
   "dinerrestaurantreviews",
   "diners",
   "dininggroups",
@@ -10,7 +10,7 @@ const collections = [
   "visitreviews"
 ];
 
-const outputDir = "/Users/tedshaffer/Documents/MongoDBBackups/memoRapper/backup-16-2-2025";
+const outputDir = "/Users/tedshaffer/Documents/MongoDBBackups/memoRapper/backup-1-18-2-2025";
 
 const fs = require("fs");
 

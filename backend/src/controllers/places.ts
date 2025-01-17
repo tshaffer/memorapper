@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import MongoPlaceModel, { IMongoPlace } from "../models/MongoPlace";
-import { DesiredRestaurant, GoogleGeometry, GooglePlace, MongoGeometry, MongoPlace, SubmitDesiredRestaurantRequestBody } from "../types";
+import { NewRestaurant, GoogleGeometry, GooglePlace, MongoGeometry, MongoPlace, SubmitNewRestaurantRequestBody } from "../types";
 import { getMongoGeometryFromGoogleGeometry } from "./googlePlaces";
 import { convertMongoPlacesToGooglePlaces, convertMongoPlaceToGooglePlace } from '../utilities';
-import DesiredRestaurantModel, { IDesiredRestaurant } from '../models/DesiredRestaurant';
+import NewRestaurantModel, { INewRestaurant } from '../models/NewRestaurant';
+import { v4 as uuidv4 } from 'uuid';
 
 export const getPlace = async (placeId: any): Promise<IMongoPlace | null> => {
   try {
@@ -66,36 +67,39 @@ export function convertMongoGeometryToGoogleGeometry(mongoGeometry: MongoGeometr
 }
 
 
-export const getDesiredRestaurants = async (request: Request, response: Response, next: any): Promise<void> => {
+export const getNewRestaurants = async (request: Request, response: Response, next: any): Promise<void> => {
   try {
     const mongoPlaceDocuments: IMongoPlace[] = await MongoPlaceModel.find({}).exec();
-    const desiredRestaurantDocuments: IDesiredRestaurant[] = await DesiredRestaurantModel.find({}).exec();
+    const newRestaurantDocuments: INewRestaurant[] = await NewRestaurantModel.find({}).exec();
 
-    const desiredRestaurants: DesiredRestaurant[] = [];
+    const newRestaurants: NewRestaurant[] = [];
 
-    for (const desiredRestaurantDocument of desiredRestaurantDocuments) {
-      const desiredRestaurantGooglePlaceId = desiredRestaurantDocument.googlePlaceId;
+    for (const newRestaurantDocument of newRestaurantDocuments) {
+      const newRestaurantGooglePlaceId = newRestaurantDocument.googlePlaceId;
       for (const mongoPlaceDocument of mongoPlaceDocuments) {
-        if (mongoPlaceDocument.googlePlaceId === desiredRestaurantGooglePlaceId) {
-          const desiredRestaurant = desiredRestaurantDocument.toObject();
-          desiredRestaurant.googlePlace = convertMongoPlaceToGooglePlace(mongoPlaceDocument);
-          desiredRestaurants.push(desiredRestaurant);
+        if (mongoPlaceDocument.googlePlaceId === newRestaurantGooglePlaceId) {
+          const newRestaurant = newRestaurantDocument.toObject();
+          newRestaurant.googlePlace = convertMongoPlaceToGooglePlace(mongoPlaceDocument);
+          newRestaurants.push(newRestaurant);
         }
       }
     }
-    response.status(200).json({ desiredRestaurants });
+    response.status(200).json({ newRestaurants });
   } catch (error) {
     console.error('Error retrieving reviews:', error);
     response.status(500).json({ error: 'An error occurred while retrieving the reviews.' });
   }
 }
 
-export const submitDesiredRestaurantHandler = async (req: Request, res: Response): Promise<any> => {
+export const submitNewRestaurantHandler = async (
+  req: Request<{}, {}, SubmitNewRestaurantRequestBody>,
+  res: Response
+): Promise<any> => {
 
-  const body: SubmitDesiredRestaurantRequestBody = req.body;
+  const body: SubmitNewRestaurantRequestBody = req.body;
 
   try {
-    const newReview = await submitDesiredRestaurant(body);
+    const newReview = await submitNewRestaurant(body);
     return res.status(201).json({ message: 'Review saved successfully!', review: newReview });
   } catch (error) {
     console.error('Error saving review:', error);
@@ -103,9 +107,9 @@ export const submitDesiredRestaurantHandler = async (req: Request, res: Response
   }
 };
 
-const submitDesiredRestaurant = async (visitedRestaurant: SubmitDesiredRestaurantRequestBody): Promise<IDesiredRestaurant | null> => {
+const submitNewRestaurant = async (submitNewRestaurantBody: SubmitNewRestaurantRequestBody): Promise<INewRestaurant | null> => {
 
-  const { _id, googlePlace, comments, interestLevel } = visitedRestaurant;
+  const { _id, googlePlace, newRestaurantId, diningGroupId, comments, interestLevel } = submitNewRestaurantBody;
   const googlePlaceId = googlePlace.googlePlaceId;
 
   let mongoPlace: IMongoPlace | null = await getPlace(googlePlaceId);
@@ -116,41 +120,43 @@ const submitDesiredRestaurant = async (visitedRestaurant: SubmitDesiredRestauran
     }
   }
 
-  const addDesiredRestaurantEntity: DesiredRestaurant = {
+  const addNewRestaurantEntity: NewRestaurant = {
     _id,
+    newRestaurantId,
     googlePlaceId,
+    diningGroupId,
     comments,
     interestLevel
   };
 
-  let savedDesiredRestaurant: IDesiredRestaurant | null;
+  let savedNewRestaurant: INewRestaurant | null;
 
   if (_id) {
     // If _id is provided, update the existing document
-    savedDesiredRestaurant = await DesiredRestaurantModel.findByIdAndUpdate(_id, addDesiredRestaurantEntity, {
+    savedNewRestaurant = await NewRestaurantModel.findByIdAndUpdate(_id, addNewRestaurantEntity, {
       new: true,    // Return the updated document
       runValidators: true // Ensure the updated data complies with schema validation
     });
 
-    if (!savedDesiredRestaurant) {
+    if (!savedNewRestaurant) {
       throw new Error('Visited restaurant not found for update.');
     }
   } else {
-    delete addDesiredRestaurantEntity._id;
-    const newDesiredRestaurant: IDesiredRestaurant | null = await addDesiredRestaurant(addDesiredRestaurantEntity);
-    console.log('newDesiredRestaurant:', newDesiredRestaurant?.toObject());
+    delete addNewRestaurantEntity._id;
+    const newNewRestaurant: INewRestaurant | null = await addNewRestaurant(addNewRestaurantEntity);
+    console.log('newNewRestaurant:', newNewRestaurant?.toObject());
   }
 
   return null;
 }
 
-export const addDesiredRestaurant = async (visitedRestaurant: DesiredRestaurant): Promise<IDesiredRestaurant | null> => {
+export const addNewRestaurant = async (visitedRestaurant: NewRestaurant): Promise<INewRestaurant | null> => {
 
-  const newDesiredRestaurant: IDesiredRestaurant = new DesiredRestaurantModel(visitedRestaurant);
+  const newNewRestaurant: INewRestaurant = new NewRestaurantModel(visitedRestaurant);
 
   try {
-    const savedDesiredRestaurant: IDesiredRestaurant | null = await newDesiredRestaurant.save();
-    return savedDesiredRestaurant;
+    const savedNewRestaurant: INewRestaurant | null = await newNewRestaurant.save();
+    return savedNewRestaurant;
   } catch (error: any) {
     console.error('Error saving review:', error);
     throw new Error('An error occurred while saving the review.');

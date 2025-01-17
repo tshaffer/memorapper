@@ -25,16 +25,33 @@ export interface DinerRestaurantReviewRef {
   dinerId: string; // Foreign key to Diner
 }
 
-export interface RestaurantReview {
-  restaurantReviewId: string; // unique key
+export interface NewRestaurant {
+  _id?: string;
+  newRestaurantId: string;
+  googlePlace: GooglePlace | undefined;
+  diningGroupId: string;
+  restaurantName: string;
+  interestLevel: number;
+  comments: string;
+}
+
+export interface ReviewedRestaurant {
+  reviewedRestaurantId: string; // unique key
   diningGroupId: string; // Foreign key to DiningGroup
-  placeId: string; // Foreign key to Place
+  googlePlaceId: string; // Foreign key to Place
+  dinerRestaurantReviews: DinerRestaurantReviewRef[];
+}
+
+export interface ReviewedRestaurantWithPlace {
+  reviewedRestaurantId: string; // unique key
+  diningGroupId: string; // Foreign key to DiningGroup
+  googlePlace: GooglePlace; // Foreign key to Place
   dinerRestaurantReviews: DinerRestaurantReviewRef[];
 }
 
 export interface VisitReview {
   diningGroupId: string;
-  placeId: string;
+  googlePlaceId: string;
   dateOfVisit: string;
   reviewText: string;
   itemReviews: ItemReview[];
@@ -67,12 +84,6 @@ export interface FilterResultsParams {
 
 export interface ExtendedGooglePlace extends GooglePlace {
   reviews: VisitReview[];
-}
-
-export interface RestaurantVisitInstance {
-  dateOfVisit: string;
-  reviewText: string;
-  itemReviews: ItemReview[];
 }
 
 export interface ChatResponse {
@@ -122,3 +133,11 @@ export interface DistanceAwayQuery {
   lng: number;
   radius: number;
 }
+
+export interface RestaurantDetailsProps {
+  reviewedRestaurant: ReviewedRestaurantWithPlace;
+  dinerRestaurantReviews: DinerRestaurantReview[];
+  visitReviews: VisitReview[];
+  diners: Diner[];
+}
+

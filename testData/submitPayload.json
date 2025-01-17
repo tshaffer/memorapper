@@ -1,0 +1,321 @@
+{
+  "_id": "",
+  "diningGroupId": "1",
+  "place": {
+    "googlePlaceId": "ChIJ_ZkMOzS3j4ARrHx230WkSHo",
+    "name": "Doppio Zero Mountain View",
+    "address_components": [
+      {
+        "long_name": "160",
+        "short_name": "160",
+        "types": [
+          "street_number"
+        ]
+      },
+      {
+        "long_name": "Castro Street",
+        "short_name": "Castro St",
+        "types": [
+          "route"
+        ]
+      },
+      {
+        "long_name": "Old Mountain View",
+        "short_name": "Old Mountain View",
+        "types": [
+          "neighborhood",
+          "political"
+        ]
+      },
+      {
+        "long_name": "Mountain View",
+        "short_name": "Mountain View",
+        "types": [
+          "locality",
+          "political"
+        ]
+      },
+      {
+        "long_name": "Santa Clara County",
+        "short_name": "Santa Clara County",
+        "types": [
+          "administrative_area_level_2",
+          "political"
+        ]
+      },
+      {
+        "long_name": "California",
+        "short_name": "CA",
+        "types": [
+          "administrative_area_level_1",
+          "political"
+        ]
+      },
+      {
+        "long_name": "United States",
+        "short_name": "US",
+        "types": [
+          "country",
+          "political"
+        ]
+      },
+      {
+        "long_name": "94041",
+        "short_name": "94041",
+        "types": [
+          "postal_code"
+        ]
+      }
+    ],
+    "formatted_address": "160 Castro St, Mountain View, CA 94041, USA",
+    "geometry": {
+      "location": {
+        "lat": 37.3944829,
+        "lng": -122.0790619
+      },
+      "viewport": {
+        "east": -122.0775229697085,
+        "north": 37.3957318302915,
+        "south": 37.3930338697085,
+        "west": -122.0802209302915
+      }
+    },
+    "website": "https://www.dzpizzeria.com/mountain-view",
+    "opening_hours": {
+      "open_now": false,
+      "periods": [
+        {
+          "close": {
+            "day": 0,
+            "time": "2130",
+            "hours": 21,
+            "minutes": 30,
+            "nextDate": 1737351000000
+          },
+          "open": {
+            "day": 0,
+            "time": "1130",
+            "hours": 11,
+            "minutes": 30,
+            "nextDate": 1737315000000
+          }
+        },
+        {
+          "close": {
+            "day": 1,
+            "time": "1430",
+            "hours": 14,
+            "minutes": 30,
+            "nextDate": 1737412200000
+          },
+          "open": {
+            "day": 1,
+            "time": "1130",
+            "hours": 11,
+            "minutes": 30,
+            "nextDate": 1737401400000
+          }
+        },
+        {
+          "close": {
+            "day": 1,
+            "time": "2200",
+            "hours": 22,
+            "minutes": 0,
+            "nextDate": 1737439200000
+          },
+          "open": {
+            "day": 1,
+            "time": "1630",
+            "hours": 16,
+            "minutes": 30,
+            "nextDate": 1737419400000
+          }
+        },
+        {
+          "close": {
+            "day": 2,
+            "time": "1430",
+            "hours": 14,
+            "minutes": 30,
+            "nextDate": 1737498600000
+          },
+          "open": {
+            "day": 2,
+            "time": "1130",
+            "hours": 11,
+            "minutes": 30,
+            "nextDate": 1737487800000
+          }
+        },
+        {
+          "close": {
+            "day": 2,
+            "time": "2200",
+            "hours": 22,
+            "minutes": 0,
+            "nextDate": 1737525600000
+          },
+          "open": {
+            "day": 2,
+            "time": "1630",
+            "hours": 16,
+            "minutes": 30,
+            "nextDate": 1737505800000
+          }
+        },
+        {
+          "close": {
+            "day": 3,
+            "time": "1430",
+            "hours": 14,
+            "minutes": 30,
+            "nextDate": 1737585000000
+          },
+          "open": {
+            "day": 3,
+            "time": "1130",
+            "hours": 11,
+            "minutes": 30,
+            "nextDate": 1737574200000
+          }
+        },
+        {
+          "close": {
+            "day": 3,
+            "time": "2200",
+            "hours": 22,
+            "minutes": 0,
+            "nextDate": 1737612000000
+          },
+          "open": {
+            "day": 3,
+            "time": "1630",
+            "hours": 16,
+            "minutes": 30,
+            "nextDate": 1737592200000
+          }
+        },
+        {
+          "close": {
+            "day": 4,
+            "time": "1430",
+            "hours": 14,
+            "minutes": 30,
+            "nextDate": 1737671400000
+          },
+          "open": {
+            "day": 4,
+            "time": "1130",
+            "hours": 11,
+            "minutes": 30,
+            "nextDate": 1737660600000
+          }
+        },
+        {
+          "close": {
+            "day": 4,
+            "time": "2200",
+            "hours": 22,
+            "minutes": 0,
+            "nextDate": 1737698400000
+          },
+          "open": {
+            "day": 4,
+            "time": "1630",
+            "hours": 16,
+            "minutes": 30,
+            "nextDate": 1737678600000
+          }
+        },
+        {
+          "close": {
+            "day": 5,
+            "time": "1430",
+            "hours": 14,
+            "minutes": 30,
+            "nextDate": 1737153000000
+          },
+          "open": {
+            "day": 5,
+            "time": "1130",
+            "hours": 11,
+            "minutes": 30,
+            "nextDate": 1737142200000
+          }
+        },
+        {
+          "close": {
+            "day": 5,
+            "time": "2300",
+            "hours": 23,
+            "minutes": 0,
+            "nextDate": 1737183600000
+          },
+          "open": {
+            "day": 5,
+            "time": "1630",
+            "hours": 16,
+            "minutes": 30,
+            "nextDate": 1737160200000
+          }
+        },
+        {
+          "close": {
+            "day": 6,
+            "time": "2300",
+            "hours": 23,
+            "minutes": 0,
+            "nextDate": 1737270000000
+          },
+          "open": {
+            "day": 6,
+            "time": "1130",
+            "hours": 11,
+            "minutes": 30,
+            "nextDate": 1737228600000
+          }
+        }
+      ],
+      "weekday_text": [
+        "Monday: 11:30 AM – 2:30 PM, 4:30 – 10:00 PM",
+        "Tuesday: 11:30 AM – 2:30 PM, 4:30 – 10:00 PM",
+        "Wednesday: 11:30 AM – 2:30 PM, 4:30 – 10:00 PM",
+        "Thursday: 11:30 AM – 2:30 PM, 4:30 – 10:00 PM",
+        "Friday: 11:30 AM – 2:30 PM, 4:30 – 11:00 PM",
+        "Saturday: 11:30 AM – 11:00 PM",
+        "Sunday: 11:30 AM – 9:30 PM"
+      ]
+    },
+    "price_level": 2,
+    "vicinity": "160 Castro Street, Mountain View",
+    "restaurantType": 5
+  },
+  "dinerRestaurantReviews": [
+    {
+      "dinerRestaurantReviewId": "61889e01-c083-49c0-bcb3-cc119b70d182",
+      "dinerId": "1",
+      "rating": 5,
+      "comments": "My favorite pizza place"
+    },
+    {
+      "dinerRestaurantReviewId": "d7381909-f95f-4f73-94a6-3925a6135abe",
+      "dinerId": "2",
+      "rating": 4,
+      "comments": "Outdoor seating is nice. Eatings indoors there is a deal breaker."
+    }
+  ],
+  "dateOfVisit": "2025-01-17",
+  "reviewText": "Ordered the Doppio Zero Pizza - it is as delicious as the one we make at home.\\nMortadella pizza - I liked it though I prefer the pistachios to be more crunched up.",
+  "itemReviews": [
+    {
+      "item": "Doppio Zero Pizza",
+      "review": "as delicious as the one we make at home"
+    },
+    {
+      "item": "Mortadella pizza",
+      "review": "I liked it though I prefer the pistachios to be more crunched up"
+    }
+  ],
+  "sessionId": "9iu8ig07vpbm60ts3y5"
+}

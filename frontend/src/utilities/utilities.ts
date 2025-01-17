@@ -1,4 +1,17 @@
 import { GoogleGeometry, GooglePlace, RestaurantType } from "../types";
+import '../App.css';
+
+import { IconifyIcon } from '@iconify/react';
+
+// // https://icon-sets.iconify.design/?query=<query>
+import restaurantIcon from '@iconify/icons-openmoji/fork-and-knife-with-plate';
+import bakeryIcon from '@iconify/icons-emojione/bread';
+import barIcon from '@iconify/icons-emojione/wine-glass';
+import pizzaIcon from '@iconify/icons-emojione/pizza';
+import pastaIcon from '@iconify/icons-emojione/spaghetti';
+import iceCreamIcon from '@iconify/icons-emojione/ice-cream';
+import burritoIcon from '@iconify/icons-noto/burrito';
+import coffeeIcon from '@iconify/icons-openmoji/electric-coffee-percolator';
 
 export const getCityNameFromPlace = (place: GooglePlace): string => {
   const addressComponents = place.address_components;
@@ -10,9 +23,15 @@ export const getCityNameFromPlace = (place: GooglePlace): string => {
 }
 
 export const getLatLngFromPlace = (place: GooglePlace): google.maps.LatLngLiteral => {
-  const geometry: GoogleGeometry | undefined = place.geometry;
-  const location: google.maps.LatLngLiteral = geometry?.location!;
-  return location;
+  try {
+    const geometry: GoogleGeometry | undefined = place.geometry;
+    const location: google.maps.LatLngLiteral = geometry?.location!;
+    return location;
+  } catch (error) {
+    console.error('getLatLngFromPlace error', error);
+    debugger;
+    return { lat: 0, lng: 0 };
+  }
 }
 
 // Dummy object to define the shape of GooglePlace at runtime
@@ -123,3 +142,23 @@ export const restaurantTypeLabelFromRestaurantType = (restaurantType: Restaurant
   return 'Restaurant';
 
 }
+export const iconFromRestaurantType = (restaurantType: RestaurantType): IconifyIcon => {
+  switch (restaurantType) {
+    case RestaurantType.Bakery:
+      return bakeryIcon;
+    case RestaurantType.Bar:
+      return barIcon;
+    case RestaurantType.CoffeeShop:
+      return coffeeIcon;
+    case RestaurantType.PizzaPlace:
+      return pizzaIcon;
+    case RestaurantType.ItalianRestaurant:
+      return pastaIcon;
+    case RestaurantType.DessertShop:
+      return iceCreamIcon;
+    case RestaurantType.Taqueria:
+      return burritoIcon;
+  }
+  return restaurantIcon;
+}
+

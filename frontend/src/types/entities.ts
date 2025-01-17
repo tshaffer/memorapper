@@ -3,24 +3,18 @@ import { GooglePlace } from "./googlePlace";
 import { Filters } from "./interfaces";
 import { AddressComponent } from "./place";
 
-export interface DesiredRestaurant {
-  _id?: string;
-  googlePlace: GooglePlace | undefined;
-  restaurantName: string;
-  interestLevel: number;
-  comments: string;
-}
-
-export interface EditableDesiredRestaurant {
+export interface EditableNewRestaurant {
   googlePlace: GooglePlace;
   restaurantName: string;
   comments: string;
   interestLevel: number;
 }
 
-export interface SubmitDesiredRestaurantRequestBody {
+export interface SubmitNewRestaurantRequestBody {
   _id?: string;
   googlePlace: GooglePlace;
+  newRestaurantId: string;
+  diningGroupId: string;
   interestLevel: number;
   comments: string;
 }
@@ -29,7 +23,7 @@ export interface Settings {
   filters: Filters;
 }
 
-export interface UnvisitedPlace {
+export interface NewPlace {
   _id?: any;
   place: GooglePlace | null;
   comments: string;

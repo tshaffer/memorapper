@@ -61,7 +61,7 @@ export const addReviewsFromFileHandler = async (
 
 const addTestReview = async (
   diningGroupId: string,
-  dinerRestaurantReviews: any[],
+  dinerRestaurantReview: any[],
   dateOfVisit: string,
   restaurantName: string,
   restaurantType: number,
@@ -83,7 +83,7 @@ const addTestReview = async (
   const submitReviewBody: SubmitReviewBody = {
     diningGroupId,
     place,
-    dinerRestaurantReviews,
+    dinerRestaurantReviews: dinerRestaurantReview,
     dateOfVisit,
     reviewText,
     itemReviews,

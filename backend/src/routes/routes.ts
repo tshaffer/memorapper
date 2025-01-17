@@ -4,14 +4,14 @@ import {
   getPlaces,
   healthHandler,
   testHandler,
-  getDesiredRestaurants,
-  submitDesiredRestaurantHandler,
+  getNewRestaurants,
+  submitNewRestaurantHandler,
   getDiningGroups,
   getDiners,
   getDinerRestaurantReviews,
   previewHandler,
   getVisitReviews,
-  getRestaurantReviews,
+  getReviewedRestaurants,
   chatHandler,
   searchAndFilterHandler,
 } from '../controllers';
@@ -22,18 +22,18 @@ const router = Router();
 router.get('/health', healthHandler);
 router.get('/test', testHandler);
 router.get('/places', getPlaces);
-router.get('/desiredRestaurants', getDesiredRestaurants);
+router.get('/newRestaurants', getNewRestaurants);
 
 router.post('/reviews/addReviewsFromFile', addReviewsFromFileHandler);
 
-router.post('/submitDesiredRestaurant', submitDesiredRestaurantHandler);
+router.post('/submitNewRestaurant', submitNewRestaurantHandler);
 
 
 router.get('/diningGroups', getDiningGroups);
 router.get('/diners', getDiners);
 router.get('/visitReviews', getVisitReviews);
 router.get('/dinerRestaurantReviews', getDinerRestaurantReviews);
-router.get('/restaurantReviews', getRestaurantReviews);
+router.get('/reviewedRestaurants', getReviewedRestaurants);
 
 router.post('/preview', previewHandler);
 router.post('/review', reviewHandler);

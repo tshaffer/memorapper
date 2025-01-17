@@ -2,27 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import directionsIcon from '@iconify/icons-mdi/directions';
-import { DiningGroup, VisitReview, Diner, DinerRestaurantReview, DinerRestaurantReviewRef, ExtendedGooglePlace, RestaurantReview } from '../types';
+import { DiningGroup, VisitReview, Diner, DinerRestaurantReview, DinerRestaurantReviewRef, ExtendedGooglePlace, ReviewedRestaurant, ReviewedRestaurantWithPlace, RestaurantDetailsProps } from '../types';
 import { InfoWindow } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace, restaurantTypeLabelFromRestaurantType } from '../utilities';
 import '../App.css';
 import { Typography, useMediaQuery } from '@mui/material';
 import Rating from '@mui/material/Rating';
 
-interface RestaurantInfoWindowProps {
-  location: ExtendedGooglePlace;
+interface ReviewedRestaurantInfoWindowProps {
+  reviewedRestaurant: ReviewedRestaurantWithPlace;
   onClose: () => void;
 }
 
-const RestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location, onClose }) => {
+const ReviewedRestaurantInfoWindow: React.FC<ReviewedRestaurantInfoWindowProps> = ({ reviewedRestaurant, onClose }) => {
 
   const isMobile = useMediaQuery('(max-width:768px)');
   const navigate = useNavigate();
 
+  const location = reviewedRestaurant.googlePlace!;
+
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [diningGroups, setDiningGroups] = useState<DiningGroup[]>([]);
   const [diners, setDiners] = useState<Diner[]>([]);
-  const [restaurantReviews, setRestaurantReviews] = useState<RestaurantReview[]>([]);
+  const [reviewedRestaurants, setReviewedRestaurants] = useState<ReviewedRestaurant[]>([]);
   const [dinerRestaurantReviews, setDinerRestaurantReviews] = useState<DinerRestaurantReview[]>([]);
   const [visitReviews, setVisitReviews] = useState<VisitReview[]>([]);
 
@@ -47,10 +49,6 @@ const RestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location, o
       return;
     }
 
-    const { reviews, googlePlaceId, name, address_components, formatted_address, website, opening_hours, price_level, vicinity, restaurantType } = location;
-
-    console.log('reviews:', reviews);
-
     const fetchDiningGroups = async (): Promise<DiningGroup[]> => {
       const response = await fetch('/api/diningGroups');
       const data = await response.json();
@@ -65,10 +63,10 @@ const RestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location, o
       return data.diners;
     }
 
-    const fetchRestaurantReviews = async (): Promise<RestaurantReview[]> => {
-      const response = await fetch('/api/restaurantReviews');
+    const fetchRestaurantReviews = async (): Promise<ReviewedRestaurant[]> => {
+      const response = await fetch('/api/reviewedRestaurants');
       const data = await response.json();
-      setRestaurantReviews(data.restaurantReviews);
+      setReviewedRestaurants(data.reviewedRestaurants);
       return data.restaurantReviews;
     };
 
@@ -97,9 +95,9 @@ const RestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location, o
     fetchData();
   }, []);
 
-  const getRestaurantReview = (): RestaurantReview | null => {
-    for (const restaurantReview of restaurantReviews) {
-      if (restaurantReview.placeId === location.googlePlaceId) {
+  const getRestaurantReview = (): ReviewedRestaurant | null => {
+    for (const restaurantReview of reviewedRestaurants) {
+      if (restaurantReview.googlePlaceId === location.googlePlaceId) {
         const diningGroupId = restaurantReview.diningGroupId;
         for (const diningGroup of diningGroups) {
           if (diningGroup.diningGroupId === diningGroupId) {
@@ -122,8 +120,14 @@ const RestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location, o
 
   function handleRestaurantLinkClicked(): void {
     console.log('handleRestaurantLinkClicked');
-    // const reviews: AccountPlaceReview[] = location.reviews;
-    // navigate(`/restaurantDetails`, { state: { place: location, reviews } });
+    console.log(reviewedRestaurant);
+    const RestaurantDetailsProps: RestaurantDetailsProps = {
+      reviewedRestaurant,
+      dinerRestaurantReviews,
+      visitReviews,
+      diners,
+    };
+    navigate(`/restaurantDetails`, { state: RestaurantDetailsProps});
   }
 
   const renderDinerRestaurantReview = (dinerReviewInputRef: DinerRestaurantReviewRef): JSX.Element | null => {
@@ -180,6 +184,8 @@ const RestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location, o
     return dinerRestaurantReviewElements;
   }
 
+  console.log('ReviewedRestaurantInfoWindow location:', location);
+  
   return (
     <InfoWindow
       position={getLatLngFromPlace(location)}
@@ -257,5 +263,5 @@ const RestaurantInfoWindow: React.FC<RestaurantInfoWindowProps> = ({ location, o
   );
 }
 
-export default RestaurantInfoWindow;
+export default ReviewedRestaurantInfoWindow;
 

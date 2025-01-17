@@ -6,13 +6,14 @@ import LocationAutocomplete from '../../components/LocationAutocomplete';
 import {
   ExtendedGooglePlaceToVisit,
   Filters,
-  UnvisitedPlace,
+  NewPlace,
   GooglePlace,
   FilterResultsParams,
   VisitReview,
   ExtendedGooglePlace,
   SearchQuery,
-  DesiredRestaurant
+  NewRestaurant,
+  ReviewedRestaurant
 } from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
 import PulsingDots from '../../components/PulsingDots';
@@ -30,8 +31,11 @@ const MapPage: React.FC = () => {
 
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [places, setPlaces] = useState<GooglePlace[]>([]);
+
   const [filteredPlaces, setFilteredPlaces] = useState<GooglePlace[]>([]);
-  const [newRestaurants, setNewRestaurants] = useState<DesiredRestaurant[]>([]);
+
+  const [reviewedRestaurants, setReviewedRestaurants] = useState<ReviewedRestaurant[]>([]);
+  const [newRestaurants, setNewRestaurants] = useState<NewRestaurant[]>([]);
 
   const [reviews, setReviews] = useState<VisitReview[]>([]);
 
@@ -81,11 +85,18 @@ const MapPage: React.FC = () => {
       return data.googlePlaces;
     };
 
-    const fetchNewRestaurants = async (): Promise<DesiredRestaurant[]> => {
-      const response = await fetch('/api/desiredRestaurants');
+    const fetchReviewedRestaurants = async (): Promise<ReviewedRestaurant[]> => {
+      const response = await fetch('/api/reviewedRestaurants');
       const data = await response.json();
-      setNewRestaurants(data.desiredRestaurants);
-      return data.desiredRestaurants;
+      setReviewedRestaurants(data.reviewedRestaurants);
+      return data.restaurantReviews;
+    };
+
+    const fetchNewRestaurants = async (): Promise<NewRestaurant[]> => {
+      const response = await fetch('/api/newRestaurants');
+      const data = await response.json();
+      setNewRestaurants(data.newRestaurants);
+      return data.newRestaurants;
     };
 
     const fetchReviews = async (): Promise<VisitReview[]> => {
@@ -97,7 +108,8 @@ const MapPage: React.FC = () => {
 
     const fetchData = async () => {
       const location = await fetchCurrentLocation();
-      const places = await fetchPlaces();
+      const places: GooglePlace[] = await fetchPlaces();
+      const reviewedRestaurants: ReviewedRestaurant[] = await fetchReviewedRestaurants();
       filterOnEntry(places, location!, settings.filters);
       await fetchReviews();
     };
@@ -124,7 +136,7 @@ const MapPage: React.FC = () => {
   }, [_id, places]);
 
   const getReviewsForPlace = (placeId: string): VisitReview[] =>
-    reviews.filter((review) => review.placeId === placeId);
+    reviews.filter((review) => review.googlePlaceId === placeId);
 
   const getExtendedGooglePlaces = (inputPlaces: GooglePlace[]): ExtendedGooglePlace[] =>
     inputPlaces.map((place) => ({
@@ -134,18 +146,18 @@ const MapPage: React.FC = () => {
 
   const getExtendedGooglePlaceToVisit = (place: GooglePlace): ExtendedGooglePlaceToVisit => {
     const googlePlaceId = place.googlePlaceId;
-    const unvisitedPlace: DesiredRestaurant | undefined = newRestaurants.find((unvisitedPlaceToVisit) => unvisitedPlaceToVisit.googlePlace!.googlePlaceId === googlePlaceId);
+    const newPlace: NewRestaurant | undefined = newRestaurants.find((newPlaceToVisit) => newPlaceToVisit.googlePlace!.googlePlaceId === googlePlaceId);
     return {
       ...place,
-      comments: unvisitedPlace?.comments || '',
-      rating: unvisitedPlace?.interestLevel || 0,
+      comments: newPlace?.comments || '',
+      rating: newPlace?.interestLevel || 0,
     };
   }
 
   const getExtendedGooglePlacesToVisit = (): ExtendedGooglePlaceToVisit[] => {
     const extendedGooglePlacesToVisit: ExtendedGooglePlaceToVisit[] = [];
-    for (const unvisitedPlace of newRestaurants) {
-      const extendedGooglePlaceToVisit: ExtendedGooglePlaceToVisit = getExtendedGooglePlaceToVisit(unvisitedPlace.googlePlace!);
+    for (const newPlace of newRestaurants) {
+      const extendedGooglePlaceToVisit: ExtendedGooglePlaceToVisit = getExtendedGooglePlaceToVisit(newPlace.googlePlace!);
       extendedGooglePlacesToVisit.push(extendedGooglePlaceToVisit);
     }
     return extendedGooglePlacesToVisit;
@@ -251,8 +263,10 @@ const MapPage: React.FC = () => {
         <MapWithMarkers
           key={JSON.stringify({ googlePlaces: filteredPlaces, specifiedLocation: mapLocation })} // Forces re-render on prop change
           initialCenter={mapLocation!}
-          locations={getExtendedGooglePlaces(filteredPlaces)}
-          locationsToVisit={getExtendedGooglePlacesToVisit()}
+          reviewedRestaurants={reviewedRestaurants}
+          newRestaurants={newRestaurants}
+          // locations={getExtendedGooglePlaces(filteredPlaces)}
+          // locationsToVisit={getExtendedGooglePlacesToVisit()}
         />
       </div>
     );

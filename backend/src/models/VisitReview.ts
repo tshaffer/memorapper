@@ -10,7 +10,7 @@ const ItemReviewSchema: Schema = new Schema({
 
 const VisitReviewSchema: Schema = new Schema({
   diningGroupId: { type: String, required: true, ref: 'DiningGroup' },
-  placeId: { type: String, required: true, ref: 'MongoPlace' },
+  googlePlaceId: { type: String, required: true, ref: 'MongoPlace' },
   dateOfVisit: { type: String, required: true },
   reviewText: { type: String, required: true },
   itemReviews: [ItemReviewSchema],

@@ -1,0 +1,193 @@
+{
+  "googlePlace": {
+    "googlePlaceId": "ChIJx6D1wO8ar4YRNg7TVi9H8gI",
+    "name": "Barracuda Cantina",
+    "address_components": [
+      {
+        "long_name": "Cerritos Avenue",
+        "short_name": "Cerritos Ave",
+        "types": [
+          "route"
+        ]
+      },
+      {
+        "long_name": "Los Cerritos",
+        "short_name": "Los Cerritos",
+        "types": [
+          "locality",
+          "political"
+        ]
+      },
+      {
+        "long_name": "Baja California Sur",
+        "short_name": "B.C.S.",
+        "types": [
+          "administrative_area_level_1",
+          "political"
+        ]
+      },
+      {
+        "long_name": "Mexico",
+        "short_name": "MX",
+        "types": [
+          "country",
+          "political"
+        ]
+      },
+      {
+        "long_name": "23300",
+        "short_name": "23300",
+        "types": [
+          "postal_code"
+        ]
+      }
+    ],
+    "formatted_address": "Cerritos Ave, 23300 Los Cerritos, B.C.S., Mexico",
+    "geometry": {
+      "location": {
+        "lat": 23.3302842,
+        "lng": -110.1761184
+      },
+      "viewport": {
+        "east": -110.1746996697085,
+        "north": 23.33160473029151,
+        "south": 23.3289067697085,
+        "west": -110.1773976302915
+      }
+    },
+    "website": "http://www.barracudacantina.com/",
+    "opening_hours": {
+      "open_now": false,
+      "periods": [
+        {
+          "close": {
+            "day": 0,
+            "time": "2000",
+            "hours": 20,
+            "minutes": 0,
+            "nextDate": 1737342000000
+          },
+          "open": {
+            "day": 0,
+            "time": "1200",
+            "hours": 12,
+            "minutes": 0,
+            "nextDate": 1737313200000
+          }
+        },
+        {
+          "close": {
+            "day": 1,
+            "time": "2000",
+            "hours": 20,
+            "minutes": 0,
+            "nextDate": 1737428400000
+          },
+          "open": {
+            "day": 1,
+            "time": "1200",
+            "hours": 12,
+            "minutes": 0,
+            "nextDate": 1737399600000
+          }
+        },
+        {
+          "close": {
+            "day": 2,
+            "time": "2000",
+            "hours": 20,
+            "minutes": 0,
+            "nextDate": 1737514800000
+          },
+          "open": {
+            "day": 2,
+            "time": "1200",
+            "hours": 12,
+            "minutes": 0,
+            "nextDate": 1737486000000
+          }
+        },
+        {
+          "close": {
+            "day": 3,
+            "time": "2000",
+            "hours": 20,
+            "minutes": 0,
+            "nextDate": 1737601200000
+          },
+          "open": {
+            "day": 3,
+            "time": "1200",
+            "hours": 12,
+            "minutes": 0,
+            "nextDate": 1737572400000
+          }
+        },
+        {
+          "close": {
+            "day": 4,
+            "time": "2000",
+            "hours": 20,
+            "minutes": 0,
+            "nextDate": 1737687600000
+          },
+          "open": {
+            "day": 4,
+            "time": "1200",
+            "hours": 12,
+            "minutes": 0,
+            "nextDate": 1737658800000
+          }
+        },
+        {
+          "close": {
+            "day": 5,
+            "time": "2000",
+            "hours": 20,
+            "minutes": 0,
+            "nextDate": 1737169200000
+          },
+          "open": {
+            "day": 5,
+            "time": "1200",
+            "hours": 12,
+            "minutes": 0,
+            "nextDate": 1737140400000
+          }
+        },
+        {
+          "close": {
+            "day": 6,
+            "time": "2000",
+            "hours": 20,
+            "minutes": 0,
+            "nextDate": 1737255600000
+          },
+          "open": {
+            "day": 6,
+            "time": "1200",
+            "hours": 12,
+            "minutes": 0,
+            "nextDate": 1737226800000
+          }
+        }
+      ],
+      "weekday_text": [
+        "Monday: 12:00 – 8:00 PM",
+        "Tuesday: 12:00 – 8:00 PM",
+        "Wednesday: 12:00 – 8:00 PM",
+        "Thursday: 12:00 – 8:00 PM",
+        "Friday: 12:00 – 8:00 PM",
+        "Saturday: 12:00 – 8:00 PM",
+        "Sunday: 12:00 – 8:00 PM"
+      ]
+    },
+    "price_level": 2,
+    "vicinity": "Cerritos Avenue, Los Cerritos",
+    "restaurantType": 2
+  },
+  "newRestaurantId": "391d1d6b-3661-4e5c-ac0a-f71675bfab51",
+  "diningGroupId": "1",
+  "comments": "",
+  "interestLevel": 3
+}

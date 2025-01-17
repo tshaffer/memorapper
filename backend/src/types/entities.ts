@@ -2,16 +2,20 @@ import { RestaurantType } from "./enums";
 import { GooglePlace } from "./googlePlace";
 import { AddressComponent } from "./place";
 
-export interface DesiredRestaurant {
+export interface NewRestaurant {
   _id?: string;
+  newRestaurantId: string;
   googlePlaceId: string;
+  diningGroupId: string;
   interestLevel: number;
   comments: string;
 }
 
-export interface SubmitDesiredRestaurantRequestBody {
+export interface SubmitNewRestaurantRequestBody {
   _id?: string;
   googlePlace: GooglePlace;
+  newRestaurantId: string;
+  diningGroupId: string;
   interestLevel: number;
   comments: string;
 }

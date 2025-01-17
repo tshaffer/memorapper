@@ -29,7 +29,7 @@ export const filterResults = async (
   // Filter reviews based on filtered places
   const filteredReviews = reviews.filter((review) => {
     // Check if the review belongs to a filtered place
-    if (!filteredPlaceIds.has(review.placeId)) return false;
+    if (!filteredPlaceIds.has(review.googlePlaceId)) return false;
     return true;
   });
 
