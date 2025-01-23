@@ -5,12 +5,16 @@ import routes from './routes/routes';
 import mongoose from 'mongoose';
 import path from 'path';
 
+console.log('retrieve environment variables');
+
 dotenv.config();
 
 console.log('environment variables:');
 console.log(process.env.OPENAI_API_KEY);
 console.log(process.env.MONGODB_URI);
 console.log(process.env.PORT);
+console.log(process.env.GOOGLE_PLACES_API_KEY);
+console.log(process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
 
 const app: express.Application = express();
 const PORT = process.env.PORT || 5000;

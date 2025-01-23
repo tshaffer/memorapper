@@ -137,6 +137,9 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, reviewed
     );
   };
 
+  console.log('MapWithMarkers, key:');
+  console.log(import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY);
+
   const googleMapsApiKey = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!;
 
   return (

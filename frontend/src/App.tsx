@@ -39,6 +39,10 @@ const App: React.FC = () => {
   const location = useLocation(); // Track the current route
 
   useEffect(() => {
+
+    console.log('App.tsx: useEffect()');
+    console.log('diningGroups:', diningGroups);
+    
     const getCurrentDiningGroup = (): DiningGroup | null => {
       const storedDiningGroupId: string | null = localStorage.getItem('diningGroupId');
       if (diningGroups) {
