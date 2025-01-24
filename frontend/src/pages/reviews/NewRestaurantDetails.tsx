@@ -68,10 +68,10 @@ const NewRestaurantDetails: React.FC = () => {
         </Typography>
       );
     }
-
+  
     return (
       <Paper elevation={3} sx={{ padding: 2, marginTop: 2 }}>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" sx={{ marginBottom: 1 }}>
           Opening Hours
         </Typography>
         <List
@@ -79,30 +79,25 @@ const NewRestaurantDetails: React.FC = () => {
             padding: 0,
             '& .MuiListItem-root': {
               padding: 0,
-              marginBottom: { xs: '0px', sm: '8px' }, // Reduce spacing between lines on mobile
-              marginTop: { xs: '0px', sm: '8px' }, // Reduce spacing between lines on mobile
+              marginBottom: 0.5, // Minimal spacing between lines
             },
           }}
         >
           {newRestaurant.googlePlace!.opening_hours.weekday_text.map((day, index) => (
-            <ListItem
-              key={index}
-            >
+            <ListItem key={index} sx={{ padding: 0 }}>
               <ListItemText
                 primary={day}
                 sx={{
-                  padding: 0,
-                  marginBottom: { xs: '0px', sm: '8px' }, // Reduce spacing between lines on mobile
-                  marginTop: { xs: '0px', sm: '8px' }, // Reduce spacing between lines on mobile
+                  marginBottom: 0, // Ensure no extra margin
                 }}
               />
             </ListItem>
           ))}
         </List>
-      </Paper >
+      </Paper>
     );
   };
-
+  
   const renderAddress = (): JSX.Element => {
     return (
       <Typography>{newRestaurant.googlePlace!.vicinity}</Typography>
