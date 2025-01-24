@@ -22,7 +22,7 @@ const NewRestaurantDetails: React.FC = () => {
 
   const renderRestaurantName = () => {
     return (
-        <Typography variant="h6">{newRestaurant.googlePlace!.name}</Typography>
+      <Typography variant="h6">{newRestaurant.googlePlace!.name}</Typography>
     );
   };
 
@@ -103,11 +103,29 @@ const NewRestaurantDetails: React.FC = () => {
     );
   };
 
+  const renderAddress = (): JSX.Element => {
+    return (
+      <Typography>{newRestaurant.googlePlace!.vicinity}</Typography>
+    );
+  }
+
+  const renderWebPage = (): JSX.Element => {
+    return (
+      <Typography>
+        <a href={newRestaurant.googlePlace!.website} target="_blank" rel="noreferrer">
+          {newRestaurant.googlePlace!.website}
+        </a>
+      </Typography>
+    )
+  }
+
   return (
     <Grid container spacing={2} sx={{ padding: 2, height: '100vh', overflowY: 'auto' }}>
       <Grid item xs={12} md={4} sx={{ borderRight: { md: '1px solid #ddd' }, paddingRight: 2 }}>
         {renderRestaurantName()}
         {renderRestaurantType()}
+        {renderAddress()}
+        {renderWebPage()}
         {renderInterestLevel()}
         {renderComments()}
         {renderOpeningHours()}
