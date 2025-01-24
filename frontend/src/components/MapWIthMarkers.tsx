@@ -130,15 +130,13 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, reviewed
   const renderNewRestaurantMarker = (newRestaurant: NewRestaurant, index: number): JSX.Element => {
     return (
       <NewRestaurantMarker
+        key={`location-${index}`}
         newRestaurant={newRestaurant}
         onMarkerClick={(clickedRestaurant: NewRestaurant) => handleNewRestaurantClick(clickedRestaurant)}
       >
       </NewRestaurantMarker>
     );
   };
-
-  console.log('MapWithMarkers, key:');
-  console.log(import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY);
 
   const googleMapsApiKey = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!;
 

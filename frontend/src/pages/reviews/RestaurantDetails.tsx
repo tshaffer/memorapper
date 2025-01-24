@@ -113,7 +113,7 @@ const RestaurantDetails: React.FC = () => {
   const renderOpeningHours = (): JSX.Element => {
     if (!place.opening_hours || !place.opening_hours.weekday_text) {
       return (
-        <Typography variant="body2" color="textSecondary">
+        <Typography component={'span'} variant={'body2'} color="textSecondary">
           Opening hours not available
         </Typography>
       );
@@ -121,7 +121,7 @@ const RestaurantDetails: React.FC = () => {
 
     return (
       <Paper elevation={3} sx={{ padding: 2, marginTop: 2 }}>
-        <Typography variant="h6" gutterBottom>
+        <Typography component={'span'} variant={'body2'}>
           Opening Hours
         </Typography>
         <List

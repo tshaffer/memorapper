@@ -40,9 +40,6 @@ const App: React.FC = () => {
 
   useEffect(() => {
 
-    console.log('App.tsx: useEffect()');
-    console.log('diningGroups:', diningGroups);
-    
     const getCurrentDiningGroup = (): DiningGroup | null => {
       const storedDiningGroupId: string | null = localStorage.getItem('diningGroupId');
       if (diningGroups) {
