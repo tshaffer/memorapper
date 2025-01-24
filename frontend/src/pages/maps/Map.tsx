@@ -22,22 +22,16 @@ import { newFilterResults } from '../../utilities/newFilterResults';
 import MapWithMarkers from '../../components/MapWIthMarkers';
 
 const MapPage: React.FC = () => {
+  const { places, reviews, newRestaurants, reviewedRestaurants, settings, setFilters } = useUserContext();
   const { _id } = useParams<{ _id: string }>();
-  const { settings, setFilters } = useUserContext();
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
   const [showFiltersDialog, setShowFiltersDialog] = React.useState(false);
 
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
-  const [places, setPlaces] = useState<GooglePlace[]>([]);
 
   const [filteredPlaces, setFilteredPlaces] = useState<GooglePlace[]>([]);
-
-  const [reviewedRestaurants, setReviewedRestaurants] = useState<ReviewedRestaurant[]>([]);
-  const [newRestaurants, setNewRestaurants] = useState<NewRestaurant[]>([]);
-
-  const [reviews, setReviews] = useState<VisitReview[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -77,45 +71,12 @@ const MapPage: React.FC = () => {
       }
     };
 
-    const fetchPlaces = async (): Promise<GooglePlace[]> => {
-      const response = await fetch('/api/places');
-      const data = await response.json();
-      setPlaces(data.googlePlaces);
-      setFilteredPlaces(data.googlePlaces);
-      return data.googlePlaces;
-    };
-
-    const fetchReviewedRestaurants = async (): Promise<ReviewedRestaurant[]> => {
-      const response = await fetch('/api/reviewedRestaurants');
-      const data = await response.json();
-      setReviewedRestaurants(data.reviewedRestaurants);
-      return data.restaurantReviews;
-    };
-
-    const fetchNewRestaurants = async (): Promise<NewRestaurant[]> => {
-      const response = await fetch('/api/newRestaurants');
-      const data = await response.json();
-      setNewRestaurants(data.newRestaurants);
-      return data.newRestaurants;
-    };
-
-    const fetchReviews = async (): Promise<VisitReview[]> => {
-      const response = await fetch('/api/visitReviews');
-      const data = await response.json();
-      setReviews(data.visitReviews);
-      return data.visitReviews;
-    };
-
     const fetchData = async () => {
       const location = await fetchCurrentLocation();
-      const places: GooglePlace[] = await fetchPlaces();
-      const reviewedRestaurants: ReviewedRestaurant[] = await fetchReviewedRestaurants();
       filterOnEntry(places, location!, settings.filters);
-      await fetchReviews();
     };
 
     fetchData();
-    fetchNewRestaurants();
 
   }, [_id]);
 

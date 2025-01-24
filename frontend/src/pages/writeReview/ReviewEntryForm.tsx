@@ -26,13 +26,11 @@ interface ReviewEntryFormProps {
 
 const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormProps) => {
 
-  const { currentDiningGroup } = useUserContext();
+  const { diners } = useUserContext();
 
   const { reviewData, setReviewData, onSubmitPreview } = props;
 
   const isMobile = useMediaQuery('(max-width:768px)');
-
-  const [diners, setDiners] = useState<Diner[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -52,26 +50,6 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
       handleChange('sessionId', newSessionId);
     }
   }, [reviewData.sessionId]);
-
-  useEffect(() => {
-
-    const fetchDiners = async (): Promise<Diner[]> => {
-      const response = await fetch('/api/diners');
-      const data = await response.json();
-      const allDiners: Diner[] = data.diners;
-      const dinersForCurrentDiningGroup: Diner[] = allDiners.filter((diner) => diner.diningGroupId === currentDiningGroup?.diningGroupId);
-      return dinersForCurrentDiningGroup;
-    }
-
-    const fetchData = async () => {
-      const diners = await fetchDiners();
-      setDiners(diners);
-    };
-
-    fetchData();
-
-  }, []);
-
 
   const restaurantTypeOptions = Object.keys(RestaurantType)
     .filter((key) => isNaN(Number(key)))

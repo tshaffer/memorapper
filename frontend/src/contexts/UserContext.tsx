@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Diner, DiningGroup, DistanceAwayFilterValues, Filters, GooglePlace, NewRestaurant, ReviewedRestaurant, Settings, VisitReview } from '../types';
+import { Diner, DinerRestaurantReview, DiningGroup, DistanceAwayFilterValues, Filters, GooglePlace, NewRestaurant, ReviewedRestaurant, Settings, VisitReview } from '../types';
 
 interface UserContextValue {
   diningGroups: DiningGroup[];
@@ -18,6 +18,9 @@ interface UserContextValue {
 
   reviews: VisitReview[];
   setReviews: (reviews: VisitReview[]) => void;
+
+  dinerRestaurantReviews: DinerRestaurantReview[];
+  setDinerRestaurantReviews: (dinerRestaurantReviews: DinerRestaurantReview[]) => void;
 
   currentDiningGroup: DiningGroup | null;
   setCurrentDiningGroup: (diningGroup: DiningGroup | null) => void;
@@ -38,7 +41,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [reviewedRestaurants, setReviewedRestaurants] = useState<ReviewedRestaurant[]>([]);
   const [newRestaurants, setNewRestaurants] = useState<NewRestaurant[]>([]);
   const [reviews, setReviews] = useState<VisitReview[]>([]);
-
+  const [dinerRestaurantReviews, setDinerRestaurantReviews] = useState<DinerRestaurantReview[]>([]);
   const [currentDiningGroup, setCurrentDiningGroup] = useState<DiningGroup | null>(null);
 
   const [settings, setSettingsState] = useState<Settings>({
@@ -100,12 +103,21 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setReviews(data.visitReviews);
     };
 
+    const fetchDinerRestaurantReviews = async () => {
+      const response = await fetch('/api/dinerRestaurantReviews');
+      const data = await response.json();
+      setDinerRestaurantReviews(data.dinerRestaurantReviews);
+    };
+
+
     const fetchData = async () => {
       await fetchDiningGroups();
       await fetchDiners();
       await fetchPlaces();
       await fetchReviewedRestaurants();
+      await fetchNewRestaurants();
       await fetchReviews();
+      await fetchDinerRestaurantReviews();
       setLoading(false);
     };
 
@@ -127,6 +139,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setNewRestaurants: setNewRestaurants,
         reviews: reviews,
         setReviews: setReviews,
+        dinerRestaurantReviews: dinerRestaurantReviews,
+        setDinerRestaurantReviews: setDinerRestaurantReviews,
         currentDiningGroup: currentDiningGroup,
         settings,
         setCurrentDiningGroup: setCurrentDiningGroup,

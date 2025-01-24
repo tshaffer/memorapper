@@ -21,8 +21,7 @@ interface PreviewTabProps {
 }
 
 const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
-
-  const { currentDiningGroup } = useUserContext();
+  const { diners } = useUserContext();
 
   const { reviewData, onSubmitReview } = props;
 
@@ -30,30 +29,9 @@ const PreviewTab: React.FC<PreviewTabProps> = (props: PreviewTabProps) => {
 
   const { place, dateOfVisit, reviewText, itemReviews } = reviewData;
 
-  const [diners, setDiners] = useState<Diner[]>([]);
-
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const navigate = useNavigate();
-
-  React.useEffect(() => {
-
-    const fetchDiners = async (): Promise<Diner[]> => {
-      const response = await fetch('/api/diners');
-      const data = await response.json();
-      const allDiners: Diner[] = data.diners;
-      const dinersForCurrentDiningGroup: Diner[] = allDiners.filter((diner) => diner.diningGroupId === currentDiningGroup?.diningGroupId);
-      return dinersForCurrentDiningGroup;
-    }
-
-    const fetchData = async () => {
-      const diners = await fetchDiners();
-      setDiners(diners);
-    };
-
-    fetchData();
-
-  }, []);
 
   const getDinerInput = (dinerId: string): DinerRestaurantReview | null => {
     if (!reviewData || !reviewData.dinerRestaurantReviews) return null;

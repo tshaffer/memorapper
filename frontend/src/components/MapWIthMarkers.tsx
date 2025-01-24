@@ -8,6 +8,7 @@ import ReviewedRestaurantMarker from './ReviewedRestaurantMarker';
 import NewRestaurantMarker from './NewRestaurantMarker';
 import ReviewedRestaurantInfoWindow from './ReviewedRestaurantInfoWindow';
 import NewRestaurantInfoWindow from './NewRestaurantInfoWindow';
+import { useUserContext } from '../contexts/UserContext';
 
 const DEFAULT_ZOOM = 14;
 
@@ -30,6 +31,9 @@ interface MapWithMarkersProps {
 }
 
 const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, reviewedRestaurants, newRestaurants, blueDotLocation }) => {
+
+  const { places } = useUserContext();
+
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
 
@@ -72,23 +76,6 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, reviewed
     }
   }, []);
 
-  const [places, setPlaces] = useState<GooglePlace[]>([]);
-
-  useEffect(() => {
-
-    const fetchPlaces = async () => {
-      const response = await fetch('/api/places');
-      const data = await response.json();
-      setPlaces(data.googlePlaces);
-    };
-
-    const fetchData = async () => {
-      await fetchPlaces();
-    };
-
-    fetchData();
-
-  }, []);
 
   const getPlaceFromPlaceId = (placeId: string): GooglePlace | null => {
     for (const place of places) {

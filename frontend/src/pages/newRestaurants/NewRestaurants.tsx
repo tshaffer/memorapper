@@ -27,13 +27,12 @@ const smallColumnStyle: React.CSSProperties = {
 
 const NewRestaurants = () => {
 
-  const { settings, setFilters } = useUserContext();
+  const { newRestaurants,  setFilters, settings } = useUserContext();
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
   const [showFiltersDialog, setShowFiltersDialog] = React.useState(false);
 
-  const [newRestaurants, setNewRestaurants] = useState<NewRestaurant[]>([]);
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -62,14 +61,6 @@ const NewRestaurants = () => {
       }
     };
 
-    const fetchNewRestaurants = async (): Promise<NewRestaurant[]> => {
-      const response = await fetch('/api/newRestaurants');
-      const data = await response.json();
-      setNewRestaurants(data.newRestaurants);
-      return data.newRestaurants;
-    };
-
-    fetchNewRestaurants();
     fetchCurrentLocation();
 
   }, []);
