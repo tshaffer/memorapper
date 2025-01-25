@@ -126,6 +126,7 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, reviewed
   };
 
   const googleMapsApiKey = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!;
+  console.log('MapWithMarkers: googleMapsApiKey:', googleMapsApiKey);
 
   return (
     <APIProvider apiKey={googleMapsApiKey} version="beta">
