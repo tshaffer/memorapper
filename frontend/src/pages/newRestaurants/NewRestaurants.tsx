@@ -67,7 +67,9 @@ const NewRestaurants = () => {
 
   const getSortedPlaces = (): NewRestaurant[] => {
 
-    return newRestaurants;
+    const sortedPlaces = [...newRestaurants]; // Clone the array to avoid mutating state
+
+    return sortedPlaces.sort((a, b) => a.googlePlace!.name.localeCompare(b.googlePlace!.name));
     // const sortedPlaces = [...filteredPlaces]; // Clone the array to avoid mutating state
 
     // switch (sortCriteria) {
