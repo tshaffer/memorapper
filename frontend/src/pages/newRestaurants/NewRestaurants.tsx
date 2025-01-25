@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Box, useMediaQuery } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Box, useMediaQuery, Tooltip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from '@mui/icons-material/Edit';
 
@@ -268,37 +268,45 @@ const NewRestaurants = () => {
                     }}
                   >
                     <TableCell align="right" className="dimmed" style={smallColumnStyle}>
-                      <IconButton onClick={(event) => {
-                        event.stopPropagation();
-                        handleShowMap(newRestaurant.googlePlace!.googlePlaceId)
-                      }}
-                      >
-                        <MapIcon />
-                      </IconButton>
+                      <Tooltip title="Show Map">
+                        <IconButton onClick={(event) => {
+                          event.stopPropagation();
+                          handleShowMap(newRestaurant.googlePlace!.googlePlaceId)
+                        }}
+                        >
+                          <MapIcon />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                     <TableCell align="right" className="dimmed" style={smallColumnStyle}>
-                      <IconButton onClick={(event) => {
-                        event.stopPropagation();
-                        handleShowDirections(newRestaurant.googlePlace!.googlePlaceId)
-                      }}>
-                        <DirectionsIcon />
-                      </IconButton>
+                      <Tooltip title="Show Directions">
+                        <IconButton onClick={(event) => {
+                          event.stopPropagation();
+                          handleShowDirections(newRestaurant.googlePlace!.googlePlaceId)
+                        }}>
+                          <DirectionsIcon />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                     <TableCell align="right" className="dimmed" style={smallColumnStyle}>
-                      <IconButton onClick={(event) => {
-                        event.stopPropagation();
-                        handleEditNewRestaurant(newRestaurant)
-                      }}>
-                        <EditIcon fontSize="small" />
-                      </IconButton>
+                      <Tooltip title="View/Edit">
+                        <IconButton onClick={(event) => {
+                          event.stopPropagation();
+                          handleEditNewRestaurant(newRestaurant)
+                        }}>
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                     <TableCell align="right" className="dimmed" style={smallColumnStyle}>
-                      <IconButton onClick={(event) => {
-                        event.stopPropagation();
-                        handleDeleteNewRestaurant(newRestaurant)
-                      }}>
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
+                      <Tooltip title="Delete">
+                        <IconButton onClick={(event) => {
+                          event.stopPropagation();
+                          handleDeleteNewRestaurant(newRestaurant)
+                        }}>
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                     <TableCell>{newRestaurant.googlePlace!.name}</TableCell>
                     <TableCell>{getCityNameFromPlace(newRestaurant.googlePlace!) || 'Not provided'}</TableCell>
