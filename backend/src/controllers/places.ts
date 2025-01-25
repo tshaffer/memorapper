@@ -162,3 +162,36 @@ export const addNewRestaurant = async (visitedRestaurant: NewRestaurant): Promis
     throw new Error('An error occurred while saving the review.');
   }
 }
+
+export const deleteRestaurantHandler = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+
+  const body = req.body;
+  const newRestaurantId = body.newRestaurantId;
+
+  try {
+    const newReview = await deleteNewRestaurant(newRestaurantId);
+    return res.status(200);
+  } catch (error) {
+    console.error('Error deleting restaurant:', error);
+    return res.status(500).json({ error: 'An error occurred while deleting the restaurant.' });
+  }
+};
+
+const deleteNewRestaurant = async (newRestaurantId: string) => {
+
+  /*
+  let mongoPlace: IMongoPlace | null = await getPlace(googlePlaceId);
+  if (!mongoPlace) {
+    mongoPlace = await addPlace(googlePlace);
+    if (!mongoPlace) {
+      throw new Error('Error saving place.');
+    }
+  }
+*/
+
+  await NewRestaurantModel.findOneAndDelete({ newRestaurantId: newRestaurantId });
+}
+

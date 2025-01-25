@@ -14,6 +14,7 @@ import {
   getReviewedRestaurants,
   chatHandler,
   searchAndFilterHandler,
+  deleteRestaurantHandler,
 } from '../controllers';
 import { reviewHandler } from '../controllers/review';
 
@@ -27,6 +28,7 @@ router.get('/newRestaurants', getNewRestaurants);
 router.post('/reviews/addReviewsFromFile', addReviewsFromFileHandler);
 
 router.post('/submitNewRestaurant', submitNewRestaurantHandler);
+router.post('/deleteRestaurant', deleteRestaurantHandler);
 
 
 router.get('/diningGroups', getDiningGroups);

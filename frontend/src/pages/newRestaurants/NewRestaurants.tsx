@@ -6,6 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import DirectionsIcon from '@mui/icons-material/Directions';
 import MapIcon from '@mui/icons-material/Map';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import LocationAutocomplete from '../../components/LocationAutocomplete';
 import FiltersDialog from '../../components/FiltersDialog';
@@ -27,7 +28,7 @@ const smallColumnStyle: React.CSSProperties = {
 
 const NewRestaurants = () => {
 
-  const { newRestaurants,  setFilters, settings } = useUserContext();
+  const { newRestaurants, setFilters, settings } = useUserContext();
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
@@ -163,6 +164,17 @@ const NewRestaurants = () => {
     navigate(`/add-place/${newRestaurant._id}`, { state: newRestaurant });
   };
 
+  const handleDeleteNewRestaurant = async (newRestaurant: NewRestaurant) => {
+    console.log('handleDeleteNewRestaurant', newRestaurant);
+    const deleteRestaurantBody = {
+      newRestaurantId: newRestaurant.newRestaurantId,
+    };
+    const response = await fetch('/api/deleteRestaurant', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(deleteRestaurantBody),
+    });
+  }
 
   const handleSetMapLocation = (location: google.maps.LatLngLiteral): void => {
     setMapLocation(location);
@@ -238,6 +250,7 @@ const NewRestaurants = () => {
                 <TableCell align="center"></TableCell>
                 <TableCell align="center"></TableCell>
                 <TableCell align="center"></TableCell>
+                <TableCell align="center"></TableCell>
                 <TableCell>Restaurant</TableCell>
                 <TableCell>Location</TableCell>
               </TableRow>
@@ -277,6 +290,14 @@ const NewRestaurants = () => {
                         handleEditNewRestaurant(newRestaurant)
                       }}>
                         <EditIcon fontSize="small" />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell align="right" className="dimmed" style={smallColumnStyle}>
+                      <IconButton onClick={(event) => {
+                        event.stopPropagation();
+                        handleDeleteNewRestaurant(newRestaurant)
+                      }}>
+                        <DeleteIcon fontSize="small" />
                       </IconButton>
                     </TableCell>
                     <TableCell>{newRestaurant.googlePlace!.name}</TableCell>
