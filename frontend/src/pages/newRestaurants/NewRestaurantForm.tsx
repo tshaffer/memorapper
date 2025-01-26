@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../../styles/multiPanelStyles.css';
 import { Button, MenuItem, Rating, Select, TextField, useMediaQuery } from "@mui/material";
-import { RestaurantType, NewRestaurant, GooglePlace, EditableNewRestaurant, SubmitNewRestaurantRequestBody } from "../../types";
+import { RestaurantType, NewRestaurant, EditableNewRestaurant, SubmitNewRestaurantRequestBody } from "../../types";
 import RestaurantName from '../../components/RestaurantName';
 import PulsingDots from '../../components/PulsingDots';
 import { useLocation, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { useUserContext } from '../../contexts/UserContext';
+import React from 'react';
 
 const NewRestaurantForm = () => {
 
@@ -15,28 +16,30 @@ const NewRestaurantForm = () => {
 
   const { currentDiningGroup } = useUserContext();
 
+  const [restaurantName, setRestaurantName] = React.useState('');
+
   const location = useLocation();
+
   const editableNewRestaurant = location.state as EditableNewRestaurant | null;
 
-  let googlePlace: GooglePlace | undefined = undefined;
-  let restaurantName = '';
-  let comments = '';
-  let interestLevel = 0;
-  if (editableNewRestaurant) {
-    googlePlace = editableNewRestaurant.googlePlace;
-    restaurantName = editableNewRestaurant.googlePlace!.name;
-    interestLevel = editableNewRestaurant.interestLevel;
-    comments = editableNewRestaurant.comments;
-  }
+  // Inside the component body
+  const googlePlace = editableNewRestaurant?.googlePlace;
+  const comments = editableNewRestaurant?.comments ?? '';
+  const interestLevel = editableNewRestaurant?.interestLevel ?? 3;
+
+  useEffect(() => {
+    if (googlePlace?.name) {
+      setRestaurantName(googlePlace.name);
+    }
+  }, [googlePlace]);
 
   const initialNewRestaurantData: NewRestaurant = {
     _id,
     newRestaurantId: uuidv4(),
     googlePlace,
     diningGroupId: currentDiningGroup ? currentDiningGroup.diningGroupId : '',
-    restaurantName,
     comments,
-    interestLevel: editableNewRestaurant ? editableNewRestaurant.interestLevel : 3,
+    interestLevel,
   };
 
   const [newRestaurantData, setNewRestaurantData] = useState<NewRestaurant>(initialNewRestaurantData);
@@ -91,8 +94,8 @@ const NewRestaurantForm = () => {
       <>
         <label htmlFor="restaurant-name">Restaurant Name (Required):</label>
         <RestaurantName
-          restaurantName={newRestaurantData!.restaurantName}
-          onSetRestaurantName={(name) => handleChange('restaurantName', name)}
+          restaurantName={restaurantName}
+          onSetRestaurantName={(name) => setRestaurantName(name)}
           onSetGooglePlace={(googlePlace) => handleChange('googlePlace', googlePlace)}
         />
       </>

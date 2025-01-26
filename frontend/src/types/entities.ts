@@ -5,7 +5,6 @@ import { AddressComponent } from "./place";
 
 export interface EditableNewRestaurant {
   googlePlace: GooglePlace;
-  restaurantName: string;
   comments: string;
   interestLevel: number;
 }
