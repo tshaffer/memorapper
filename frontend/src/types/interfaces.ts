@@ -30,7 +30,6 @@ export interface NewRestaurant {
   newRestaurantId: string;
   googlePlace: GooglePlace | undefined;
   diningGroupId: string;
-  // restaurantName: string;
   interestLevel: number;
   comments: string;
 }

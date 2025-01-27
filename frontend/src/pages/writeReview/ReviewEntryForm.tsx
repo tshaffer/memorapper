@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { Button, MenuItem, Select, TextField, useMediaQuery } from '@mui/material';
+import { Button, FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, Select, TextField, useMediaQuery } from '@mui/material';
 import Rating from '@mui/material/Rating';
 
 import RestaurantName from '../../components/RestaurantName';
@@ -26,13 +26,25 @@ interface ReviewEntryFormProps {
 
 const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormProps) => {
 
-  const { diners } = useUserContext();
+  const { diners, newRestaurants } = useUserContext();
 
   const { reviewData, setReviewData, onSubmitPreview } = props;
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isUsingExistingRestaurant, setIsUsingExistingRestaurant] = useState(false);
+
+  const getDinerRestaurantReview = (dinerId: string): DinerRestaurantReview | null => {
+    if (!reviewData || !reviewData.dinerRestaurantReviews) return null;
+
+    for (const dinerRestaurantReview of reviewData.dinerRestaurantReviews) {
+      if (dinerRestaurantReview.dinerId === dinerId) {
+        return dinerRestaurantReview;
+      }
+    }
+    return null;
+  }
 
   const handleChange = (field: keyof ReviewData, value: any) => {
     setReviewData((prev) => ({ ...prev, [field]: value }));
@@ -172,17 +184,6 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
     </div>
   );
 
-  const getDinerRestaurantReview = (dinerId: string): DinerRestaurantReview | null => {
-    if (!reviewData || !reviewData.dinerRestaurantReviews) return null;
-
-    for (const dinerRestaurantReview of reviewData.dinerRestaurantReviews) {
-      if (dinerRestaurantReview.dinerId === dinerId) {
-        return dinerRestaurantReview;
-      }
-    }
-    return null;
-  }
-
   const renderRatingsAndComments = (): JSX.Element => {
     return (
       <div className="ratings-and-comments">
@@ -239,35 +240,147 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
     return <PulsingDots />;
   };
 
+  // return (
+  //   <div
+  //     id="form"
+  //     className="tab-panel active"
+  //     style={{
+  //       maxHeight: isMobile ? 'calc(60vh)' : '80vh', // Fixed height for desktop
+  //       overflowY: 'auto', // Enable vertical scrolling
+  //       padding: '1rem',   // Optional: Add some padding for better visuals
+  //     }}
+  //   >
+  //     <form id="add-review-form">
+  //       <fieldset>
+  //         <legend>Restaurant Details</legend>
+  //         {renderRestaurantName()}
+  //         {renderRestaurantType()}
+  //       </fieldset>
+
+  //       <fieldset>
+  //         <legend>Ratings and Comments</legend>
+  //         {renderRatingsAndComments()}
+  //       </fieldset>
+
+  //       <fieldset>
+  //         <legend>Review</legend>
+  //         {renderReviewText()}
+  //         {renderDateOfVisit()}
+  //       </fieldset>
+  //     </form>
+
+  //     <div className="form-actions">
+  //       <Button
+  //         disabled={!reviewData.place || !reviewData.reviewText}
+  //         onClick={handlePreview}
+  //         variant="contained"
+  //         color="primary"
+  //       >
+  //         Preview
+  //       </Button>
+  //     </div>
+
+  //     {renderPulsingDots()}
+  //   </div>
+  // );
+
+
+
+  const renderRestaurantSelector = (): JSX.Element => (
+    <div className="form-group">
+      <label htmlFor="restaurant-selector">Select Existing Restaurant</label>
+      <Select
+        id="restaurant-selector"
+        value={reviewData?.place?.googlePlaceId || ''}
+        onChange={(event) => handleExistingRestaurantSelection(event.target.value)}
+        displayEmpty
+        fullWidth
+      >
+        <MenuItem value="" disabled>
+          Select a restaurant
+        </MenuItem>
+        {newRestaurants.map((restaurant) => (
+          <MenuItem key={restaurant.newRestaurantId} value={restaurant.googlePlace?.googlePlaceId}>
+            {restaurant.googlePlace?.name}
+          </MenuItem>
+        ))}
+      </Select>
+    </div>
+  );
+  
+  const renderRestaurantNameAndType = (): JSX.Element | null => {
+    if (isUsingExistingRestaurant) return null; // Don't show if using an existing restaurant
+  
+    return (
+      <>
+        {renderRestaurantName()}
+        {renderRestaurantType()}
+      </>
+    );
+  };
+  
+  const renderRestaurantDetailsToggle = (): JSX.Element => (
+    <div className="form-group">
+      <FormControl component="fieldset">
+        <RadioGroup
+          row
+          value={isUsingExistingRestaurant ? 'existing' : 'new'}
+          onChange={(event) => setIsUsingExistingRestaurant(event.target.value === 'existing')}
+        >
+          <FormControlLabel
+            value="existing"
+            control={<Radio />}
+            label="Existing Restaurant"
+          />
+          <FormControlLabel
+            value="new"
+            control={<Radio />}
+            label="New Restaurant"
+          />
+        </RadioGroup>
+      </FormControl>
+    </div>
+  );
+  
+  const handleExistingRestaurantSelection = (googlePlaceId: string) => {
+    const selectedRestaurant = newRestaurants.find(
+      (restaurant) => restaurant.googlePlace?.googlePlaceId === googlePlaceId
+    );
+    if (selectedRestaurant) {
+      handleChange('place', selectedRestaurant.googlePlace);
+    }
+  };
+  
+  // Updated render function
   return (
     <div
       id="form"
       className="tab-panel active"
       style={{
-        maxHeight: isMobile ? 'calc(60vh)' : '80vh', // Fixed height for desktop
-        overflowY: 'auto', // Enable vertical scrolling
-        padding: '1rem',   // Optional: Add some padding for better visuals
+        maxHeight: isMobile ? 'calc(60vh)' : '80vh',
+        overflowY: 'auto',
+        padding: '1rem',
       }}
     >
       <form id="add-review-form">
         <fieldset>
           <legend>Restaurant Details</legend>
-          {renderRestaurantName()}
-          {renderRestaurantType()}
+          {renderRestaurantDetailsToggle()}
+          {isUsingExistingRestaurant ? renderRestaurantSelector() : renderRestaurantNameAndType()}
         </fieldset>
-
+  
         <fieldset>
           <legend>Ratings and Comments</legend>
           {renderRatingsAndComments()}
         </fieldset>
-
+  
         <fieldset>
           <legend>Review</legend>
           {renderReviewText()}
           {renderDateOfVisit()}
         </fieldset>
       </form>
-
+  
       <div className="form-actions">
         <Button
           disabled={!reviewData.place || !reviewData.reviewText}
@@ -278,10 +391,11 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
           Preview
         </Button>
       </div>
-
+  
       {renderPulsingDots()}
     </div>
   );
+  
 };
 
 export default NewReviewEntryForm;
