@@ -26,11 +26,13 @@ interface ReviewEntryFormProps {
 
 const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormProps) => {
 
-  const { diners, newRestaurants } = useUserContext();
+  const { currentDiningGroup, diners, newRestaurants } = useUserContext();
 
   const { reviewData, setReviewData, onSubmitPreview } = props;
 
   const isMobile = useMediaQuery('(max-width:768px)');
+
+  const [filteredDiners, setFilteredDiners] = useState<Diner[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isUsingExistingRestaurant, setIsUsingExistingRestaurant] = useState(false);
@@ -62,6 +64,22 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
       handleChange('sessionId', newSessionId);
     }
   }, [reviewData.sessionId]);
+
+  useEffect(() => {
+
+    const fetchDiners = async (): Promise<Diner[]> => {
+      const dinersForCurrentDiningGroup: Diner[] = diners.filter((diner) => diner.diningGroupId === currentDiningGroup?.diningGroupId);
+      return dinersForCurrentDiningGroup;
+    }
+
+    const fetchData = async () => {
+      const diners = await fetchDiners();
+      setFilteredDiners(diners);
+    };
+
+    fetchData();
+
+  }, []);
 
   const restaurantTypeOptions = Object.keys(RestaurantType)
     .filter((key) => isNaN(Number(key)))
@@ -189,7 +207,7 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
       <div className="ratings-and-comments">
         <fieldset className="ratings-comments-section">
           <legend>Ratings and Comments by Users</legend>
-          {diners.map((diner) => {
+          {filteredDiners.map((diner) => {
             const input: DinerRestaurantReview = getDinerRestaurantReview(diner.dinerId) || {
               dinerRestaurantReviewId: uuidv4(),
               dinerId: diner.dinerId,
