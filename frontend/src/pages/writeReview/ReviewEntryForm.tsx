@@ -258,52 +258,6 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
     return <PulsingDots />;
   };
 
-  // return (
-  //   <div
-  //     id="form"
-  //     className="tab-panel active"
-  //     style={{
-  //       maxHeight: isMobile ? 'calc(60vh)' : '80vh', // Fixed height for desktop
-  //       overflowY: 'auto', // Enable vertical scrolling
-  //       padding: '1rem',   // Optional: Add some padding for better visuals
-  //     }}
-  //   >
-  //     <form id="add-review-form">
-  //       <fieldset>
-  //         <legend>Restaurant Details</legend>
-  //         {renderRestaurantName()}
-  //         {renderRestaurantType()}
-  //       </fieldset>
-
-  //       <fieldset>
-  //         <legend>Ratings and Comments</legend>
-  //         {renderRatingsAndComments()}
-  //       </fieldset>
-
-  //       <fieldset>
-  //         <legend>Review</legend>
-  //         {renderReviewText()}
-  //         {renderDateOfVisit()}
-  //       </fieldset>
-  //     </form>
-
-  //     <div className="form-actions">
-  //       <Button
-  //         disabled={!reviewData.place || !reviewData.reviewText}
-  //         onClick={handlePreview}
-  //         variant="contained"
-  //         color="primary"
-  //       >
-  //         Preview
-  //       </Button>
-  //     </div>
-
-  //     {renderPulsingDots()}
-  //   </div>
-  // );
-
-
-
   const renderRestaurantSelector = (): JSX.Element => (
     <div className="form-group">
       <label htmlFor="restaurant-selector">Select Existing Restaurant</label>
