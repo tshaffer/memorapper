@@ -159,3 +159,16 @@ button:hover {
   }
 
 }
+
+.fixed-action {
+  position: fixed;
+  bottom: 0;
+  /* Center the fixed container with a width of 80% */
+  right: calc((100% - 80%) / 2);
+  width: 80%;
+  background-color: #fff; /* Ensure it matches your design */
+  padding: 1rem;
+  border-top: 1px solid #ccc;
+  text-align: right; /* Right align the button within the container */
+  z-index: 1000;
+}

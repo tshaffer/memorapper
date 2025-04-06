@@ -279,10 +279,10 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
       </Select>
     </div>
   );
-  
+
   const renderRestaurantNameAndType = (): JSX.Element | null => {
     if (isUsingExistingRestaurant) return null; // Don't show if using an existing restaurant
-  
+
     return (
       <>
         {renderRestaurantName()}
@@ -290,7 +290,7 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
       </>
     );
   };
-  
+
   const renderRestaurantDetailsToggle = (): JSX.Element => (
     <div className="form-group">
       <FormControl component="fieldset">
@@ -313,7 +313,7 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
       </FormControl>
     </div>
   );
-  
+
   const handleExistingRestaurantSelection = (googlePlaceId: string) => {
     const selectedRestaurant = newRestaurants.find(
       (restaurant) => restaurant.googlePlace?.googlePlaceId === googlePlaceId
@@ -322,38 +322,43 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
       handleChange('place', selectedRestaurant.googlePlace);
     }
   };
-  
-  // Updated render function
+
   return (
-    <div
-      id="form"
-      className="tab-panel active"
-      style={{
-        maxHeight: isMobile ? 'calc(60vh)' : '80vh',
-        overflowY: 'auto',
-        padding: '1rem',
-      }}
-    >
-      <form id="add-review-form">
-        <fieldset>
-          <legend>Restaurant Details</legend>
-          {renderRestaurantDetailsToggle()}
-          {isUsingExistingRestaurant ? renderRestaurantSelector() : renderRestaurantNameAndType()}
-        </fieldset>
+    <>
+      <div
+        id="form"
+        className="tab-panel active"
+        style={{
+          maxHeight: isMobile ? 'calc(60vh)' : '80vh',
+          overflowY: 'auto',
+          padding: '1rem',
+          paddingBottom: '4rem', // extra space so content isn’t hidden behind the fixed button
+        }}
+      >
+        <form id="add-review-form">
+          <fieldset>
+            <legend>Restaurant Details</legend>
+            {renderRestaurantDetailsToggle()}
+            {isUsingExistingRestaurant
+              ? renderRestaurantSelector()
+              : renderRestaurantNameAndType()}
+          </fieldset>
   
-        <fieldset>
-          <legend>Ratings and Comments</legend>
-          {renderRatingsAndComments()}
-        </fieldset>
+          <fieldset>
+            <legend>Ratings and Comments</legend>
+            {renderRatingsAndComments()}
+          </fieldset>
   
-        <fieldset>
-          <legend>Review</legend>
-          {renderReviewText()}
-          {renderDateOfVisit()}
-        </fieldset>
-      </form>
+          <fieldset>
+            <legend>Review</legend>
+            {renderReviewText()}
+            {renderDateOfVisit()}
+          </fieldset>
+        </form>
   
-      <div className="form-actions">
+        {renderPulsingDots()}
+      </div>
+      <div className="form-actions fixed-action">
         <Button
           disabled={!reviewData.place || !reviewData.reviewText}
           onClick={handlePreview}
@@ -363,11 +368,8 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
           Preview
         </Button>
       </div>
-  
-      {renderPulsingDots()}
-    </div>
+    </>
   );
-  
-};
+  };
 
 export default NewReviewEntryForm;
