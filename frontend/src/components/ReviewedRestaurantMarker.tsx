@@ -1,7 +1,7 @@
-import React, {  } from 'react';
+import React, { } from 'react';
 import { ReviewedRestaurantWithPlace } from '../types';
 import { AdvancedMarker } from '@vis.gl/react-google-maps';
-import { getLatLngFromPlace, iconFromRestaurantType } from '../utilities';
+import { getLatLngFromGooglePlace, iconFromRestaurantType } from '../utilities';
 import '../App.css';
 
 import { Icon } from '@iconify/react';
@@ -58,7 +58,7 @@ const ReviewedRestaurantMarker: React.FC<ReviewedRestaurantMarkerProps> = ({ rev
     }
     return (
       <AdvancedMarker
-        position={getLatLngFromPlace(reviewedRestaurant.googlePlace)}
+        position={getLatLngFromGooglePlace(reviewedRestaurant.googlePlace)}
         onClick={() => handleReviewedRestaurantMarkerClick()}
       >
         <div style={{ position: 'relative' }}>

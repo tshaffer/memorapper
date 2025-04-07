@@ -3,7 +3,6 @@ import path from 'path';
 import axios from 'axios';
 import { Request, Response } from 'express';
 import { GooglePlace, GooglePlacesResponse, RestaurantType, ChatGPTOutput, SubmitReviewBody } from '../types';
-import { addPlace } from './places';
 
 import { parsePreview } from './preview';
 const GOOGLE_PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
@@ -13,6 +12,7 @@ import {
 } from '../models';
 import { newSubmitReview } from './review';
 import { v4 as uuidv4 } from 'uuid';
+import { addMongoPlace } from './dbPlaces';
 
 interface AddReviewFromFileBody {
   fileName: string;
@@ -77,7 +77,7 @@ const addTestReview = async (
   place.restaurantType = restaurantType;
   console.log('place:', place);
 
-  const newMongoPlace: IMongoPlace | null = await addPlace(place);
+  const newMongoPlace: IMongoPlace | null = await addMongoPlace(place);
   console.log('newMongoPlace:', newMongoPlace);
 
   const submitReviewBody: SubmitReviewBody = {

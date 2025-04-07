@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { MongoPlace } from '../types/mongoTypes';
+import { PlaceType } from '../types';
 
 export interface IMongoPlace extends Omit<MongoPlace, "_id">, Document { }
 
@@ -44,14 +45,47 @@ const OpeningHoursSchema: Schema = new Schema({
 
 const MongoPlaceSchema: Schema = new Schema({
   googlePlaceId: { type: String, required: true, unique: true },
+  placeType: {
+    type: Number,
+    enum: [
+      PlaceType.Restaurant,
+      PlaceType.GroceryStore,
+      PlaceType.Destination
+    ]
+  },
   name: { type: String, required: true },
+  /*
+    address_components: [{
+      long_name: { type: String },
+      short_name: { type: String },
+      types: [{ type: String }]
+    }],
+  */
   address_components: { type: Array },
   formatted_address: { type: String, required: true },
   website: { type: String },
   opening_hours: { type: OpeningHoursSchema }, // Added opening hours field
   price_level: { type: Number },
   vicinity: { type: String },
-  restaurantType: { type: Number, required: true },
+  /*
+  restaurantType: { 
+    type: Number, 
+    enum: [
+      RestaurantType.Restaurant,
+      RestaurantType.CoffeeShop,
+      RestaurantType.Bar,
+      RestaurantType.Bakery,
+      RestaurantType.Taqueria,
+      RestaurantType.PizzaPlace,
+      RestaurantType.ItalianRestaurant,
+      RestaurantType.DessertShop
+    ]
+  }
+  */
+  // placeType
+  // others?
+  // restaurantType: { type: Number, required: true },
+  restaurantType: { type: Number },
   geometry: MongoGeometrySchema
 }, { collection: "mongoPlaces" });
 

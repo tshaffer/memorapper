@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import directionsIcon from '@iconify/icons-mdi/directions';
-import { ExtendedGooglePlaceToVisit, GooglePlace, NewRestaurant } from '../types';
+import { GoogleGeometry, Place, PlaceType } from '../types';
 import { InfoWindow } from '@vis.gl/react-google-maps';
-import { getLatLngFromGooglePlace, restaurantTypeLabelFromRestaurantType } from '../utilities';
+import { getLatLngFromPlace, restaurantTypeLabelFromRestaurantType } from '../utilities';
 import '../App.css';
 import { Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-interface NewRestaurantInfoWindowProps {
-  newRestaurant: NewRestaurant;
+interface PlaceInfoWindowProps {
+  place: Place;
   onClose: () => void;
 }
 
-const NewRestaurantInfoWindow: React.FC<NewRestaurantInfoWindowProps> = ({ newRestaurant, onClose }) => {
+const PlaceInfoWindow: React.FC<PlaceInfoWindowProps> = ({ place, onClose }) => {
 
   const navigate = useNavigate();
 
-  const location: GooglePlace = newRestaurant.googlePlace!;
+  const placeLocation: GoogleGeometry = place.geometry!;
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
   useEffect(() => {
@@ -35,26 +35,24 @@ const NewRestaurantInfoWindow: React.FC<NewRestaurantInfoWindowProps> = ({ newRe
     }
   }, []);
 
-  function handleNewRestaurantLinkClicked(): void {
-    console.log('handleNewRestaurantLinkClicked');
-    console.log(newRestaurant);
-    navigate(`/new-restaurant-details`, { state: newRestaurant });
+  function handlePlaceLinkClicked(): void {
+    console.log('handlePlaceLinkClicked');
+    console.log(place);
+    // navigate(`/new-restaurant-details`, { state: place });
   }
 
   const handleShowDirections = () => {
-    if (location && currentLocation) {
-      const destinationLocation: google.maps.LatLngLiteral = location.geometry!.location;
+    if (placeLocation && currentLocation) {
+      const destinationLocation: google.maps.LatLngLiteral = placeLocation.location;
       const destinationLatLng: google.maps.LatLngLiteral = { lat: destinationLocation.lat, lng: destinationLocation.lng };
-      const url = `https://www.google.com/maps/dir/?api=1&origin=${currentLocation.lat},${currentLocation.lng}&destination=${destinationLatLng.lat},${destinationLatLng.lng}&destination_place_id=${location.name}`;
+      const url = `https://www.google.com/maps/dir/?api=1&origin=${currentLocation.lat},${currentLocation.lng}&destination=${destinationLatLng.lat},${destinationLatLng.lng}&destination_place_id=${place.name}`;
       window.open(url, '_blank');
     }
   };
 
-  console.log('NewRestaurntInfoWindow:', location);
-
   return (
     <InfoWindow
-      position={getLatLngFromGooglePlace(location)}
+      position={getLatLngFromPlace(place)}
       onCloseClick={onClose}
     >
       <div
@@ -92,9 +90,9 @@ const NewRestaurantInfoWindow: React.FC<NewRestaurantInfoWindowProps> = ({ newRe
               cursor: 'pointer', // Indicate it's clickable
               fontWeight: 'bold', // Make the link more prominent
             }}
-            onClick={() => handleNewRestaurantLinkClicked()}
+            onClick={() => handlePlaceLinkClicked()}
           >
-            {location.name}
+            {place.name}
           </h4>
           <div
             onClick={handleShowDirections}
@@ -120,19 +118,18 @@ const NewRestaurantInfoWindow: React.FC<NewRestaurantInfoWindowProps> = ({ newRe
           </div>
         </div>
 
+        {place.placeType === PlaceType.Restaurant && (
+          <Typography variant="body2" style={{ margin: '0 0 8px 0' }}>
+            {restaurantTypeLabelFromRestaurantType(place.restaurantType!)}
+          </Typography>
+        )}
         <Typography variant="body2" style={{ margin: '0 0 8px 0' }}>
-          {restaurantTypeLabelFromRestaurantType(location.restaurantType)}
-        </Typography>
-        <Typography variant="body2" style={{ margin: '0 0 8px 0' }}>
-          Rating: {newRestaurant.interestLevel}
-        </Typography>
-        <Typography variant="body2" style={{ margin: '0 0 8px 0' }}>
-          {newRestaurant.comments}
+          {place.placeComments}
         </Typography>
       </div>
     </InfoWindow>
   );
 }
 
-export default NewRestaurantInfoWindow;
+export default PlaceInfoWindow;
 

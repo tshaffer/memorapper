@@ -1,197 +1,145 @@
 import { Request, Response } from 'express';
 import MongoPlaceModel, { IMongoPlace } from "../models/MongoPlace";
-import { NewRestaurant, GoogleGeometry, GooglePlace, MongoGeometry, MongoPlace, SubmitNewRestaurantRequestBody } from "../types";
-import { getMongoGeometryFromGoogleGeometry } from "./googlePlaces";
-import { convertMongoPlacesToGooglePlaces, convertMongoPlaceToGooglePlace } from '../utilities';
-import NewRestaurantModel, { INewRestaurant } from '../models/NewRestaurant';
-import { v4 as uuidv4 } from 'uuid';
+import { GooglePlace, MongoPlace, Place, SubmitPlaceRequestBody } from "../types";
+import PlaceModel, { IPlace } from '../models/Place';
+import { getMongoPlace, addMongoPlace } from './dbPlaces';
+import { convertMongoGeometryToGoogleGeometry } from '../utilities';
 
-export const getPlace = async (placeId: any): Promise<IMongoPlace | null> => {
+export const getPlaces = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
   try {
-    const existingPlace: IMongoPlace | null = await MongoPlaceModel.findOne({ googlePlaceId: placeId }).exec();
-    return existingPlace;
-  } catch (error) {
-    throw new Error('An error occurred while retrieving the place.');
-  }
-}
 
-export const getPlaces = async (request: Request, response: Response, next: any) => {
-  try {
-    const mongoPlaces: IMongoPlace[] = await MongoPlaceModel.find({}).exec();
-    const googlePlaces: GooglePlace[] = convertMongoPlacesToGooglePlaces(mongoPlaces);
-    response.status(200).json({ googlePlaces });
-    return;
-  } catch (error) {
-    console.error('Error retrieving reviews:', error);
-    response.status(500).json({ error: 'An error occurred while retrieving the reviews.' });
-    return;
-  }
-}
-
-export const addPlace = async (googlePlace: GooglePlace): Promise<IMongoPlace | null> => {
-  // Convert Google geometry to MongoDB format
-  const mongoGeometry: MongoGeometry = getMongoGeometryFromGoogleGeometry(googlePlace.geometry!);
-  const mongoPlace: MongoPlace = { ...googlePlace, geometry: mongoGeometry };
-
-  const newMongoPlace: IMongoPlace = new MongoPlaceModel(mongoPlace);
-
-  try {
-    const savedMongoPlace: IMongoPlace | null = await newMongoPlace.save();
-    return savedMongoPlace;
-  } catch (error: any) {
-    // Check for duplicate key error (E11000 duplicate key error index)
-    if (error.code === 11000 && error.keyPattern?.googlePlaceId) {
-      console.log("Place already exists in the database.");
-      const existingPlace = await MongoPlaceModel.findOne({ googlePlaceId: googlePlace.googlePlaceId });
-      return existingPlace;
-    } else {
-      console.error('Error saving place:', error);
-      throw new Error('An error occurred while saving the place.');
-    }
-  }
-}
-
-export function convertMongoGeometryToGoogleGeometry(mongoGeometry: MongoGeometry): GoogleGeometry {
-  return {
-    location: {
-      lat: mongoGeometry.location.coordinates[1], // GeoJSON uses [lng, lat]
-      lng: mongoGeometry.location.coordinates[0]
-    },
-    viewport: {
-      north: mongoGeometry.viewport.northeast.coordinates[1],
-      south: mongoGeometry.viewport.southwest.coordinates[1],
-      east: mongoGeometry.viewport.northeast.coordinates[0],
-      west: mongoGeometry.viewport.southwest.coordinates[0]
-    }
-  };
-}
-
-
-export const getNewRestaurants = async (request: Request, response: Response, next: any): Promise<void> => {
-  try {
     const mongoPlaceDocuments: IMongoPlace[] = await MongoPlaceModel.find({}).exec();
-    const newRestaurantDocuments: INewRestaurant[] = await NewRestaurantModel.find({}).exec();
+    const placesDocuments: IPlace[] = await PlaceModel.find({}).exec();
 
-    const newRestaurants: NewRestaurant[] = [];
+    const places: Place[] = [];
 
-    for (const newRestaurantDocument of newRestaurantDocuments) {
-      const newRestaurantGooglePlaceId = newRestaurantDocument.googlePlaceId;
+    for (const placeDocument of placesDocuments) {
+      const placeGooglePlaceId = placeDocument.googlePlaceId;
       for (const mongoPlaceDocument of mongoPlaceDocuments) {
-        if (mongoPlaceDocument.googlePlaceId === newRestaurantGooglePlaceId) {
-          const newRestaurant = newRestaurantDocument.toObject();
-          newRestaurant.googlePlace = convertMongoPlaceToGooglePlace(mongoPlaceDocument);
-          newRestaurants.push(newRestaurant);
+        if (mongoPlaceDocument.googlePlaceId === placeGooglePlaceId) {
+          const place = placeDocument.toObject();
+          const mongoPlace: MongoPlace = mongoPlaceDocument.toObject();
+          place.address_components = mongoPlace.address_components;
+          place.formatted_address = mongoPlace.formatted_address;
+          place.geometry = convertMongoGeometryToGoogleGeometry(mongoPlace.geometry!);
+          place.name = mongoPlace.name;
+          place.opening_hours = mongoPlace.opening_hours;
+          place.price_level = mongoPlace.price_level;
+          place.vicinity = mongoPlace.vicinity;
+          place.website = mongoPlace.website;
+
+          places.push(place);
         }
       }
     }
-    response.status(200).json({ newRestaurants });
+    return res.status(200).json({ places });
   } catch (error) {
-    console.error('Error retrieving reviews:', error);
-    response.status(500).json({ error: 'An error occurred while retrieving the reviews.' });
-  }
-}
-
-export const submitNewRestaurantHandler = async (
-  req: Request<{}, {}, SubmitNewRestaurantRequestBody>,
-  res: Response
-): Promise<any> => {
-
-  const body: SubmitNewRestaurantRequestBody = req.body;
-
-  try {
-    const newReview = await submitNewRestaurant(body);
-    return res.status(201).json({ message: 'Review saved successfully!', review: newReview });
-  } catch (error) {
-    console.error('Error saving review:', error);
-    return res.status(500).json({ error: 'An error occurred while saving the review.' });
+    console.error('Error fetching places:', error);
+    return res.status(500).json({ error: 'An error occurred while fetching places.' });
   }
 };
 
-const submitNewRestaurant = async (submitNewRestaurantBody: SubmitNewRestaurantRequestBody): Promise<INewRestaurant | null> => {
+export const submitPlaceHandler = async (
+  req: Request<{}, {}, Place>,
+  res: Response
+): Promise<any> => {
+  const body: Place = req.body;
+  try {
+    const place = await submitPlace(body);
+    return res.status(201).json({ message: 'Place saved successfully!', place });
+  } catch (error) {
+    console.error('Error saving place:', error);
+    return res.status(500).json({ error: 'An error occurred while saving the place.' });
+  }
+};
 
-  const { _id, googlePlace, newRestaurantId, diningGroupId, comments, interestLevel } = submitNewRestaurantBody;
-  const googlePlaceId = googlePlace.googlePlaceId;
+const submitPlace = async (placeRequestBody: SubmitPlaceRequestBody): Promise<IPlace | null> => {
 
-  let mongoPlace: IMongoPlace | null = await getPlace(googlePlaceId);
+  const { _idPlace, placeId, placeType: placeType, googlePlaceId } = placeRequestBody;
+
+  const googlePlace: GooglePlace = {
+    googlePlaceId: googlePlaceId!,
+    placeType: placeType,
+    name: placeRequestBody.name!,
+    address_components: placeRequestBody.address_components,
+    formatted_address: placeRequestBody.formatted_address!,
+    website: placeRequestBody.website!,
+    opening_hours: placeRequestBody.opening_hours,
+    price_level: placeRequestBody.price_level,
+    vicinity: placeRequestBody.vicinity,
+    geometry: placeRequestBody.geometry
+  }
+
+  let mongoPlace: IMongoPlace | null = await getMongoPlace(googlePlaceId);
   if (!mongoPlace) {
-    mongoPlace = await addPlace(googlePlace);
+    mongoPlace = await addMongoPlace(googlePlace);
     if (!mongoPlace) {
       throw new Error('Error saving place.');
     }
   }
 
-  const addNewRestaurantEntity: NewRestaurant = {
-    _id,
-    newRestaurantId,
-    googlePlaceId,
-    diningGroupId,
-    comments,
-    interestLevel
+  const addPlaceEntity: Place = {
+    _idPlace,
+    placeType,
+    placeId,
+    googlePlaceId: mongoPlace.googlePlaceId,
   };
 
-  let savedNewRestaurant: INewRestaurant | null;
+  let savedPlace: IPlace | null;
 
-  if (_id) {
+  if (_idPlace) {
     // If _id is provided, update the existing document
-    savedNewRestaurant = await NewRestaurantModel.findByIdAndUpdate(_id, addNewRestaurantEntity, {
+    savedPlace = await PlaceModel.findByIdAndUpdate(_idPlace, addPlaceEntity, {
       new: true,    // Return the updated document
       runValidators: true // Ensure the updated data complies with schema validation
     });
 
-    if (!savedNewRestaurant) {
-      throw new Error('Visited restaurant not found for update.');
+    if (!savedPlace) {
+      throw new Error('Place not found for update.');
     }
   } else {
-    delete addNewRestaurantEntity._id;
-    const newNewRestaurant: INewRestaurant | null = await addNewRestaurant(addNewRestaurantEntity);
-    console.log('newNewRestaurant:', newNewRestaurant?.toObject());
+    delete addPlaceEntity._idPlace;
+    const newPlace: IPlace | null = await addPlaceToDb(addPlaceEntity);
+    console.log('newPlace:', newPlace?.toObject());
   }
 
   return null;
 }
 
-export const addNewRestaurant = async (visitedRestaurant: NewRestaurant): Promise<INewRestaurant | null> => {
+export const addPlaceToDb = async (place: Place): Promise<IPlace | null> => {
 
-  const newNewRestaurant: INewRestaurant = new NewRestaurantModel(visitedRestaurant);
+  const newPlace: IPlace = new PlaceModel(place);
 
   try {
-    const savedNewRestaurant: INewRestaurant | null = await newNewRestaurant.save();
-    return savedNewRestaurant;
+    const savedPlace: IPlace | null = await newPlace.save();
+    return savedPlace;
   } catch (error: any) {
-    console.error('Error saving review:', error);
-    throw new Error('An error occurred while saving the review.');
+    console.error('Error saving place:', error);
+    throw new Error('An error occurred while saving the place.');
   }
 }
 
-export const deleteRestaurantHandler = async (
+export const deletePlaceHandler = async (
   req: Request,
   res: Response
 ): Promise<any> => {
 
   const body = req.body;
-  const newRestaurantId = body.newRestaurantId;
+  const placeId = body.placeId;
 
   try {
-    const newReview = await deleteNewRestaurant(newRestaurantId);
+    await deletePlace(placeId);
     return res.status(200);
   } catch (error) {
-    console.error('Error deleting restaurant:', error);
-    return res.status(500).json({ error: 'An error occurred while deleting the restaurant.' });
+    console.error('Error deleting place:', error);
+    return res.status(500).json({ error: 'An error occurred while deleting the place.' });
   }
 };
 
-const deleteNewRestaurant = async (newRestaurantId: string) => {
-
-  /*
-  let mongoPlace: IMongoPlace | null = await getPlace(googlePlaceId);
-  if (!mongoPlace) {
-    mongoPlace = await addPlace(googlePlace);
-    if (!mongoPlace) {
-      throw new Error('Error saving place.');
-    }
-  }
-*/
-
-  await NewRestaurantModel.findOneAndDelete({ newRestaurantId: newRestaurantId });
+const deletePlace = async (placeId: string) => {
+  await PlaceModel.findOneAndDelete({ newRestaurantId: placeId });
 }
 

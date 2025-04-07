@@ -1,4 +1,4 @@
-import { GoogleGeometry, GooglePlace, RestaurantType } from "../types";
+import { GoogleGeometry, GooglePlace, Place, RestaurantType } from "../types";
 import '../App.css';
 
 import { IconifyIcon } from '@iconify/react';
@@ -22,17 +22,25 @@ export const getCityNameFromPlace = (place: GooglePlace): string => {
   return cityName;
 }
 
-export const getLatLngFromPlace = (place: GooglePlace): google.maps.LatLngLiteral => {
+export const getLatLngFromPlace = (place: Place): google.maps.LatLngLiteral => {
+  const geometry: GoogleGeometry | undefined = place.geometry;
+  if (geometry) {
+    return geometry.location;
+  }
+  return { lat: 0, lng: 0 };
+}
+
+export const getLatLngFromGooglePlace = (place: GooglePlace): google.maps.LatLngLiteral => {
   try {
     const geometry: GoogleGeometry | undefined = place.geometry;
-    const location: google.maps.LatLngLiteral = geometry?.location!;
-    return location;
+    return geometry?.location!;
   } catch (error) {
     console.error('getLatLngFromPlace error', error);
     debugger;
     return { lat: 0, lng: 0 };
   }
 }
+
 
 // Dummy object to define the shape of GooglePlace at runtime
 // const googlePlaceTemplate: GooglePlace = {

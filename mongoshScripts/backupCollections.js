@@ -10,7 +10,7 @@ const collections = [
   "visitreviews"
 ];
 
-const outputDir = "/Users/tedshaffer/Documents/MongoDBBackups/memoRapper/backup-1-18-2-2025";
+const outputDir = "/Users/tedshaffer/Documents/MongoDBBackups/memoRapper/backup-4-09-1";
 
 const fs = require("fs");
 

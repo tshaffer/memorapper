@@ -4,7 +4,7 @@ import { Icon } from '@iconify/react';
 import directionsIcon from '@iconify/icons-mdi/directions';
 import { Diner, DinerRestaurantReviewRef, ReviewedRestaurant, ReviewedRestaurantWithPlace, RestaurantDetailsProps } from '../types';
 import { InfoWindow } from '@vis.gl/react-google-maps';
-import { getLatLngFromPlace, restaurantTypeLabelFromRestaurantType } from '../utilities';
+import { getLatLngFromGooglePlace, restaurantTypeLabelFromRestaurantType } from '../utilities';
 import '../App.css';
 import { Typography, useMediaQuery } from '@mui/material';
 import Rating from '@mui/material/Rating';
@@ -73,7 +73,7 @@ const ReviewedRestaurantInfoWindow: React.FC<ReviewedRestaurantInfoWindowProps> 
       visitReviews: reviews,
       diners,
     };
-    navigate(`/restaurantDetails`, { state: RestaurantDetailsProps});
+    navigate(`/restaurantDetails`, { state: RestaurantDetailsProps });
   }
 
   const renderDinerRestaurantReview = (dinerReviewInputRef: DinerRestaurantReviewRef): JSX.Element | null => {
@@ -131,10 +131,10 @@ const ReviewedRestaurantInfoWindow: React.FC<ReviewedRestaurantInfoWindowProps> 
   }
 
   console.log('ReviewedRestaurantInfoWindow location:', location);
-  
+
   return (
     <InfoWindow
-      position={getLatLngFromPlace(location)}
+      position={getLatLngFromGooglePlace(location)}
       onCloseClick={onClose}
     >
       <div

@@ -2,10 +2,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { Request, Response } from 'express';
 import { VisitReview, DinerRestaurantReview, SubmitReviewBody, ReviewedRestaurant } from '../types';
 import { IMongoPlace } from '../models';
-import { addPlace, getPlace } from './places';
 import VisitReviewModel, { IVisitReview } from '../models/VisitReview';
 import ReviewedRestaurantModel, { IReviewedRestaurant } from '../models/ReviewedRestaurant';
 import DinerRestaurantReviewModel, { IDinerRestaurantReview } from '../models/DinerRetaurantReview';
+import { getMongoPlace, addMongoPlace } from './dbPlaces';
 
 export const reviewHandler = async (
   req: Request<{}, {}, SubmitReviewBody>,
@@ -29,10 +29,10 @@ export const newSubmitReview = async (submitReviewBody: SubmitReviewBody): Promi
 
   const googlePlaceId = place.googlePlaceId;
 
-  let mongoPlace: IMongoPlace | null = await getPlace(googlePlaceId);
+  let mongoPlace: IMongoPlace | null = await getMongoPlace(googlePlaceId);
   console.log('place:', place);
   if (!mongoPlace) {
-    mongoPlace = await addPlace(place);
+    mongoPlace = await addMongoPlace(place);
     if (!place) {
       throw new Error('Error saving place.');
     }

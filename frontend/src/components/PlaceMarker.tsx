@@ -1,7 +1,7 @@
 import React, { } from 'react';
-import { NewRestaurant } from '../types';
+import { Place } from '../types';
 import { AdvancedMarker } from '@vis.gl/react-google-maps';
-import { getLatLngFromGooglePlace, iconFromRestaurantType } from '../utilities';
+import { getLatLngFromPlace } from '../utilities';
 import '../App.css';
 
 import { Icon } from '@iconify/react';
@@ -42,37 +42,37 @@ const textStyle = (color: string): React.CSSProperties => ({
   `,
 });
 
-interface NewRestaurantMarkerProps {
-  newRestaurant: NewRestaurant;
-  onMarkerClick: (reviewedRestaurant: NewRestaurant) => void;
+interface PlaceMarkerProps {
+  place: Place;
+  onMarkerClick: (place: Place) => void;
 }
 
-const NewRestaurantMarker: React.FC<NewRestaurantMarkerProps> = ({ newRestaurant, onMarkerClick }) => {
+const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
 
-  const handleNewRestaurantMarkerClick = () => {
-    onMarkerClick(newRestaurant);
+  const handlePlaceMarkerClick = () => {
+    onMarkerClick(place);
   };
 
-  const renderNewRestaurantMarker = (): JSX.Element => (
+  const renderPlaceMarker = (): JSX.Element => (
     <AdvancedMarker
-      position={getLatLngFromGooglePlace(newRestaurant.googlePlace!)}
-      onClick={() => handleNewRestaurantMarkerClick()}
+      position={getLatLngFromPlace(place)}
+      onClick={() => handlePlaceMarkerClick()}
     >
       <div style={{ position: 'relative' }}>
-        <div style={textStyle('blue')}>{newRestaurant.googlePlace!.name}</div>
+        <div style={textStyle('pink')}>{place.name}</div>
         <div style={iconContainerStyle}>
-          <Icon icon={restaurantIcon} style={{ fontSize: '30px', color: 'blue' }} />
-          <Icon icon={iconFromRestaurantType(newRestaurant.googlePlace!.restaurantType)} style={{ fontSize: '30px', color: 'red' }} />
+          <Icon icon={restaurantIcon} style={{ fontSize: '30px', color: 'pink' }} />
+          {/* <Icon icon={iconFromRestaurantType(place.restaurantType!)} style={{ fontSize: '30px', color: 'red' }} /> */}
         </div>
       </div>
     </AdvancedMarker>
   );
-
+  
   return (
     <>
-      {renderNewRestaurantMarker()}
+      {renderPlaceMarker()}
     </>
   );
 }
 
-export default NewRestaurantMarker;
+export default PlaceMarker;

@@ -2,12 +2,12 @@ import { GooglePlace, FilterResultsParams } from "../types";
 
 export const newFilterResults = (
   filter: FilterResultsParams,
-  places: GooglePlace[],
+  googlePlaces: GooglePlace[],
   mapLocation: google.maps.LatLngLiteral,
 ): GooglePlace[] => {
   const { distanceAwayFilter, openNowFilter }: FilterResultsParams = filter;
 
-  const filteredPlaces: GooglePlace[] = places.filter((place: GooglePlace) => {
+  const filteredPlaces: GooglePlace[] = googlePlaces.filter((place: GooglePlace) => {
     if (!place.geometry || !place.geometry.location) return false;
 
     // Filter by distance

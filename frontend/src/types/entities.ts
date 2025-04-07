@@ -1,7 +1,6 @@
 import { RestaurantType } from "./enums";
-import { GooglePlace } from "./googlePlace";
+import { AddressComponent, GooglePlace } from "./googlePlace";
 import { Filters } from "./interfaces";
-import { AddressComponent } from "./place";
 
 export interface EditableNewRestaurant {
   googlePlace: GooglePlace;

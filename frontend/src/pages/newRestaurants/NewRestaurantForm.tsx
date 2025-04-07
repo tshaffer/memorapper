@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import '../../styles/multiPanelStyles.css';
 import { Button, MenuItem, Rating, Select, TextField, useMediaQuery } from "@mui/material";
-import { RestaurantType, NewRestaurant, EditableNewRestaurant, SubmitNewRestaurantRequestBody } from "../../types";
+import { RestaurantType, NewRestaurant, EditableNewRestaurant, SubmitNewRestaurantRequestBody, GooglePlace } from "../../types";
 import RestaurantName from '../../components/RestaurantName';
 import PulsingDots from '../../components/PulsingDots';
 import { useLocation, useParams } from 'react-router-dom';
@@ -23,7 +23,7 @@ const NewRestaurantForm = () => {
   const editableNewRestaurant = location.state as EditableNewRestaurant | null;
 
   // Inside the component body
-  const googlePlace = editableNewRestaurant?.googlePlace;
+  const googlePlace: GooglePlace | undefined  = editableNewRestaurant?.googlePlace;
   const comments = editableNewRestaurant?.comments ?? '';
   const interestLevel = editableNewRestaurant?.interestLevel ?? 3;
 

@@ -1,6 +1,5 @@
-import { RestaurantType } from "./enums";
-import { GooglePlace } from "./googlePlace";
-import { AddressComponent } from "./place";
+import { PlaceType, RestaurantType } from "./enums";
+import { AddressComponent, GooglePlace } from "./googlePlace";
 
 export interface NewRestaurant {
   _id?: string;
@@ -38,6 +37,7 @@ export interface ChatRequestBody {
 
 export interface BasePlace {
   googlePlaceId: string;
+  placeType?: PlaceType;
   name: string;
   address_components?: AddressComponent[];
   formatted_address: string;

@@ -1,11 +1,9 @@
 import { Router } from 'express';
 import {
   addReviewsFromFileHandler,
-  getPlaces,
+  getGooglePlaces,
   healthHandler,
   testHandler,
-  getNewRestaurants,
-  submitNewRestaurantHandler,
   getDiningGroups,
   getDiners,
   getDinerRestaurantReviews,
@@ -14,7 +12,12 @@ import {
   getReviewedRestaurants,
   chatHandler,
   searchAndFilterHandler,
+  submitPlaceHandler,
+  submitNewRestaurantHandler,
   deleteRestaurantHandler,
+  getNewRestaurants,
+  getPlaces,
+  deletePlaceHandler,
 } from '../controllers';
 import { reviewHandler } from '../controllers/review';
 
@@ -22,14 +25,18 @@ const router = Router();
 
 router.get('/health', healthHandler);
 router.get('/test', testHandler);
-router.get('/places', getPlaces);
-router.get('/newRestaurants', getNewRestaurants);
+
+router.get('/googlePlaces', getGooglePlaces);
 
 router.post('/reviews/addReviewsFromFile', addReviewsFromFileHandler);
 
+router.get('/newRestaurants', getNewRestaurants);
 router.post('/submitNewRestaurant', submitNewRestaurantHandler);
 router.post('/deleteRestaurant', deleteRestaurantHandler);
 
+router.get('/places', getPlaces);
+router.post('/submitPlace', submitPlaceHandler);
+router.post('/deletePlace', deletePlaceHandler);
 
 router.get('/diningGroups', getDiningGroups);
 router.get('/diners', getDiners);

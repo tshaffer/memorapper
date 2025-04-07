@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ReviewedRestaurantWithPlace, ReviewedRestaurant, NewRestaurant, GooglePlace } from '../types';
+import React, { useState, useEffect, useRef } from 'react';
+import { ReviewedRestaurantWithPlace, ReviewedRestaurant, NewRestaurant, GooglePlace, Place } from '../types';
 import { AdvancedMarker, APIProvider, Map } from '@vis.gl/react-google-maps';
 import '../App.css';
 
@@ -9,6 +9,8 @@ import NewRestaurantMarker from './NewRestaurantMarker';
 import ReviewedRestaurantInfoWindow from './ReviewedRestaurantInfoWindow';
 import NewRestaurantInfoWindow from './NewRestaurantInfoWindow';
 import { useUserContext } from '../contexts/UserContext';
+import PlaceMarker from './PlaceMarker';
+import PlaceInfoWindow from './PlaceInfoWindow';
 
 const DEFAULT_ZOOM = 14;
 
@@ -27,31 +29,26 @@ interface MapWithMarkersProps {
   initialCenter: google.maps.LatLngLiteral;
   reviewedRestaurants: ReviewedRestaurant[];
   newRestaurants: NewRestaurant[];
+  places: Place[];
   blueDotLocation?: google.maps.LatLngLiteral;
+  onVisiblePlacesChanged: (visibleReviewedRestaurants: ReviewedRestaurantWithPlace[], visibleNewRestaurants: NewRestaurant[], places: Place[]) => void;
+  onPlaceSelect: (place: Place) => void;
 }
 
-const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, reviewedRestaurants, newRestaurants, blueDotLocation }) => {
+const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, reviewedRestaurants, newRestaurants, places, blueDotLocation, onVisiblePlacesChanged, onPlaceSelect }) => {
 
-  const { places } = useUserContext();
+  const { googlePlaces } = useUserContext();
 
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
 
   const [selectedReviewedRestaurant, setSelectedReviewedRestaurant] = useState<ReviewedRestaurantWithPlace | null>(null);
   const [selectedNewRestaurant, setSelectedNewRestaurant] = useState<NewRestaurant | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+
+  const [bounds, setBounds] = useState<google.maps.LatLngBounds | null>(null);
 
   useEffect(() => {
-
-    // const handleKeyDown = (event: KeyboardEvent) => {
-    //   if ((event.metaKey || event.ctrlKey) && (event.key === '+' || event.key === '=' || event.key === '-')) {
-    //     event.preventDefault();
-    //     if (event.key === '+' || event.key === '=') {
-    //       setZoom(zoom + 1);
-    //     } else if (event.key === '-') {
-    //       setZoom(zoom - 1);
-    //     }
-    //   }
-    // };
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && (event.key === '+' || event.key === '=' || event.key === '-')) {
@@ -76,9 +73,8 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, reviewed
     }
   }, []);
 
-
   const getPlaceFromPlaceId = (placeId: string): GooglePlace | null => {
-    for (const place of places) {
+    for (const place of googlePlaces) {
       if (place.googlePlaceId === placeId) {
         return place;
       }
@@ -96,14 +92,31 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, reviewed
     setSelectedReviewedRestaurant(null);
   };
 
+  const handlePlaceClicked = (place: Place) => {
+    console.log('Place clicked:', place);
+    setSelectedPlace(place);
+    setSelectedReviewedRestaurant(null);
+    setSelectedNewRestaurant(null);
+    onPlaceSelect(place); 
+  };
+
   const handleCloseInfoWindow = () => {
     setSelectedReviewedRestaurant(null);
     setSelectedNewRestaurant(null);
+    setSelectedPlace(null);
+  };
+
+  const reviewedRestaurantWithPlaceFromReviewedRestaurant = (reviewedRestaurant: ReviewedRestaurant): ReviewedRestaurantWithPlace => {
+    const googlePlace = getPlaceFromPlaceId(reviewedRestaurant.googlePlaceId);
+    if (!googlePlace) {
+      console.error('Google Place not found for reviewed restaurant:', reviewedRestaurant);
+      debugger;
+    }
+    return { ...reviewedRestaurant, googlePlace: googlePlace! };
   };
 
   const renderReviewedRestaurantMarker = (reviewedRestaurant: ReviewedRestaurant, index: number): JSX.Element => {
-    const googlePlace = getPlaceFromPlaceId(reviewedRestaurant.googlePlaceId);
-    const reviewedRestaurantWithPlace: ReviewedRestaurantWithPlace = { ...reviewedRestaurant, googlePlace: googlePlace! };
+    const reviewedRestaurantWithPlace: ReviewedRestaurantWithPlace = reviewedRestaurantWithPlaceFromReviewedRestaurant(reviewedRestaurant);
     return (
       <ReviewedRestaurantMarker
         key={`location-${index}`}
@@ -125,42 +138,128 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, reviewed
     );
   };
 
+  const renderPlaceMarker = (place: Place, index: number): JSX.Element => {
+    return (
+      <PlaceMarker
+        key={`location-${index}`}
+        place={place}
+        onMarkerClick={(place: Place) => handlePlaceClicked(place)}
+      >
+      </PlaceMarker>
+    );
+  };
+
   const googleMapsApiKey = import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY!;
 
-  return (
-    <APIProvider apiKey={googleMapsApiKey} version="beta">
-      <Map
-        style={{ width: '100%', height: '100%' }}
-        id="gmap"
-        mapId="1ca0b6526e7d4819"
-        defaultCenter={initialCenter}
-        zoom={zoom}
-        onZoomChanged={(event) => setZoom(event.detail.zoom)}
-        fullscreenControl={false}
-        zoomControl
-        gestureHandling="greedy"
-        scrollwheel
-        mapTypeControl={false}
-        streetViewControl={false}
-        rotateControl={false}
-        scaleControl={false}
-      >
-        {reviewedRestaurants.map((reviewedRestaurant, index) => renderReviewedRestaurantMarker(reviewedRestaurant, index))}
-        {newRestaurants.map((newRestaurant, index) => renderNewRestaurantMarker(newRestaurant, index))}
-        {currentLocation && (
-          <AdvancedMarker position={blueDotLocation || currentLocation}>
-            <CustomBlueDot />
-          </AdvancedMarker>
-        )}
-        {selectedReviewedRestaurant && (
-          <ReviewedRestaurantInfoWindow reviewedRestaurant={selectedReviewedRestaurant} onClose={handleCloseInfoWindow} />
-        )}
-        {selectedNewRestaurant && (
-          <NewRestaurantInfoWindow newRestaurant={selectedNewRestaurant} onClose={handleCloseInfoWindow} />
-        )}
-      </Map>
-    </APIProvider>
-  );
+  // Helper: Determine if a marker is inside the current map bounds.
+  const isMarkerVisible = (markerPos: google.maps.LatLngLiteral, bounds: google.maps.LatLngBounds) => {
+    if (!markerPos) return false;
+    const markerLatLng = new google.maps.LatLng(markerPos.lat, markerPos.lng);
+    return bounds.contains(markerLatLng);
+  };
+
+  const centerLat = bounds?.getCenter().lat();
+  const centerLng = bounds?.getCenter().lng();
+  const neLat = bounds?.getNorthEast().lat();
+  const neLng = bounds?.getNorthEast().lng();
+  const swLat = bounds?.getSouthWest().lat();
+  const swLng = bounds?.getSouthWest().lng();
+
+  useEffect(() => {
+
+    if (!bounds) return;
+
+    let markerIsVisibleCount = 0;
+
+    const visibleReviewedRestaurants: ReviewedRestaurantWithPlace[] = [];
+    const visibleNewRestaurants: NewRestaurant[] = [];
+    const visiblePlaces: Place[] = [];
+
+    for (const reviewedRestaurant of reviewedRestaurants) {
+      const rr: ReviewedRestaurantWithPlace = reviewedRestaurantWithPlaceFromReviewedRestaurant(reviewedRestaurant);
+      if (rr.googlePlace) {
+        if (rr.googlePlace && rr.googlePlace.geometry) {
+          const markerIsVisible = isMarkerVisible(rr.googlePlace.geometry.location, bounds);
+          if (markerIsVisible) {
+            visibleReviewedRestaurants.push(rr);
+            markerIsVisibleCount++;
+          }
+        }
+      }
+    }
+
+    for (const newRestaurant of newRestaurants) {
+      if (newRestaurant.googlePlace) {
+        if (newRestaurant.googlePlace && newRestaurant.googlePlace.geometry) {
+          const markerIsVisible = isMarkerVisible(newRestaurant.googlePlace.geometry.location, bounds);
+          if (markerIsVisible) {
+            visibleNewRestaurants.push(newRestaurant);
+            markerIsVisibleCount++;
+          }
+        }
+      }
+    }
+    
+    for (const place of places) {
+      if (place && place.geometry) {
+        const markerIsVisible = isMarkerVisible(place.geometry.location, bounds);
+        if (markerIsVisible) {
+          visiblePlaces.push(place);
+          markerIsVisibleCount++;
+        }
+      }
+    }
+  
+    onVisiblePlacesChanged(visibleReviewedRestaurants, visibleNewRestaurants, visiblePlaces);
+
+}, [centerLat, centerLng, neLat, neLng, swLat, swLng]);
+
+return (
+  <APIProvider apiKey={googleMapsApiKey} version="beta">
+    <Map
+      style={{ width: '100%', height: '100%' }}
+      id="gmap"
+      mapId="1ca0b6526e7d4819"
+      defaultCenter={initialCenter}
+      zoom={zoom}
+      onZoomChanged={(event) => setZoom(event.detail.zoom)}
+      fullscreenControl={false}
+      zoomControl
+      gestureHandling="greedy"
+      scrollwheel
+      mapTypeControl={false}
+      streetViewControl={false}
+      rotateControl={false}
+      scaleControl={false}
+      onBoundsChanged={(event) => {
+        const boundsLiteral = event.detail.bounds as google.maps.LatLngBoundsLiteral;
+        const newBounds = new google.maps.LatLngBounds(
+          new google.maps.LatLng(boundsLiteral.south, boundsLiteral.west),
+          new google.maps.LatLng(boundsLiteral.north, boundsLiteral.east)
+        );
+        setBounds(newBounds);
+      }}
+    >
+      {reviewedRestaurants.map((reviewedRestaurant, index) => renderReviewedRestaurantMarker(reviewedRestaurant, index))}
+      {newRestaurants.map((newRestaurant, index) => renderNewRestaurantMarker(newRestaurant, index))}
+      {places.map((place, index) => renderPlaceMarker(place, index))}
+      {currentLocation && (
+        <AdvancedMarker position={blueDotLocation || currentLocation}>
+          <CustomBlueDot />
+        </AdvancedMarker>
+      )}
+      {selectedReviewedRestaurant && (
+        <ReviewedRestaurantInfoWindow reviewedRestaurant={selectedReviewedRestaurant} onClose={handleCloseInfoWindow} />
+      )}
+      {selectedNewRestaurant && (
+        <NewRestaurantInfoWindow newRestaurant={selectedNewRestaurant} onClose={handleCloseInfoWindow} />
+      )}
+      {selectedPlace && (
+        <PlaceInfoWindow place={selectedPlace} onClose={handleCloseInfoWindow} />
+      )}
+    </Map>
+  </APIProvider>
+);
 };
 
 export default MapWithMarkers;

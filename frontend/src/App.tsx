@@ -17,7 +17,7 @@ import { DiningGroup, DistanceAwayFilterValues, Settings, } from './types';
 import SettingsDialog from './components/SettingsDialog';
 import NewRestaurantForm from './pages/newRestaurants/NewRestaurantForm';
 import NewRestaurants from './pages/newRestaurants/NewRestaurants';
-
+import PlaceForm from './pages/places/PlaceForm';
 import Map from './pages/maps/Map';
 import NewRestaurantDetails from './pages/reviews/NewRestaurantDetails';
 
@@ -144,6 +144,7 @@ const App: React.FC = () => {
         <Route path="/new-restaurants" element={<NewRestaurants />} />
         <Route path="/add-place" element={<NewRestaurantForm />} />
         <Route path="/add-place/:_id" element={<NewRestaurantForm />} />
+        <Route path="/add-mr-place" element={<PlaceForm />} />
       </Routes>
     );
   }
@@ -187,6 +188,13 @@ const App: React.FC = () => {
                   to="/map"
                 >
                   Map
+                </Button>
+                <Button
+                  style={isActive('/add-mr-place') ? activeButtonStyle : { color: 'white' }}
+                  component={Link}
+                  to="/add-mr-place"
+                >
+                  Add Place
                 </Button>
                 <Button
                   style={isActive('/write-review') ? activeButtonStyle : { color: 'white' }}

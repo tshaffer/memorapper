@@ -1,5 +1,4 @@
 import { BasePlace } from "./entities";
-import { AddressComponent, PlacePhoto } from "./place";
 
 export interface ExtendedGooglePlaceToVisit extends GooglePlace {
   comments: string;
@@ -47,4 +46,17 @@ export interface GooglePlaceDetails {
   opening_hours?: google.maps.places.PlaceOpeningHours;
   price_level?: number;
   vicinity?: string;
+}
+
+export interface AddressComponent {
+  long_name: string;
+  short_name: string;
+  types: string[];
+}
+
+interface PlacePhoto {
+  height: number;
+  width: number;
+  html_attributions: string[];
+  photo_reference: string;
 }

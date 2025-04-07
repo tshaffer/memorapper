@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Diner, DinerRestaurantReview, DiningGroup, DistanceAwayFilterValues, Filters, GooglePlace, NewRestaurant, ReviewedRestaurant, Settings, VisitReview } from '../types';
+import { Diner, DinerRestaurantReview, DiningGroup, DistanceAwayFilterValues, Filters, GooglePlace, Place, NewRestaurant, ReviewedRestaurant, Settings, VisitReview } from '../types';
 
 interface UserContextValue {
   diningGroups: DiningGroup[];
@@ -7,14 +7,17 @@ interface UserContextValue {
   diners: Diner[];
   setDiners: (diners: Diner[]) => void;
 
-  places: GooglePlace[];
-  setPlaces: (places: GooglePlace[]) => void;
+  googlePlaces: GooglePlace[];
+  setGooglePlaces: (googlePlaces: GooglePlace[]) => void;
 
   reviewedRestaurants: ReviewedRestaurant[];
   setReviewedRestaurants: (reviewedRestaurants: ReviewedRestaurant[]) => void;
 
   newRestaurants: NewRestaurant[];
   setNewRestaurants: (newRestaurants: NewRestaurant[]) => void;
+
+  places: Place[];
+  setPlaces: (places: Place[]) => void;
 
   reviews: VisitReview[];
   setReviews: (reviews: VisitReview[]) => void;
@@ -37,9 +40,10 @@ const UserContext = createContext<UserContextValue | undefined>(undefined);
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [diningGroups, setDiningGroups] = useState<DiningGroup[]>([]);
   const [diners, setDiners] = useState<Diner[]>([]);
-  const [places, setPlaces] = useState<GooglePlace[]>([]);
+  const [googlePlaces, setGooglePlaces] = useState<GooglePlace[]>([]);
   const [reviewedRestaurants, setReviewedRestaurants] = useState<ReviewedRestaurant[]>([]);
   const [newRestaurants, setNewRestaurants] = useState<NewRestaurant[]>([]);
+  const [places, setPlaces] = useState<Place[]>([]);
   const [reviews, setReviews] = useState<VisitReview[]>([]);
   const [dinerRestaurantReviews, setDinerRestaurantReviews] = useState<DinerRestaurantReview[]>([]);
   const [currentDiningGroup, setCurrentDiningGroup] = useState<DiningGroup | null>(null);
@@ -79,10 +83,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setDiners(data.diners);
     }
 
-    const fetchPlaces = async () => {
-      const response = await fetch('/api/places');
+    const fetchGooglePlaces = async () => {
+      const response = await fetch('/api/googlePlaces');
       const data = await response.json();
-      setPlaces(data.googlePlaces);
+      setGooglePlaces(data.googlePlaces);
     };
 
     const fetchReviewedRestaurants = async () => {
@@ -95,6 +99,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await fetch('/api/newRestaurants');
       const data = await response.json();
       setNewRestaurants(data.newRestaurants);
+    };
+
+    const fetchPlaces = async () => {
+      const response = await fetch('/api/places');
+      const data = await response.json();
+      setPlaces(data.places);
     };
 
     const fetchReviews = async () => {
@@ -113,9 +123,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const fetchData = async () => {
       await fetchDiningGroups();
       await fetchDiners();
-      await fetchPlaces();
+      await fetchGooglePlaces();
       await fetchReviewedRestaurants();
       await fetchNewRestaurants();
+      await fetchPlaces();
       await fetchReviews();
       await fetchDinerRestaurantReviews();
       setLoading(false);
@@ -131,12 +142,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         diningGroups: diningGroups,
         diners: diners,
         setDiners: setDiners,
-        places: places,
-        setPlaces: setPlaces,
+        googlePlaces: googlePlaces,
+        setGooglePlaces: setGooglePlaces,
         reviewedRestaurants: reviewedRestaurants,
         setReviewedRestaurants: setReviewedRestaurants,
         newRestaurants: newRestaurants,
         setNewRestaurants: setNewRestaurants,
+        places: places,
+        setPlaces: setPlaces,
         reviews: reviews,
         setReviews: setReviews,
         dinerRestaurantReviews: dinerRestaurantReviews,

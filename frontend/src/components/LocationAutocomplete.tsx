@@ -52,9 +52,9 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: Locati
 
   const handleMapLocationChanged = () => {
     if (mapAutocompleteRef.current) {
-      const place: google.maps.places.PlaceResult = mapAutocompleteRef.current.getPlace();
-      if (place?.geometry !== undefined) {
-        const geometry = place.geometry!;
+      const googlePlace: google.maps.places.PlaceResult = mapAutocompleteRef.current.getPlace();
+      if (googlePlace?.geometry !== undefined) {
+        const geometry = googlePlace.geometry!;
         const newCoordinates: google.maps.LatLngLiteral = {
           lat: geometry.location!.lat(),
           lng: geometry.location!.lng(),

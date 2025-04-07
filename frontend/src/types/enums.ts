@@ -16,3 +16,9 @@ export enum RestaurantType {
   ItalianRestaurant = 6,
   DessertShop = 7,
 }
+
+export enum PlaceType {
+  Restaurant = 0,
+  GroceryStore = 1,
+  Destination = 2,
+}
