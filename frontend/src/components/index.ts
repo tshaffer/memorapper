@@ -1,4 +1,3 @@
-export * from './DiningGroupDialog';
 export * from './FiltersDialog';
 export * from './GoogleMapsProvider';
 export * from './LocationAutocomplete';

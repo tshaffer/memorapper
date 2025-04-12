@@ -13,15 +13,6 @@ import iceCreamIcon from '@iconify/icons-emojione/ice-cream';
 import burritoIcon from '@iconify/icons-noto/burrito';
 import coffeeIcon from '@iconify/icons-openmoji/electric-coffee-percolator';
 
-export const getCityNameFromPlace = (place: GooglePlace): string => {
-  const addressComponents = place.address_components;
-  const cityComponent = addressComponents?.find((component: any) =>
-    component.types.includes("locality")
-  );
-  const cityName: string = cityComponent ? cityComponent.long_name : ''
-  return cityName;
-}
-
 export const getLatLngFromPlace = (place: Place): google.maps.LatLngLiteral => {
   const geometry: GoogleGeometry | undefined = place.geometry;
   if (geometry) {
@@ -29,31 +20,6 @@ export const getLatLngFromPlace = (place: Place): google.maps.LatLngLiteral => {
   }
   return { lat: 0, lng: 0 };
 }
-
-export const getLatLngFromGooglePlace = (place: GooglePlace): google.maps.LatLngLiteral => {
-  try {
-    const geometry: GoogleGeometry | undefined = place.geometry;
-    return geometry?.location!;
-  } catch (error) {
-    console.error('getLatLngFromPlace error', error);
-    debugger;
-    return { lat: 0, lng: 0 };
-  }
-}
-
-
-// Dummy object to define the shape of GooglePlace at runtime
-// const googlePlaceTemplate: GooglePlace = {
-//   place_id: '',
-//   name: '',
-//   address_components: [],
-//   formatted_address: '',
-//   geometry: {
-//     location: { lat: 0, lng: 0 },
-//     viewport: { east: 0, north: 0, south: 0, west: 0 },
-//   },
-//   website: '',
-// };
 
 const getRestaurantType = (googlePlaceResult: google.maps.places.PlaceResult): RestaurantType => {
 
@@ -103,16 +69,6 @@ export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.
     restaurantType: getRestaurantType(googlePlaceResult),
   };
   return googlePlace;
-
-  // const keys = Object.keys(googlePlaceTemplate) as (keyof GooglePlace)[];
-
-  // const result = Object.fromEntries(
-  //   keys
-  //     .filter(key => key in googlePlaceResult)
-  //     .map(key => [key, googlePlaceResult[key]])
-  // ) as unknown as GooglePlace;
-
-  // return result;
 
 }
 

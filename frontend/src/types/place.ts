@@ -18,7 +18,7 @@ export type Place = {
   _idPlace?: string;
   placeId: string;
   placeType?: PlaceType;
-  googlePlaceId: string;
+  googlePlaceId?: string;
   placeComments?: string;
 } & NewGooglePlace & Restaurant;
 

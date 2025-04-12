@@ -8,11 +8,7 @@ import {
   Filters,
   GooglePlace,
   FilterResultsParams,
-  VisitReview,
-  ExtendedGooglePlace,
   SearchQuery,
-  NewRestaurant,
-  ReviewedRestaurantWithPlace,
   Place,
   RestaurantReview,
 } from '../../types';
@@ -27,7 +23,7 @@ import VisiblePlacesList from './VisiblePlacesList';
 import PlaceDetailPanel from './PlaceDetailPanel';
 
 const MapPage: React.FC = () => {
-  const { googlePlaces, reviews, newRestaurants, places, reviewedRestaurants, settings, setFilters } = useUserContext();
+  const { googlePlaces, places, settings, setFilters } = useUserContext();
   const { _id } = useParams<{ _id: string }>();
 
   const isMobile = useMediaQuery('(max-width:768px)');
@@ -41,8 +37,6 @@ const MapPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [isListVisible, setIsListVisible] = useState(true);
-  const [visibleRestaurants, setVisibleRestaurants] = useState<ReviewedRestaurantWithPlace[]>([]);
-  const [visibleNewRestaurants, setVisibleNewRestaurants] = useState<NewRestaurant[]>([]);
   const [visiblePlaces, setVisiblePlaces] = useState<Place[]>([]);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
 
@@ -121,35 +115,6 @@ const MapPage: React.FC = () => {
     }
   }, [_id, googlePlaces]);
 
-  // const getReviewsForPlace = (placeId: string): VisitReview[] =>
-  //   reviews.filter((review) => review.googlePlaceId === placeId);
-
-  // const getExtendedGooglePlaces = (inputPlaces: GooglePlace[]): ExtendedGooglePlace[] =>
-  //   inputPlaces.map((place) => ({
-  //     ...place,
-  //     reviews: getReviewsForPlace(place.googlePlaceId),
-  //   }));
-
-  // const getExtendedGooglePlaceToVisit = (place: GooglePlace): ExtendedGooglePlaceToVisit => {
-  //   const googlePlaceId = place.googlePlaceId;
-  //   const newPlace: NewRestaurant | undefined = newRestaurants.find((newPlaceToVisit) => newPlaceToVisit.googlePlace!.googlePlaceId === googlePlaceId);
-  //   return {
-  //     ...place,
-  //     comments: newPlace?.comments || '',
-  //     rating: newPlace?.interestLevel || 0,
-  //   };
-  // }
-
-  // const getExtendedGooglePlacesToVisit = (): ExtendedGooglePlaceToVisit[] => {
-  //   const extendedGooglePlacesToVisit: ExtendedGooglePlaceToVisit[] = [];
-  //   for (const newPlace of newRestaurants) {
-  //     const extendedGooglePlaceToVisit: ExtendedGooglePlaceToVisit = getExtendedGooglePlaceToVisit(newPlace.googlePlace!);
-  //     extendedGooglePlacesToVisit.push(extendedGooglePlaceToVisit);
-  //   }
-  //   return extendedGooglePlacesToVisit;
-  // }
-
-
   const handleOpenFiltersDialog = () => {
     setShowFiltersDialog(true);
   };
@@ -223,9 +188,7 @@ const MapPage: React.FC = () => {
     setMapLocation(location);
   }
 
-  const handleVisiblePlacesChanged = (visibleReviewedRestaurants: ReviewedRestaurantWithPlace[], visibleNewRestaurants: NewRestaurant[], visiblePlaces: Place[]) => {
-    setVisibleRestaurants(visibleReviewedRestaurants);
-    setVisibleNewRestaurants(visibleNewRestaurants);
+  const handleVisiblePlacesChanged = (visiblePlaces: Place[]) => {
     setVisiblePlaces(visiblePlaces);
   }
 
@@ -290,10 +253,8 @@ const MapPage: React.FC = () => {
         <MapWithMarkers
           key={JSON.stringify({ googlePlaces: filteredGooglePlaces, specifiedLocation: mapLocation })} // Forces re-render on prop change
           initialCenter={mapLocation!}
-          reviewedRestaurants={reviewedRestaurants}
-          newRestaurants={newRestaurants}
           places={places}
-          onVisiblePlacesChanged={(visibleReviewedRestaurants, visibleNewRestaurants, visiblePlaces) => handleVisiblePlacesChanged(visibleReviewedRestaurants, visibleNewRestaurants, visiblePlaces)}
+          onVisiblePlacesChanged={(visiblePlaces) => handleVisiblePlacesChanged(visiblePlaces)}
           // onPlaceSelect={handlePlaceSelect}  // new callback for when a marker is clicked
           onPlaceSelect={() => {console.log('place clicked')}}  // new callback for when a marker is clicked
         />
@@ -306,8 +267,6 @@ const MapPage: React.FC = () => {
       <div style={contentContainerStyle}>
         {isListVisible && (
           <VisiblePlacesList
-            visibleRestaurants={visibleRestaurants}
-            visibleNewRestaurants={visibleNewRestaurants}
             visiblePlaces={visiblePlaces}
             onPlaceSelect={handlePlaceSelect}  // new callback for when a list item is clicked
           />

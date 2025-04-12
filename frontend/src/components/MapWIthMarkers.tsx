@@ -1,13 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ReviewedRestaurantWithPlace, ReviewedRestaurant, NewRestaurant, GooglePlace, Place } from '../types';
+import React, { useState, useEffect } from 'react';
+import { Place } from '../types';
 import { AdvancedMarker, APIProvider, Map } from '@vis.gl/react-google-maps';
 import '../App.css';
 
 // // https://icon-sets.iconify.design/?query=<query>
-import ReviewedRestaurantMarker from './ReviewedRestaurantMarker';
-import NewRestaurantMarker from './NewRestaurantMarker';
-import ReviewedRestaurantInfoWindow from './ReviewedRestaurantInfoWindow';
-import NewRestaurantInfoWindow from './NewRestaurantInfoWindow';
 import { useUserContext } from '../contexts/UserContext';
 import PlaceMarker from './PlaceMarker';
 import PlaceInfoWindow from './PlaceInfoWindow';
@@ -27,23 +23,19 @@ const CustomBlueDot = () => (
 
 interface MapWithMarkersProps {
   initialCenter: google.maps.LatLngLiteral;
-  reviewedRestaurants: ReviewedRestaurant[];
-  newRestaurants: NewRestaurant[];
   places: Place[];
   blueDotLocation?: google.maps.LatLngLiteral;
-  onVisiblePlacesChanged: (visibleReviewedRestaurants: ReviewedRestaurantWithPlace[], visibleNewRestaurants: NewRestaurant[], places: Place[]) => void;
+  onVisiblePlacesChanged: (places: Place[]) => void;
   onPlaceSelect: (place: Place) => void;
 }
 
-const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, reviewedRestaurants, newRestaurants, places, blueDotLocation, onVisiblePlacesChanged, onPlaceSelect }) => {
+const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, blueDotLocation, onVisiblePlacesChanged, onPlaceSelect }) => {
 
   const { googlePlaces } = useUserContext();
 
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
 
-  const [selectedReviewedRestaurant, setSelectedReviewedRestaurant] = useState<ReviewedRestaurantWithPlace | null>(null);
-  const [selectedNewRestaurant, setSelectedNewRestaurant] = useState<NewRestaurant | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
 
   const [bounds, setBounds] = useState<google.maps.LatLngBounds | null>(null);
@@ -73,69 +65,14 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, reviewed
     }
   }, []);
 
-  const getPlaceFromPlaceId = (placeId: string): GooglePlace | null => {
-    for (const place of googlePlaces) {
-      if (place.googlePlaceId === placeId) {
-        return place;
-      }
-    };
-    return null;
-  }
-
-  const handleReviewedRestaurantClicked = (reviewedRestaurantWithPlace: ReviewedRestaurantWithPlace) => {
-    setSelectedReviewedRestaurant(reviewedRestaurantWithPlace);
-    setSelectedNewRestaurant(null);
-  };
-
-  const handleNewRestaurantClick = (newRestaurant: NewRestaurant) => {
-    setSelectedNewRestaurant(newRestaurant);
-    setSelectedReviewedRestaurant(null);
-  };
-
   const handlePlaceClicked = (place: Place) => {
     console.log('Place clicked:', place);
     setSelectedPlace(place);
-    setSelectedReviewedRestaurant(null);
-    setSelectedNewRestaurant(null);
     onPlaceSelect(place); 
   };
 
   const handleCloseInfoWindow = () => {
-    setSelectedReviewedRestaurant(null);
-    setSelectedNewRestaurant(null);
     setSelectedPlace(null);
-  };
-
-  const reviewedRestaurantWithPlaceFromReviewedRestaurant = (reviewedRestaurant: ReviewedRestaurant): ReviewedRestaurantWithPlace => {
-    const googlePlace = getPlaceFromPlaceId(reviewedRestaurant.googlePlaceId);
-    if (!googlePlace) {
-      console.error('Google Place not found for reviewed restaurant:', reviewedRestaurant);
-      debugger;
-    }
-    return { ...reviewedRestaurant, googlePlace: googlePlace! };
-  };
-
-  const renderReviewedRestaurantMarker = (reviewedRestaurant: ReviewedRestaurant, index: number): JSX.Element => {
-    const reviewedRestaurantWithPlace: ReviewedRestaurantWithPlace = reviewedRestaurantWithPlaceFromReviewedRestaurant(reviewedRestaurant);
-    return (
-      <ReviewedRestaurantMarker
-        key={`location-${index}`}
-        reviewedRestaurant={reviewedRestaurantWithPlace}
-        onMarkerClick={(reviewedRestaurantWithPlace) => handleReviewedRestaurantClicked(reviewedRestaurantWithPlace)}
-      >
-      </ReviewedRestaurantMarker>
-    );
-  };
-
-  const renderNewRestaurantMarker = (newRestaurant: NewRestaurant, index: number): JSX.Element => {
-    return (
-      <NewRestaurantMarker
-        key={`location-${index}`}
-        newRestaurant={newRestaurant}
-        onMarkerClick={(clickedRestaurant: NewRestaurant) => handleNewRestaurantClick(clickedRestaurant)}
-      >
-      </NewRestaurantMarker>
-    );
   };
 
   const renderPlaceMarker = (place: Place, index: number): JSX.Element => {
@@ -171,34 +108,7 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, reviewed
 
     let markerIsVisibleCount = 0;
 
-    const visibleReviewedRestaurants: ReviewedRestaurantWithPlace[] = [];
-    const visibleNewRestaurants: NewRestaurant[] = [];
     const visiblePlaces: Place[] = [];
-
-    for (const reviewedRestaurant of reviewedRestaurants) {
-      const rr: ReviewedRestaurantWithPlace = reviewedRestaurantWithPlaceFromReviewedRestaurant(reviewedRestaurant);
-      if (rr.googlePlace) {
-        if (rr.googlePlace && rr.googlePlace.geometry) {
-          const markerIsVisible = isMarkerVisible(rr.googlePlace.geometry.location, bounds);
-          if (markerIsVisible) {
-            visibleReviewedRestaurants.push(rr);
-            markerIsVisibleCount++;
-          }
-        }
-      }
-    }
-
-    for (const newRestaurant of newRestaurants) {
-      if (newRestaurant.googlePlace) {
-        if (newRestaurant.googlePlace && newRestaurant.googlePlace.geometry) {
-          const markerIsVisible = isMarkerVisible(newRestaurant.googlePlace.geometry.location, bounds);
-          if (markerIsVisible) {
-            visibleNewRestaurants.push(newRestaurant);
-            markerIsVisibleCount++;
-          }
-        }
-      }
-    }
     
     for (const place of places) {
       if (place && place.geometry) {
@@ -210,7 +120,7 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, reviewed
       }
     }
   
-    onVisiblePlacesChanged(visibleReviewedRestaurants, visibleNewRestaurants, visiblePlaces);
+    onVisiblePlacesChanged(visiblePlaces);
 
 }, [centerLat, centerLng, neLat, neLng, swLat, swLng]);
 
@@ -240,19 +150,11 @@ return (
         setBounds(newBounds);
       }}
     >
-      {reviewedRestaurants.map((reviewedRestaurant, index) => renderReviewedRestaurantMarker(reviewedRestaurant, index))}
-      {newRestaurants.map((newRestaurant, index) => renderNewRestaurantMarker(newRestaurant, index))}
       {places.map((place, index) => renderPlaceMarker(place, index))}
       {currentLocation && (
         <AdvancedMarker position={blueDotLocation || currentLocation}>
           <CustomBlueDot />
         </AdvancedMarker>
-      )}
-      {selectedReviewedRestaurant && (
-        <ReviewedRestaurantInfoWindow reviewedRestaurant={selectedReviewedRestaurant} onClose={handleCloseInfoWindow} />
-      )}
-      {selectedNewRestaurant && (
-        <NewRestaurantInfoWindow newRestaurant={selectedNewRestaurant} onClose={handleCloseInfoWindow} />
       )}
       {selectedPlace && (
         <PlaceInfoWindow place={selectedPlace} onClose={handleCloseInfoWindow} />
