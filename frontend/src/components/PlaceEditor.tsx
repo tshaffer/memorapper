@@ -22,17 +22,17 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
   const defaultPlace: Place =
     mode === 'create'
       ? {
-          _idPlace: _id,
-          placeId: uuidv4(),
-          placeType: PlaceType.Restaurant,
-          restaurantType: RestaurantType.Restaurant,
-          openForBreakfast: undefined,
-          openForLunch: undefined,
-          openForDinner: undefined,
-          name: '',
-          formatted_address: '',
-          // Optionally add other fields like address_components, geometry, etc.
-        }
+        _idPlace: _id,
+        placeId: uuidv4(),
+        placeType: PlaceType.Restaurant,
+        restaurantType: RestaurantType.Restaurant,
+        openForBreakfast: undefined,
+        openForLunch: undefined,
+        openForDinner: undefined,
+        name: '',
+        formatted_address: '',
+        // Optionally add other fields like address_components, geometry, etc.
+      }
       : (initialPlace as Place);
 
   const [place, setPlace] = useState<Place>(defaultPlace);
@@ -120,15 +120,25 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
   };
 
   // Container styling varies by mode.
-  const containerStyle =
+  const containerStyle: React.CSSProperties =
     mode === 'create'
-      ? { maxWidth: isMobile ? '90%' : '600px', margin: '0 auto', padding: '1rem' }
-      : { maxWidth: '400px', margin: '1rem', padding: '1rem', border: '1px solid #ccc', borderRadius: '4px' };
+      ? {
+        width: '100%', // fill the entire width
+        padding: '1rem',
+        boxSizing: 'border-box', // ensures padding doesn't overflow
+      }
+      : {
+        maxWidth: '400px',
+        margin: '1rem',
+        padding: '1rem',
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+      };
 
   // Render functions for various fields.
   const renderPlaceName = () => (
     <div style={{ marginBottom: '1rem' }}>
-      <label htmlFor="place-name">{mode === 'create' ? 'New Place Name:' : 'Place Name:'}</label>
+      <label htmlFor="place-name">{'Place Name:'}</label>
       <RestaurantName
         restaurantName={placeName}
         onSetRestaurantName={(name: string) => setPlaceName(name)}
@@ -139,9 +149,9 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
 
   const renderPlaceComments = () => (
     <div style={{ marginBottom: '1rem' }}>
-      <label>{mode === 'create' ? 'New Comments:' : 'Comments:'}</label>
+      <label>{'Comments:'}</label>
       <TextField
-        label={mode === 'create' ? 'Add comments' : 'Edit comments'}
+        label={'Comments'}
         fullWidth
         multiline
         rows={4}
@@ -153,7 +163,7 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
 
   const renderPlaceType = () => (
     <div style={{ marginBottom: '1rem' }}>
-      <label>{mode === 'create' ? 'Select Place Type:' : 'Place Type:'}</label>
+      <label>{'Place Type:'}</label>
       <Select
         labelId="place-type-select-label"
         value={place.placeType}
@@ -171,7 +181,7 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
     if (place.placeType !== PlaceType.Restaurant) return null;
     return (
       <div style={{ marginBottom: '1rem' }}>
-        <label>{mode === 'create' ? 'Select Restaurant Type:' : 'Restaurant Type:'}</label>
+        <label>{'Restaurant Type:'}</label>
         <Select
           labelId="restaurant-type-select-label"
           value={place.restaurantType}
@@ -235,7 +245,7 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
 
   return (
     <div id='PlaceEditor' style={containerStyle}>
-      <h2>{mode === 'create' ? 'Add New Place' : 'Edit Place Details'}</h2>
+      <h2>{mode === 'create' ? 'Add Place' : 'Edit Place'}</h2>
       <form>
         {renderPlaceName()}
         {renderPlaceComments()}
