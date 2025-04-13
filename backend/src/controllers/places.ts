@@ -59,19 +59,19 @@ export const submitPlaceHandler = async (
 
 const submitPlace = async (placeRequestBody: SubmitPlaceRequestBody): Promise<IPlace | null> => {
 
-  const { _idPlace, placeId, placeType: placeType, googlePlaceId } = placeRequestBody;
+  const { _idPlace, placeId, placeType, googlePlaceId, placeComments, address_components, formatted_address, geometry, name, opening_hours, price_level, vicinity, openForBreakfast, openForLunch, openForDinner, restaurantType, website } = placeRequestBody;
 
   const googlePlace: GooglePlace = {
     googlePlaceId: googlePlaceId!,
-    placeType: placeType,
-    name: placeRequestBody.name!,
-    address_components: placeRequestBody.address_components,
-    formatted_address: placeRequestBody.formatted_address!,
-    website: placeRequestBody.website!,
-    opening_hours: placeRequestBody.opening_hours,
-    price_level: placeRequestBody.price_level,
-    vicinity: placeRequestBody.vicinity,
-    geometry: placeRequestBody.geometry
+    placeType,
+    name: name!,
+    address_components,
+    formatted_address: formatted_address!,
+    website: website!,
+    opening_hours,
+    price_level,
+    vicinity,
+    geometry,
   }
 
   let mongoPlace: IMongoPlace | null = await getMongoPlace(googlePlaceId);
@@ -84,9 +84,17 @@ const submitPlace = async (placeRequestBody: SubmitPlaceRequestBody): Promise<IP
 
   const addPlaceEntity: Place = {
     _idPlace,
-    placeType,
     placeId,
+    placeType,
     googlePlaceId: mongoPlace.googlePlaceId,
+    placeComments,
+    restaurantType,
+    openForBreakfast,
+    openForLunch,
+    openForDinner,
+    consensusComments: '',
+    perUserComments: [],
+    restaurantReviews: [],
   };
 
   let savedPlace: IPlace | null;

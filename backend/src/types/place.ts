@@ -26,6 +26,8 @@ export type SubmitPlaceRequestBody = {
   _idPlace?: string;
   placeId: string;
   placeType?: PlaceType;
+  googlePlaceId: string;
+  placeComments?: string;
 } & NewGooglePlace & Restaurant;
 
 // subset of fields from google.maps.places.PlaceResult

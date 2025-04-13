@@ -24,8 +24,9 @@ export interface IRestaurantReview {
 // Updated IPlace interface merging Place and MRRestaurant fields
 export interface IPlace extends Document {
   placeId: string;
-  googlePlaceId: string;
   placeType: PlaceType;
+  googlePlaceId: string;
+  placeComments?: string;
   restaurantType?: RestaurantType;
   openForBreakfast?: boolean;
   openForLunch?: boolean;
@@ -58,12 +59,13 @@ const RestaurantReviewSchema: Schema = new Schema({
 // Place schema with embedded restaurant fields
 const PlaceSchema: Schema = new Schema({
   placeId: { type: String, required: true, unique: true },
-  googlePlaceId: { type: String, required: true, ref: 'MongoPlace' },
   placeType: {
     type: Number,
     required: true,
     enum: [PlaceType.Restaurant, PlaceType.GroceryStore, PlaceType.Destination]
   },
+  googlePlaceId: { type: String, required: true, ref: 'MongoPlace' },
+  placeComments: { type: String },
   restaurantType: {
     type: String,
     enum: Object.values(RestaurantType)

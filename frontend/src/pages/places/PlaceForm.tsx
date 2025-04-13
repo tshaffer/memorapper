@@ -124,10 +124,10 @@ const PlaceForm = () => {
     setPlace((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleAddPlace = async (_: React.MouseEvent<HTMLButtonElement, MouseEvent>): Promise<void> => {
+  const handleAddPlace = async (newPlace: Place): Promise<void> => {
 
     console.log('handleAddPlace');
-    console.log('placeData:', place);
+    console.log('placeData:', newPlace);
 
     setIsLoading(true);
 
@@ -136,7 +136,7 @@ const PlaceForm = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...place,
+          ...newPlace,
         }),
       });
       const data = await response.json();
@@ -285,9 +285,8 @@ const PlaceForm = () => {
     >
       <PlaceEditor
         mode={'create'}
-        onSubmit={function (place: Place) {
-          console.log('PlaceForm: PlaceEditor onSubmit callback received:', place);
-          return Promise.resolve();
+        onSubmit={ (place: Place) => {
+          return handleAddPlace(place);
         }}
         onCancel={function () {
           console.log('Add place cancelled.');
