@@ -336,6 +336,7 @@ const MapPage: React.FC = () => {
 
       {/* PlaceDetailPanel: only rendered when a place is selected */}
       {selectedPlace && (
+        
         <PlaceDetailPanel
           open={true}
           place={selectedPlace}

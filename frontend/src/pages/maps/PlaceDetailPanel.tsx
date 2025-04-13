@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { Place, PlaceType, RestaurantReview } from '../../types';
+import PlaceEditor from '../../components/PlaceEditor';
 
 interface PlaceDetailPanelProps {
   open: boolean;
@@ -136,6 +137,18 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
                 />
               </Box>
             )}
+            <PlaceEditor
+              mode={'create'}
+              initialPlace={editPlace}
+              onSubmit={function (place: Place) {
+                console.log('Edit submitted:', place);
+                return Promise.resolve();
+              }}
+              onCancel={function () {
+                console.log('Edit cancelled.');
+              }}
+            >
+            </PlaceEditor>
             <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
               <Button variant="contained" onClick={handleSavePlace}>Save</Button>
               <Button variant="outlined" onClick={handleCancelEdit}>Cancel</Button>
