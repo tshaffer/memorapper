@@ -7,6 +7,7 @@ import PulsingDots from '../../components/PulsingDots';
 import { useParams } from 'react-router-dom';
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import PlaceEditor from '../../components/PlaceEditor';
 
 const PlaceForm = () => {
 
@@ -33,22 +34,22 @@ const PlaceForm = () => {
 
   interface MealAvailability {
     openForBreakfast: boolean;
-    openForLunch:  boolean;
+    openForLunch: boolean;
     openForDinner: boolean;
   }
-  
+
   const inferMealAvailability = (opening_hours: any): MealAvailability => {
     let openForBreakfast = false;
-    let openForLunch    = false;
-    let openForDinner   = false;
-  
+    let openForLunch = false;
+    let openForDinner = false;
+
     // 1. Check if the place is "Open 24 hours" (for every day listed).
     //    If so, we're done: it's open for all meal times.
     if (opening_hours.weekday_text && Array.isArray(opening_hours.weekday_text)) {
       const allDaysOpen24 = opening_hours.weekday_text.every((dayText: string) =>
         dayText.toLowerCase().includes("open 24 hours")
       );
-  
+
       if (allDaysOpen24) {
         return {
           openForBreakfast: true,
@@ -57,7 +58,7 @@ const PlaceForm = () => {
         };
       }
     }
-  
+
     // 2. Otherwise, fall back to the existing "periods" logic (if it exists).
     //    This block remains largely the same as your original, except you'll
     //    want to ensure that period.open.time and period.close.time are
@@ -67,7 +68,7 @@ const PlaceForm = () => {
         if (period.open && period.open.time) {
           // Extract the hour from the "HHmm" string (e.g., "0830" → 8).
           const hour = parseInt(period.open.time.substring(0, 2), 10);
-  
+
           // Simple inference logic:
           // - If opening time is before 10:00 => available for breakfast.
           // - If opening time is between 10:00 and 14:00 => available for lunch.
@@ -84,14 +85,14 @@ const PlaceForm = () => {
         }
       });
     }
-  
+
     return {
       openForBreakfast,
       openForLunch,
       openForDinner,
     };
   };
-  
+
   const handleChangeGooglePlace = (googlePlace: GooglePlace) => {
     // Copy current place data into a temporary variable.
     const currentPlace: SubmitPlaceRequestBody = { ...place };
@@ -282,22 +283,33 @@ const PlaceForm = () => {
         padding: '1rem',
       }}
     >
-      <form id='add-review-form'>
+      <PlaceEditor
+        mode={'create'}
+        onSubmit={function (place: Place) {
+          console.log('PlaceForm: PlaceEditor onSubmit callback received:', place);
+          return Promise.resolve();
+        }}
+        onCancel={function () {
+          console.log('Add place cancelled.');
+        }}
+      >
+      </PlaceEditor>
+      {/* <form id='add-review-form'>
         {renderPlaceName()}
         {renderPlaceComments()}
         {renderPlaceType()}
         {renderRestaurantType()}
         {renderMealAvailability()}
-      </form>
+      </form> */}
 
-      <Button
+      {/* <Button
         disabled={!place.googlePlaceId}
         onClick={handleAddPlace}
       >
         Add Place
-      </Button>
+      </Button> */}
 
-      {renderPulsingDots()}
+      {/* {renderPulsingDots()} */}
 
     </div>
   );

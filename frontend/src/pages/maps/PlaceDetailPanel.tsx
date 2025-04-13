@@ -141,7 +141,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
               mode={'edit'}
               initialPlace={editPlace}
               onSubmit={function (place: Place) {
-                console.log('Edit submitted:', place);
+                console.log('PlaceDetailPanel: PlaceEditor onSubmit callback received:', place);
                 return Promise.resolve();
               }}
               onCancel={function () {
