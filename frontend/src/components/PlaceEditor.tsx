@@ -234,7 +234,7 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
   };
 
   return (
-    <div style={containerStyle}>
+    <div id='PlaceEditor' style={containerStyle}>
       <h2>{mode === 'create' ? 'Add New Place' : 'Edit Place Details'}</h2>
       <form>
         {renderPlaceName()}

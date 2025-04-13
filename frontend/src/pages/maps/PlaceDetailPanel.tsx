@@ -91,7 +91,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
         {/* Display either an editing form or read-only details */}
         {isEditing ? (
           <Box>
-            <TextField
+            {/* <TextField
               label="Name"
               fullWidth
               value={editPlace.name || ''}
@@ -105,7 +105,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
               onChange={(e) => handleEditChange('formatted_address', e.target.value)}
               margin="normal"
             />
-            {/* Editable meal availability for restaurants */}
+            
             {editPlace.placeType === PlaceType.Restaurant && (
               <Box>
                 <FormControlLabel
@@ -136,9 +136,9 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
                   label="Open for Dinner"
                 />
               </Box>
-            )}
+            )} */}
             <PlaceEditor
-              mode={'create'}
+              mode={'edit'}
               initialPlace={editPlace}
               onSubmit={function (place: Place) {
                 console.log('Edit submitted:', place);
@@ -149,10 +149,10 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
               }}
             >
             </PlaceEditor>
-            <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
+            {/* <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
               <Button variant="contained" onClick={handleSavePlace}>Save</Button>
               <Button variant="outlined" onClick={handleCancelEdit}>Cancel</Button>
-            </Box>
+            </Box> */}
           </Box>
         ) : (
           <Box>
@@ -181,7 +181,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
         )}
 
         {/* Review management: only shown for restaurants */}
-        {place.placeType === PlaceType.Restaurant && (
+        {/* {place.placeType === PlaceType.Restaurant && (
           <Box sx={{ mt: 4 }}>
             <Typography variant="h6">Reviews</Typography>
             {place.restaurantReviews && place.restaurantReviews.length > 0 ? (
@@ -230,7 +230,11 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
               <Button variant="contained" onClick={handleAddReviewSubmit}>Submit Review</Button>
             </Box>
           </Box>
-        )}
+        )} */}
+
+
+
+
       </Box>
     </Drawer>
   );
