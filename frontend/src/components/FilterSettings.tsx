@@ -1,22 +1,10 @@
-import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
-import { useEffect, useRef, useState } from 'react';
-import { Box, Button, Switch, Typography, useMediaQuery } from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
-import { DistanceAwayFilterValues, Filters } from "../types";
+import { Box, Typography, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Checkbox, useMediaQuery } from '@mui/material';
+import { DistanceAwayFilterValues, Filters, MealType, OpenFilterMode } from "../types";
+
 export interface FiltersSettingsProps {
-  filters: Filters
+  filters: Filters;
   onUpdateFilters: (filters: Filters) => void;
 }
-
-const filterButtonStyle: React.CSSProperties = {
-  padding: '8px 8px',
-  background: '#f8f8f8',
-  border: '1px solid #ccc',
-  borderRadius: '20px',
-  fontSize: '14px',
-  cursor: 'pointer',
-};
 
 const myButtonStyle: React.CSSProperties = {
   color: '#1976D2',
@@ -25,73 +13,56 @@ const myButtonStyle: React.CSSProperties = {
 };
 
 const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsProps) => {
-
   const { filters, onUpdateFilters } = props;
-  const { distanceAwayFilter: distanceAway, isOpenNowFilterEnabled: isOpenNowEnabled } = filters;
+  // Destructure current filters; note that we now expect the filters to include an "openFilterMode"
+  // and, if in "MEALS" mode, an "openMeals" object.
+  const {
+    distanceAwayFilter: distanceAway,
+    openFilterMode = OpenFilterMode.Any,
+    openMeals = { breakfast: false, lunch: false, dinner: false }
+  } = filters;
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
-  const [distanceAwayDropdownVisible, setDistanceAwayDropdownVisible] = useState(false);
-
-  const distanceDropdownRef = useRef<HTMLDivElement | null>(null);
-
+  // --- Distance Filter Handlers ---
   const handleDistanceAwayChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newDistanceAway = Number(e.target.value);
     onUpdateFilters({ ...filters, distanceAwayFilter: newDistanceAway });
-    setDistanceAwayDropdownVisible(false);
   };
 
-  const handleOpenNowClick = () => {
-    setDistanceAwayDropdownVisible(false);
-    const newOpenNowFilterEnabled = !isOpenNowEnabled;
-    onUpdateFilters({ ...filters, isOpenNowFilterEnabled: newOpenNowFilterEnabled });
+  // --- Open Status Filter Handlers ---
+  // Handle change in the radio group for open status.
+  const handleOpenFilterModeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newMode = event.target.value as OpenFilterMode;
+    onUpdateFilters({ ...filters, openFilterMode: newMode });
   };
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (distanceDropdownRef.current && !distanceDropdownRef.current.contains(event.target as Node)) {
-      setDistanceAwayDropdownVisible(false);
-    }
+  // Handle the toggling of specific meal checkboxes.
+  const handleMealCheckboxChange = (meal: MealType) => (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const updatedMeals = { ...openMeals, [meal]: event.target.checked };
+    // When updating meal selections, set the mode to "MEALS" so that
+    // the UI stays consistent with the user's intent.
+    onUpdateFilters({ ...filters, openFilterMode: OpenFilterMode.Meals, openMeals: updatedMeals });
   };
 
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Escape') {
-      setDistanceAwayDropdownVisible(false);
-    }
-  };
+  // --- Rendering Sub-Components ---
 
-  useEffect(() => {
-    if (distanceAwayDropdownVisible) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('keydown', handleKeyDown);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleKeyDown);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [distanceAwayDropdownVisible, ]);
-
-
+  // Renders the distance selector with a separate label.
   const renderDistanceAway = (): JSX.Element => (
     <Box
       sx={{
         display: 'flex',
         alignItems: 'center',
         gap: '8px',
-        padding: '8px 8px',
+        padding: '8px',
         background: '#f8f8f8',
         border: '1px solid #ccc',
         borderRadius: '20px',
-        cursor: 'pointer',
       }}
     >
-      <Typography
-        variant="subtitle1"
-        style={myButtonStyle}
-      >
+      <Typography variant="subtitle1" style={myButtonStyle}>
         {isMobile ? 'DISTANCE' : 'DISTANCE AWAY'}
       </Typography>
       <select
@@ -116,35 +87,69 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     </Box>
   );
 
+  // Renders the open status radio group and, if applicable, the meal checkboxes.
+  const renderOpenFilter = (): JSX.Element => (
+    <FormControl component="fieldset">
+      <FormLabel component="legend" style={{ fontWeight: 500, fontSize: '14px', color: '#1976D2' }}>
+        OPEN STATUS
+      </FormLabel>
+      <RadioGroup row value={openFilterMode} onChange={handleOpenFilterModeChange}>
+        <FormControlLabel value={OpenFilterMode.Any} control={<Radio />} label="Not Specified" />
+        <FormControlLabel value={OpenFilterMode.Now} control={<Radio />} label="Open Now" />
+        <FormControlLabel value={OpenFilterMode.Meals} control={<Radio />} label="Open at Meals" />
+      </RadioGroup>
+      {openFilterMode === OpenFilterMode.Meals && (
+        <Box sx={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={openMeals.breakfast}
+                onChange={handleMealCheckboxChange(MealType.Breakfast)}
+              />
+            }
+            label="Breakfast"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={openMeals.lunch}
+                onChange={handleMealCheckboxChange(MealType.Lunch)}
+              />
+            }
+            label="Lunch"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={openMeals.dinner}
+                onChange={handleMealCheckboxChange(MealType.Dinner)}
+              />
+            }
+            label="Dinner"
+          />
+        </Box>
+      )}
+    </FormControl>
+  );
+
+  // Combines the distance and open status filter UI components.
   const renderFiltersRow = (): JSX.Element => (
     <Box
       sx={{
         display: 'flex',
         flexWrap: 'wrap',
-        gap: '8px',
+        gap: '16px',
         justifyContent: isMobile ? 'center' : 'flex-start',
         marginBottom: '12px',
+        alignItems: 'center',
       }}
     >
       {renderDistanceAway()}
-      <Button style={filterButtonStyle} onClick={handleOpenNowClick}>
-        Open Now
-        <CheckIcon
-          style={{
-            marginLeft: '4px',
-            visibility: isOpenNowEnabled ? 'visible' : 'hidden',
-          }}
-        />
-      </Button>
+      {renderOpenFilter()}
     </Box>
   );
 
-  return (
-    <>
-      {renderFiltersRow()}
-    </>
-  );
-
+  return <>{renderFiltersRow()}</>;
 };
 
 export default FiltersSettings;

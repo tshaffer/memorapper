@@ -1,14 +1,16 @@
-import { DistanceAwayFilterValues } from "./enums";
+import { DistanceAwayFilterValues, OpenFilterMode } from "./enums";
 
 export interface FilterResultsParams {
   distanceAwayFilter: DistanceAwayFilterValues;
-  openNowFilter: boolean;
+  openFilterMode: OpenFilterMode;
+  openMeals: OpenMealsSpec;
 }
 
 export interface SearchQuery {
   query: string;
   distanceAway: DistanceAwayQuery;
-  isOpenNow: boolean;
+  openFilterMode: OpenFilterMode;
+  openMeals: OpenMealsSpec;
 }
 
 export interface DistanceFilter {
@@ -18,9 +20,16 @@ export interface DistanceFilter {
   distance: number;
 }
 
+export interface OpenMealsSpec {
+  breakfast: boolean;
+  lunch: boolean;
+  dinner: boolean;
+}
+
 export interface Filters {
   distanceAwayFilter: DistanceAwayFilterValues;
-  isOpenNowFilterEnabled: boolean;
+  openFilterMode: OpenFilterMode;
+  openMeals: OpenMealsSpec;
 }
 
 export interface DistanceAwayQuery {

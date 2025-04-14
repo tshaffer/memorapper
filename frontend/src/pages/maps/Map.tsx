@@ -142,11 +142,12 @@ const MapPage: React.FC = () => {
     googlePlaces: any, location: google.maps.LatLngLiteral, filters: Filters,
   ) => {
 
-    const { distanceAwayFilter, isOpenNowFilterEnabled } = filters;
+    const { distanceAwayFilter, openFilterMode, openMeals  } = filters;
 
     const filter: FilterResultsParams = {
       distanceAwayFilter,
-      openNowFilter: isOpenNowFilterEnabled,
+      openFilterMode,
+      openMeals,
     };
 
     const filteredPlaces: GooglePlace[] = newFilterResults(filter, googlePlaces, location);
@@ -167,7 +168,8 @@ const MapPage: React.FC = () => {
 
     const searchQuery: SearchQuery = {
       query,
-      isOpenNow: filters.isOpenNowFilterEnabled,
+      openFilterMode: filters.openFilterMode,
+      openMeals: filters.openMeals,
       distanceAway: {
         lat: mapLocation!.lat,
         lng: mapLocation!.lng,

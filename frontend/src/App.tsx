@@ -7,7 +7,7 @@ import GoogleMapsProvider from './components/GoogleMapsProvider';
 import './App.css';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } from '@mui/material';
 import { useUserContext } from './contexts/UserContext';
-import { DistanceAwayFilterValues, Settings, } from './types';
+import { DistanceAwayFilterValues, OpenFilterMode, Settings, } from './types';
 import PlaceForm from './pages/places/PlaceForm';
 import Map from './pages/maps/Map';
 
@@ -38,7 +38,12 @@ const App: React.FC = () => {
         const settings: Settings = {
           filters: {
             distanceAwayFilter: DistanceAwayFilterValues.AnyDistance,
-            isOpenNowFilterEnabled: false,
+            openFilterMode: OpenFilterMode.Any,
+            openMeals: {
+              breakfast: false,
+              lunch: false,
+              dinner: false,
+            }
           },
         };
         localStorage.setItem("appSettings", JSON.stringify(settings));
@@ -54,14 +59,6 @@ const App: React.FC = () => {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [settingsAnchorEl, setSettingsAnchorEl] = useState<null | HTMLElement>(null);
-
-  const handleOpenDiningGroupDropdown = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleCloseDiningGroupDropdown = () => {
-    setAnchorEl(null);
-  };
 
   const isActive = (path: string) => location.pathname === path; // Check if the button corresponds to the current route
 

@@ -5,7 +5,7 @@ export const newFilterResults = (
   googlePlaces: GooglePlace[],
   mapLocation: google.maps.LatLngLiteral,
 ): GooglePlace[] => {
-  const { distanceAwayFilter, openNowFilter }: FilterResultsParams = filter;
+  const { distanceAwayFilter, openFilterMode, openMeals   }: FilterResultsParams = filter;
 
   const filteredPlaces: GooglePlace[] = googlePlaces.filter((place: GooglePlace) => {
     if (!place.geometry || !place.geometry.location) return false;
@@ -15,9 +15,9 @@ export const newFilterResults = (
     if (distanceInMiles > distanceAwayFilter) return false;
 
     // Filter by open now
-    if (openNowFilter && !isPlaceOpenNow(place.opening_hours)) {
-      return false;
-    }
+    // if (openNowFilter && !isPlaceOpenNow(place.opening_hours)) {
+    //   return false;
+    // }
 
     return true;
   });
