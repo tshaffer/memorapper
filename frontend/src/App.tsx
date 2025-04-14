@@ -10,6 +10,8 @@ import { useUserContext } from './contexts/UserContext';
 import { DistanceAwayFilterValues, OpenFilterMode, Settings, } from './types';
 import PlaceForm from './pages/places/PlaceForm';
 import Map from './pages/maps/Map';
+import SettingsDialog from './components/SettingsDialog';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 // soft orange: #FFA07A
 // other possibilities
@@ -24,7 +26,7 @@ const activeButtonStyle: React.CSSProperties = {
 };
 
 const App: React.FC = () => {
-  const { setSettings, setFilters, loading, error } = useUserContext();
+  const { settings, setSettings, setFilters, loading, error } = useUserContext();
   const isMobile = useMediaQuery('(max-width:768px)');
   const location = useLocation(); // Track the current route
 
@@ -59,6 +61,25 @@ const App: React.FC = () => {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [settingsAnchorEl, setSettingsAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleOpenSettingsDialog = (event: React.MouseEvent<HTMLElement>) => {
+    setSettingsAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseSettingsDialog = () => {
+    setSettingsAnchorEl(null);
+  };
+
+  const handleSetSettings = (updatedSettings: Settings) => {
+
+    console.log("handleSetSettings called with updatedSettings:", updatedSettings);
+
+    // Update settings using the UserContext's setSettings
+    setSettings(updatedSettings);
+
+    // Persist the updated settings to localStorage
+    localStorage.setItem("appSettings", JSON.stringify(updatedSettings));
+  };
 
   const isActive = (path: string) => location.pathname === path; // Check if the button corresponds to the current route
 
@@ -121,12 +142,21 @@ const App: React.FC = () => {
                 </Button>
               </>
             )}
+            <IconButton onClick={handleOpenSettingsDialog} color="inherit">
+              <SettingsIcon />
+            </IconButton>
           </Toolbar>
         </AppBar>
 
         <Box id="mainAppContentArea" sx={{ flexGrow: 1, overflow: 'hidden' }}>
           {content}
         </Box>
+        <SettingsDialog
+          open={settingsAnchorEl !== null}
+          onClose={handleCloseSettingsDialog}
+          settings={settings}
+          onSetSettings={handleSetSettings}
+        />
       </Box >
     </GoogleMapsProvider >
   );
