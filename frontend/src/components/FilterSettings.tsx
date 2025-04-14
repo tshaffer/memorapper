@@ -6,12 +6,6 @@ export interface FiltersSettingsProps {
   onUpdateFilters: (filters: Filters) => void;
 }
 
-const myButtonStyle: React.CSSProperties = {
-  color: '#1976D2',
-  fontWeight: 500,
-  fontSize: '14px',
-};
-
 const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsProps) => {
   const { filters, onUpdateFilters } = props;
   // Destructure current filters; note that we now expect the filters to include an "openFilterMode"
@@ -69,7 +63,8 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
         sx={{
           color: '#1976D2',
           fontWeight: 500,
-          fontSize: '14px'
+          fontSize: '14px',
+          mb: '6px',            // 6 pixels of space below the label
         }}
       >
         {isMobile ? 'DISTANCE' : 'DISTANCE AWAY'}
@@ -107,7 +102,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
   // Renders the open status radio group and, if applicable, the meal checkboxes.
   const renderOpenFilter = (): JSX.Element => (
     <FormControl component="fieldset">
-      <FormLabel component="legend" style={{ fontWeight: 500, fontSize: '14px', color: '#1976D2' }}>
+      <FormLabel component="legend" sx={{ fontWeight: 500, fontSize: '14px', color: '#1976D2' }}>
         OPEN STATUS
       </FormLabel>
       <RadioGroup row value={openFilterMode} onChange={handleOpenFilterModeChange}>
