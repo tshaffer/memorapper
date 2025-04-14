@@ -40,9 +40,9 @@ const App: React.FC = () => {
             distanceAwayFilter: DistanceAwayFilterValues.AnyDistance,
             openFilterMode: OpenFilterMode.Any,
             openMeals: {
-              breakfast: false,
-              lunch: false,
-              dinner: false,
+              BREAKFAST: false,
+              LUNCH: false,
+              DINNER: false,
             }
           },
         };

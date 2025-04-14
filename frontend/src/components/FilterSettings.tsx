@@ -13,7 +13,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
   const {
     distanceAwayFilter: distanceAway,
     openFilterMode = OpenFilterMode.Any,
-    openMeals = { breakfast: false, lunch: false, dinner: false }
+    openMeals = { BREAKFAST: false, LUNCH: false, DINNER: false }
   } = filters;
 
   const isMobile = useMediaQuery('(max-width:768px)');
@@ -115,7 +115,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
           <FormControlLabel
             control={
               <Checkbox
-                checked={openMeals.breakfast}
+                checked={openMeals.BREAKFAST}
                 onChange={handleMealCheckboxChange(MealType.Breakfast)}
               />
             }
@@ -124,7 +124,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
           <FormControlLabel
             control={
               <Checkbox
-                checked={openMeals.lunch}
+                checked={openMeals.LUNCH}
                 onChange={handleMealCheckboxChange(MealType.Lunch)}
               />
             }
@@ -133,7 +133,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
           <FormControlLabel
             control={
               <Checkbox
-                checked={openMeals.dinner}
+                checked={openMeals.DINNER}
                 onChange={handleMealCheckboxChange(MealType.Dinner)}
               />
             }

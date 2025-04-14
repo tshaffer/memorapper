@@ -21,9 +21,9 @@ export interface DistanceFilter {
 }
 
 export interface OpenMealsSpec {
-  breakfast: boolean;
-  lunch: boolean;
-  dinner: boolean;
+  BREAKFAST: boolean;
+  LUNCH: boolean;
+  DINNER: boolean;
 }
 
 export interface Filters {
