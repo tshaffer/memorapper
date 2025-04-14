@@ -35,6 +35,7 @@ const FiltersDialog: React.FC<FiltersDialogProps> = (props: FiltersDialogProps) 
   }, [props.filters.distanceAwayFilter, props.filters.openFilterMode, props.filters.openMeals]);
 
   const handleUpdateFilters = (filters: Filters) => {
+    console.log('handleUpdateFilters', filters);
     setDistanceAwayFilter(filters.distanceAwayFilter);
     setOpenFilterMode(filters.openFilterMode);
     setOpenMeals(filters.openMeals);
@@ -49,6 +50,7 @@ const FiltersDialog: React.FC<FiltersDialogProps> = (props: FiltersDialogProps) 
     props.onClose();
   }
 
+  console.log('FiltersDialog', props.filters);
   return (
     <Dialog onClose={props.onClose} open={props.open}>
       <DialogTitle>Filters</DialogTitle>
@@ -56,9 +58,9 @@ const FiltersDialog: React.FC<FiltersDialogProps> = (props: FiltersDialogProps) 
         <Box sx={{ padding: '8px', overflowY: 'auto' }}>
           <FiltersSettings
             filters={{
-              distanceAwayFilter: distanceAwayFilter,
-              openFilterMode: props.filters.openFilterMode,
-              openMeals: props.filters.openMeals,
+              distanceAwayFilter,
+              openFilterMode,
+              openMeals,
             }}
             onUpdateFilters={handleUpdateFilters}
           />
