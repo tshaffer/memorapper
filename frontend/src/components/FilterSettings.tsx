@@ -1,4 +1,4 @@
-import { Box, Typography, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Checkbox, useMediaQuery } from '@mui/material';
+import { Box, Typography, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Checkbox, useMediaQuery, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
 import { DistanceAwayFilterValues, Filters, MealType, OpenFilterMode } from "../types";
 
 export interface FiltersSettingsProps {
@@ -25,7 +25,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
   const isMobile = useMediaQuery('(max-width:768px)');
 
   // --- Distance Filter Handlers ---
-  const handleDistanceAwayChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleDistanceAwayChange = (e: SelectChangeEvent<DistanceAwayFilterValues>) => {
     const newDistanceAway = Number(e.target.value);
     onUpdateFilters({ ...filters, distanceAwayFilter: newDistanceAway });
   };
@@ -51,40 +51,57 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
 
   // Renders the distance selector with a separate label.
   const renderDistanceAway = (): JSX.Element => (
-    <Box
+    <FormControl
+      variant="outlined"
+      size="small"
       sx={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        padding: '8px',
+        // Pill shape styling:
         background: '#f8f8f8',
         border: '1px solid #ccc',
         borderRadius: '20px',
+        // Make width flexible or set a minWidth:
+        minWidth: isMobile ? 140 : 180,
       }}
     >
-      <Typography variant="subtitle1" style={myButtonStyle}>
+      <InputLabel
+        id="distance-away-label"
+        shrink // keeps the label from floating on select
+        sx={{
+          color: '#1976D2',
+          fontWeight: 500,
+          fontSize: '14px'
+        }}
+      >
         {isMobile ? 'DISTANCE' : 'DISTANCE AWAY'}
-      </Typography>
-      <select
+      </InputLabel>
+      <Select
+        labelId="distance-away-label"
+        id="distance-away-select"
+        notched
+        label={isMobile ? 'DISTANCE' : 'DISTANCE AWAY'}
         value={distanceAway}
         onChange={handleDistanceAwayChange}
-        style={{
+        sx={{
           color: '#1976D2',
           fontWeight: 500,
           fontSize: '14px',
-          background: 'transparent',
-          border: 'none',
-          outline: 'none',
-          cursor: 'pointer',
+          // Remove the standard 'outlined' border:
+          '& .MuiOutlinedInput-notchedOutline': {
+            border: 'none',
+          },
+          // Optionally remove focus outline if desired:
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            border: 'none',
+          },
         }}
       >
-        <option value={DistanceAwayFilterValues.HalfMile}>HALF MILE</option>
-        <option value={DistanceAwayFilterValues.OneMile}>1 MILE</option>
-        <option value={DistanceAwayFilterValues.FiveMiles}>5 MILES</option>
-        <option value={DistanceAwayFilterValues.TenMiles}>10 MILES</option>
-        <option value={DistanceAwayFilterValues.AnyDistance}>ANY DISTANCE</option>
-      </select>
-    </Box>
+        <MenuItem value={DistanceAwayFilterValues.HalfMile}>HALF MILE</MenuItem>
+        <MenuItem value={DistanceAwayFilterValues.OneMile}>1 MILE</MenuItem>
+        <MenuItem value={DistanceAwayFilterValues.FiveMiles}>5 MILES</MenuItem>
+        <MenuItem value={DistanceAwayFilterValues.TenMiles}>10 MILES</MenuItem>
+        <MenuItem value={DistanceAwayFilterValues.AnyDistance}>ANY DISTANCE</MenuItem>
+      </Select>
+    </FormControl>
   );
 
   // Renders the open status radio group and, if applicable, the meal checkboxes.
