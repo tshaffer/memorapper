@@ -1,4 +1,4 @@
-import { GooglePlace, FilterResultsParams, SearchResponse, PlaceTypeQuery } from "../types";
+import { GooglePlace, FilterResultsParams, SearchResponse, PlaceTypeQuery, RestaurantType, OpenFilterMode, MealType } from "../types";
 
 export const filterResults = async (
   filter: FilterResultsParams,
@@ -21,15 +21,39 @@ export const filterResults = async (
       }
     }
     // Filter by restaurant type
+    if (placeTypeFilter === PlaceTypeQuery.Restaurant && place.restaurantType) {
+      if (restaurantTypeFilter !== RestaurantType.Restaurant) {
+        if (place.restaurantType !== restaurantTypeFilter) {
+          return false;
+        }
+      }
+    }
 
-    // Filter by open status
+    // Filter by opening hours and meal types
+    if (openFilterMode !== OpenFilterMode.Any) {
+      if (openFilterMode === OpenFilterMode.Now && !isPlaceOpenNow(place.opening_hours)) {
+        return false;
+      } else if (openFilterMode === OpenFilterMode.Meals) {
 
-    // Filter by meal type
+        const mealTypes = Object.keys(openMealsFilter).filter((meal) => openMealsFilter[meal as keyof typeof openMealsFilter]);
+        
+        if (mealTypes.length > 0 && !place.opening_hours) {
+          return false;
+        }
 
-    // Filter by open now
-    // if (openNowFilter && !isPlaceOpenNow(place.opening_hours)) {
-    //   return false;
-    // }
+        const mealAvailability: MealAvailability = inferMealAvailability(place.opening_hours);
+        const isOpenForMeal = mealTypes.some((meal) => {
+          if (meal === MealType.Breakfast) return mealAvailability.openForBreakfast;
+          if (meal === MealType.Lunch) return mealAvailability.openForLunch;
+          if (meal === MealType.Dinner) return mealAvailability.openForDinner;
+          return false;
+        });
+        
+        if (!isOpenForMeal) {
+          return false;
+        }
+      }
+    }
 
     return true;
   });
@@ -77,4 +101,40 @@ const isPlaceOpenNow = (openingHours?: google.maps.places.PlaceOpeningHours): bo
   return currentTime >= openingTime && currentTime < closingTime;
 };
 
+interface MealAvailability {
+  openForBreakfast: boolean;
+  openForLunch: boolean;
+  openForDinner: boolean;
+}
+
+const inferMealAvailability = (opening_hours: any): MealAvailability => {
+  let openForBreakfast = false;
+  let openForLunch = false;
+  let openForDinner = false;
+
+  if (opening_hours.weekday_text && Array.isArray(opening_hours.weekday_text)) {
+    const allDaysOpen24 = opening_hours.weekday_text.every((dayText: string) =>
+      dayText.toLowerCase().includes("open 24 hours")
+    );
+    if (allDaysOpen24) {
+      return {
+        openForBreakfast: true,
+        openForLunch: true,
+        openForDinner: true,
+      };
+    }
+  }
+
+  if (opening_hours.periods && Array.isArray(opening_hours.periods)) {
+    opening_hours.periods.forEach((period: any) => {
+      if (period.open && period.open.time) {
+        const hour = parseInt(period.open.time.substring(0, 2), 10);
+        if (hour < 10) openForBreakfast = true;
+        if (hour >= 10 && hour < 14) openForLunch = true;
+        if (hour >= 14) openForDinner = true;
+      }
+    });
+  }
+  return { openForBreakfast, openForLunch, openForDinner };
+};
 
