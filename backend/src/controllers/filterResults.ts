@@ -1,12 +1,11 @@
-import { GooglePlace, FilterResultsParams, VisitReview, SearchResponse } from "../types";
+import { GooglePlace, FilterResultsParams, SearchResponse } from "../types";
 
 export const filterResults = async (
   filter: FilterResultsParams,
   places: GooglePlace[],
-  reviews: VisitReview[],
   mapLocation: google.maps.LatLngLiteral,
 ): Promise<SearchResponse> => {
-  const { distanceAwayFilter, openNowFilter }: FilterResultsParams = filter;
+  const { distanceAwayFilter, placeTypeFilter, restaurantTypeFilter, openFilterMode, openMealsFilter }: FilterResultsParams = filter;
 
   const filteredPlaces: GooglePlace[] = places.filter((place: GooglePlace) => {
     if (!place.geometry || !place.geometry.location) return false;
@@ -16,24 +15,14 @@ export const filterResults = async (
     if (distanceInMiles > distanceAwayFilter) return false;
 
     // Filter by open now
-    if (openNowFilter && !isPlaceOpenNow(place.opening_hours)) {
-      return false;
-    }
+    // if (openNowFilter && !isPlaceOpenNow(place.opening_hours)) {
+    //   return false;
+    // }
 
     return true;
   });
 
-  // Extract the filtered place IDs for review filtering
-  const filteredPlaceIds = new Set(filteredPlaces.map((place) => place.googlePlaceId));
-
-  // Filter reviews based on filtered places
-  const filteredReviews = reviews.filter((review) => {
-    // Check if the review belongs to a filtered place
-    if (!filteredPlaceIds.has(review.googlePlaceId)) return false;
-    return true;
-  });
-
-  return { places: filteredPlaces, reviews: filteredReviews };
+  return { places: filteredPlaces };
 };
 
 // Helper function to calculate distance between two coordinates

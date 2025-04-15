@@ -22,3 +22,15 @@ export enum PlaceType {
   GroceryStore = 1,
   Destination = 2,
 }
+
+export enum OpenFilterMode {
+  Any = 'ANY',
+  Now = 'NOW',
+  Meals = 'MEALS',
+}
+
+export enum MealType {
+  Breakfast = 'BREAKFAST',
+  Lunch = 'LUNCH',
+  Dinner = 'DINNER',
+}
