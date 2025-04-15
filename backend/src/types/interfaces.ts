@@ -3,7 +3,7 @@ import { GooglePlace } from "./googlePlace";
 
 export interface FilterResultsParams {
   distanceAwayFilter: SearchDistanceFilter;
-  placeTypeFilter: PlaceType;
+  placeTypeFilter: PlaceTypeQuery;
   restaurantTypeFilter: RestaurantType;
   openFilterMode: OpenFilterMode;
   openMealsFilter: OpenMealsSpec;

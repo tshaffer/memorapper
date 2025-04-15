@@ -1,4 +1,4 @@
-import { GooglePlace, FilterResultsParams, SearchResponse } from "../types";
+import { GooglePlace, FilterResultsParams, SearchResponse, PlaceTypeQuery } from "../types";
 
 export const filterResults = async (
   filter: FilterResultsParams,
@@ -13,6 +13,18 @@ export const filterResults = async (
     // Filter by distance
     const distanceInMiles = haversineDistance(mapLocation, place.geometry.location);
     if (distanceInMiles > distanceAwayFilter) return false;
+
+    // Filter by place type
+    if (placeTypeFilter !== PlaceTypeQuery.Any) {
+      if (placeTypeFilter !== (place.placeType! as unknown as PlaceTypeQuery)) {
+        return false;;
+      }
+    }
+    // Filter by restaurant type
+
+    // Filter by open status
+
+    // Filter by meal type
 
     // Filter by open now
     // if (openNowFilter && !isPlaceOpenNow(place.opening_hours)) {
