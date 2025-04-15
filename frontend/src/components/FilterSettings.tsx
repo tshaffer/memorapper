@@ -114,7 +114,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
 
   const renderPlaceType = (): JSX.Element => {
     return (
-      <div style={{ marginBottom: '1rem' }}>
+      <div style={{ marginBottom: '1rem', flexBasis: '100%' }}>
         <label>{'Place Type:'}</label>
         <Select
           labelId="place-type-select-label"
@@ -137,7 +137,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     }
     // Render the restaurant type selector.
     return (
-      <div style={{ marginBottom: '1rem' }}>
+      <div style={{ marginBottom: '1rem', flexBasis: '100%' }}>
         <label>{'Restaurant Type:'}</label>
         <Select
           labelId="restaurant-type-select-label"
