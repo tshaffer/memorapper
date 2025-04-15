@@ -1,4 +1,4 @@
-import { OpenFilterMode, PlaceType, RestaurantType, SearchDistanceFilter } from "./enums";
+import { OpenFilterMode, PlaceType, PlaceTypeQuery, RestaurantType, SearchDistanceFilter } from "./enums";
 import { GooglePlace } from "./googlePlace";
 
 export interface FilterResultsParams {
@@ -18,7 +18,7 @@ export interface DistanceAwayQuery {
 export interface SearchQuery {
   query: string;
   distanceAway: DistanceAwayQuery;
-  placeType: PlaceType;
+  placeType: PlaceTypeQuery;
   restaurantType: RestaurantType;
   openFilterMode: OpenFilterMode;
   openMeals: OpenMealsSpec;

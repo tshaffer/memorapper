@@ -17,6 +17,13 @@ export enum RestaurantType {
   DessertShop = 7,
 }
 
+export enum PlaceTypeQuery {
+  Any = -1,
+  Restaurant = 0,
+  GroceryStore = 1,
+  Destination = 2,
+}
+
 export enum PlaceType {
   Restaurant = 0,
   GroceryStore = 1,

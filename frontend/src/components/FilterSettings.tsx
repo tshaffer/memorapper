@@ -1,5 +1,5 @@
 import { Box, Typography, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Checkbox, useMediaQuery, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { DistanceAwayFilterValues, Filters, MealType, OpenFilterMode, Place, PlaceType, RestaurantType } from "../types";
+import { DistanceAwayFilterValues, Filters, MealType, OpenFilterMode, Place, PlaceType, PlaceTypeQuery, RestaurantType } from "../types";
 
 export interface FiltersSettingsProps {
   filters: Filters;
@@ -13,7 +13,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
   const {
     distanceAwayFilter = DistanceAwayFilterValues.AnyDistance,
     openFilterMode = OpenFilterMode.Any,
-    placeType = PlaceType.Restaurant,
+    placeType = PlaceTypeQuery.Restaurant,
     restaurantType = RestaurantType.Restaurant,
     openMeals = { BREAKFAST: false, LUNCH: false, DINNER: false }
   } = filters;
@@ -26,8 +26,8 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     onUpdateFilters({ ...filters, distanceAwayFilter: newDistanceAway });
   };
 
-  const handlePlaceTypeChange = (event: SelectChangeEvent<PlaceType>) => {
-    const newPlaceType = event.target.value as PlaceType;
+  const handlePlaceTypeChange = (event: SelectChangeEvent<PlaceTypeQuery>) => {
+    const newPlaceType = event.target.value as PlaceTypeQuery;
     onUpdateFilters({ ...filters, placeType: newPlaceType });
   };
 
@@ -122,9 +122,10 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
           onChange={handlePlaceTypeChange}
           fullWidth
         >
-          <MenuItem value={PlaceType.Restaurant}>Restaurant</MenuItem>
-          <MenuItem value={PlaceType.Destination}>Other</MenuItem>
-          <MenuItem value={PlaceType.GroceryStore}>Grocery Store</MenuItem>
+          <MenuItem value={PlaceTypeQuery.Any}>Any</MenuItem>
+          <MenuItem value={PlaceTypeQuery.Restaurant}>Restaurant</MenuItem>
+          <MenuItem value={PlaceTypeQuery.Destination}>Other</MenuItem>
+          <MenuItem value={PlaceTypeQuery.GroceryStore}>Grocery Store</MenuItem>
         </Select>
       </div>
     );
@@ -212,8 +213,8 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     >
       {renderDistanceAway()}
       {renderPlaceType()}
-      {placeType === PlaceType.Restaurant && renderRestaurantType()}
-      {placeType === PlaceType.Restaurant && renderOpenFilter()}
+      {placeType === PlaceTypeQuery.Restaurant && renderRestaurantType()}
+      {placeType === PlaceTypeQuery.Restaurant && renderOpenFilter()}
     </Box>
   );
 
