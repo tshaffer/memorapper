@@ -1,5 +1,5 @@
 import { Box, Typography, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Checkbox, useMediaQuery, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { DistanceAwayFilterValues, Filters, MealType, OpenFilterMode } from "../types";
+import { DistanceAwayFilterValues, Filters, MealType, OpenFilterMode, Place, PlaceType, RestaurantType } from "../types";
 
 export interface FiltersSettingsProps {
   filters: Filters;
@@ -11,8 +11,10 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
   // Destructure current filters; note that we now expect the filters to include an "openFilterMode"
   // and, if in "MEALS" mode, an "openMeals" object.
   const {
-    distanceAwayFilter: distanceAway,
+    distanceAwayFilter = DistanceAwayFilterValues.AnyDistance,
     openFilterMode = OpenFilterMode.Any,
+    placeType = PlaceType.Restaurant,
+    restaurantType = RestaurantType.Restaurant,
     openMeals = { BREAKFAST: false, LUNCH: false, DINNER: false }
   } = filters;
 
@@ -23,6 +25,17 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     const newDistanceAway = Number(e.target.value);
     onUpdateFilters({ ...filters, distanceAwayFilter: newDistanceAway });
   };
+
+  const handlePlaceTypeChange = (event: SelectChangeEvent<PlaceType>) => {
+    const newPlaceType = event.target.value as PlaceType;
+    onUpdateFilters({ ...filters, placeType: newPlaceType });
+  };
+
+  const handleRestaurantTypeChange = (event: SelectChangeEvent<RestaurantType>) => {
+    const newRestaurantType = event.target.value as RestaurantType;
+    onUpdateFilters({ ...filters, restaurantType: newRestaurantType });
+  };
+
 
   // --- Open Status Filter Handlers ---
   // Handle change in the radio group for open status.
@@ -74,7 +87,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
         id="distance-away-select"
         notched
         label={isMobile ? 'DISTANCE' : 'DISTANCE AWAY'}
-        value={distanceAway}
+        value={distanceAwayFilter}
         onChange={handleDistanceAwayChange}
         sx={{
           color: '#1976D2',
@@ -98,6 +111,47 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
       </Select>
     </FormControl>
   );
+
+  const renderPlaceType = (): JSX.Element => {
+    return (
+      <div style={{ marginBottom: '1rem' }}>
+        <label>{'Place Type:'}</label>
+        <Select
+          labelId="place-type-select-label"
+          value={placeType}
+          onChange={handlePlaceTypeChange}
+          fullWidth
+        >
+          <MenuItem value={PlaceType.Restaurant}>Restaurant</MenuItem>
+          <MenuItem value={PlaceType.Destination}>Other</MenuItem>
+          <MenuItem value={PlaceType.GroceryStore}>Grocery Store</MenuItem>
+        </Select>
+      </div>
+    );
+  }
+
+  const renderRestaurantType = (): JSX.Element | null => {
+    // Only show this filter if the place type is 'restaurant'.
+    if (placeType !== PlaceType.Restaurant) {
+      return null;
+    }
+    // Render the restaurant type selector.
+    return (
+      <div style={{ marginBottom: '1rem' }}>
+        <label>{'Restaurant Type:'}</label>
+        <Select
+          labelId="restaurant-type-select-label"
+          value={restaurantType}
+          onChange={handleRestaurantTypeChange}
+          fullWidth
+        >
+          <MenuItem value={PlaceType.Restaurant}>Restaurant</MenuItem>
+          <MenuItem value={PlaceType.Destination}>Other</MenuItem>
+          <MenuItem value={PlaceType.GroceryStore}>Grocery Store</MenuItem>
+        </Select>
+      </div>
+    );
+  };
 
   // Renders the open status radio group and, if applicable, the meal checkboxes.
   const renderOpenFilter = (): JSX.Element => (
@@ -157,6 +211,8 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
       }}
     >
       {renderDistanceAway()}
+      {renderPlaceType()}
+      {renderRestaurantType()}
       {renderOpenFilter()}
     </Box>
   );
