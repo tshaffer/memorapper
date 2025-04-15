@@ -67,7 +67,7 @@ const PlaceSchema: Schema = new Schema({
   googlePlaceId: { type: String, required: true, ref: 'MongoPlace' },
   placeComments: { type: String },
   restaurantType: {
-    type: String,
+    type: Number,
     enum: Object.values(RestaurantType)
   },
   openForBreakfast: { type: Boolean },

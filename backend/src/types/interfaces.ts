@@ -1,5 +1,6 @@
 import { OpenFilterMode, PlaceType, PlaceTypeQuery, RestaurantType, SearchDistanceFilter } from "./enums";
 import { GooglePlace } from "./googlePlace";
+import { PlaceWithGooglePlace } from "./place";
 
 export interface FilterResultsParams {
   distanceAwayFilter: SearchDistanceFilter;
@@ -31,6 +32,6 @@ export interface OpenMealsSpec {
 }
 
 export interface SearchResponse {
-  places: GooglePlace[];
+  places: PlaceWithGooglePlace[];
 }
 

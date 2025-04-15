@@ -1,13 +1,13 @@
-import { GooglePlace, FilterResultsParams, SearchResponse, PlaceTypeQuery, RestaurantType, OpenFilterMode, MealType } from "../types";
+import { FilterResultsParams, SearchResponse, PlaceTypeQuery, RestaurantType, OpenFilterMode, MealType, Place, PlaceWithGooglePlace } from "../types";
 
 export const filterResults = async (
   filter: FilterResultsParams,
-  places: GooglePlace[],
+  places: PlaceWithGooglePlace[],
   mapLocation: google.maps.LatLngLiteral,
 ): Promise<SearchResponse> => {
   const { distanceAwayFilter, placeTypeFilter, restaurantTypeFilter, openFilterMode, openMealsFilter }: FilterResultsParams = filter;
 
-  const filteredPlaces: GooglePlace[] = places.filter((place: GooglePlace) => {
+  const filteredPlaces: PlaceWithGooglePlace[] = places.filter((place: PlaceWithGooglePlace) => {
     if (!place.geometry || !place.geometry.location) return false;
 
     // Filter by distance

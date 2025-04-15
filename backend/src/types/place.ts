@@ -22,6 +22,14 @@ export type Place = {
   placeComments?: string;
 } & Restaurant;
 
+export type PlaceWithGooglePlace = {
+  _idPlace?: string;
+  placeId: string;
+  placeType?: PlaceType;
+  googlePlaceId?: string;
+  placeComments?: string;
+} & NewGooglePlace & Restaurant;  
+
 export type SubmitPlaceRequestBody = {
   _idPlace?: string;
   placeId: string;

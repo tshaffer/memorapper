@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
-import { IMongoPlace } from "../models";
-import MongoPlaceModel from "../models/MongoPlace";
-import { GooglePlace, SearchQuery, FilterResultsParams, SearchResponse } from "../types";
-import { convertMongoPlacesToGooglePlaces } from "../utilities";
+import { SearchQuery, FilterResultsParams, SearchResponse, Place, PlaceWithGooglePlace } from "../types";
 import { filterResults } from './filterResults';
+import { getPlaces } from './places';
 
 export const searchAndFilterHandler = async (
   req: Request<{}, {}, {
@@ -16,8 +14,8 @@ export const searchAndFilterHandler = async (
 
   try {
 
-    const mongoPlaces: IMongoPlace[] = await MongoPlaceModel.find({});
-
+    const places: PlaceWithGooglePlace[] = await getPlaces();
+    
     const filterResultsParams: FilterResultsParams = {
       distanceAwayFilter: distanceAway.radius,
       placeTypeFilter: placeType,
@@ -25,8 +23,7 @@ export const searchAndFilterHandler = async (
       openFilterMode: openFilterMode,
       openMealsFilter: openMeals,
     };
-    const googlePlaces: GooglePlace[] = convertMongoPlacesToGooglePlaces(mongoPlaces);
-    const searchResponse: SearchResponse = await (filterResults(filterResultsParams, googlePlaces, { lat: distanceAway.lat, lng: distanceAway.lng }));
+    const searchResponse: SearchResponse = await (filterResults(filterResultsParams, places, { lat: distanceAway.lat, lng: distanceAway.lng }));
 
     res.status(200).json(searchResponse);
 

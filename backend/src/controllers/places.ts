@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import MongoPlaceModel, { IMongoPlace } from "../models/MongoPlace";
-import { GooglePlace, MongoPlace, Place, SubmitPlaceRequestBody } from "../types";
+import { GooglePlace, MongoPlace, Place, PlaceWithGooglePlace, SubmitPlaceRequestBody } from "../types";
 import PlaceModel, { IPlace } from '../models/Place';
 import { convertMongoGeometryToGoogleGeometry } from '../utilities';
 import { MongoGeometry } from "../types";
 import { convertGoogleGeometryToMongoGeometry, convertMongoPlacesToGooglePlaces } from '../utilities';
 
-export const getPlaces = async (
+export const getPlacesHandler = async (
   req: Request,
   res: Response
 ): Promise<any> => {
@@ -40,6 +40,39 @@ export const getPlaces = async (
   } catch (error) {
     console.error('Error fetching places:', error);
     return res.status(500).json({ error: 'An error occurred while fetching places.' });
+  }
+};
+
+export const getPlaces = async (): Promise<PlaceWithGooglePlace[]> => {
+  try {
+    const mongoPlaceDocuments: IMongoPlace[] = await MongoPlaceModel.find({}).exec();
+    const placesDocuments: IPlace[] = await PlaceModel.find({}).exec();
+
+    const places: PlaceWithGooglePlace[] = [];
+
+    for (const placeDocument of placesDocuments) {
+      const placeGooglePlaceId = placeDocument.googlePlaceId;
+      for (const mongoPlaceDocument of mongoPlaceDocuments) {
+        if (mongoPlaceDocument.googlePlaceId === placeGooglePlaceId) {
+          const mongoPlace: MongoPlace = mongoPlaceDocument.toObject();
+          let place: PlaceWithGooglePlace = placeDocument.toObject();
+          place.address_components = mongoPlace.address_components;
+          place.formatted_address = mongoPlace.formatted_address;
+          place.geometry = convertMongoGeometryToGoogleGeometry(mongoPlace.geometry!);
+          place.name = mongoPlace.name;
+          place.opening_hours = mongoPlace.opening_hours;
+          place.price_level = mongoPlace.price_level;
+          place.vicinity = mongoPlace.vicinity;
+          place.website = mongoPlace.website;
+
+          places.push(place);
+        }
+      }
+    }
+    return places;
+  } catch (error) {
+    console.error('Error fetching places:', error);
+    throw new Error('An error occurred while fetching places.');
   }
 };
 

@@ -4,7 +4,7 @@ import {
   healthHandler,
   testHandler,
   submitPlaceHandler,
-  getPlaces,
+  getPlacesHandler,
   deletePlaceHandler,
   searchAndFilterHandler,
 } from '../controllers';
@@ -16,7 +16,7 @@ router.get('/test', testHandler);
 
 router.get('/googlePlaces', getGooglePlaces);
 
-router.get('/places', getPlaces);
+router.get('/places', getPlacesHandler);
 router.post('/submitPlace', submitPlaceHandler);
 router.post('/deletePlace', deletePlaceHandler);
 

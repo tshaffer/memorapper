@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { MongoPlace } from '../types/mongoTypes';
-import { PlaceType } from '../types';
+import { PlaceType, RestaurantType } from '../types';
 
 export interface IMongoPlace extends Omit<MongoPlace, "_id">, Document { }
 
@@ -67,9 +67,10 @@ const MongoPlaceSchema: Schema = new Schema({
   opening_hours: { type: OpeningHoursSchema }, // Added opening hours field
   price_level: { type: Number },
   vicinity: { type: String },
-  /*
-  restaurantType: { 
-    type: Number, 
+
+
+  restaurantType: {
+    type: Number,
     enum: [
       RestaurantType.Restaurant,
       RestaurantType.CoffeeShop,
@@ -80,12 +81,7 @@ const MongoPlaceSchema: Schema = new Schema({
       RestaurantType.ItalianRestaurant,
       RestaurantType.DessertShop
     ]
-  }
-  */
-  // placeType
-  // others?
-  // restaurantType: { type: Number, required: true },
-  restaurantType: { type: Number },
+  },
   geometry: MongoGeometrySchema
 }, { collection: "mongoPlaces" });
 
