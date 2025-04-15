@@ -2,7 +2,7 @@ import { DistanceAwayFilterValues, OpenFilterMode, PlaceType, PlaceTypeQuery, Re
 
 export interface FilterResultsParams {
   distanceAwayFilter: DistanceAwayFilterValues;
-  placeType: PlaceType;
+  placeType: PlaceTypeQuery;
   restaurantType: RestaurantType;
   openFilterMode: OpenFilterMode;
   openMeals: OpenMealsSpec;
@@ -11,7 +11,7 @@ export interface FilterResultsParams {
 export interface SearchQuery {
   query: string;
   distanceAway: DistanceAwayQuery;
-  placeType: PlaceType;
+  placeType: PlaceTypeQuery;
   restaurantType: RestaurantType;
   openFilterMode: OpenFilterMode;
   openMeals: OpenMealsSpec;
