@@ -131,11 +131,6 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
   }
 
   const renderRestaurantType = (): JSX.Element | null => {
-    // Only show this filter if the place type is 'restaurant'.
-    if (placeType !== PlaceType.Restaurant) {
-      return null;
-    }
-    // Render the restaurant type selector.
     return (
       <div style={{ marginBottom: '1rem', flexBasis: '100%' }}>
         <label>{'Restaurant Type:'}</label>
@@ -145,9 +140,14 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
           onChange={handleRestaurantTypeChange}
           fullWidth
         >
-          <MenuItem value={PlaceType.Restaurant}>Restaurant</MenuItem>
-          <MenuItem value={PlaceType.Destination}>Other</MenuItem>
-          <MenuItem value={PlaceType.GroceryStore}>Grocery Store</MenuItem>
+          <MenuItem value={RestaurantType.Restaurant}>Restaurant</MenuItem>
+          <MenuItem value={RestaurantType.CoffeeShop}>Coffee Shop</MenuItem>
+          <MenuItem value={RestaurantType.Bar}>Bar</MenuItem>
+          <MenuItem value={RestaurantType.Bakery}>Bakery</MenuItem>
+          <MenuItem value={RestaurantType.Taqueria}>Taqueria</MenuItem>
+          <MenuItem value={RestaurantType.PizzaPlace}>Pizza</MenuItem>
+          <MenuItem value={RestaurantType.ItalianRestaurant}>Italian</MenuItem>
+          <MenuItem value={RestaurantType.DessertShop}>Dessert</MenuItem>
         </Select>
       </div>
     );
@@ -212,8 +212,8 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     >
       {renderDistanceAway()}
       {renderPlaceType()}
-      {renderRestaurantType()}
-      {renderOpenFilter()}
+      {placeType === PlaceType.Restaurant && renderRestaurantType()}
+      {placeType === PlaceType.Restaurant && renderOpenFilter()}
     </Box>
   );
 
