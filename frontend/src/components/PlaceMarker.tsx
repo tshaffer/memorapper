@@ -1,5 +1,5 @@
 import React, { } from 'react';
-import { Place } from '../types';
+import { Place, PlaceType } from '../types';
 import { AdvancedMarker } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace } from '../utilities';
 import '../App.css';
@@ -8,8 +8,7 @@ import { Icon } from '@iconify/react';
 
 // // https://icon-sets.iconify.design/?query=<query>
 import restaurantIcon from '@iconify/icons-openmoji/fork-and-knife-with-plate';
-
-const DEFAULT_ZOOM = 14;
+import roundPushpin from '@iconify/icons-openmoji/round-pushpin';
 
 const iconContainerStyle: React.CSSProperties = {
   position: 'absolute',
@@ -25,23 +24,6 @@ const iconContainerStyle: React.CSSProperties = {
   alignItems: 'center',
 };
 
-const textStyle = (color: string): React.CSSProperties => ({
-  position: 'absolute',
-  right: '18px',
-  transform: 'translateY(-150%)',
-  whiteSpace: 'nowrap',
-  color, // Dynamic color
-  fontSize: '14px',
-  fontWeight: '500',
-  backgroundColor: 'transparent',
-  textShadow: `
-    1px 1px 0 white,
-    -1px 1px 0 white,
-    1px -1px 0 white,
-    -1px -1px 0 white
-  `,
-});
-
 interface PlaceMarkerProps {
   place: Place;
   onMarkerClick: (place: Place) => void;
@@ -53,21 +35,58 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
     onMarkerClick(place);
   };
 
+  const getMarkerIcon = (): any => {
+    switch (place.placeType) {
+      case PlaceType.Restaurant:
+        return restaurantIcon;
+      default:
+        return roundPushpin;
+    }
+  }
+
+  const getMarkerColor = (): string => {
+    return place.visited ? '#1e7e34' : '#0056b3';
+  };
+
+  const textStyle = (): React.CSSProperties => ({
+    position: 'absolute',
+    right: '18px',
+    transform: 'translateY(-150%)',
+    whiteSpace: 'nowrap',
+    color: getMarkerColor(),
+    fontSize: '16px',
+    fontWeight: '500',
+    backgroundColor: 'transparent',
+    textShadow: `
+      1px 1px 0 white,
+      -1px 1px 0 white,
+      1px -1px 0 white,
+      -1px -1px 0 white
+    `,
+  });
+  
+
   const renderPlaceMarker = (): JSX.Element => (
     <AdvancedMarker
       position={getLatLngFromPlace(place)}
       onClick={() => handlePlaceMarkerClick()}
     >
       <div style={{ position: 'relative' }}>
-        <div style={textStyle('pink')}>{place.name}</div>
+        <div style={{
+          position: 'relative',
+          background: 'rgba(255, 255, 255, 0.5)',
+          padding: '2px 4px',
+          borderRadius: '4px',
+        }}>
+          <div style={textStyle()}>{place.name}</div>
+        </div>
         <div style={iconContainerStyle}>
-          <Icon icon={restaurantIcon} style={{ fontSize: '30px', color: 'pink' }} />
-          {/* <Icon icon={iconFromRestaurantType(place.restaurantType!)} style={{ fontSize: '30px', color: 'red' }} /> */}
+          <Icon icon={getMarkerIcon()} style={{ fontSize: '30px' }} />
         </div>
       </div>
     </AdvancedMarker>
   );
-  
+
   return (
     <>
       {renderPlaceMarker()}

@@ -127,9 +127,6 @@ const PlaceForm = () => {
 
   const handleAddPlace = async (newPlace: Place): Promise<void> => {
 
-    console.log('handleAddPlace');
-    console.log('placeData:', newPlace);
-
     setIsLoading(true);
 
     try {
