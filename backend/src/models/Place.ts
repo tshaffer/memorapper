@@ -26,6 +26,7 @@ export interface IPlace extends Document {
   placeId: string;
   placeType: PlaceType;
   googlePlaceId: string;
+  visited: boolean;
   placeComments?: string;
   restaurantType?: RestaurantType;
   openForBreakfast?: boolean;
@@ -59,6 +60,7 @@ const RestaurantReviewSchema: Schema = new Schema({
 // Place schema with embedded restaurant fields
 const PlaceSchema: Schema = new Schema({
   placeId: { type: String, required: true, unique: true },
+  visited: { type: Boolean, required: true, default: false },
   placeType: {
     type: Number,
     required: true,
@@ -68,7 +70,7 @@ const PlaceSchema: Schema = new Schema({
   placeComments: { type: String },
   restaurantType: {
     type: Number,
-    enum: Object.values(RestaurantType)
+    enum: [RestaurantType.Restaurant, RestaurantType.CoffeeShop, RestaurantType.Bar, RestaurantType.Bakery, RestaurantType.Taqueria, RestaurantType.PizzaPlace, RestaurantType.ItalianRestaurant, RestaurantType.DessertShop],
   },
   openForBreakfast: { type: Boolean },
   openForLunch: { type: Boolean },

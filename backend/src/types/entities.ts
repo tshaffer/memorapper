@@ -15,6 +15,7 @@ export interface BasePlace {
   website: string;
   opening_hours?: google.maps.places.PlaceOpeningHours;
   price_level?: number;
+  rating?: number;
   vicinity?: string;
   restaurantType?: RestaurantType;
 }

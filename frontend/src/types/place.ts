@@ -17,6 +17,7 @@ export interface Restaurant {
 export type Place = {
   _idPlace?: string;
   placeId: string;
+  visited: boolean;
   placeType?: PlaceType;
   googlePlaceId?: string;
   placeComments?: string;
@@ -25,6 +26,7 @@ export type Place = {
 export type SubmitPlaceRequestBody = {
   _idPlace?: string;
   placeId: string;
+  visited: boolean;
   placeType?: PlaceType;
 } & NewGooglePlace & Restaurant;
 
@@ -37,6 +39,7 @@ export interface NewGooglePlace {
   opening_hours?: google.maps.places.PlaceOpeningHours;
   googlePlaceId?: string;
   price_level?: number;
+  rating?: number;
   vicinity?: string;
   website?: string;
 }
@@ -50,7 +53,6 @@ export interface NewGooglePlace {
 // icon_mask_base_uri?: string;
 // international_phone_number?: string;
 // photos?: google.maps.places.PlacePhoto[];
-// rating?: number;
 // url?: string;
 // user_ratings_total?: number;
 // utc_offset?: number;

@@ -45,6 +45,12 @@ const getRestaurantType = (googlePlaceResult: google.maps.places.PlaceResult): R
 }
 
 export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.PlaceResult): GooglePlace {
+  console.log('pickGooglePlaceProperties', googlePlaceResult);
+  console.log('aspects', googlePlaceResult.aspects);
+  console.log('rating', googlePlaceResult.rating);
+  console.log('userRatingsTotal', googlePlaceResult.user_ratings_total);
+  console.log('reviews', googlePlaceResult.reviews);
+
   const googlePlace: GooglePlace = {
     googlePlaceId: googlePlaceResult.place_id!,
     name: googlePlaceResult.name!,
@@ -65,6 +71,7 @@ export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.
     website: googlePlaceResult.website || '',
     opening_hours: googlePlaceResult.opening_hours,
     price_level: googlePlaceResult.price_level,
+    rating: googlePlaceResult.rating,
     vicinity: googlePlaceResult.vicinity,
     restaurantType: getRestaurantType(googlePlaceResult),
   };

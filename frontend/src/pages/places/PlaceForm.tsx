@@ -19,6 +19,7 @@ const PlaceForm = () => {
   const initialPlaceData: Place = {
     _idPlace: _id,
     placeId: uuidv4(),
+    visited: false,
     placeType: PlaceType.Restaurant,
     restaurantType: RestaurantType.Restaurant,
     // Optional meal availability fields for restaurants:
@@ -148,132 +149,6 @@ const PlaceForm = () => {
     }
   };
 
-  const renderPlaceName = (): JSX.Element => {
-    return (
-      <>
-        <label htmlFor="place-name">Place Name:</label>
-        <RestaurantName
-          restaurantName={placeName}
-          onSetRestaurantName={(name) => setPlaceName(name)}
-          onSetGooglePlace={(googlePlace) => handleChangeGooglePlace(googlePlace)}
-        />
-      </>
-    );
-  };
-
-  const renderPlaceType = (): JSX.Element => {
-    return (
-      <>
-        <label htmlFor="restaurant-type">Place Type:</label>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={place.placeType}
-          onChange={(event) => handleChange('placeType', event.target.value as PlaceType)}
-        >
-          <MenuItem value={PlaceType.Restaurant}>Restaurant</MenuItem>
-          <MenuItem value={PlaceType.Destination}>Other</MenuItem>
-          <MenuItem value={PlaceType.GroceryStore}>Grocery Store</MenuItem>
-        </Select>
-      </>
-    );
-  };
-
-  const renderRestaurantType = (): JSX.Element | null => {
-    if (place.placeType !== PlaceType.Restaurant) {
-      return null;
-    }
-    const value = place.restaurantType;
-    return (
-      <>
-        <label>Restaurant Type (Required):</label>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={value}
-          onChange={(event) => handleChange('restaurantType', event.target.value as RestaurantType)}
-        >
-          <MenuItem value={RestaurantType.Restaurant}>Restaurant</MenuItem>
-          <MenuItem value={RestaurantType.CoffeeShop}>Coffee Shop</MenuItem>
-          <MenuItem value={RestaurantType.Bar}>Bar</MenuItem>
-          <MenuItem value={RestaurantType.Bakery}>Bakery</MenuItem>
-          <MenuItem value={RestaurantType.Taqueria}>Taqueria</MenuItem>
-          <MenuItem value={RestaurantType.PizzaPlace}>Pizza</MenuItem>
-          <MenuItem value={RestaurantType.ItalianRestaurant}>Italian</MenuItem>
-          <MenuItem value={RestaurantType.DessertShop}>Dessert</MenuItem>
-        </Select>
-      </>
-    );
-  };
-
-  // New render function for meal availability checkboxes
-  const renderMealAvailability = (): JSX.Element | null => {
-    if (place.placeType !== PlaceType.Restaurant) {
-      return null;
-    }
-    return (
-      <div style={{ marginTop: '1rem' }}>
-        <label>Meal Availability:</label>
-        <div>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={!!place.openForBreakfast}
-                onChange={(e) => handleChange('openForBreakfast', e.target.checked)}
-              />
-            }
-            label="Open for Breakfast"
-          />
-        </div>
-        <div>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={!!place.openForLunch}
-                onChange={(e) => handleChange('openForLunch', e.target.checked)}
-              />
-            }
-            label="Open for Lunch"
-          />
-        </div>
-        <div>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={!!place.openForDinner}
-                onChange={(e) => handleChange('openForDinner', e.target.checked)}
-              />
-            }
-            label="Open for Dinner"
-          />
-        </div>
-      </div>
-    );
-  };
-
-  const renderPlaceComments = (): JSX.Element => {
-    return (
-      <>
-        <label>Comments:</label>
-        <TextField
-          label="Comments"
-          fullWidth
-          multiline
-          rows={4}
-          value={place.placeComments}
-          onChange={(e) => handleChange('placeComments', e.target.value)}
-        />
-      </>
-    );
-  }
-
-  const renderPulsingDots = (): JSX.Element | null => {
-    if (!isLoading) {
-      return null;
-    }
-    return (<PulsingDots />);
-  };
-
   return (
     <div
       id="form"
@@ -293,23 +168,6 @@ const PlaceForm = () => {
         }}
       >
       </PlaceEditor>
-      {/* <form id='add-review-form'>
-        {renderPlaceName()}
-        {renderPlaceComments()}
-        {renderPlaceType()}
-        {renderRestaurantType()}
-        {renderMealAvailability()}
-      </form> */}
-
-      {/* <Button
-        disabled={!place.googlePlaceId}
-        onClick={handleAddPlace}
-      >
-        Add Place
-      </Button> */}
-
-      {/* {renderPulsingDots()} */}
-
     </div>
   );
 };

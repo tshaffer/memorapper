@@ -203,10 +203,28 @@ const MapPage: React.FC = () => {
     setSelectedPlace(place);
   };
 
-  const handleUpdatePlace = (updatedPlace: Place) => {
+  const handleUpdatePlace = async (updatedPlace: Place) => {
+
     // Update the place in your state (and optionally propagate changes to your backend/global store)
     setSelectedPlace(updatedPlace);
-    // e.g., update your places list if needed
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/submitPlace', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...updatedPlace,
+        }),
+      });
+      const data = await response.json();
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error submitting updatePlace:', error);
+      setIsLoading(false);
+    }
+
   };
 
   const handleDeletePlace = (placeId: string) => {
@@ -261,7 +279,6 @@ const MapPage: React.FC = () => {
           initialCenter={mapLocation!}
           places={places}
           onVisiblePlacesChanged={(visiblePlaces) => handleVisiblePlacesChanged(visiblePlaces)}
-          // onPlaceSelect={handlePlaceSelect}  // new callback for when a marker is clicked
           onPlaceSelect={() => {console.log('place clicked')}}  // new callback for when a marker is clicked
         />
       </div>

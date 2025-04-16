@@ -5,14 +5,7 @@ import {
   IconButton,
   Box,
   Typography,
-  Button,
-  TextField,
-  Checkbox,
-  FormControlLabel,
-  List,
-  ListItem,
-  ListItemText
-} from '@mui/material';
+  Button} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { Place, PlaceType, RestaurantReview } from '../../types';
 import PlaceEditor from '../../components/PlaceEditor';
@@ -21,7 +14,7 @@ interface PlaceDetailPanelProps {
   open: boolean;
   place: Place;
   onClose: () => void;
-  onUpdatePlace: (place: Place) => void;
+  onUpdatePlace: (place: Place) => Promise<any>;
   onDeletePlace: (placeId: string) => void;
   onAddReview: (placeId: string, review: RestaurantReview) => void;
   onEditReview: (placeId: string, review: RestaurantReview) => void;
@@ -42,6 +35,10 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editPlace, setEditPlace] = useState<Place>({ ...place });
 
+  React.useEffect(() => {
+    setEditPlace({ ...place });
+  }, [place]);
+  
   // Local state for a new review (only used if the place is a restaurant)
   const [newReview, setNewReview] = useState<RestaurantReview>({
     _idRestaurantReview: '',
@@ -57,8 +54,8 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
     setEditPlace(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSavePlace = () => {
-    onUpdatePlace(editPlace);
+  const handleSavePlace = async (place: Place) => {
+    onUpdatePlace(place);
     setIsEditing(false);
   };
 
@@ -91,68 +88,13 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
         {/* Display either an editing form or read-only details */}
         {isEditing ? (
           <Box>
-            {/* <TextField
-              label="Name"
-              fullWidth
-              value={editPlace.name || ''}
-              onChange={(e) => handleEditChange('name', e.target.value)}
-              margin="normal"
-            />
-            <TextField
-              label="Formatted Address"
-              fullWidth
-              value={editPlace.formatted_address || ''}
-              onChange={(e) => handleEditChange('formatted_address', e.target.value)}
-              margin="normal"
-            />
-            
-            {editPlace.placeType === PlaceType.Restaurant && (
-              <Box>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={!!editPlace.openForBreakfast}
-                      onChange={(e) => handleEditChange('openForBreakfast', e.target.checked)}
-                    />
-                  }
-                  label="Open for Breakfast"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={!!editPlace.openForLunch}
-                      onChange={(e) => handleEditChange('openForLunch', e.target.checked)}
-                    />
-                  }
-                  label="Open for Lunch"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={!!editPlace.openForDinner}
-                      onChange={(e) => handleEditChange('openForDinner', e.target.checked)}
-                    />
-                  }
-                  label="Open for Dinner"
-                />
-              </Box>
-            )} */}
             <PlaceEditor
               mode={'edit'}
               initialPlace={editPlace}
-              onSubmit={function (place: Place) {
-                console.log('PlaceDetailPanel: PlaceEditor onSubmit callback received:', place);
-                return Promise.resolve();
-              }}
-              onCancel={function () {
-                console.log('Edit cancelled.');
-              }}
+              onSubmit={(place: Place) => handleSavePlace(place)}
+              onCancel={handleCancelEdit}
             >
             </PlaceEditor>
-            {/* <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
-              <Button variant="contained" onClick={handleSavePlace}>Save</Button>
-              <Button variant="outlined" onClick={handleCancelEdit}>Cancel</Button>
-            </Box> */}
           </Box>
         ) : (
           <Box>
@@ -231,10 +173,6 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
             </Box>
           </Box>
         )} */}
-
-
-
-
       </Box>
     </Drawer>
   );

@@ -23,12 +23,14 @@ export const getPlacesHandler = async (
         if (mongoPlaceDocument.googlePlaceId === placeGooglePlaceId) {
           const place = placeDocument.toObject();
           const mongoPlace: MongoPlace = mongoPlaceDocument.toObject();
+          place._idPlace = placeDocument._id;
           place.address_components = mongoPlace.address_components;
           place.formatted_address = mongoPlace.formatted_address;
           place.geometry = convertMongoGeometryToGoogleGeometry(mongoPlace.geometry!);
           place.name = mongoPlace.name;
           place.opening_hours = mongoPlace.opening_hours;
           place.price_level = mongoPlace.price_level;
+          place.rating = mongoPlace.rating;
           place.vicinity = mongoPlace.vicinity;
           place.website = mongoPlace.website;
 
@@ -62,6 +64,7 @@ export const getPlaces = async (): Promise<PlaceWithGooglePlace[]> => {
           place.name = mongoPlace.name;
           place.opening_hours = mongoPlace.opening_hours;
           place.price_level = mongoPlace.price_level;
+          place.rating = mongoPlace.rating;
           place.vicinity = mongoPlace.vicinity;
           place.website = mongoPlace.website;
 
@@ -92,7 +95,7 @@ export const submitPlaceHandler = async (
 
 const submitPlace = async (placeRequestBody: SubmitPlaceRequestBody): Promise<IPlace | null> => {
 
-  const { _idPlace, placeId, placeType, googlePlaceId, placeComments, address_components, formatted_address, geometry, name, opening_hours, price_level, vicinity, openForBreakfast, openForLunch, openForDinner, restaurantType, website } = placeRequestBody;
+  const { _idPlace, placeId, visited, placeType, googlePlaceId, placeComments, address_components, formatted_address, geometry, name, opening_hours, price_level, rating, vicinity, openForBreakfast, openForLunch, openForDinner, restaurantType, website } = placeRequestBody;
 
   const googlePlace: GooglePlace = {
     googlePlaceId: googlePlaceId!,
@@ -103,6 +106,7 @@ const submitPlace = async (placeRequestBody: SubmitPlaceRequestBody): Promise<IP
     website: website!,
     opening_hours,
     price_level,
+    rating,
     vicinity,
     geometry,
   }
@@ -118,6 +122,7 @@ const submitPlace = async (placeRequestBody: SubmitPlaceRequestBody): Promise<IP
   const addPlaceEntity: Place = {
     _idPlace,
     placeId,
+    visited,
     placeType,
     googlePlaceId: mongoPlace.googlePlaceId,
     placeComments,
