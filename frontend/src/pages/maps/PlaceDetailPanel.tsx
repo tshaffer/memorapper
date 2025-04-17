@@ -5,7 +5,9 @@ import {
   IconButton,
   Box,
   Typography,
-  Button} from '@mui/material';
+  Button,
+  Rating
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { Place, PlaceType, RestaurantReview } from '../../types';
 import PlaceEditor from '../../components/PlaceEditor';
@@ -40,7 +42,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
   React.useEffect(() => {
     setEditPlace({ ...place });
   }, [place]);
-  
+
   // Local state for a new review (only used if the place is a restaurant)
   const [newReview, setNewReview] = useState<RestaurantReview>({
     _idRestaurantReview: '',
@@ -102,9 +104,18 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
           <Box>
             <Typography variant="body2" color="textSecondary">{place.formatted_address}</Typography>
             {place.rating && (
-              <Typography variant="body2" color="textSecondary">
-                Rating: {place.rating} ({place.user_ratings_total} reviews)
-              </Typography>
+              <>
+                <Typography variant="body2" color="textSecondary">
+                  <Rating
+                    value={place.rating}
+                    max={5}
+                    readOnly
+                  />
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  {place.rating} ({place.user_ratings_total} reviews)
+                </Typography>
+              </>
             )}
             {place.placeType === PlaceType.Restaurant && (
               <Box sx={{ mt: 2 }}>
