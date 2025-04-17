@@ -9,6 +9,8 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { Place, PlaceType, RestaurantReview } from '../../types';
 import PlaceEditor from '../../components/PlaceEditor';
+import { restaurantTypeLabelFromRestaurantType } from '../../utilities';
+import { OpeningHours } from '../../components';
 
 interface PlaceDetailPanelProps {
   open: boolean;
@@ -79,7 +81,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
       <Box sx={{ width: 350, padding: 2 }}>
         {/* Header with a title and close button */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">Place Details</Typography>
+          <Typography variant="h6">{place.name}</Typography>
           <IconButton onClick={onClose}>
             <CloseIcon />
           </IconButton>
@@ -98,12 +100,11 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
           </Box>
         ) : (
           <Box>
-            <Typography variant="subtitle1">{place.name}</Typography>
             <Typography variant="body2" color="textSecondary">{place.formatted_address}</Typography>
             {place.placeType === PlaceType.Restaurant && (
               <Box sx={{ mt: 2 }}>
-                <Typography variant="subtitle2">Restaurant Details</Typography>
-                <Typography variant="body2">Type: {place.restaurantType}</Typography>
+                <Typography variant="body2">{restaurantTypeLabelFromRestaurantType(place.restaurantType!)}</Typography>
+                {place.opening_hours && <OpeningHours openingHours={place.opening_hours!}></OpeningHours>}
                 <Typography variant="body2">
                   Breakfast: {place.openForBreakfast ? 'Yes' : 'No'}
                 </Typography>

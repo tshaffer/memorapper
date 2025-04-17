@@ -21,6 +21,36 @@ export const getLatLngFromPlace = (place: Place): google.maps.LatLngLiteral => {
   return { lat: 0, lng: 0 };
 }
 
+/**
+ * Returns true if 'now' falls between the last open and the next close.
+ */
+export function isCurrentlyOpen(
+  periods: google.maps.places.PlaceOpeningHoursPeriod[] | undefined,
+  now: number
+): boolean {
+  if (!periods?.length) return false;
+
+  // 1) flatten into a list of open/close events
+  type Event = { type: 'open' | 'close'; time: google.maps.places.PlaceOpeningHoursTime };
+  const events: Event[] = periods.flatMap(p => {
+    const evs: Event[] = [{ type: 'open', time: p.open }];
+    if (p.close) evs.push({ type: 'close', time: p.close });
+    return evs;
+  });
+
+  // 2) drop any events that lack a nextDate
+  const withDates = events.filter(e => e.time.nextDate != null);
+
+  // 3) sort chronologically by nextDate
+  withDates.sort((a, b) => a.time.nextDate! - b.time.nextDate!);
+
+  // 4) find the very next event after "now"
+  const nextEvent = withDates.find(e => e.time.nextDate! > now);
+
+  // if the next event is a close, we must be open *right now*
+  return nextEvent?.type === 'close';
+}
+
 const getRestaurantType = (googlePlaceResult: google.maps.places.PlaceResult): RestaurantType => {
 
   const googlePlaceTypes: string[] | undefined = googlePlaceResult.types;
