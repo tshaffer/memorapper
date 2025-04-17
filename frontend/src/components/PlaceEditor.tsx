@@ -206,11 +206,12 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
           fullWidth
         >
           <MenuItem value={RestaurantType.Restaurant}>Restaurant</MenuItem>
-          <MenuItem value={RestaurantType.CoffeeShop}>Coffee Shop</MenuItem>
+          <MenuItem value={RestaurantType.CoffeeShop}>Coffee</MenuItem>
+          <MenuItem value={RestaurantType.Seafood}>Seafood</MenuItem>
+          <MenuItem value={RestaurantType.PizzaPlace}>Pizza</MenuItem>
           <MenuItem value={RestaurantType.Bar}>Bar</MenuItem>
           <MenuItem value={RestaurantType.Bakery}>Bakery</MenuItem>
           <MenuItem value={RestaurantType.Taqueria}>Taqueria</MenuItem>
-          <MenuItem value={RestaurantType.PizzaPlace}>Pizza</MenuItem>
           <MenuItem value={RestaurantType.ItalianRestaurant}>Italian</MenuItem>
           <MenuItem value={RestaurantType.DessertShop}>Dessert</MenuItem>
         </Select>

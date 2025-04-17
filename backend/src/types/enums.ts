@@ -16,6 +16,7 @@ export enum RestaurantTypeQuery {
   PizzaPlace = 5,
   ItalianRestaurant = 6,
   DessertShop = 7,
+  Seafood = 8,
 }
 
 
@@ -28,6 +29,7 @@ export enum RestaurantType {
   PizzaPlace = 5,
   ItalianRestaurant = 6,
   DessertShop = 7,
+  Seafood = 8,
 }
 
 export enum PlaceType {

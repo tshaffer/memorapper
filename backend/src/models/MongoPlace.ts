@@ -89,7 +89,8 @@ const MongoPlaceSchema: Schema = new Schema({
       RestaurantType.Taqueria,
       RestaurantType.PizzaPlace,
       RestaurantType.ItalianRestaurant,
-      RestaurantType.DessertShop
+      RestaurantType.DessertShop,
+      RestaurantType.Seafood,
     ]
   },
   geometry: MongoGeometrySchema

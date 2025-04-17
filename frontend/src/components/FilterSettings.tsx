@@ -144,11 +144,12 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
         >
           <MenuItem value={RestaurantTypeQuery.Any}>Any</MenuItem>
           <MenuItem value={RestaurantTypeQuery.Restaurant}>Restaurant</MenuItem>
-          <MenuItem value={RestaurantTypeQuery.CoffeeShop}>Coffee Shop</MenuItem>
+          <MenuItem value={RestaurantTypeQuery.CoffeeShop}>Coffee</MenuItem>
+          <MenuItem value={RestaurantTypeQuery.Seafood}>Seafood</MenuItem>
+          <MenuItem value={RestaurantTypeQuery.PizzaPlace}>Pizza</MenuItem>
           <MenuItem value={RestaurantTypeQuery.Bar}>Bar</MenuItem>
           <MenuItem value={RestaurantTypeQuery.Bakery}>Bakery</MenuItem>
           <MenuItem value={RestaurantTypeQuery.Taqueria}>Taqueria</MenuItem>
-          <MenuItem value={RestaurantTypeQuery.PizzaPlace}>Pizza</MenuItem>
           <MenuItem value={RestaurantTypeQuery.ItalianRestaurant}>Italian</MenuItem>
           <MenuItem value={RestaurantTypeQuery.DessertShop}>Dessert</MenuItem>
         </Select>

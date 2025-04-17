@@ -1,7 +1,7 @@
 import React, { } from 'react';
 import { Place, PlaceType } from '../types';
 import { AdvancedMarker } from '@vis.gl/react-google-maps';
-import { getLatLngFromPlace } from '../utilities';
+import { getLatLngFromPlace, iconFromRestaurantType } from '../utilities';
 import '../App.css';
 
 import { Icon } from '@iconify/react';
@@ -9,6 +9,8 @@ import { Icon } from '@iconify/react';
 // // https://icon-sets.iconify.design/?query=<query>
 import restaurantIcon from '@iconify/icons-openmoji/fork-and-knife-with-plate';
 import roundPushpin from '@iconify/icons-openmoji/round-pushpin';
+import loveHotelIcon from '@iconify/icons-openmoji/love-hotel';
+import convenienceStoreIcon from '@iconify/icons-openmoji/convenience-store';
 
 const iconContainerStyle: React.CSSProperties = {
   position: 'absolute',
@@ -38,7 +40,11 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
   const getMarkerIcon = (): any => {
     switch (place.placeType) {
       case PlaceType.Restaurant:
-        return restaurantIcon;
+        return iconFromRestaurantType(place.restaurantType!);
+      case PlaceType.Accommodations:
+        return loveHotelIcon;
+      case PlaceType.GroceryStore:
+        return convenienceStoreIcon;
       default:
         return roundPushpin;
     }
@@ -64,7 +70,7 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
       -1px -1px 0 white
     `,
   });
-  
+
 
   const renderPlaceMarker = (): JSX.Element => (
     <AdvancedMarker

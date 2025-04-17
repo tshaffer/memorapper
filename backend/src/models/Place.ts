@@ -70,7 +70,7 @@ const PlaceSchema: Schema = new Schema({
   placeComments: { type: String },
   restaurantType: {
     type: Number,
-    enum: [RestaurantType.Restaurant, RestaurantType.CoffeeShop, RestaurantType.Bar, RestaurantType.Bakery, RestaurantType.Taqueria, RestaurantType.PizzaPlace, RestaurantType.ItalianRestaurant, RestaurantType.DessertShop],
+    enum: [RestaurantType.Restaurant, RestaurantType.Seafood, RestaurantType.CoffeeShop, RestaurantType.Bar, RestaurantType.Bakery, RestaurantType.Taqueria, RestaurantType.PizzaPlace, RestaurantType.ItalianRestaurant, RestaurantType.DessertShop],
   },
   openForBreakfast: { type: Boolean },
   openForLunch: { type: Boolean },

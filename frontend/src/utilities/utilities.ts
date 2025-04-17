@@ -12,6 +12,7 @@ import pastaIcon from '@iconify/icons-emojione/spaghetti';
 import iceCreamIcon from '@iconify/icons-emojione/ice-cream';
 import burritoIcon from '@iconify/icons-noto/burrito';
 import coffeeIcon from '@iconify/icons-openmoji/electric-coffee-percolator';
+import shrimpIcon from '@iconify/icons-emojione/shrimp';
 
 export const getLatLngFromPlace = (place: Place): google.maps.LatLngLiteral => {
   const geometry: GoogleGeometry | undefined = place.geometry;
@@ -141,6 +142,8 @@ export const restaurantTypeLabelFromRestaurantType = (restaurantType: Restaurant
       return 'Dessert Shop';
     case RestaurantType.Taqueria:
       return 'Taqueria';
+    case RestaurantType.Seafood:
+      return 'Seafood';
   }
   return 'Restaurant';
 
@@ -161,6 +164,8 @@ export const iconFromRestaurantType = (restaurantType: RestaurantType): IconifyI
       return iceCreamIcon;
     case RestaurantType.Taqueria:
       return burritoIcon;
+    case RestaurantType.Seafood:
+      return shrimpIcon;
   }
   return restaurantIcon;
 }
