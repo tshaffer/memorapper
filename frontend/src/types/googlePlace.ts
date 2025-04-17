@@ -42,6 +42,7 @@ export interface GooglePlaceDetails {
   types?: string[];
   url?: string;
   user_ratings_total?: number;
+  utc_offset_minutes?: number;
   website?: string;
   opening_hours?: google.maps.places.PlaceOpeningHours;
   price_level?: number;

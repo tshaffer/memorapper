@@ -67,6 +67,8 @@ const MongoPlaceSchema: Schema = new Schema({
   opening_hours: { type: OpeningHoursSchema }, // Added opening hours field
   price_level: { type: Number },
   rating: { type: Number },
+  user_ratings_total: { type: Number },
+  utc_offset_minutes: { type: Number },
   vicinity: { type: String },
 
 

@@ -30,7 +30,7 @@ export type PlaceWithGooglePlace = {
   placeType?: PlaceType;
   googlePlaceId?: string;
   placeComments?: string;
-} & NewGooglePlace & Restaurant;  
+} & NewGooglePlace & Restaurant;
 
 export type SubmitPlaceRequestBody = {
   _idPlace?: string;
@@ -51,6 +51,8 @@ export interface NewGooglePlace {
   googlePlaceId?: string;
   rating?: number;
   price_level?: number;
+  user_ratings_total?: number;
+  utc_offset_minutes?: number;
   vicinity?: string;
   website?: string;
 }
@@ -65,9 +67,6 @@ export interface NewGooglePlace {
 // international_phone_number?: string;
 // photos?: google.maps.places.PlacePhoto[];
 // url?: string;
-// user_ratings_total?: number;
-// utc_offset?: number;
-// utc_offset_minutes?: number;
 
 // User interface
 export interface User {

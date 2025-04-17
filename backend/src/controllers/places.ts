@@ -31,6 +31,8 @@ export const getPlacesHandler = async (
           place.opening_hours = mongoPlace.opening_hours;
           place.price_level = mongoPlace.price_level;
           place.rating = mongoPlace.rating;
+          place.user_ratings_total = mongoPlace.user_ratings_total;
+          place.utc_offset_minutes = mongoPlace.utc_offset_minutes;
           place.vicinity = mongoPlace.vicinity;
           place.website = mongoPlace.website;
 
@@ -65,6 +67,8 @@ export const getPlaces = async (): Promise<PlaceWithGooglePlace[]> => {
           place.opening_hours = mongoPlace.opening_hours;
           place.price_level = mongoPlace.price_level;
           place.rating = mongoPlace.rating;
+          place.user_ratings_total = mongoPlace.user_ratings_total;
+          place.utc_offset_minutes = mongoPlace.utc_offset_minutes;
           place.vicinity = mongoPlace.vicinity;
           place.website = mongoPlace.website;
 
@@ -95,7 +99,7 @@ export const submitPlaceHandler = async (
 
 const submitPlace = async (placeRequestBody: SubmitPlaceRequestBody): Promise<IPlace | null> => {
 
-  const { _idPlace, placeId, visited, placeType, googlePlaceId, placeComments, address_components, formatted_address, geometry, name, opening_hours, price_level, rating, vicinity, openForBreakfast, openForLunch, openForDinner, restaurantType, website } = placeRequestBody;
+  const { _idPlace, placeId, visited, placeType, googlePlaceId, placeComments, address_components, formatted_address, geometry, name, opening_hours, price_level, rating, vicinity, openForBreakfast, openForLunch, openForDinner, restaurantType, user_ratings_total, utc_offset_minutes, website } = placeRequestBody;
 
   const googlePlace: GooglePlace = {
     googlePlaceId: googlePlaceId!,
@@ -107,6 +111,8 @@ const submitPlace = async (placeRequestBody: SubmitPlaceRequestBody): Promise<IP
     opening_hours,
     price_level,
     rating,
+    user_ratings_total,
+    utc_offset_minutes,
     vicinity,
     geometry,
   }

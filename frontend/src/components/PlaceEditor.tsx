@@ -90,6 +90,9 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
     currentPlace.googlePlaceId = googlePlace.googlePlaceId;
     currentPlace.price_level = googlePlace.price_level;
     currentPlace.rating = googlePlace.rating;
+    currentPlace.user_ratings_total = googlePlace.user_ratings_total;
+    currentPlace.utc_offset_minutes = googlePlace.utc_offset_minutes;
+    currentPlace.restaurantType = googlePlace.restaurantType;
     currentPlace.vicinity = googlePlace.vicinity;
     currentPlace.website = googlePlace.website;
 

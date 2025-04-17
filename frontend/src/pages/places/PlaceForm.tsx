@@ -105,6 +105,9 @@ const PlaceForm = () => {
     currentPlace.opening_hours = googlePlace.opening_hours;
     currentPlace.googlePlaceId = googlePlace.googlePlaceId;
     currentPlace.price_level = googlePlace.price_level;
+    currentPlace.rating = googlePlace.rating;
+    currentPlace.user_ratings_total = googlePlace.user_ratings_total;
+    currentPlace.utc_offset_minutes = googlePlace.utc_offset_minutes;
     currentPlace.vicinity = googlePlace.vicinity;
     currentPlace.website = googlePlace.website;
 

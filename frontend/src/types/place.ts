@@ -40,11 +40,13 @@ export interface NewGooglePlace {
   googlePlaceId?: string;
   price_level?: number;
   rating?: number;
+  user_ratings_total?: number;
+  utc_offset_minutes?: number;
   vicinity?: string;
   website?: string;
 }
 
-// other fields from google.maps.places.PlaceResult that I may want to add
+// other fields from google.maps.places.PlaceResult that I may want to add to NewGooglePlace
 // adr_address?: string;
 // formatted_phone_number?: string;
 // geometry?: google.maps.places.PlaceGeometry;
@@ -54,9 +56,6 @@ export interface NewGooglePlace {
 // international_phone_number?: string;
 // photos?: google.maps.places.PlacePhoto[];
 // url?: string;
-// user_ratings_total?: number;
-// utc_offset?: number;
-// utc_offset_minutes?: number;
 
 // User interface
 export interface User {

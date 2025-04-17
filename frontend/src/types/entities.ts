@@ -20,6 +20,8 @@ export interface BasePlace {
   opening_hours?: google.maps.places.PlaceOpeningHours;
   price_level?: number;
   rating?: number;
+  user_ratings_total?: number;
+  utc_offset_minutes?: number;
   vicinity?: string;
   restaurantType: RestaurantType;
 }
