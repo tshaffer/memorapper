@@ -1,13 +1,13 @@
-import { GooglePlace, FilterResultsParams } from "../types";
+import { GooglePlace, FilterResultsParams, PlaceWithGooglePlace } from "../types";
 
 export const newFilterResults = (
   filter: FilterResultsParams,
-  googlePlaces: GooglePlace[],
+  googlePlaces: PlaceWithGooglePlace[],
   mapLocation: google.maps.LatLngLiteral,
-): GooglePlace[] => {
+): PlaceWithGooglePlace [] => {
   const { distanceAwayFilter, placeType, restaurantType, openFilterMode, openMeals   }: FilterResultsParams = filter;
 
-  const filteredPlaces: GooglePlace[] = googlePlaces.filter((place: GooglePlace) => {
+  const filteredPlaces: PlaceWithGooglePlace[] = googlePlaces.filter((place: PlaceWithGooglePlace) => {
     if (!place.geometry || !place.geometry.location) return false;
 
     // Filter by distance

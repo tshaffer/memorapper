@@ -14,6 +14,15 @@ export interface Restaurant {
   restaurantReviews?: RestaurantReview[];
 }
 
+export type PlaceWithGooglePlace = {
+  _idPlace?: string;
+  placeId: string;
+  visited: boolean;
+  placeType?: PlaceType;
+  googlePlaceId?: string;
+  placeComments?: string;
+} & NewGooglePlace & Restaurant;
+
 export type Place = {
   _idPlace?: string;
   placeId: string;

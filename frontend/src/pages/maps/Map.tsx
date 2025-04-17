@@ -11,6 +11,7 @@ import {
   SearchQuery,
   Place,
   RestaurantReview,
+  PlaceWithGooglePlace,
 } from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
 import PulsingDots from '../../components/PulsingDots';
@@ -32,7 +33,7 @@ const MapPage: React.FC = () => {
 
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
-  const [filteredGooglePlaces, setFilteredGooglePlaces] = useState<GooglePlace[]>([]);
+  const [filteredGooglePlaces, setFilteredGooglePlaces] = useState<PlaceWithGooglePlace[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -139,7 +140,7 @@ const MapPage: React.FC = () => {
   }
 
   const filterOnEntry = (
-    googlePlaces: any, location: google.maps.LatLngLiteral, filters: Filters,
+    googlePlaces: PlaceWithGooglePlace[], location: google.maps.LatLngLiteral, filters: Filters,
   ) => {
 
     const { distanceAwayFilter, openFilterMode, placeType, restaurantType, openMeals  } = filters;
@@ -152,7 +153,7 @@ const MapPage: React.FC = () => {
       openMeals,
     };
 
-    const filteredPlaces: GooglePlace[] = newFilterResults(filter, googlePlaces, location);
+    const filteredPlaces: PlaceWithGooglePlace[] = newFilterResults(filter, googlePlaces, location);
 
     setFilteredGooglePlaces(filteredPlaces);
   }
@@ -277,7 +278,7 @@ const MapPage: React.FC = () => {
         <MapWithMarkers
           key={JSON.stringify({ googlePlaces: filteredGooglePlaces, specifiedLocation: mapLocation })} // Forces re-render on prop change
           initialCenter={mapLocation!}
-          places={places}
+          places={filteredGooglePlaces}
           onVisiblePlacesChanged={(visiblePlaces) => handleVisiblePlacesChanged(visiblePlaces)}
           onPlaceSelect={() => {console.log('place clicked')}}  // new callback for when a marker is clicked
         />

@@ -5,6 +5,7 @@ import PlaceModel, { IPlace } from '../models/Place';
 import { convertMongoGeometryToGoogleGeometry } from '../utilities';
 import { MongoGeometry } from "../types";
 import { convertGoogleGeometryToMongoGeometry, convertMongoPlacesToGooglePlaces } from '../utilities';
+import { ObjectId } from 'mongoose';
 
 export const getPlacesHandler = async (
   req: Request,
@@ -60,6 +61,7 @@ export const getPlaces = async (): Promise<PlaceWithGooglePlace[]> => {
         if (mongoPlaceDocument.googlePlaceId === placeGooglePlaceId) {
           const mongoPlace: MongoPlace = mongoPlaceDocument.toObject();
           let place: PlaceWithGooglePlace = placeDocument.toObject();
+          place._idPlace = (placeDocument._id as ObjectId).toString();
           place.address_components = mongoPlace.address_components;
           place.formatted_address = mongoPlace.formatted_address;
           place.geometry = convertMongoGeometryToGoogleGeometry(mongoPlace.geometry!);

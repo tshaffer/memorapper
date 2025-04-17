@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { DistanceAwayFilterValues, Filters, GooglePlace, OpenFilterMode, Place, PlaceTypeQuery, RestaurantType, RestaurantTypeQuery, Settings } from '../types';
+import { DistanceAwayFilterValues, Filters, OpenFilterMode, Place, PlaceTypeQuery, PlaceWithGooglePlace, RestaurantType, RestaurantTypeQuery, Settings } from '../types';
 
 interface UserContextValue {
 
-  googlePlaces: GooglePlace[];
-  setGooglePlaces: (googlePlaces: GooglePlace[]) => void;
+  googlePlaces: PlaceWithGooglePlace[];
+  setGooglePlaces: (googlePlaces: PlaceWithGooglePlace[]) => void;
 
   places: Place[];
   setPlaces: (places: Place[]) => void;
@@ -19,7 +19,7 @@ interface UserContextValue {
 const UserContext = createContext<UserContextValue | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [googlePlaces, setGooglePlaces] = useState<GooglePlace[]>([]);
+  const [googlePlaces, setGooglePlaces] = useState<PlaceWithGooglePlace[]>([]);
   const [places, setPlaces] = useState<Place[]>([]);
 
   const [settings, setSettingsState] = useState<Settings>({

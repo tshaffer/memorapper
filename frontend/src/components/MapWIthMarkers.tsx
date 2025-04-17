@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Place } from '../types';
+import { Place, PlaceWithGooglePlace } from '../types';
 import { AdvancedMarker, APIProvider, Map } from '@vis.gl/react-google-maps';
 import '../App.css';
 
@@ -23,7 +23,7 @@ const CustomBlueDot = () => (
 
 interface MapWithMarkersProps {
   initialCenter: google.maps.LatLngLiteral;
-  places: Place[];
+  places: PlaceWithGooglePlace[];
   blueDotLocation?: google.maps.LatLngLiteral;
   onVisiblePlacesChanged: (places: Place[]) => void;
   onPlaceSelect: (place: Place) => void;
