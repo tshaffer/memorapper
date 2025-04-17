@@ -1,16 +1,11 @@
 use memorappy;
 
 const collections = [
-  "newrestaurants",
-  "dinerrestaurantreviews",
-  "diners",
-  "dininggroups",
   "mongoPlaces",
-  "restaurantreviews",
-  "visitreviews"
+  "places",
 ];
 
-const outputDir = "/Users/tedshaffer/Documents/MongoDBBackups/memoRapper/backup-4-12-legacy";
+const outputDir = "/Users/tedshaffer/Documents/MongoDBBackups/memoRapper/backup-4-17-00";
 
 const fs = require("fs");
 

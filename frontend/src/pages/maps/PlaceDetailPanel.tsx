@@ -101,6 +101,11 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
         ) : (
           <Box>
             <Typography variant="body2" color="textSecondary">{place.formatted_address}</Typography>
+            {place.rating && (
+              <Typography variant="body2" color="textSecondary">
+                Rating: {place.rating} ({place.user_ratings_total} reviews)
+              </Typography>
+            )}
             {place.placeType === PlaceType.Restaurant && (
               <Box sx={{ mt: 2 }}>
                 <Typography variant="body2">{restaurantTypeLabelFromRestaurantType(place.restaurantType!)}</Typography>
