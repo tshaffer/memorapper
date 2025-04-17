@@ -7,7 +7,7 @@ import GoogleMapsProvider from './components/GoogleMapsProvider';
 import './App.css';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } from '@mui/material';
 import { useUserContext } from './contexts/UserContext';
-import { DistanceAwayFilterValues, OpenFilterMode, PlaceTypeQuery, RestaurantType, Settings, } from './types';
+import { DistanceAwayFilterValues, OpenFilterMode, PlaceTypeQuery, RestaurantType, RestaurantTypeQuery, Settings, } from './types';
 import PlaceForm from './pages/places/PlaceForm';
 import Map from './pages/maps/Map';
 import SettingsDialog from './components/SettingsDialog';
@@ -42,7 +42,7 @@ const App: React.FC = () => {
             distanceAwayFilter: DistanceAwayFilterValues.AnyDistance,
             openFilterMode: OpenFilterMode.Any,
             placeType: PlaceTypeQuery.Restaurant,
-            restaurantType: RestaurantType.Restaurant,
+            restaurantType: RestaurantTypeQuery.Any,
             openMeals: {
               BREAKFAST: false,
               LUNCH: false,

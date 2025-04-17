@@ -6,6 +6,18 @@ export enum DistanceAwayFilterValues {
   AnyDistance = 1000000,
 }
 
+export enum RestaurantTypeQuery {
+  Any = -1,
+  Restaurant = 0,
+  CoffeeShop = 1,
+  Bar = 2,
+  Bakery = 3,
+  Taqueria = 4,
+  PizzaPlace = 5,
+  ItalianRestaurant = 6,
+  DessertShop = 7,
+}
+
 export enum RestaurantType {
   Restaurant = 0,
   CoffeeShop = 1,

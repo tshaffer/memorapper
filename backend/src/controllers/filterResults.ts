@@ -1,4 +1,4 @@
-import { FilterResultsParams, SearchResponse, PlaceTypeQuery, RestaurantType, OpenFilterMode, MealType, Place, PlaceWithGooglePlace } from "../types";
+import { FilterResultsParams, SearchResponse, PlaceTypeQuery, RestaurantType, OpenFilterMode, MealType, Place, PlaceWithGooglePlace, RestaurantTypeQuery } from "../types";
 
 export const filterResults = async (
   filter: FilterResultsParams,
@@ -21,8 +21,8 @@ export const filterResults = async (
       }
     }
     // Filter by restaurant type
-    if (placeTypeFilter === PlaceTypeQuery.Restaurant && place.restaurantType) {
-      if (restaurantTypeFilter !== RestaurantType.Restaurant) {
+    if (placeTypeFilter === PlaceTypeQuery.Restaurant) {
+      if (restaurantTypeFilter !== RestaurantTypeQuery.Any) {
         if (place.restaurantType !== restaurantTypeFilter) {
           return false;
         }

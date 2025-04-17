@@ -1,5 +1,5 @@
 import { Box, Typography, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Checkbox, useMediaQuery, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { DistanceAwayFilterValues, Filters, MealType, OpenFilterMode, Place, PlaceType, PlaceTypeQuery, RestaurantType } from "../types";
+import { DistanceAwayFilterValues, Filters, MealType, OpenFilterMode, Place, PlaceType, PlaceTypeQuery, RestaurantType, RestaurantTypeQuery } from "../types";
 
 export interface FiltersSettingsProps {
   filters: Filters;
@@ -13,8 +13,8 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
   const {
     distanceAwayFilter = DistanceAwayFilterValues.AnyDistance,
     openFilterMode = OpenFilterMode.Any,
-    placeType = PlaceTypeQuery.Restaurant,
-    restaurantType = RestaurantType.Restaurant,
+    placeType = PlaceTypeQuery.Any,
+    restaurantType = RestaurantTypeQuery.Any,
     openMeals = { BREAKFAST: false, LUNCH: false, DINNER: false }
   } = filters;
 
@@ -31,8 +31,8 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     onUpdateFilters({ ...filters, placeType: newPlaceType });
   };
 
-  const handleRestaurantTypeChange = (event: SelectChangeEvent<RestaurantType>) => {
-    const newRestaurantType = event.target.value as RestaurantType;
+  const handleRestaurantTypeChange = (event: SelectChangeEvent<RestaurantTypeQuery>) => {
+    const newRestaurantType = event.target.value as RestaurantTypeQuery;
     onUpdateFilters({ ...filters, restaurantType: newRestaurantType });
   };
 
@@ -141,14 +141,15 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
           onChange={handleRestaurantTypeChange}
           fullWidth
         >
-          <MenuItem value={RestaurantType.Restaurant}>Restaurant</MenuItem>
-          <MenuItem value={RestaurantType.CoffeeShop}>Coffee Shop</MenuItem>
-          <MenuItem value={RestaurantType.Bar}>Bar</MenuItem>
-          <MenuItem value={RestaurantType.Bakery}>Bakery</MenuItem>
-          <MenuItem value={RestaurantType.Taqueria}>Taqueria</MenuItem>
-          <MenuItem value={RestaurantType.PizzaPlace}>Pizza</MenuItem>
-          <MenuItem value={RestaurantType.ItalianRestaurant}>Italian</MenuItem>
-          <MenuItem value={RestaurantType.DessertShop}>Dessert</MenuItem>
+          <MenuItem value={RestaurantTypeQuery.Any}>Any</MenuItem>
+          <MenuItem value={RestaurantTypeQuery.Restaurant}>Restaurant</MenuItem>
+          <MenuItem value={RestaurantTypeQuery.CoffeeShop}>Coffee Shop</MenuItem>
+          <MenuItem value={RestaurantTypeQuery.Bar}>Bar</MenuItem>
+          <MenuItem value={RestaurantTypeQuery.Bakery}>Bakery</MenuItem>
+          <MenuItem value={RestaurantTypeQuery.Taqueria}>Taqueria</MenuItem>
+          <MenuItem value={RestaurantTypeQuery.PizzaPlace}>Pizza</MenuItem>
+          <MenuItem value={RestaurantTypeQuery.ItalianRestaurant}>Italian</MenuItem>
+          <MenuItem value={RestaurantTypeQuery.DessertShop}>Dessert</MenuItem>
         </Select>
       </div>
     );

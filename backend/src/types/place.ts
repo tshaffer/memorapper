@@ -1,11 +1,11 @@
 // frontend/node_modules/@types/google.maps/index.d.ts
 // https://developers.google.com/maps/documentation/places/web-service/supported_types
 
-import { PlaceType, RestaurantType } from "./enums";
+import { PlaceType, RestaurantType, RestaurantTypeQuery } from "./enums";
 import { GoogleGeometry } from "./googlePlace";
 
 export interface Restaurant {
-  restaurantType?: RestaurantType;
+  restaurantType?: RestaurantType | RestaurantTypeQuery;
   openForBreakfast?: boolean;
   openForLunch?: boolean;
   openForDinner?: boolean;
