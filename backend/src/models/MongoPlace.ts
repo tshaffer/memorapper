@@ -30,10 +30,16 @@ const MongoGeometrySchema: Schema = new Schema({
 const OpeningHoursPeriodSchema: Schema = new Schema({
   open: {
     day: { type: Number, required: true }, // Day of the week (0 = Sunday, 6 = Saturday)
+    hours: { type: Number, required: true },
+    minutes: { type: Number, required: true },
+    nextDate: { type: Number },
     time: { type: String, required: true }, // HHMM format (e.g., "0900" for 9:00 AM)
   },
   close: {
     day: { type: Number }, // Optional closing day
+    hours: { type: Number },
+    minutes: { type: Number },
+    nextDate: { type: Number },
     time: { type: String }, // Optional closing time
   },
 });
