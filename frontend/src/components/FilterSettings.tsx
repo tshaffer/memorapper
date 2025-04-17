@@ -124,6 +124,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
         >
           <MenuItem value={PlaceTypeQuery.Any}>Any</MenuItem>
           <MenuItem value={PlaceTypeQuery.Restaurant}>Restaurant</MenuItem>
+          <MenuItem value={PlaceTypeQuery.Accommodations}>Accommodations</MenuItem>
           <MenuItem value={PlaceTypeQuery.Destination}>Other</MenuItem>
           <MenuItem value={PlaceTypeQuery.GroceryStore}>Grocery Store</MenuItem>
         </Select>

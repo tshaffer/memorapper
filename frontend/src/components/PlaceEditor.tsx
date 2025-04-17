@@ -187,6 +187,7 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
         fullWidth
       >
         <MenuItem value={PlaceType.Restaurant}>Restaurant</MenuItem>
+        <MenuItem value={PlaceType.Accommodations}>Accommodations</MenuItem>
         <MenuItem value={PlaceType.Destination}>Other</MenuItem>
         <MenuItem value={PlaceType.GroceryStore}>Grocery Store</MenuItem>
       </Select>

@@ -34,6 +34,7 @@ export enum PlaceType {
   Restaurant = 0,
   GroceryStore = 1,
   Destination = 2,
+  Accommodations = 3,
 }
 
 export enum PlaceTypeQuery {
@@ -41,6 +42,7 @@ export enum PlaceTypeQuery {
   Restaurant = 0,
   GroceryStore = 1,
   Destination = 2,
+  Accommodations = 3,
 }
 
 export enum OpenFilterMode {

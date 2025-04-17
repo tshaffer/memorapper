@@ -55,6 +55,7 @@ const MongoPlaceSchema: Schema = new Schema({
     type: Number,
     enum: [
       PlaceType.Restaurant,
+      PlaceType.Accommodations,
       PlaceType.GroceryStore,
       PlaceType.Destination
     ]
