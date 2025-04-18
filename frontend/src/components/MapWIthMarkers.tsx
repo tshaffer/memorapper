@@ -68,8 +68,12 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, 
   const handlePlaceClicked = (place: Place) => {
     console.log('Place clicked:', place);
     setSelectedPlace(place);
-    onPlaceSelect(place); 
   };
+
+  const handleLinkClick = (): void => {
+    console.log('handleLinkClick', selectedPlace);
+    onPlaceSelect(selectedPlace!); 
+  }
 
   const handleCloseInfoWindow = () => {
     setSelectedPlace(null);
@@ -124,6 +128,7 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, 
 
 }, [centerLat, centerLng, neLat, neLng, swLat, swLng]);
 
+
 return (
   <APIProvider apiKey={googleMapsApiKey} version="beta">
     <Map
@@ -157,7 +162,7 @@ return (
         </AdvancedMarker>
       )}
       {selectedPlace && (
-        <PlaceInfoWindow place={selectedPlace} onClose={handleCloseInfoWindow} />
+        <PlaceInfoWindow place={selectedPlace} onLinkClick={handleLinkClick} onClose={handleCloseInfoWindow} />
       )}
     </Map>
   </APIProvider>

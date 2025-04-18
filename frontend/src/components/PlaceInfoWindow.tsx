@@ -10,10 +10,11 @@ import { useNavigate } from 'react-router-dom';
 
 interface PlaceInfoWindowProps {
   place: Place;
+  onLinkClick: (place: Place) => void;
   onClose: () => void;
 }
 
-const PlaceInfoWindow: React.FC<PlaceInfoWindowProps> = ({ place, onClose }) => {
+const PlaceInfoWindow: React.FC<PlaceInfoWindowProps> = ({ place, onLinkClick, onClose }) => {
 
   const navigate = useNavigate();
 
@@ -39,6 +40,7 @@ const PlaceInfoWindow: React.FC<PlaceInfoWindowProps> = ({ place, onClose }) => 
     console.log('handlePlaceLinkClicked');
     console.log(place);
     // navigate(`/new-restaurant-details`, { state: place });
+    onLinkClick(place);
   }
 
   const handleShowDirections = () => {

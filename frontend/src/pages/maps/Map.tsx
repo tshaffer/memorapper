@@ -280,8 +280,8 @@ const MapPage: React.FC = () => {
           initialCenter={mapLocation!}
           places={filteredGooglePlaces}
           onVisiblePlacesChanged={(visiblePlaces) => handleVisiblePlacesChanged(visiblePlaces)}
-          onPlaceSelect={() => {console.log('place clicked')}}  // new callback for when a marker is clicked
-        />
+          onPlaceSelect={handlePlaceSelect}  // new callback for when a list item is clicked
+          />
       </div>
     );
   };
