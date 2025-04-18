@@ -39,7 +39,6 @@ const PlaceInfoWindow: React.FC<PlaceInfoWindowProps> = ({ place, onLinkClick, o
   function handlePlaceLinkClicked(): void {
     console.log('handlePlaceLinkClicked');
     console.log(place);
-    // navigate(`/new-restaurant-details`, { state: place });
     onLinkClick(place);
   }
 

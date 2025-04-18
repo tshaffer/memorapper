@@ -132,6 +132,13 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
                 </Typography>
               </Box>
             )}
+            {place.website && (
+              <Typography variant="body2">
+                <a href={place.website} target="_blank" rel="noopener noreferrer">
+                  {place.website}
+                </a>
+              </Typography>
+            )}
             <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
               <Button variant="contained" onClick={() => setIsEditing(true)}>Edit</Button>
               <Button variant="outlined" color="error" onClick={() => onDeletePlace(place._idPlace!)}>Delete</Button>
