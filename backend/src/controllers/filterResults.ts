@@ -1,4 +1,4 @@
-import { FilterResultsParams, SearchResponse, PlaceTypeQuery, RestaurantType, OpenFilterMode, MealType, Place, PlaceWithGooglePlace, RestaurantTypeQuery } from "../types";
+import { FilterResultsParams, SearchResponse, RestaurantType, OpenFilterMode, MealType, PlaceWithGooglePlace, PlaceType } from "../types";
 
 export const filterResults = async (
   filter: FilterResultsParams,
@@ -26,7 +26,7 @@ export const filterResults = async (
 
     // 3) Place‐type filter
     if (placeTypesFilter.length > 0) {
-      if (!placeTypesFilter.includes(place.placeType as unknown as PlaceTypeQuery)) {
+      if (!placeTypesFilter.includes(place.placeType as unknown as PlaceType)) {
         return false;
       }
     }
@@ -34,11 +34,11 @@ export const filterResults = async (
     // 4) Restaurant‐type filter: only if this place is a restaurant
     if (
       restaurantsTypeFilter.length > 0 &&
-      (place.placeType as unknown as PlaceTypeQuery) === PlaceTypeQuery.Restaurant
+      (place.placeType as unknown as PlaceType) === PlaceType.Restaurant
     ) {
       if (
         !restaurantsTypeFilter.includes(
-          place.restaurantType as RestaurantTypeQuery
+          place.restaurantType as RestaurantType
         )
       ) {
         return false;

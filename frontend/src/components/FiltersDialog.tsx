@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Box, Button, Tooltip, useMediaQuery } from '@mui/material';
 
 import FiltersSettings from "./FilterSettings";
-import { Filters, PlaceTypeQuery, RestaurantTypeQuery } from "../types";
+import { Filters, PlaceType, RestaurantType } from "../types";
 
 export interface FiltersDialogPropsFromParent {
   open: boolean;
@@ -25,8 +25,8 @@ const FiltersDialog: React.FC<FiltersDialogProps> = (props: FiltersDialogProps) 
 
   const [query, setQuery] = useState('');
   const [distanceAwayFilter, setDistanceAwayFilter] = useState<number>(props.filters.distanceAwayFilter);
-  const [placeTypes, setPlaceTypes] = useState<PlaceTypeQuery[]>(props.filters.placeTypes);
-  const [restaurantTypes, setRestaurantTypes] = useState<RestaurantTypeQuery[]>(props.filters.restaurantTypes);
+  const [placeTypes, setPlaceTypes] = useState<PlaceType[]>(props.filters.placeTypes);
+  const [restaurantTypes, setRestaurantTypes] = useState<RestaurantType[]>(props.filters.restaurantTypes);
   const [openFilterMode, setOpenFilterMode] = useState(props.filters.openFilterMode);
   const [openMeals, setOpenMeals] = useState(props.filters.openMeals);
 

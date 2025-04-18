@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { DistanceAwayFilterValues, Filters, OpenFilterMode, Place, PlaceTypeQuery, PlaceWithGooglePlace, RestaurantType, RestaurantTypeQuery, Settings } from '../types';
+import { DistanceAwayFilterValues, Filters, OpenFilterMode, Place, PlaceWithGooglePlace, Settings } from '../types';
 
 interface UserContextValue {
 

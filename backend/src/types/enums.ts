@@ -6,20 +6,6 @@ export enum SearchDistanceFilter {
   AnyDistance = 1000000,
 }
 
-export enum RestaurantTypeQuery {
-  Any = -1,
-  Restaurant = 0,
-  CoffeeShop = 1,
-  Bar = 2,
-  Bakery = 3,
-  Taqueria = 4,
-  PizzaPlace = 5,
-  ItalianRestaurant = 6,
-  DessertShop = 7,
-  Seafood = 8,
-}
-
-
 export enum RestaurantType {
   Restaurant = 0,
   CoffeeShop = 1,
@@ -33,14 +19,6 @@ export enum RestaurantType {
 }
 
 export enum PlaceType {
-  Restaurant = 0,
-  GroceryStore = 1,
-  Destination = 2,
-  Accommodations = 3,
-}
-
-export enum PlaceTypeQuery {
-  Any = -1,
   Restaurant = 0,
   GroceryStore = 1,
   Destination = 2,

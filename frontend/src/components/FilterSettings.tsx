@@ -1,5 +1,5 @@
 import { Box, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Checkbox, useMediaQuery, InputLabel, Select, MenuItem, SelectChangeEvent, FormGroup } from '@mui/material';
-import { DistanceAwayFilterValues, Filters, MealType, OpenFilterMode, Place, PlaceType, PlaceTypeQuery, RestaurantType, RestaurantTypeQuery } from "../types";
+import { DistanceAwayFilterValues, Filters, MealType, OpenFilterMode, Place, PlaceType, RestaurantType } from "../types";
 import { useState } from 'react';
 
 export interface FiltersSettingsProps {
@@ -19,26 +19,26 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     openMeals = { BREAKFAST: false, LUNCH: false, DINNER: false }
   } = filters;
 
-  const [selectedPlaceTypes, setSelectedPlaceTypes] = useState<PlaceTypeQuery[]>([]);
-  const [selectedRestaurantTypes, setSelectedRestaurantTypes] = useState<RestaurantTypeQuery[]>([]);
+  const [selectedPlaceTypes, setSelectedPlaceTypes] = useState<PlaceType[]>([]);
+  const [selectedRestaurantTypes, setSelectedRestaurantTypes] = useState<RestaurantType[]>([]);
 
-  const PLACE_TYPE_OPTIONS: { label: string; value: PlaceTypeQuery }[] = [
-    { label: 'Restaurant', value: PlaceTypeQuery.Restaurant },
-    { label: 'Accommodations', value: PlaceTypeQuery.Accommodations },
-    { label: 'Other', value: PlaceTypeQuery.Destination },
-    { label: 'Grocery Store', value: PlaceTypeQuery.GroceryStore },
+  const PLACE_TYPE_OPTIONS: { label: string; value: PlaceType }[] = [
+    { label: 'Restaurant', value: PlaceType.Restaurant },
+    { label: 'Accommodations', value: PlaceType.Accommodations },
+    { label: 'Other', value: PlaceType.Destination },
+    { label: 'Grocery Store', value: PlaceType.GroceryStore },
   ];
 
-  const RESTAURANT_TYPE_OPTIONS: { label: string; value: RestaurantTypeQuery }[] = [
-    { label: 'Restaurant', value: RestaurantTypeQuery.Restaurant },
-    { label: 'Coffee Shop', value: RestaurantTypeQuery.CoffeeShop },
-    { label: 'Seafood', value: RestaurantTypeQuery.Seafood },
-    { label: 'Pizza', value: RestaurantTypeQuery.PizzaPlace },
-    { label: 'Bar', value: RestaurantTypeQuery.Bar },
-    { label: 'Bakery', value: RestaurantTypeQuery.Bakery },
-    { label: 'Taqueria', value: RestaurantTypeQuery.Taqueria },
-    { label: 'Italian', value: RestaurantTypeQuery.ItalianRestaurant },
-    { label: 'Ice Cream', value: RestaurantTypeQuery.DessertShop },
+  const RESTAURANT_TYPE_OPTIONS: { label: string; value: RestaurantType }[] = [
+    { label: 'Restaurant', value: RestaurantType.Restaurant },
+    { label: 'Coffee Shop', value: RestaurantType.CoffeeShop },
+    { label: 'Seafood', value: RestaurantType.Seafood },
+    { label: 'Pizza', value: RestaurantType.PizzaPlace },
+    { label: 'Bar', value: RestaurantType.Bar },
+    { label: 'Bakery', value: RestaurantType.Bakery },
+    { label: 'Taqueria', value: RestaurantType.Taqueria },
+    { label: 'Italian', value: RestaurantType.ItalianRestaurant },
+    { label: 'Ice Cream', value: RestaurantType.DessertShop },
   ];
 
   const isMobile = useMediaQuery('(max-width:768px)');
@@ -49,13 +49,13 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     onUpdateFilters({ ...filters, distanceAwayFilter: newDistanceAway });
   };
 
-  // const handlePlaceTypeChange = (event: SelectChangeEvent<PlaceTypeQuery>) => {
-  //   const newPlaceType = event.target.value as PlaceTypeQuery;
+  // const handlePlaceTypeChange = (event: SelectChangeEvent<PlaceType>) => {
+  //   const newPlaceType = event.target.value as PlaceType;
   //   onUpdateFilters({ ...filters, placeTypes: newPlaceType });
   // };
 
-  // const handleRestaurantTypeChange = (event: SelectChangeEvent<RestaurantTypeQuery>) => {
-  //   const newRestaurantType = event.target.value as RestaurantTypeQuery;
+  // const handleRestaurantTypeChange = (event: SelectChangeEvent<RestaurantType>) => {
+  //   const newRestaurantType = event.target.value as RestaurantType;
   //   onUpdateFilters({ ...filters, restaurantTypes: newRestaurantType });
   // };
 
@@ -135,7 +135,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     </FormControl>
   );
 
-  const handlePlaceTypeToggle = (placeType: PlaceTypeQuery, isChecked: boolean) => {
+  const handlePlaceTypeToggle = (placeType: PlaceType, isChecked: boolean) => {
     const updatedPlaceTypes = isChecked
       ? [...selectedPlaceTypes, placeType]
       : selectedPlaceTypes.filter((type) => type !== placeType);
@@ -144,7 +144,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     onUpdateFilters({ ...filters, placeTypes: updatedPlaceTypes });
   };
 
-  const handleRestaurantTypeToggle = (restaurantType: RestaurantTypeQuery, isChecked: boolean) => {
+  const handleRestaurantTypeToggle = (restaurantType: RestaurantType, isChecked: boolean) => {
     const updatedRestaurantTypes = isChecked
       ? [...selectedRestaurantTypes, restaurantType]
       : selectedRestaurantTypes.filter((type) => type !== restaurantType);
@@ -272,8 +272,8 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     >
       {renderDistanceAway()}
       {renderPlaceType()}
-      {placeTypes.includes(PlaceTypeQuery.Restaurant) && renderRestaurantType()}
-      {placeTypes.includes(PlaceTypeQuery.Restaurant) && renderOpenFilter()}
+      {placeTypes.includes(PlaceType.Restaurant) && renderRestaurantType()}
+      {placeTypes.includes(PlaceType.Restaurant) && renderOpenFilter()}
     </Box>
   );
 
