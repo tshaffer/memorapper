@@ -122,6 +122,8 @@ const MapPage: React.FC = () => {
 
   const executeSearchAndFilter = async (searchQuery: SearchQuery): Promise<void> => {
 
+    console.log('executeSearchAndFilter called with searchQuery:', searchQuery);
+    
     const requestBody = { searchQuery };
 
     try {
@@ -143,12 +145,12 @@ const MapPage: React.FC = () => {
     googlePlaces: PlaceWithGooglePlace[], location: google.maps.LatLngLiteral, filters: Filters,
   ) => {
 
-    const { distanceAwayFilter, openFilterMode, placeType, restaurantType, openMeals  } = filters;
+    const { distanceAwayFilter, openFilterMode, placeTypes: placeType, restaurantTypes: restaurantType, openMeals } = filters;
 
     const filter: FilterResultsParams = {
       distanceAwayFilter,
-      placeType,
-      restaurantType,
+      placeTypes: placeType,
+      restaurantTypes: restaurantType,
       openFilterMode,
       openMeals,
     };
@@ -172,8 +174,8 @@ const MapPage: React.FC = () => {
     const searchQuery: SearchQuery = {
       query,
       openFilterMode: filters.openFilterMode,
-      placeType: filters.placeType,
-      restaurantType: filters.restaurantType,
+      placeTypes: filters.placeTypes,
+      restaurantTypes: filters.restaurantTypes,
       openMeals: filters.openMeals,
       distanceAway: {
         lat: mapLocation!.lat,
@@ -281,7 +283,7 @@ const MapPage: React.FC = () => {
           places={filteredGooglePlaces}
           onVisiblePlacesChanged={(visiblePlaces) => handleVisiblePlacesChanged(visiblePlaces)}
           onPlaceSelect={handlePlaceSelect}  // new callback for when a list item is clicked
-          />
+        />
       </div>
     );
   };
@@ -360,7 +362,7 @@ const MapPage: React.FC = () => {
 
       {/* PlaceDetailPanel: only rendered when a place is selected */}
       {selectedPlace && (
-        
+
         <PlaceDetailPanel
           open={true}
           place={selectedPlace}

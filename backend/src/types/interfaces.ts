@@ -3,8 +3,8 @@ import { PlaceWithGooglePlace } from "./place";
 
 export interface FilterResultsParams {
   distanceAwayFilter: SearchDistanceFilter;
-  placeTypeFilter: PlaceTypeQuery;
-  restaurantTypeFilter: RestaurantTypeQuery;
+  placeTypesFilter: PlaceTypeQuery[];
+  restaurantsTypeFilter: RestaurantTypeQuery[];
   openFilterMode: OpenFilterMode;
   openMealsFilter: OpenMealsSpec;
 }
@@ -18,8 +18,8 @@ export interface DistanceAwayQuery {
 export interface SearchQuery {
   query: string;
   distanceAway: DistanceAwayQuery;
-  placeType: PlaceTypeQuery;
-  restaurantType: RestaurantTypeQuery;
+  placeTypes: PlaceTypeQuery[];
+  restaurantTypes: RestaurantTypeQuery[];
   openFilterMode: OpenFilterMode;
   openMeals: OpenMealsSpec;
 }

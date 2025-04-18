@@ -5,53 +5,78 @@ export const filterResults = async (
   places: PlaceWithGooglePlace[],
   mapLocation: google.maps.LatLngLiteral,
 ): Promise<SearchResponse> => {
-  const { distanceAwayFilter, placeTypeFilter, restaurantTypeFilter, openFilterMode, openMealsFilter }: FilterResultsParams = filter;
+  const {
+    distanceAwayFilter,
+    placeTypesFilter,
+    restaurantsTypeFilter,
+    openFilterMode,
+    openMealsFilter,
+  } = filter;
 
-  const filteredPlaces: PlaceWithGooglePlace[] = places.filter((place: PlaceWithGooglePlace) => {
-    if (!place.geometry || !place.geometry.location) return false;
+  const filteredPlaces = places.filter(place => {
+    // 1) Must have geometry
+    if (!place.geometry?.location) return false;
 
-    // Filter by distance
-    const distanceInMiles = haversineDistance(mapLocation, place.geometry.location);
+    // 2) Distance filter
+    const distanceInMiles = haversineDistance(
+      mapLocation,
+      place.geometry.location
+    );
     if (distanceInMiles > distanceAwayFilter) return false;
 
-    // Filter by place type
-    if (placeTypeFilter !== PlaceTypeQuery.Any) {
-      if (placeTypeFilter !== (place.placeType! as unknown as PlaceTypeQuery)) {
-        return false;;
-      }
-    }
-    // Filter by restaurant type
-    if (placeTypeFilter === PlaceTypeQuery.Restaurant) {
-      if (restaurantTypeFilter !== RestaurantTypeQuery.Any) {
-        if (place.restaurantType !== restaurantTypeFilter) {
-          return false;
-        }
-      }
-    }
-
-    // Filter by opening hours and meal types
-    if (openFilterMode !== OpenFilterMode.Any) {
-      if (openFilterMode === OpenFilterMode.Now && !isPlaceOpenNow(place.opening_hours)) {
+    // 3) Place‐type filter
+    if (placeTypesFilter.length > 0) {
+      if (!placeTypesFilter.includes(place.placeType as unknown as PlaceTypeQuery)) {
         return false;
-      } else if (openFilterMode === OpenFilterMode.Meals) {
+      }
+    }
 
-        const mealTypes = Object.keys(openMealsFilter).filter((meal) => openMealsFilter[meal as keyof typeof openMealsFilter]);
-        
-        if (mealTypes.length > 0 && !place.opening_hours) {
-          return false;
-        }
+    // 4) Restaurant‐type filter: only if this place is a restaurant
+    if (
+      restaurantsTypeFilter.length > 0 &&
+      (place.placeType as unknown as PlaceTypeQuery) === PlaceTypeQuery.Restaurant
+    ) {
+      if (
+        !restaurantsTypeFilter.includes(
+          place.restaurantType as RestaurantTypeQuery
+        )
+      ) {
+        return false;
+      }
+    }
 
-        const mealAvailability: MealAvailability = inferMealAvailability(place.opening_hours);
-        const isOpenForMeal = mealTypes.some((meal) => {
-          if (meal === MealType.Breakfast) return mealAvailability.openForBreakfast;
-          if (meal === MealType.Lunch) return mealAvailability.openForLunch;
-          if (meal === MealType.Dinner) return mealAvailability.openForDinner;
-          return false;
+    // 5) Open‐now vs. open‐for‐meals vs. no open filter
+    if (openFilterMode === OpenFilterMode.Now) {
+      if (!isPlaceOpenNow(place.opening_hours)) return false;
+
+    } else if (openFilterMode === OpenFilterMode.Meals) {
+      // figure out which meals are checked
+      const selectedMeals = (Object.entries(openMealsFilter) as [
+        MealType,
+        boolean
+      ][])
+        .filter(([, ok]) => ok)
+        .map(([meal]) => meal);
+
+      // only apply if at least one meal is checked
+      if (selectedMeals.length > 0) {
+        if (!place.opening_hours) return false;
+
+        const availability = inferMealAvailability(place.opening_hours);
+        const isOpenForAny = selectedMeals.some(meal => {
+          switch (meal) {
+            case MealType.Breakfast:
+              return availability.openForBreakfast;
+            case MealType.Lunch:
+              return availability.openForLunch;
+            case MealType.Dinner:
+              return availability.openForDinner;
+            default:
+              return false;
+          }
         });
-        
-        if (!isOpenForMeal) {
-          return false;
-        }
+
+        if (!isOpenForAny) return false;
       }
     }
 
@@ -61,6 +86,7 @@ export const filterResults = async (
   return { places: filteredPlaces };
 };
 
+// This function calculates the distance between two geographical coordinates using the Haversine formula.
 // Helper function to calculate distance between two coordinates
 function haversineDistance(
   coord1: google.maps.LatLngLiteral,

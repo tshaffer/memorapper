@@ -26,8 +26,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     filters: {
       distanceAwayFilter: DistanceAwayFilterValues.AnyDistance,
       openFilterMode: OpenFilterMode.Any,
-      placeType: PlaceTypeQuery.Restaurant,
-      restaurantType: RestaurantTypeQuery.Any,
+      placeTypes: [],
+      restaurantTypes: [],
       openMeals: {
         BREAKFAST: false,
         LUNCH: false,

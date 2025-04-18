@@ -1,5 +1,6 @@
-import { Box, Typography, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Checkbox, useMediaQuery, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import { Box, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Checkbox, useMediaQuery, InputLabel, Select, MenuItem, SelectChangeEvent, FormGroup } from '@mui/material';
 import { DistanceAwayFilterValues, Filters, MealType, OpenFilterMode, Place, PlaceType, PlaceTypeQuery, RestaurantType, RestaurantTypeQuery } from "../types";
+import { useState } from 'react';
 
 export interface FiltersSettingsProps {
   filters: Filters;
@@ -13,10 +14,32 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
   const {
     distanceAwayFilter = DistanceAwayFilterValues.AnyDistance,
     openFilterMode = OpenFilterMode.Any,
-    placeType = PlaceTypeQuery.Any,
-    restaurantType = RestaurantTypeQuery.Any,
+    placeTypes = [],
+    restaurantTypes = [],
     openMeals = { BREAKFAST: false, LUNCH: false, DINNER: false }
   } = filters;
+
+  const [selectedPlaceTypes, setSelectedPlaceTypes] = useState<PlaceTypeQuery[]>([]);
+  const [selectedRestaurantTypes, setSelectedRestaurantTypes] = useState<RestaurantTypeQuery[]>([]);
+
+  const PLACE_TYPE_OPTIONS: { label: string; value: PlaceTypeQuery }[] = [
+    { label: 'Restaurant', value: PlaceTypeQuery.Restaurant },
+    { label: 'Accommodations', value: PlaceTypeQuery.Accommodations },
+    { label: 'Other', value: PlaceTypeQuery.Destination },
+    { label: 'Grocery Store', value: PlaceTypeQuery.GroceryStore },
+  ];
+
+  const RESTAURANT_TYPE_OPTIONS: { label: string; value: RestaurantTypeQuery }[] = [
+    { label: 'Restaurant', value: RestaurantTypeQuery.Restaurant },
+    { label: 'Coffee Shop', value: RestaurantTypeQuery.CoffeeShop },
+    { label: 'Seafood', value: RestaurantTypeQuery.Seafood },
+    { label: 'Pizza', value: RestaurantTypeQuery.PizzaPlace },
+    { label: 'Bar', value: RestaurantTypeQuery.Bar },
+    { label: 'Bakery', value: RestaurantTypeQuery.Bakery },
+    { label: 'Taqueria', value: RestaurantTypeQuery.Taqueria },
+    { label: 'Italian', value: RestaurantTypeQuery.ItalianRestaurant },
+    { label: 'Ice Cream', value: RestaurantTypeQuery.DessertShop },
+  ];
 
   const isMobile = useMediaQuery('(max-width:768px)');
 
@@ -26,15 +49,15 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     onUpdateFilters({ ...filters, distanceAwayFilter: newDistanceAway });
   };
 
-  const handlePlaceTypeChange = (event: SelectChangeEvent<PlaceTypeQuery>) => {
-    const newPlaceType = event.target.value as PlaceTypeQuery;
-    onUpdateFilters({ ...filters, placeType: newPlaceType });
-  };
+  // const handlePlaceTypeChange = (event: SelectChangeEvent<PlaceTypeQuery>) => {
+  //   const newPlaceType = event.target.value as PlaceTypeQuery;
+  //   onUpdateFilters({ ...filters, placeTypes: newPlaceType });
+  // };
 
-  const handleRestaurantTypeChange = (event: SelectChangeEvent<RestaurantTypeQuery>) => {
-    const newRestaurantType = event.target.value as RestaurantTypeQuery;
-    onUpdateFilters({ ...filters, restaurantType: newRestaurantType });
-  };
+  // const handleRestaurantTypeChange = (event: SelectChangeEvent<RestaurantTypeQuery>) => {
+  //   const newRestaurantType = event.target.value as RestaurantTypeQuery;
+  //   onUpdateFilters({ ...filters, restaurantTypes: newRestaurantType });
+  // };
 
 
   // --- Open Status Filter Handlers ---
@@ -112,48 +135,81 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     </FormControl>
   );
 
+  const handlePlaceTypeToggle = (placeType: PlaceTypeQuery, isChecked: boolean) => {
+    const updatedPlaceTypes = isChecked
+      ? [...selectedPlaceTypes, placeType]
+      : selectedPlaceTypes.filter((type) => type !== placeType);
+    setSelectedPlaceTypes(updatedPlaceTypes);
+    console.log('Updated place types:', updatedPlaceTypes);
+    onUpdateFilters({ ...filters, placeTypes: updatedPlaceTypes });
+  };
+
+  const handleRestaurantTypeToggle = (restaurantType: RestaurantTypeQuery, isChecked: boolean) => {
+    const updatedRestaurantTypes = isChecked
+      ? [...selectedRestaurantTypes, restaurantType]
+      : selectedRestaurantTypes.filter((type) => type !== restaurantType);
+    setSelectedRestaurantTypes(updatedRestaurantTypes);
+    console.log('Updated restaurant types:', updatedRestaurantTypes);
+    onUpdateFilters({ ...filters, restaurantTypes: updatedRestaurantTypes });
+  };
+
   const renderPlaceType = (): JSX.Element => {
     return (
-      <div style={{ marginBottom: '1rem', flexBasis: '100%' }}>
-        <label>{'Place Type:'}</label>
-        <Select
-          labelId="place-type-select-label"
-          value={placeType}
-          onChange={handlePlaceTypeChange}
-          fullWidth
-        >
-          <MenuItem value={PlaceTypeQuery.Any}>Any</MenuItem>
-          <MenuItem value={PlaceTypeQuery.Restaurant}>Restaurant</MenuItem>
-          <MenuItem value={PlaceTypeQuery.Accommodations}>Accommodations</MenuItem>
-          <MenuItem value={PlaceTypeQuery.Destination}>Other</MenuItem>
-          <MenuItem value={PlaceTypeQuery.GroceryStore}>Grocery Store</MenuItem>
-        </Select>
-      </div>
+      <FormControl
+        component="fieldset"
+        style={{ marginBottom: '1rem', flexBasis: '100%' }}
+      >
+        <FormLabel component="legend" style={{ marginBottom: 8 }}>
+          Place Type:
+        </FormLabel>
+        <FormGroup row>
+          {PLACE_TYPE_OPTIONS.map(({ label, value }) => (
+            <FormControlLabel
+              key={value}
+              control={
+                <Checkbox
+                  checked={selectedPlaceTypes.includes(value)}
+                  onChange={(e) =>
+                    handlePlaceTypeToggle(value, e.target.checked)
+                  }
+                  name={label}
+                />
+              }
+              label={label}
+            />
+          ))}
+        </FormGroup>
+      </FormControl>
     );
-  }
+  };
 
-  const renderRestaurantType = (): JSX.Element | null => {
+  const renderRestaurantType = (): JSX.Element => {
     return (
-      <div style={{ marginBottom: '1rem', flexBasis: '100%' }}>
-        <label>{'Restaurant Type:'}</label>
-        <Select
-          labelId="restaurant-type-select-label"
-          value={restaurantType}
-          onChange={handleRestaurantTypeChange}
-          fullWidth
-        >
-          <MenuItem value={RestaurantTypeQuery.Any}>Any</MenuItem>
-          <MenuItem value={RestaurantTypeQuery.Restaurant}>Restaurant</MenuItem>
-          <MenuItem value={RestaurantTypeQuery.CoffeeShop}>Coffee</MenuItem>
-          <MenuItem value={RestaurantTypeQuery.Seafood}>Seafood</MenuItem>
-          <MenuItem value={RestaurantTypeQuery.PizzaPlace}>Pizza</MenuItem>
-          <MenuItem value={RestaurantTypeQuery.Bar}>Bar</MenuItem>
-          <MenuItem value={RestaurantTypeQuery.Bakery}>Bakery</MenuItem>
-          <MenuItem value={RestaurantTypeQuery.Taqueria}>Taqueria</MenuItem>
-          <MenuItem value={RestaurantTypeQuery.ItalianRestaurant}>Italian</MenuItem>
-          <MenuItem value={RestaurantTypeQuery.DessertShop}>Dessert</MenuItem>
-        </Select>
-      </div>
+      <FormControl
+        component="fieldset"
+        style={{ marginBottom: '1rem', flexBasis: '100%' }}
+      >
+        <FormLabel component="legend" style={{ marginBottom: 8 }}>
+          Restaurant Type:
+        </FormLabel>
+        <FormGroup row>
+          {RESTAURANT_TYPE_OPTIONS.map(({ label, value }) => (
+            <FormControlLabel
+              key={value}
+              control={
+                <Checkbox
+                  checked={selectedRestaurantTypes.includes(value)}
+                  onChange={(e) =>
+                    handleRestaurantTypeToggle(value, e.target.checked)
+                  }
+                  name={label}
+                />
+              }
+              label={label}
+            />
+          ))}
+        </FormGroup>
+      </FormControl>
     );
   };
 
@@ -216,8 +272,8 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     >
       {renderDistanceAway()}
       {renderPlaceType()}
-      {placeType === PlaceTypeQuery.Restaurant && renderRestaurantType()}
-      {placeType === PlaceTypeQuery.Restaurant && renderOpenFilter()}
+      {placeTypes.includes(PlaceTypeQuery.Restaurant) && renderRestaurantType()}
+      {placeTypes.includes(PlaceTypeQuery.Restaurant) && renderOpenFilter()}
     </Box>
   );
 

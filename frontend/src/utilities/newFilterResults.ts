@@ -4,8 +4,8 @@ export const newFilterResults = (
   filter: FilterResultsParams,
   googlePlaces: PlaceWithGooglePlace[],
   mapLocation: google.maps.LatLngLiteral,
-): PlaceWithGooglePlace [] => {
-  const { distanceAwayFilter, placeType, restaurantType, openFilterMode, openMeals   }: FilterResultsParams = filter;
+): PlaceWithGooglePlace[] => {
+  const { distanceAwayFilter, placeTypes: placeType, restaurantTypes: restaurantType, openFilterMode, openMeals }: FilterResultsParams = filter;
 
   const filteredPlaces: PlaceWithGooglePlace[] = googlePlaces.filter((place: PlaceWithGooglePlace) => {
     if (!place.geometry || !place.geometry.location) return false;

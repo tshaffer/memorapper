@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Box, Button, Tooltip, useMediaQuery } from '@mui/material';
 
 import FiltersSettings from "./FilterSettings";
-import { Filters } from "../types";
+import { Filters, PlaceTypeQuery, RestaurantTypeQuery } from "../types";
 
 export interface FiltersDialogPropsFromParent {
   open: boolean;
@@ -25,29 +25,29 @@ const FiltersDialog: React.FC<FiltersDialogProps> = (props: FiltersDialogProps) 
 
   const [query, setQuery] = useState('');
   const [distanceAwayFilter, setDistanceAwayFilter] = useState<number>(props.filters.distanceAwayFilter);
-  const [placeType, setPlaceType] = useState<number>(props.filters.placeType);
-  const [restaurantType, setRestaurantType] = useState<number>(props.filters.restaurantType);
+  const [placeTypes, setPlaceTypes] = useState<PlaceTypeQuery[]>(props.filters.placeTypes);
+  const [restaurantTypes, setRestaurantTypes] = useState<RestaurantTypeQuery[]>(props.filters.restaurantTypes);
   const [openFilterMode, setOpenFilterMode] = useState(props.filters.openFilterMode);
   const [openMeals, setOpenMeals] = useState(props.filters.openMeals);
 
   useEffect(() => {
     setDistanceAwayFilter(props.filters.distanceAwayFilter);
     setOpenFilterMode(props.filters.openFilterMode);
-    setPlaceType(props.filters.placeType);
-    setRestaurantType(props.filters.restaurantType);
+    setPlaceTypes(props.filters.placeTypes);
+    setRestaurantTypes(props.filters.restaurantTypes);
     setOpenMeals(props.filters.openMeals);
-  }, [props.filters.distanceAwayFilter, props.filters.openFilterMode, props.filters.placeType, props.filters.restaurantType, props.filters.openMeals]);
+  }, [props.filters.distanceAwayFilter, props.filters.openFilterMode, props.filters.placeTypes, props.filters.restaurantTypes, props.filters.openMeals]);
 
   const handleUpdateFilters = (filters: Filters) => {
     setDistanceAwayFilter(filters.distanceAwayFilter);
     setOpenFilterMode(filters.openFilterMode);
-    setPlaceType(filters.placeType);
-    setRestaurantType(filters.restaurantType);
+    setPlaceTypes(filters.placeTypes);
+    setRestaurantTypes(filters.restaurantTypes);
     setOpenMeals(filters.openMeals);
   }
 
   function handleSetFilters(): void {
-    props.onSetFilters(query, { distanceAwayFilter, openFilterMode, placeType, restaurantType, openMeals });
+    props.onSetFilters(query, { distanceAwayFilter, openFilterMode, placeTypes: placeTypes, restaurantTypes: restaurantTypes, openMeals });
     props.onClose();
   }
 
@@ -64,8 +64,8 @@ const FiltersDialog: React.FC<FiltersDialogProps> = (props: FiltersDialogProps) 
             filters={{
               distanceAwayFilter,
               openFilterMode,
-              placeType,
-              restaurantType,
+              placeTypes: placeTypes,
+              restaurantTypes: restaurantTypes,
               openMeals,
             }}
             onUpdateFilters={handleUpdateFilters}
