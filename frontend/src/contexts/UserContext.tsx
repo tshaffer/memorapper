@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Distance, Filters, OpenFilterMode, Place, PlaceWithGooglePlace, Settings, TSGooglePlace } from '../types';
+import { Distance, Filters, OpenFilterMode, Place, PlaceWithGooglePlace, Settings, GooglePlace } from '../types';
 
 interface UserContextValue {
 
-  googlePlaces: TSGooglePlace[];
-  setGooglePlaces: (googlePlaces: TSGooglePlace[]) => void;
+  googlePlaces: GooglePlace[];
+  setGooglePlaces: (googlePlaces: GooglePlace[]) => void;
 
   places: Place[];
   setPlaces: (places: Place[]) => void;
@@ -22,7 +22,7 @@ interface UserContextValue {
 const UserContext = createContext<UserContextValue | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [googlePlaces, setGooglePlaces] = useState<TSGooglePlace[]>([]);
+  const [googlePlaces, setGooglePlaces] = useState<GooglePlace[]>([]);
   const [places, setPlaces] = useState<Place[]>([]);
   const [placesWithGooglePlaces, setPlacesWithGooglePlaces] = useState<PlaceWithGooglePlace[]>([]);
 
@@ -70,7 +70,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return data.places;
     };
 
-    const mergePlacesWithGooglePlaces = (places: Place[], googlePlaces: TSGooglePlace[]): PlaceWithGooglePlace[] => {
+    const mergePlacesWithGooglePlaces = (places: Place[], googlePlaces: GooglePlace[]): PlaceWithGooglePlace[] => {
       const placesWithGooglePlaces = places.map((place) => {
         const googlePlace = googlePlaces.find((gPlace) => gPlace.googlePlaceId === place.googlePlaceId);
         const PlaceWithGooglePlace: PlaceWithGooglePlace = {
@@ -84,9 +84,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const fetchData = async () => {
-      const tsGooglePlaces: TSGooglePlace[] = await fetchGooglePlaces();
+      const googlePlaces: GooglePlace[] = await fetchGooglePlaces();
       const places: Place[] = await fetchPlaces();
-      mergePlacesWithGooglePlaces(places, tsGooglePlaces);
+      mergePlacesWithGooglePlaces(places, googlePlaces);
       setLoading(false);
     };
 

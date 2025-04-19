@@ -1,4 +1,4 @@
-import { GoogleGeometry, PlaceWithGooglePlace, RestaurantType, TSGooglePlace } from "../types";
+import { GoogleGeometry, PlaceWithGooglePlace, RestaurantType, GooglePlace } from "../types";
 import '../App.css';
 
 import { IconifyIcon } from '@iconify/react';
@@ -75,14 +75,14 @@ const getRestaurantType = (googlePlaceResult: google.maps.places.PlaceResult): R
   return RestaurantType.Restaurant
 }
 
-export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.PlaceResult): TSGooglePlace {
+export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.PlaceResult): GooglePlace {
   console.log('pickGooglePlaceProperties', googlePlaceResult);
   // console.log('aspects', googlePlaceResult.aspects);
   // console.log('rating', googlePlaceResult.rating);
   // console.log('userRatingsTotal', googlePlaceResult.user_ratings_total);
   // console.log('reviews', googlePlaceResult.reviews);
 
-  const googlePlace: TSGooglePlace = {
+  const googlePlace: GooglePlace = {
     googlePlaceId: googlePlaceResult.place_id!,
     name: googlePlaceResult.name!,
     address_components: googlePlaceResult.address_components,

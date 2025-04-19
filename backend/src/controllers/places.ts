@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import MongoPlaceModel, { IMongoPlace } from "../models/MongoPlace";
-import { TSGooglePlace, MongoPlace, Place, PlaceWithGooglePlace, SubmitPlaceRequestBody } from "../types";
+import { GooglePlace, MongoPlace, Place, PlaceWithGooglePlace, SubmitPlaceRequestBody } from "../types";
 import PlaceModel, { IPlace } from '../models/Place';
 import { convertMongoGeometryToGoogleGeometry } from '../utilities';
 import { MongoGeometry } from "../types";
@@ -62,7 +62,7 @@ export const getPlaces = async (): Promise<PlaceWithGooglePlace[]> => {
             utc_offset_minutes: mongoPlace.utc_offset_minutes,
             vicinity: mongoPlace.vicinity,
             website: mongoPlace.website,
-            };
+          };
 
           places.push(place);
         }
@@ -178,7 +178,7 @@ export const getMongoPlace = async (placeId: any): Promise<IMongoPlace | null> =
 export const getGooglePlaces = async (request: Request, response: Response, next: any) => {
   try {
     const mongoPlaces: IMongoPlace[] = await MongoPlaceModel.find({}).exec();
-    const googlePlaces: TSGooglePlace[] = convertMongoPlacesToGooglePlaces(mongoPlaces);
+    const googlePlaces: GooglePlace[] = convertMongoPlacesToGooglePlaces(mongoPlaces);
     response.status(200).json({ googlePlaces });
     return;
   } catch (error) {
@@ -188,7 +188,7 @@ export const getGooglePlaces = async (request: Request, response: Response, next
   }
 }
 
-export const addMongoPlace = async (googlePlace: TSGooglePlace): Promise<IMongoPlace | null> => {
+export const addMongoPlace = async (googlePlace: GooglePlace): Promise<IMongoPlace | null> => {
   // Convert Google geometry to MongoDB format
   const mongoGeometry: MongoGeometry = convertGoogleGeometryToMongoGeometry(googlePlace.geometry!);
   const mongoPlace: MongoPlace = { ...googlePlace, geometry: mongoGeometry };

@@ -31,7 +31,7 @@ export type PlaceWithGooglePlace = {
   visited: boolean;
   placeType?: PlaceType;
   placeComments?: string;
-  googlePlace?: TSGooglePlace;
+  googlePlace?: GooglePlace;
   restaurant?: Restaurant;
 };
 
@@ -41,11 +41,11 @@ export type SubmitPlaceRequestBody = {
   visited: boolean;
   placeType?: PlaceType;
   placeComments?: string;
-  googlePlace?: TSGooglePlace;
+  googlePlace?: GooglePlace;
   restaurant?: Restaurant;
 };
 
-export interface TSGooglePlace {
+export interface GooglePlace {
   googlePlaceId: string;
   address_components?: google.maps.GeocoderAddressComponent[];
   formatted_address?: string;

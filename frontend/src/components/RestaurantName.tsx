@@ -1,13 +1,13 @@
 import { useRef } from "react";
 import { Box, TextField } from "@mui/material";
 import { Autocomplete } from '@react-google-maps/api';
-import { TSGooglePlace } from "../types";
+import { GooglePlace } from "../types";
 import { pickGooglePlaceProperties } from "../utilities";
 
 interface RestaurantNameProps {
   restaurantName: string;
   onSetRestaurantName: (restaurantName: string) => any;
-  onSetGooglePlace: (googlePlace: TSGooglePlace) => any;
+  onSetGooglePlace: (googlePlace: GooglePlace) => any;
 }
 
 const RestaurantName: React.FC<RestaurantNameProps> = (props: RestaurantNameProps) => {
@@ -19,7 +19,7 @@ const RestaurantName: React.FC<RestaurantNameProps> = (props: RestaurantNameProp
     if (autocompleteRef.current) {
       const place: google.maps.places.PlaceResult = autocompleteRef.current.getPlace();
       try {
-        const googlePlace: TSGooglePlace = pickGooglePlaceProperties(place);
+        const googlePlace: GooglePlace = pickGooglePlaceProperties(place);
         props.onSetGooglePlace(googlePlace);
         onSetRestaurantName(googlePlace!.name!);
       } catch (error) {
