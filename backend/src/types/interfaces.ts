@@ -11,7 +11,7 @@ export interface Filters {
 
 export interface SearchQuery {
   query: string;
-  distanceAway: DistanceAwayQuery;
+  distanceSpec: DistanceAwayQuery;
   placeTypes: PlaceType[];
   restaurantTypes: RestaurantType[];
   openFilterMode: OpenFilterMode;

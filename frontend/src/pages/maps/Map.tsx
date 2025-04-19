@@ -186,7 +186,7 @@ const MapPage: React.FC = () => {
       placeTypes: filters.placeTypes,
       restaurantTypes: filters.restaurantTypes,
       openMeals: filters.openMealsFilter,
-      distanceAway: {
+      distanceSpec: {
         lat: mapLocation!.lat,
         lng: mapLocation!.lng,
         radius: filters.distanceAway,
