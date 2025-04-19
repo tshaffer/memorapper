@@ -85,7 +85,18 @@ const MapPage: React.FC = () => {
 
       } catch (error) {
         console.error('Error getting current location: ', error);
-        return null;
+
+        const defaultLocation = {
+          lat: 37.3920898, // Default to Crapshack
+          lng: -122.1479873,
+        };
+        console.warn('Using default location:', defaultLocation);
+
+        if (!_id) {
+          setMapLocation(defaultLocation);
+        }
+
+        return defaultLocation;
       }
     };
 
