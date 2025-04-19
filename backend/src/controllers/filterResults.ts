@@ -1,4 +1,4 @@
-import { Filters, SearchResponse, RestaurantType, OpenFilterMode, MealType, PlaceWithGooglePlace, PlaceType } from "../types";
+import { Filters, SearchResponse, RestaurantType, RestaurantOpen, MealType, PlaceWithGooglePlace, PlaceType } from "../types";
 
 export const filterResults = async (
   filter: Filters,
@@ -9,8 +9,8 @@ export const filterResults = async (
     distanceAway: distanceAwayFilter,
     placeTypes: placeTypesFilter,
     restaurantTypes: restaurantsTypeFilter,
-    openFilterMode,
-    openMealsFilter,
+    restaurantOpen,
+    openMeals,
   } = filter;
 
   const filteredPlaces = places.filter(place => {
@@ -46,12 +46,12 @@ export const filterResults = async (
     }
 
     // 5) Open‐now vs. open‐for‐meals vs. no open filter
-    if (openFilterMode === OpenFilterMode.Now) {
+    if (restaurantOpen === RestaurantOpen.OpenNow) {
       if (!isPlaceOpenNow(place.googlePlace.opening_hours)) return false;
 
-    } else if (openFilterMode === OpenFilterMode.Meals) {
+    } else if (restaurantOpen === RestaurantOpen.OpenByMeal) {
       // figure out which meals are checked
-      const selectedMeals = (Object.entries(openMealsFilter) as [
+      const selectedMeals = (Object.entries(openMeals) as [
         MealType,
         boolean
       ][])

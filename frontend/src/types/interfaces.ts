@@ -1,11 +1,11 @@
-import { Distance, OpenFilterMode, PlaceType, RestaurantType } from "./enums";
+import { Distance, RestaurantOpen, PlaceType, RestaurantType } from "./enums";
 
 export interface Filters {
   distanceAway: Distance;
   placeTypes: PlaceType[];
   restaurantTypes: RestaurantType[];
-  openFilterMode: OpenFilterMode;
-  openMealsFilter: OpenMealsSpec;
+  restaurantOpen: RestaurantOpen;
+  openMeals: OpenForMeals;
 }
 
 export interface SearchQuery {
@@ -13,8 +13,8 @@ export interface SearchQuery {
   distanceSpec: DistanceAwayQuery;
   placeTypes: PlaceType[];
   restaurantTypes: RestaurantType[];
-  openFilterMode: OpenFilterMode;
-  openMeals: OpenMealsSpec;
+  restaurantOpen: RestaurantOpen;
+  openMeals: OpenForMeals;
 }
 
 export interface DistanceAwayQuery {
@@ -23,9 +23,9 @@ export interface DistanceAwayQuery {
   radius: number;
 }
 
-export interface OpenMealsSpec {
-  BREAKFAST: boolean;
-  LUNCH: boolean;
-  DINNER: boolean;
+export interface OpenForMeals {
+  Breakfast: boolean;
+  Lunch: boolean;
+  Dinner: boolean;
 }
 

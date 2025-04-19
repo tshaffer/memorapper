@@ -1,5 +1,5 @@
 import { Box, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Checkbox, useMediaQuery, InputLabel, Select, MenuItem, SelectChangeEvent, FormGroup } from '@mui/material';
-import { Distance, Filters, MealType, OpenFilterMode, Place, PlaceType, RestaurantType } from "../types";
+import { Distance, Filters, MealType, RestaurantOpen, Place, PlaceType, RestaurantType } from "../types";
 import { useState } from 'react';
 
 export interface FiltersSettingsProps {
@@ -13,10 +13,10 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
   // and, if in "MEALS" mode, an "openMeals" object.
   const {
     distanceAway = Distance.AnyDistance,
-    openFilterMode = OpenFilterMode.Any,
+    restaurantOpen = RestaurantOpen.OpenAnyTime,
     placeTypes = [],
     restaurantTypes = [],
-    openMealsFilter = { BREAKFAST: false, LUNCH: false, DINNER: false }
+    openMeals = { Breakfast: false, Lunch: false, Dinner: false }
   } = filters;
 
   const [selectedPlaceTypes, setSelectedPlaceTypes] = useState<PlaceType[]>([]);
@@ -62,19 +62,19 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
 
   // --- Open Status Filter Handlers ---
   // Handle change in the radio group for open status.
-  const handleOpenFilterModeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newMode = event.target.value as OpenFilterMode;
-    onUpdateFilters({ ...filters, openFilterMode: newMode });
+  const handleRestaurantOpenChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const restaurantOpen = event.target.value as RestaurantOpen;
+    onUpdateFilters({ ...filters, restaurantOpen });
   };
 
   // Handle the toggling of specific meal checkboxes.
   const handleMealCheckboxChange = (meal: MealType) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const updatedMeals = { ...openMealsFilter, [meal]: event.target.checked };
+    const updatedMeals = { ...openMeals, [meal]: event.target.checked };
     // When updating meal selections, set the mode to "MEALS" so that
     // the UI stays consistent with the user's intent.
-    onUpdateFilters({ ...filters, openFilterMode: OpenFilterMode.Meals, openMealsFilter: updatedMeals });
+    onUpdateFilters({ ...filters, restaurantOpen: RestaurantOpen.OpenByMeal, openMeals: updatedMeals });
   };
 
   // --- Rendering Sub-Components ---
@@ -219,17 +219,17 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
       <FormLabel component="legend" sx={{ fontWeight: 500, fontSize: '14px', color: '#1976D2' }}>
         OPEN STATUS
       </FormLabel>
-      <RadioGroup row value={openFilterMode} onChange={handleOpenFilterModeChange}>
-        <FormControlLabel value={OpenFilterMode.Any} control={<Radio />} label="Not Specified" />
-        <FormControlLabel value={OpenFilterMode.Now} control={<Radio />} label="Open Now" />
-        <FormControlLabel value={OpenFilterMode.Meals} control={<Radio />} label="Open at Meals" />
+      <RadioGroup row value={openMeals} onChange={handleRestaurantOpenChange}>
+        <FormControlLabel value={RestaurantOpen.OpenAnyTime} control={<Radio />} label="Not Specified" />
+        <FormControlLabel value={RestaurantOpen.OpenNow} control={<Radio />} label="Open Now" />
+        <FormControlLabel value={RestaurantOpen.OpenByMeal} control={<Radio />} label="Open at Meals" />
       </RadioGroup>
-      {openFilterMode === OpenFilterMode.Meals && (
+      {restaurantOpen === RestaurantOpen.OpenByMeal && (
         <Box sx={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
           <FormControlLabel
             control={
               <Checkbox
-                checked={openMealsFilter.BREAKFAST}
+                checked={openMeals.Breakfast}
                 onChange={handleMealCheckboxChange(MealType.Breakfast)}
               />
             }
@@ -238,7 +238,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
           <FormControlLabel
             control={
               <Checkbox
-                checked={openMealsFilter.LUNCH}
+                checked={openMeals.Lunch}
                 onChange={handleMealCheckboxChange(MealType.Lunch)}
               />
             }
@@ -247,7 +247,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
           <FormControlLabel
             control={
               <Checkbox
-                checked={openMealsFilter.DINNER}
+                checked={openMeals.Dinner}
                 onChange={handleMealCheckboxChange(MealType.Dinner)}
               />
             }

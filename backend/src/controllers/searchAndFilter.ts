@@ -10,7 +10,7 @@ export const searchAndFilterHandler = async (
   res: Response
 ): Promise<void> => {
   const { searchQuery } = req.body;
-  const { distanceSpec, placeTypes, restaurantTypes, openFilterMode, openMeals }: SearchQuery = searchQuery;
+  const { distanceSpec, placeTypes, restaurantTypes, restaurantOpen, openMeals }: SearchQuery = searchQuery;
 
   try {
 
@@ -18,10 +18,10 @@ export const searchAndFilterHandler = async (
 
     const filterResultsParams: Filters = {
       distanceAway: distanceSpec.radius,
-      placeTypes: placeTypes,
-      restaurantTypes: restaurantTypes,
-      openFilterMode: openFilterMode,
-      openMealsFilter: openMeals,
+      placeTypes,
+      restaurantTypes,
+      restaurantOpen,
+      openMeals,
     };
     const searchResponse: SearchResponse = await (filterResults(filterResultsParams, places, { lat: distanceSpec.lat, lng: distanceSpec.lng }));
 

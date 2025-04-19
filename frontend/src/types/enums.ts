@@ -7,7 +7,6 @@ export enum Distance {
 }
 
 export enum RestaurantType {
-  Any = -1,
   Restaurant = 0,
   CoffeeShop = 1,
   Bar = 2,
@@ -26,10 +25,10 @@ export enum PlaceType {
   Accommodations = 3,
 }
 
-export enum OpenFilterMode {
-  Any = 'ANY',
-  Now = 'NOW',
-  Meals = 'MEALS',
+export enum RestaurantOpen {
+  OpenAnyTime = 'OPEN_ANY_TIME',
+  OpenNow = 'OPEN_NOW',
+  OpenByMeal = 'OPEN_BY_MEAL',
 }
 
 export enum MealType {

@@ -5,7 +5,7 @@ export const newFilterResults = (
   googlePlaces: PlaceWithGooglePlace[],
   mapLocation: google.maps.LatLngLiteral,
 ): PlaceWithGooglePlace[] => {
-  const { distanceAway, placeTypes, restaurantTypes, openFilterMode, openMealsFilter }: Filters = filter;
+  const { distanceAway }: Filters = filter;
 
   const filteredPlaces: PlaceWithGooglePlace[] = googlePlaces.filter((place: PlaceWithGooglePlace) => {
     if (!place.googlePlace!.geometry || !place.googlePlace!.geometry.location) return false;
@@ -13,11 +13,6 @@ export const newFilterResults = (
     // Filter by distance
     const distanceInMiles = haversineDistance(mapLocation, place.googlePlace!.geometry.location);
     if (distanceInMiles > distanceAway) return false;
-
-    // Filter by open now
-    // if (openNowFilter && !isPlaceOpenNow(place.opening_hours)) {
-    //   return false;
-    // }
 
     return true;
   });

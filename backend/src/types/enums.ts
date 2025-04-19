@@ -25,11 +25,11 @@ export enum PlaceType {
   Accommodations = 3,
 }
 
-export enum OpenFilterMode {
-  Any = 'ANY',
-  Now = 'NOW',
-  Meals = 'MEALS',
-}
+export enum RestaurantOpen {
+  OpenAnyTime = 'OPEN_ANY_TIME',
+  OpenNow = 'OPEN_NOW',
+  OpenByMeal = 'OPEN_BY_MEAL',
+};
 
 export enum MealType {
   Breakfast = 'BREAKFAST',
