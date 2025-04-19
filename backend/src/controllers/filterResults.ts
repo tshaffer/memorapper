@@ -1,7 +1,7 @@
-import { FilterResultsParams, SearchResponse, RestaurantType, OpenFilterMode, MealType, PlaceWithGooglePlace, PlaceType } from "../types";
+import { Filters, SearchResponse, RestaurantType, OpenFilterMode, MealType, PlaceWithGooglePlace, PlaceType } from "../types";
 
 export const filterResults = async (
-  filter: FilterResultsParams,
+  filter: Filters,
   places: PlaceWithGooglePlace[],
   mapLocation: google.maps.LatLngLiteral,
 ): Promise<SearchResponse> => {

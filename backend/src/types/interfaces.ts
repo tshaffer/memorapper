@@ -1,7 +1,7 @@
 import { OpenFilterMode, PlaceType, RestaurantType, Distance } from "./enums";
 import { PlaceWithGooglePlace } from "./place";
 
-export interface FilterResultsParams {
+export interface Filters {
   distanceAway: Distance;
   placeTypes: PlaceType[];
   restaurantTypes: RestaurantType[];

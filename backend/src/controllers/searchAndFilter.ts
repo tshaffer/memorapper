@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { SearchQuery, FilterResultsParams, SearchResponse, Place, PlaceWithGooglePlace } from "../types";
+import { SearchQuery, Filters, SearchResponse, Place, PlaceWithGooglePlace } from "../types";
 import { filterResults } from './filterResults';
 import { getPlaces } from './places';
 
@@ -16,7 +16,7 @@ export const searchAndFilterHandler = async (
 
     const places: PlaceWithGooglePlace[] = await getPlaces();
 
-    const filterResultsParams: FilterResultsParams = {
+    const filterResultsParams: Filters = {
       distanceAway: distanceAway.radius,
       placeTypes: placeTypes,
       restaurantTypes: restaurantTypes,
