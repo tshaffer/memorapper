@@ -17,22 +17,15 @@ export interface SearchQuery {
   openMeals: OpenMealsSpec;
 }
 
-export interface DistanceFilter {
-  enabled: boolean;
-  useCurrentLocation: boolean;
-  specificLocation: google.maps.LatLngLiteral | null;
-  distance: number;
+export interface DistanceAwayQuery {
+  lat: number;
+  lng: number;
+  radius: number;
 }
 
 export interface OpenMealsSpec {
   BREAKFAST: boolean;
   LUNCH: boolean;
   DINNER: boolean;
-}
-
-export interface DistanceAwayQuery {
-  lat: number;
-  lng: number;
-  radius: number;
 }
 
