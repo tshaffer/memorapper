@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Place, PlaceWithGooglePlace } from '../types';
+import { PlaceWithGooglePlace } from '../types';
 import { AdvancedMarker, APIProvider, Map } from '@vis.gl/react-google-maps';
 import '../App.css';
 
@@ -25,8 +25,8 @@ interface MapWithMarkersProps {
   initialCenter: google.maps.LatLngLiteral;
   places: PlaceWithGooglePlace[];
   blueDotLocation?: google.maps.LatLngLiteral;
-  onVisiblePlacesChanged: (places: Place[]) => void;
-  onPlaceSelect: (place: Place) => void;
+  onVisiblePlacesChanged: (places: PlaceWithGooglePlace[]) => void;
+  onPlaceSelect: (place: PlaceWithGooglePlace) => void;
 }
 
 const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, blueDotLocation, onVisiblePlacesChanged, onPlaceSelect }) => {
@@ -36,7 +36,7 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, 
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
 
-  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<PlaceWithGooglePlace | null>(null);
 
   const [bounds, setBounds] = useState<google.maps.LatLngBounds | null>(null);
 
@@ -65,7 +65,7 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, 
     }
   }, []);
 
-  const handlePlaceClicked = (place: Place) => {
+  const handlePlaceClicked = (place: PlaceWithGooglePlace) => {
     console.log('Place clicked:', place);
     setSelectedPlace(place);
   };
@@ -79,12 +79,12 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, 
     setSelectedPlace(null);
   };
 
-  const renderPlaceMarker = (place: Place, index: number): JSX.Element => {
+  const renderPlaceMarker = (place: PlaceWithGooglePlace, index: number): JSX.Element => {
     return (
       <PlaceMarker
         key={`location-${index}`}
         place={place}
-        onMarkerClick={(place: Place) => handlePlaceClicked(place)}
+        onMarkerClick={(place: PlaceWithGooglePlace) => handlePlaceClicked(place)}
       >
       </PlaceMarker>
     );
@@ -112,11 +112,11 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, 
 
     let markerIsVisibleCount = 0;
 
-    const visiblePlaces: Place[] = [];
+    const visiblePlaces: PlaceWithGooglePlace[] = [];
     
     for (const place of places) {
-      if (place && place.geometry) {
-        const markerIsVisible = isMarkerVisible(place.geometry.location, bounds);
+      if (place && place.googlePlace!.geometry) {
+        const markerIsVisible = isMarkerVisible(place.googlePlace!.geometry.location, bounds);
         if (markerIsVisible) {
           visiblePlaces.push(place);
           markerIsVisibleCount++;

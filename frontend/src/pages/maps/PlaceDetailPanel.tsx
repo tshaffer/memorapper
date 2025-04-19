@@ -9,16 +9,16 @@ import {
   Rating
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { Place, PlaceType, RestaurantReview } from '../../types';
+import { Place, PlaceType, PlaceWithGooglePlace, RestaurantReview } from '../../types';
 import PlaceEditor from '../../components/PlaceEditor';
 import { restaurantTypeLabelFromRestaurantType } from '../../utilities';
 import { OpeningHours } from '../../components';
 
 interface PlaceDetailPanelProps {
   open: boolean;
-  place: Place;
+  place: PlaceWithGooglePlace;
   onClose: () => void;
-  onUpdatePlace: (place: Place) => Promise<any>;
+  onUpdatePlace: (place: PlaceWithGooglePlace) => Promise<any>;
   onDeletePlace: (placeId: string) => void;
   onAddReview: (placeId: string, review: RestaurantReview) => void;
   onEditReview: (placeId: string, review: RestaurantReview) => void;
@@ -37,7 +37,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
 }) => {
   // Local state for editing the place details.
   const [isEditing, setIsEditing] = useState(false);
-  const [editPlace, setEditPlace] = useState<Place>({ ...place });
+  const [editPlace, setEditPlace] = useState<PlaceWithGooglePlace>({ ...place });
 
   React.useEffect(() => {
     setEditPlace({ ...place });
@@ -58,7 +58,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
     setEditPlace(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSavePlace = async (place: Place) => {
+  const handleSavePlace = async (place: PlaceWithGooglePlace) => {
     onUpdatePlace(place);
     setIsEditing(false);
   };
@@ -83,7 +83,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
       <Box sx={{ width: 350, padding: 2 }}>
         {/* Header with a title and close button */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">{place.name}</Typography>
+          <Typography variant="h6">{place.googlePlace!.name}</Typography>
           <IconButton onClick={onClose}>
             <CloseIcon />
           </IconButton>
@@ -95,47 +95,47 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
             <PlaceEditor
               mode={'edit'}
               initialPlace={editPlace}
-              onSubmit={(place: Place) => handleSavePlace(place)}
+              onSubmit={(place: PlaceWithGooglePlace) => handleSavePlace(place)}
               onCancel={handleCancelEdit}
             >
             </PlaceEditor>
           </Box>
         ) : (
           <Box>
-            <Typography variant="body2" color="textSecondary">{place.formatted_address}</Typography>
-            {place.rating && (
+            <Typography variant="body2" color="textSecondary">{place.googlePlace!.formatted_address}</Typography>
+            {place.googlePlace!.rating && (
               <>
                 <Typography variant="body2" color="textSecondary">
                   <Rating
-                    value={place.rating}
+                    value={place.googlePlace!.rating}
                     max={5}
                     readOnly
                   />
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  {place.rating} ({place.user_ratings_total} reviews)
+                  {place.googlePlace!.rating} ({place.googlePlace!.user_ratings_total} reviews)
                 </Typography>
               </>
             )}
             {place.placeType === PlaceType.Restaurant && (
               <Box sx={{ mt: 2 }}>
-                <Typography variant="body2">{restaurantTypeLabelFromRestaurantType(place.restaurantType!)}</Typography>
-                {place.opening_hours && <OpeningHours openingHours={place.opening_hours!}></OpeningHours>}
+                <Typography variant="body2">{restaurantTypeLabelFromRestaurantType(place.restaurant!.restaurantType!)}</Typography>
+                {place.googlePlace!.opening_hours && <OpeningHours openingHours={place.googlePlace!.opening_hours!}></OpeningHours>}
                 <Typography variant="body2">
-                  Breakfast: {place.openForBreakfast ? 'Yes' : 'No'}
+                  Breakfast: {place.restaurant!.openForBreakfast ? 'Yes' : 'No'}
                 </Typography>
                 <Typography variant="body2">
-                  Lunch: {place.openForLunch ? 'Yes' : 'No'}
+                  Lunch: {place.restaurant!.openForLunch ? 'Yes' : 'No'}
                 </Typography>
                 <Typography variant="body2">
-                  Dinner: {place.openForDinner ? 'Yes' : 'No'}
+                  Dinner: {place.restaurant!.openForDinner ? 'Yes' : 'No'}
                 </Typography>
               </Box>
             )}
-            {place.website && (
+            {place.googlePlace!.website && (
               <Typography variant="body2">
-                <a href={place.website} target="_blank" rel="noopener noreferrer">
-                  {place.website}
+                <a href={place.googlePlace!.website} target="_blank" rel="noopener noreferrer">
+                  {place.googlePlace!.website}
                 </a>
               </Typography>
             )}

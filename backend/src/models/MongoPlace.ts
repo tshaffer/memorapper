@@ -78,21 +78,20 @@ const MongoPlaceSchema: Schema = new Schema({
   utc_offset_minutes: { type: Number },
   vicinity: { type: String },
 
-
-  restaurantType: {
-    type: Number,
-    enum: [
-      RestaurantType.Restaurant,
-      RestaurantType.CoffeeShop,
-      RestaurantType.Bar,
-      RestaurantType.Bakery,
-      RestaurantType.Taqueria,
-      RestaurantType.PizzaPlace,
-      RestaurantType.ItalianRestaurant,
-      RestaurantType.DessertShop,
-      RestaurantType.Seafood,
-    ]
-  },
+  // restaurantType: {
+  //   type: Number,
+  //   enum: [
+  //     RestaurantType.Restaurant,
+  //     RestaurantType.CoffeeShop,
+  //     RestaurantType.Bar,
+  //     RestaurantType.Bakery,
+  //     RestaurantType.Taqueria,
+  //     RestaurantType.PizzaPlace,
+  //     RestaurantType.ItalianRestaurant,
+  //     RestaurantType.DessertShop,
+  //     RestaurantType.Seafood,
+  //   ]
+  // },
   geometry: MongoGeometrySchema
 }, { collection: "mongoPlaces" });
 

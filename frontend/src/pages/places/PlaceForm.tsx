@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import '../../styles/multiPanelStyles.css';
-import { Button, MenuItem, Select, useMediaQuery, Checkbox, FormControlLabel, TextField } from "@mui/material";
-import { Place, GooglePlace, SubmitPlaceRequestBody, RestaurantType, PlaceType, UserComment } from "../../types";
-import RestaurantName from '../../components/RestaurantName';
-import PulsingDots from '../../components/PulsingDots';
+import { useMediaQuery } from "@mui/material";
+import { Place, PlaceType } from "../../types";
 import { useParams } from 'react-router-dom';
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -21,11 +19,7 @@ const PlaceForm = () => {
     placeId: uuidv4(),
     visited: false,
     placeType: PlaceType.Restaurant,
-    restaurantType: RestaurantType.Restaurant,
-    // Optional meal availability fields for restaurants:
-    openForBreakfast: undefined,
-    openForLunch: undefined,
-    openForDinner: undefined,
+    googlePlaceId: '',
   };
 
   const [place, setPlace] = useState<Place>(initialPlaceData);
@@ -94,35 +88,35 @@ const PlaceForm = () => {
     };
   };
 
-  const handleChangeGooglePlace = (googlePlace: GooglePlace) => {
-    // Copy current place data into a temporary variable.
-    const currentPlace: SubmitPlaceRequestBody = { ...place };
-    // Update google place details.
-    currentPlace.address_components = googlePlace.address_components;
-    currentPlace.formatted_address = googlePlace.formatted_address;
-    currentPlace.geometry = googlePlace.geometry;
-    currentPlace.name = googlePlace.name;
-    currentPlace.opening_hours = googlePlace.opening_hours;
-    currentPlace.googlePlaceId = googlePlace.googlePlaceId;
-    currentPlace.price_level = googlePlace.price_level;
-    currentPlace.rating = googlePlace.rating;
-    currentPlace.user_ratings_total = googlePlace.user_ratings_total;
-    currentPlace.utc_offset_minutes = googlePlace.utc_offset_minutes;
-    currentPlace.vicinity = googlePlace.vicinity;
-    currentPlace.website = googlePlace.website;
+  // const handleChangeGooglePlace = (googlePlace: PlaceWithGooglePlace) => {
+  //   // Copy current place data into a temporary variable.
+  //   const currentPlace: SubmitPlaceRequestBody = { ...place};
+  //   // Update google place details.
+  //   currentPlace.address_components = googlePlace.address_components;
+  //   currentPlace.formatted_address = googlePlace.formatted_address;
+  //   currentPlace.geometry = googlePlace.geometry;
+  //   currentPlace.name = googlePlace.name;
+  //   currentPlace.opening_hours = googlePlace.opening_hours;
+  //   currentPlace.googlePlaceId = googlePlace.googlePlaceId;
+  //   currentPlace.price_level = googlePlace.price_level;
+  //   currentPlace.rating = googlePlace.rating;
+  //   currentPlace.user_ratings_total = googlePlace.user_ratings_total;
+  //   currentPlace.utc_offset_minutes = googlePlace.utc_offset_minutes;
+  //   currentPlace.vicinity = googlePlace.vicinity;
+  //   currentPlace.website = googlePlace.website;
 
-    // If the place is a restaurant and opening_hours exists, infer the meal availabilities.
-    if (currentPlace.placeType === PlaceType.Restaurant && googlePlace.opening_hours) {
-      const { openForBreakfast, openForLunch, openForDinner } = inferMealAvailability(googlePlace.opening_hours);
-      currentPlace.openForBreakfast = openForBreakfast;
-      currentPlace.openForLunch = openForLunch;
-      currentPlace.openForDinner = openForDinner;
-    }
+  //   // If the place is a restaurant and opening_hours exists, infer the meal availabilities.
+  //   if (currentPlace.placeType === PlaceType.Restaurant && googlePlace.opening_hours) {
+  //     const { openForBreakfast, openForLunch, openForDinner } = inferMealAvailability(googlePlace.opening_hours);
+  //     currentPlace.openForBreakfast = openForBreakfast;
+  //     currentPlace.openForLunch = openForLunch;
+  //     currentPlace.openForDinner = openForDinner;
+  //   }
 
-    setPlace((prev) => ({ ...prev, ...currentPlace }));
-    setPlaceName(googlePlace.name);
-    console.log('place:', { ...place, ...currentPlace });
-  };
+  //   setPlace((prev) => ({ ...prev, ...currentPlace }));
+  //   setPlaceName(googlePlace.name);
+  //   console.log('place:', { ...place, ...currentPlace });
+  // };
 
   const handleChange = (field: keyof Place, value: any) => {
     setPlace((prev) => ({ ...prev, [field]: value }));

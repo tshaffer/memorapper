@@ -1,20 +1,20 @@
 import { IMongoPlace } from "../models";
-import { GoogleGeometry, GooglePlace, MongoGeometry, MongoPlace } from "../types";
+import { GoogleGeometry, TSGooglePlace, MongoGeometry, MongoPlace } from "../types";
 import { MongoViewport, GeoJSONPoint } from '../types';
 
-export function convertMongoPlaceToGooglePlace(mongoPlace: IMongoPlace): GooglePlace {
+export function convertMongoPlaceToGooglePlace(mongoPlace: IMongoPlace): TSGooglePlace {
   const mongoPlaceObject: MongoPlace = mongoPlace.toObject();
-  const googlePlace: GooglePlace = {
+  const googlePlace: TSGooglePlace = {
     ...mongoPlaceObject,
     geometry: convertMongoGeometryToGoogleGeometry(mongoPlace.geometry!)
   };
   return googlePlace;
 }
 
-export function convertMongoPlacesToGooglePlaces(mongoPlaces: IMongoPlace[]): GooglePlace[] {
+export function convertMongoPlacesToGooglePlaces(mongoPlaces: IMongoPlace[]): TSGooglePlace[] {
   return mongoPlaces.map((mongoPlace) => {
     const mongoPlaceObject: MongoPlace = mongoPlace.toObject();
-    const googlePlace: GooglePlace = {
+    const googlePlace: TSGooglePlace = {
       ...mongoPlaceObject,
       geometry: convertMongoGeometryToGoogleGeometry(mongoPlace.geometry!)
     };

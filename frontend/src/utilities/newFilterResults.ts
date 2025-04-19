@@ -1,4 +1,4 @@
-import { GooglePlace, Filters, PlaceWithGooglePlace } from "../types";
+import { Filters, PlaceWithGooglePlace } from "../types";
 
 export const newFilterResults = (
   filter: Filters,
@@ -8,10 +8,10 @@ export const newFilterResults = (
   const { distanceAway, placeTypes, restaurantTypes, openFilterMode, openMealsFilter }: Filters = filter;
 
   const filteredPlaces: PlaceWithGooglePlace[] = googlePlaces.filter((place: PlaceWithGooglePlace) => {
-    if (!place.geometry || !place.geometry.location) return false;
+    if (!place.googlePlace!.geometry || !place.googlePlace!.geometry.location) return false;
 
     // Filter by distance
-    const distanceInMiles = haversineDistance(mapLocation, place.geometry.location);
+    const distanceInMiles = haversineDistance(mapLocation, place.googlePlace!.geometry.location);
     if (distanceInMiles > distanceAway) return false;
 
     // Filter by open now

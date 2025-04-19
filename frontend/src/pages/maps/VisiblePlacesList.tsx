@@ -1,10 +1,10 @@
 import React, { } from 'react';
 import { useMediaQuery, List, ListItemButton } from '@mui/material';
-import { Place } from '../../types';
+import { Place, PlaceWithGooglePlace } from '../../types';
 
 export interface VisiblePlacesListProps {
-  visiblePlaces: Place[];
-  onPlaceSelect: (place: Place) => void;
+  visiblePlaces: PlaceWithGooglePlace[];
+  onPlaceSelect: (place: PlaceWithGooglePlace) => void;
 }
 
 const VisiblePlacesList: React.FC<VisiblePlacesListProps> = (props: VisiblePlacesListProps) => {
@@ -25,7 +25,7 @@ const VisiblePlacesList: React.FC<VisiblePlacesListProps> = (props: VisiblePlace
   return (
     <div style={listContainerStyle}>
       <List>
-        {props.visiblePlaces.map((place: Place, index) => (
+        {props.visiblePlaces.map((place: PlaceWithGooglePlace, index) => (
           <ListItemButton key={index}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <h4
@@ -38,7 +38,7 @@ const VisiblePlacesList: React.FC<VisiblePlacesListProps> = (props: VisiblePlace
                 }}
                 onClick={() => props.onPlaceSelect(place)}
               >
-                {place.name}
+                {place.googlePlace!.name}
               </h4>
             </div>
           </ListItemButton>

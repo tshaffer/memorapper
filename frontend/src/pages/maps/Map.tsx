@@ -22,7 +22,7 @@ import VisiblePlacesList from './VisiblePlacesList';
 import PlaceDetailPanel from './PlaceDetailPanel';
 
 const MapPage: React.FC = () => {
-  const { googlePlaces, places, settings, setFilters } = useUserContext();
+  const { placesWithGooglePlaces, places, settings, setFilters } = useUserContext();
   const { _id } = useParams<{ _id: string }>();
 
   const isMobile = useMediaQuery('(max-width:768px)');
@@ -36,8 +36,8 @@ const MapPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [isListVisible, setIsListVisible] = useState(true);
-  const [visiblePlaces, setVisiblePlaces] = useState<Place[]>([]);
-  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+  const [visiblePlaces, setVisiblePlaces] = useState<PlaceWithGooglePlace[]>([]);
+  const [selectedPlace, setSelectedPlace] = useState<PlaceWithGooglePlace | null>(null);
 
   const toggleList = () => {
     setIsListVisible((prev) => !prev);
@@ -102,7 +102,7 @@ const MapPage: React.FC = () => {
 
     const fetchData = async () => {
       const location = await fetchCurrentLocation();
-      filterOnEntry(googlePlaces, location!, settings.filters);
+      filterOnEntry(placesWithGooglePlaces, location!, settings.filters);
     };
 
     fetchData();
@@ -111,19 +111,19 @@ const MapPage: React.FC = () => {
 
   // Update map location based on the provided placeId (_id)
   useEffect(() => {
-    if (_id && googlePlaces.length > 0) {
-      const googlePlace = googlePlaces.find((googlePlace) => googlePlace.googlePlaceId === _id);
-      if (googlePlace && googlePlace.geometry) {
+    if (_id && placesWithGooglePlaces.length > 0) {
+      const googlePlace = placesWithGooglePlaces.find((placesWithGooglePlaces) => placesWithGooglePlaces.googlePlaceId === _id);
+      if (googlePlace && googlePlace.googlePlace!.geometry) {
         const location = {
-          lat: googlePlace.geometry.location.lat,
-          lng: googlePlace.geometry.location.lng,
+          lat: googlePlace.googlePlace!.geometry.location.lat,
+          lng: googlePlace.googlePlace!.geometry.location.lng,
         };
         setMapLocation(location);
       } else {
         console.warn('Place not found or missing geometry for placeId:', _id);
       }
     }
-  }, [_id, googlePlaces]);
+  }, [_id, placesWithGooglePlaces]);
 
   const handleOpenFiltersDialog = () => {
     setShowFiltersDialog(true);
@@ -206,16 +206,16 @@ const MapPage: React.FC = () => {
     setMapLocation(location);
   }
 
-  const handleVisiblePlacesChanged = (visiblePlaces: Place[]) => {
+  const handleVisiblePlacesChanged = (visiblePlaces: PlaceWithGooglePlace[]) => {
     setVisiblePlaces(visiblePlaces);
   }
 
   // Handler called when a user clicks a place icon or a visible list item.
-  const handlePlaceSelect = (place: Place) => {
+  const handlePlaceSelect = (place: PlaceWithGooglePlace) => {
     setSelectedPlace(place);
   };
 
-  const handleUpdatePlace = async (updatedPlace: Place) => {
+  const handleUpdatePlace = async (updatedPlace: PlaceWithGooglePlace) => {
 
     // Update the place in your state (and optionally propagate changes to your backend/global store)
     setSelectedPlace(updatedPlace);
@@ -247,24 +247,24 @@ const MapPage: React.FC = () => {
 
   const handleAddReview = (placeId: string, review: RestaurantReview) => {
     // Update the selected place with a new review
-    if (selectedPlace) {
-      const updatedReviews = selectedPlace.restaurantReviews ? [...selectedPlace.restaurantReviews, review] : [review];
-      setSelectedPlace({ ...selectedPlace, restaurantReviews: updatedReviews });
-    }
+    // if (selectedPlace) {
+    //   const updatedReviews = selectedPlace.restaurant!.restaurantReviews ? [...selectedPlace.restaurantReviews, review] : [review];
+    //   setSelectedPlace({ ...selectedPlace, restaurantReviews: updatedReviews });
+    // }
   };
 
   const handleEditReview = (placeId: string, review: RestaurantReview) => {
-    if (selectedPlace && selectedPlace.restaurantReviews) {
-      const updatedReviews = selectedPlace.restaurantReviews.map(r => r._idRestaurantReview === review._idRestaurantReview ? review : r);
-      setSelectedPlace({ ...selectedPlace, restaurantReviews: updatedReviews });
-    }
+    // if (selectedPlace && selectedPlace.restaurantReviews) {
+    //   const updatedReviews = selectedPlace.restaurantReviews.map(r => r._idRestaurantReview === review._idRestaurantReview ? review : r);
+    //   setSelectedPlace({ ...selectedPlace, restaurantReviews: updatedReviews });
+    // }
   };
 
   const handleDeleteReview = (placeId: string, reviewId: string) => {
-    if (selectedPlace && selectedPlace.restaurantReviews) {
-      const updatedReviews = selectedPlace.restaurantReviews.filter(r => r._idRestaurantReview !== reviewId);
-      setSelectedPlace({ ...selectedPlace, restaurantReviews: updatedReviews });
-    }
+    // if (selectedPlace && selectedPlace.restaurantReviews) {
+    //   const updatedReviews = selectedPlace.restaurantReviews.filter(r => r._idRestaurantReview !== reviewId);
+    //   setSelectedPlace({ ...selectedPlace, restaurantReviews: updatedReviews });
+    // }
   };
 
   const renderPulsingDots = (): JSX.Element | null => {

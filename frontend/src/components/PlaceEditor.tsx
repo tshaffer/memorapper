@@ -4,12 +4,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { useParams } from 'react-router-dom';
 import RestaurantName from './RestaurantName';
 import PulsingDots from './PulsingDots';
-import { Place, GooglePlace, SubmitPlaceRequestBody, RestaurantType, PlaceType } from "../types";
+import { Place, TSGooglePlace, SubmitPlaceRequestBody, RestaurantType, PlaceType, PlaceWithGooglePlace, Restaurant } from "../types";
 
 interface PlaceEditorProps {
   mode: 'create' | 'edit';
-  initialPlace?: Place;
-  onSubmit: (place: Place) => Promise<void>;
+  initialPlace?: PlaceWithGooglePlace;
+  onSubmit: (place: PlaceWithGooglePlace) => Promise<void>;
   onCancel?: () => void;
 }
 
@@ -19,26 +19,19 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
   const { _id } = useParams<{ _id: string }>();
 
   // When creating, initialize an empty/default Place.
-  const defaultPlace: Place =
+  const defaultPlace: PlaceWithGooglePlace =
     mode === 'create'
       ? {
         _idPlace: _id,
         placeId: uuidv4(),
+        googlePlaceId: '',
         visited: false,
-        placeType: PlaceType.Restaurant,
-        restaurantType: RestaurantType.Restaurant,
-        openForBreakfast: undefined,
-        openForLunch: undefined,
-        openForDinner: undefined,
-        name: '',
-        formatted_address: '',
-        rating: 0,
-        // Optionally add other fields like address_components, geometry, etc.
+        googlePlace: undefined,
       }
-      : (initialPlace as Place);
+      : (initialPlace as PlaceWithGooglePlace);
 
-  const [place, setPlace] = useState<Place>(defaultPlace);
-  const [placeName, setPlaceName] = useState(place.name || '');
+  const [place, setPlace] = useState<PlaceWithGooglePlace>(defaultPlace);
+  const [placeName, setPlaceName] = useState(place.googlePlace ? (place.googlePlace.name ? place.googlePlace.name : '') : '');
   const [isLoading, setIsLoading] = useState(false);
 
   // Helper: infer meal availability from opening_hours data.
@@ -80,36 +73,52 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
   };
 
   // Handles changes from the RestaurantName component.
-  const handleChangeGooglePlace = (googlePlace: GooglePlace) => {
+  const handleChangeGooglePlace = (googlePlace: TSGooglePlace) => {
     const currentPlace: SubmitPlaceRequestBody = { ...place };
-    currentPlace.address_components = googlePlace.address_components;
-    currentPlace.formatted_address = googlePlace.formatted_address;
-    currentPlace.geometry = googlePlace.geometry;
-    currentPlace.name = googlePlace.name;
-    currentPlace.opening_hours = googlePlace.opening_hours;
-    currentPlace.googlePlaceId = googlePlace.googlePlaceId;
-    currentPlace.price_level = googlePlace.price_level;
-    currentPlace.rating = googlePlace.rating;
-    currentPlace.user_ratings_total = googlePlace.user_ratings_total;
-    currentPlace.utc_offset_minutes = googlePlace.utc_offset_minutes;
-    currentPlace.restaurantType = googlePlace.restaurantType;
-    currentPlace.vicinity = googlePlace.vicinity;
-    currentPlace.website = googlePlace.website;
+    currentPlace.googlePlace = googlePlace;
 
     if (currentPlace.placeType === PlaceType.Restaurant && googlePlace.opening_hours) {
       const { openForBreakfast, openForLunch, openForDinner } = inferMealAvailability(googlePlace.opening_hours);
-      currentPlace.openForBreakfast = openForBreakfast;
-      currentPlace.openForLunch = openForLunch;
-      currentPlace.openForDinner = openForDinner;
+      currentPlace.restaurant = {
+        restaurantType: RestaurantType.Restaurant,
+        openForBreakfast,
+        openForLunch,
+        openForDinner,
+      };
     }
 
     setPlace(prev => ({ ...prev, ...currentPlace }));
-    setPlaceName(googlePlace.name);
+    setPlaceName(googlePlace.name!);
   };
 
-  // General handler for updating a field.
   const handleChange = (field: keyof Place, value: any) => {
     setPlace(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handlePlaceTypeChange = (newType: PlaceType) => {
+    setPlace(prev => ({
+      ...prev,
+      placeType: newType,
+      // only give it a restaurant payload if it's actually a Restaurant
+      restaurant: newType === PlaceType.Restaurant
+        ? {
+          restaurantType: RestaurantType.Restaurant,
+          openForBreakfast: false,
+          openForLunch: false,
+          openForDinner: false,
+        }
+        : undefined
+    }));
+  };
+
+  const handleRestaurantFieldChange = (field: keyof Restaurant, value: any) => {
+    setPlace(prev => ({
+      ...prev,
+      restaurant: {
+        ...prev.restaurant,
+        [field]: value,
+      },
+    }));
   };
 
   // Submit the form.
@@ -148,7 +157,7 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
       <RestaurantName
         restaurantName={placeName}
         onSetRestaurantName={(name: string) => setPlaceName(name)}
-        onSetGooglePlace={(googlePlace: GooglePlace) => handleChangeGooglePlace(googlePlace)}
+        onSetGooglePlace={(googlePlace: TSGooglePlace) => handleChangeGooglePlace(googlePlace)}
       />
     </div>
   );
@@ -183,7 +192,7 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
       <Select
         labelId="place-type-select-label"
         value={place.placeType}
-        onChange={(e) => handleChange('placeType', e.target.value as PlaceType)}
+        onChange={e => handlePlaceTypeChange(e.target.value as PlaceType)}
         fullWidth
       >
         <MenuItem value={PlaceType.Restaurant}>Restaurant</MenuItem>
@@ -201,8 +210,8 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
         <label>{'Restaurant Type:'}</label>
         <Select
           labelId="restaurant-type-select-label"
-          value={place.restaurantType}
-          onChange={(e) => handleChange('restaurantType', e.target.value as RestaurantType)}
+          value={place.restaurant!.restaurantType}
+          onChange={(e) => handleRestaurantFieldChange('restaurantType', e.target.value as RestaurantType)}
           fullWidth
         >
           <MenuItem value={RestaurantType.Restaurant}>Restaurant</MenuItem>
@@ -228,8 +237,8 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
           <FormControlLabel
             control={
               <Checkbox
-                checked={!!place.openForBreakfast}
-                onChange={(e) => handleChange('openForBreakfast', e.target.checked)}
+                checked={!!place.restaurant!.openForBreakfast}
+                onChange={(e) => handleRestaurantFieldChange('openForBreakfast', e.target.checked)}
               />
             }
             label="Breakfast"
@@ -239,8 +248,8 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
           <FormControlLabel
             control={
               <Checkbox
-                checked={!!place.openForLunch}
-                onChange={(e) => handleChange('openForLunch', e.target.checked)}
+                checked={!!place.restaurant!.openForLunch}
+                onChange={(e) => handleRestaurantFieldChange('openForLunch', e.target.checked)}
               />
             }
             label="Lunch"
@@ -250,8 +259,8 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
           <FormControlLabel
             control={
               <Checkbox
-                checked={!!place.openForDinner}
-                onChange={(e) => handleChange('openForDinner', e.target.checked)}
+                checked={!!place.restaurant!.openForDinner}
+                onChange={(e) => handleRestaurantFieldChange('openForDinner', e.target.checked)}
               />
             }
             label="Dinner"
@@ -273,7 +282,11 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
         {renderMealAvailability()}
       </form>
       <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
-        <Button variant="contained" onClick={handleSubmit} disabled={isLoading || !place.googlePlaceId}>
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={isLoading || !place.googlePlace?.googlePlaceId}
+        >
           {mode === 'create' ? 'Add Place' : 'Save Changes'}
         </Button>
         {mode === 'edit' && onCancel && (

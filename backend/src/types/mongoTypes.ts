@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { BasePlace } from "./entities";
+import { TSGooglePlace } from "./place";
 
-export interface MongoPlace extends BasePlace {
+export interface MongoPlace extends Omit<TSGooglePlace, 'geometry'> {
   _id?: mongoose.Types.ObjectId;
   geometry?: MongoGeometry;
 }

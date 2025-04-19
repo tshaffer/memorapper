@@ -17,56 +17,49 @@ export interface Restaurant {
 export type Place = {
   _idPlace?: string;
   placeId: string;
+  googlePlaceId: string;
   visited: boolean;
   placeType?: PlaceType;
-  googlePlaceId: string;
   placeComments?: string;
-} & Restaurant;
+  restaurant?: Restaurant;
+};
 
 export type PlaceWithGooglePlace = {
   _idPlace?: string;
   placeId: string;
+  googlePlaceId: string;
   visited: boolean;
   placeType?: PlaceType;
-  googlePlaceId?: string;
   placeComments?: string;
-} & NewGooglePlace & Restaurant;
+  googlePlace: TSGooglePlace;
+  restaurant?: Restaurant;
+};
 
 export type SubmitPlaceRequestBody = {
   _idPlace?: string;
   placeId: string;
   visited: boolean;
   placeType?: PlaceType;
-  googlePlaceId: string;
   placeComments?: string;
-} & NewGooglePlace & Restaurant;
+  googlePlace: TSGooglePlace;
+  restaurant?: Restaurant;
+};
 
-// subset of fields from google.maps.places.PlaceResult
-export interface NewGooglePlace {
+export interface TSGooglePlace {
+  googlePlaceId: string;
   address_components?: google.maps.GeocoderAddressComponent[];
   formatted_address?: string;
   geometry?: GoogleGeometry;
   name?: string;
   opening_hours?: google.maps.places.PlaceOpeningHours;
-  googlePlaceId?: string;
-  rating?: number;
+  place_id?: string;
   price_level?: number;
+  rating?: number;
   user_ratings_total?: number;
   utc_offset_minutes?: number;
   vicinity?: string;
-  website?: string;
+  website: string;
 }
-
-// other fields from google.maps.places.PlaceResult that I may want to add
-// adr_address?: string;
-// formatted_phone_number?: string;
-// geometry?: google.maps.places.PlaceGeometry;
-// icon?: string;
-// icon_background_color?: string;
-// icon_mask_base_uri?: string;
-// international_phone_number?: string;
-// photos?: google.maps.places.PlacePhoto[];
-// url?: string;
 
 // User interface
 export interface User {

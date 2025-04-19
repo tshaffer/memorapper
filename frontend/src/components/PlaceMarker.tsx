@@ -1,5 +1,5 @@
 import React, { } from 'react';
-import { Place, PlaceType } from '../types';
+import { Place, PlaceType, PlaceWithGooglePlace } from '../types';
 import { AdvancedMarker } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace, iconFromRestaurantType } from '../utilities';
 import '../App.css';
@@ -27,8 +27,8 @@ const iconContainerStyle: React.CSSProperties = {
 };
 
 interface PlaceMarkerProps {
-  place: Place;
-  onMarkerClick: (place: Place) => void;
+  place: PlaceWithGooglePlace;
+  onMarkerClick: (place: PlaceWithGooglePlace) => void;
 }
 
 const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
@@ -40,7 +40,11 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
   const getMarkerIcon = (): any => {
     switch (place.placeType) {
       case PlaceType.Restaurant:
-        return iconFromRestaurantType(place.restaurantType!);
+        if (!place.restaurant) {
+          return restaurantIcon;
+        } else {
+          return iconFromRestaurantType(place.restaurant.restaurantType!);
+        }
       case PlaceType.Accommodations:
         return loveHotelIcon;
       case PlaceType.GroceryStore:
@@ -84,7 +88,7 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
           padding: '2px 4px',
           borderRadius: '4px',
         }}>
-          <div style={textStyle()}>{place.name}</div>
+          <div style={textStyle()}>{place.googlePlace!.name}</div>
         </div>
         <div style={iconContainerStyle}>
           <Icon icon={getMarkerIcon()} style={{ fontSize: '30px' }} />

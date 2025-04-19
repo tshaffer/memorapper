@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import MongoPlaceModel, { IMongoPlace } from "../models/MongoPlace";
-import { GooglePlace, MongoPlace, Place, PlaceWithGooglePlace, SubmitPlaceRequestBody } from "../types";
+import { TSGooglePlace, MongoPlace, Place, PlaceWithGooglePlace, SubmitPlaceRequestBody } from "../types";
 import PlaceModel, { IPlace } from '../models/Place';
 import { convertMongoGeometryToGoogleGeometry } from '../utilities';
 import { MongoGeometry } from "../types";
@@ -22,21 +22,8 @@ export const getPlacesHandler = async (
       const placeGooglePlaceId = placeDocument.googlePlaceId;
       for (const mongoPlaceDocument of mongoPlaceDocuments) {
         if (mongoPlaceDocument.googlePlaceId === placeGooglePlaceId) {
-          const place = placeDocument.toObject();
-          const mongoPlace: MongoPlace = mongoPlaceDocument.toObject();
-          place._idPlace = placeDocument._id;
-          place.address_components = mongoPlace.address_components;
-          place.formatted_address = mongoPlace.formatted_address;
-          place.geometry = convertMongoGeometryToGoogleGeometry(mongoPlace.geometry!);
-          place.name = mongoPlace.name;
-          place.opening_hours = mongoPlace.opening_hours;
-          place.price_level = mongoPlace.price_level;
-          place.rating = mongoPlace.rating;
-          place.user_ratings_total = mongoPlace.user_ratings_total;
-          place.utc_offset_minutes = mongoPlace.utc_offset_minutes;
-          place.vicinity = mongoPlace.vicinity;
-          place.website = mongoPlace.website;
-
+          const place: Place = placeDocument.toObject();
+          place._idPlace = placeDocument._id!.toString();
           places.push(place);
         }
       }
@@ -62,17 +49,20 @@ export const getPlaces = async (): Promise<PlaceWithGooglePlace[]> => {
           const mongoPlace: MongoPlace = mongoPlaceDocument.toObject();
           let place: PlaceWithGooglePlace = placeDocument.toObject();
           place._idPlace = (placeDocument._id as ObjectId).toString();
-          place.address_components = mongoPlace.address_components;
-          place.formatted_address = mongoPlace.formatted_address;
-          place.geometry = convertMongoGeometryToGoogleGeometry(mongoPlace.geometry!);
-          place.name = mongoPlace.name;
-          place.opening_hours = mongoPlace.opening_hours;
-          place.price_level = mongoPlace.price_level;
-          place.rating = mongoPlace.rating;
-          place.user_ratings_total = mongoPlace.user_ratings_total;
-          place.utc_offset_minutes = mongoPlace.utc_offset_minutes;
-          place.vicinity = mongoPlace.vicinity;
-          place.website = mongoPlace.website;
+          place.googlePlace = {
+            googlePlaceId: placeGooglePlaceId,
+            address_components: mongoPlace.address_components,
+            formatted_address: mongoPlace.formatted_address,
+            geometry: convertMongoGeometryToGoogleGeometry(mongoPlace.geometry!),
+            name: mongoPlace.name,
+            opening_hours: mongoPlace.opening_hours,
+            price_level: mongoPlace.price_level,
+            rating: mongoPlace.rating,
+            user_ratings_total: mongoPlace.user_ratings_total,
+            utc_offset_minutes: mongoPlace.utc_offset_minutes,
+            vicinity: mongoPlace.vicinity,
+            website: mongoPlace.website,
+            };
 
           places.push(place);
         }
@@ -86,10 +76,10 @@ export const getPlaces = async (): Promise<PlaceWithGooglePlace[]> => {
 };
 
 export const submitPlaceHandler = async (
-  req: Request<{}, {}, Place>,
+  req: Request<{}, {}, SubmitPlaceRequestBody>,
   res: Response
 ): Promise<any> => {
-  const body: Place = req.body;
+  const body: SubmitPlaceRequestBody = req.body;
   try {
     const place = await submitPlace(body);
     return res.status(201).json({ message: 'Place saved successfully!', place });
@@ -101,25 +91,9 @@ export const submitPlaceHandler = async (
 
 const submitPlace = async (placeRequestBody: SubmitPlaceRequestBody): Promise<IPlace | null> => {
 
-  const { _idPlace, placeId, visited, placeType, googlePlaceId, placeComments, address_components, formatted_address, geometry, name, opening_hours, price_level, rating, vicinity, openForBreakfast, openForLunch, openForDinner, restaurantType, user_ratings_total, utc_offset_minutes, website } = placeRequestBody;
+  const { _idPlace, placeId, visited, placeType, placeComments, googlePlace, restaurant } = placeRequestBody
 
-  const googlePlace: GooglePlace = {
-    googlePlaceId: googlePlaceId!,
-    placeType,
-    name: name!,
-    address_components,
-    formatted_address: formatted_address!,
-    website: website!,
-    opening_hours,
-    price_level,
-    rating,
-    user_ratings_total,
-    utc_offset_minutes,
-    vicinity,
-    geometry,
-  }
-
-  let mongoPlace: IMongoPlace | null = await getMongoPlace(googlePlaceId);
+  let mongoPlace: IMongoPlace | null = await getMongoPlace(googlePlace.googlePlaceId);
   if (!mongoPlace) {
     mongoPlace = await addMongoPlace(googlePlace);
     if (!mongoPlace) {
@@ -130,17 +104,11 @@ const submitPlace = async (placeRequestBody: SubmitPlaceRequestBody): Promise<IP
   const addPlaceEntity: Place = {
     _idPlace,
     placeId,
+    googlePlaceId: googlePlace.googlePlaceId,
     visited,
     placeType,
-    googlePlaceId: mongoPlace.googlePlaceId,
     placeComments,
-    restaurantType,
-    openForBreakfast,
-    openForLunch,
-    openForDinner,
-    consensusComments: '',
-    perUserComments: [],
-    restaurantReviews: [],
+    restaurant,
   };
 
   let savedPlace: IPlace | null;
@@ -210,7 +178,7 @@ export const getMongoPlace = async (placeId: any): Promise<IMongoPlace | null> =
 export const getGooglePlaces = async (request: Request, response: Response, next: any) => {
   try {
     const mongoPlaces: IMongoPlace[] = await MongoPlaceModel.find({}).exec();
-    const googlePlaces: GooglePlace[] = convertMongoPlacesToGooglePlaces(mongoPlaces);
+    const googlePlaces: TSGooglePlace[] = convertMongoPlacesToGooglePlaces(mongoPlaces);
     response.status(200).json({ googlePlaces });
     return;
   } catch (error) {
@@ -220,7 +188,7 @@ export const getGooglePlaces = async (request: Request, response: Response, next
   }
 }
 
-export const addMongoPlace = async (googlePlace: GooglePlace): Promise<IMongoPlace | null> => {
+export const addMongoPlace = async (googlePlace: TSGooglePlace): Promise<IMongoPlace | null> => {
   // Convert Google geometry to MongoDB format
   const mongoGeometry: MongoGeometry = convertGoogleGeometryToMongoGeometry(googlePlace.geometry!);
   const mongoPlace: MongoPlace = { ...googlePlace, geometry: mongoGeometry };

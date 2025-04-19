@@ -14,45 +14,51 @@ export interface Restaurant {
   restaurantReviews?: RestaurantReview[];
 }
 
-export type PlaceWithGooglePlace = {
-  _idPlace?: string;
-  placeId: string;
-  visited: boolean;
-  placeType?: PlaceType;
-  googlePlaceId?: string;
-  placeComments?: string;
-} & NewGooglePlace & Restaurant;
-
 export type Place = {
   _idPlace?: string;
   placeId: string;
+  googlePlaceId: string;
   visited: boolean;
   placeType?: PlaceType;
-  googlePlaceId?: string;
   placeComments?: string;
-} & NewGooglePlace & Restaurant;
+  restaurant?: Restaurant;
+};
+
+export type PlaceWithGooglePlace = {
+  _idPlace?: string;
+  placeId: string;
+  googlePlaceId: string;
+  visited: boolean;
+  placeType?: PlaceType;
+  placeComments?: string;
+  googlePlace?: TSGooglePlace;
+  restaurant?: Restaurant;
+};
 
 export type SubmitPlaceRequestBody = {
   _idPlace?: string;
   placeId: string;
   visited: boolean;
   placeType?: PlaceType;
-} & NewGooglePlace & Restaurant;
+  placeComments?: string;
+  googlePlace?: TSGooglePlace;
+  restaurant?: Restaurant;
+};
 
-// subset of fields from google.maps.places.PlaceResult
-export interface NewGooglePlace {
+export interface TSGooglePlace {
+  googlePlaceId: string;
   address_components?: google.maps.GeocoderAddressComponent[];
   formatted_address?: string;
   geometry?: GoogleGeometry;
   name?: string;
   opening_hours?: google.maps.places.PlaceOpeningHours;
-  googlePlaceId?: string;
+  place_id?: string;
   price_level?: number;
   rating?: number;
   user_ratings_total?: number;
   utc_offset_minutes?: number;
   vicinity?: string;
-  website?: string;
+  website: string;
 }
 
 // other fields from google.maps.places.PlaceResult that I may want to add to NewGooglePlace

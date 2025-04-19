@@ -1,13 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Distance, Filters, OpenFilterMode, Place, PlaceWithGooglePlace, Settings } from '../types';
+import { Distance, Filters, OpenFilterMode, Place, PlaceWithGooglePlace, Settings, TSGooglePlace } from '../types';
 
 interface UserContextValue {
 
-  googlePlaces: PlaceWithGooglePlace[];
-  setGooglePlaces: (googlePlaces: PlaceWithGooglePlace[]) => void;
+  googlePlaces: TSGooglePlace[];
+  setGooglePlaces: (googlePlaces: TSGooglePlace[]) => void;
 
   places: Place[];
   setPlaces: (places: Place[]) => void;
+
+  placesWithGooglePlaces: PlaceWithGooglePlace[];
+  setPlacesWithGooglePlaces: (placesWithGooglePlaces: PlaceWithGooglePlace[]) => void;
 
   settings: Settings; // Updated to use the new Settings structure
   setFilters: (filters: Filters) => void;
@@ -19,8 +22,9 @@ interface UserContextValue {
 const UserContext = createContext<UserContextValue | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [googlePlaces, setGooglePlaces] = useState<PlaceWithGooglePlace[]>([]);
+  const [googlePlaces, setGooglePlaces] = useState<TSGooglePlace[]>([]);
   const [places, setPlaces] = useState<Place[]>([]);
+  const [placesWithGooglePlaces, setPlacesWithGooglePlaces] = useState<PlaceWithGooglePlace[]>([]);
 
   const [settings, setSettingsState] = useState<Settings>({
     filters: {
@@ -56,17 +60,33 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await fetch('/api/googlePlaces');
       const data = await response.json();
       setGooglePlaces(data.googlePlaces);
+      return data.googlePlaces;
     };
 
     const fetchPlaces = async () => {
       const response = await fetch('/api/places');
       const data = await response.json();
       setPlaces(data.places);
+      return data.places;
+    };
+
+    const mergePlacesWithGooglePlaces = (places: Place[], googlePlaces: TSGooglePlace[]): PlaceWithGooglePlace[] => {
+      const placesWithGooglePlaces = places.map((place) => {
+        const googlePlace = googlePlaces.find((gPlace) => gPlace.googlePlaceId === place.googlePlaceId);
+        const PlaceWithGooglePlace: PlaceWithGooglePlace = {
+          ...place,
+          googlePlace: googlePlace || undefined,
+        };
+        return PlaceWithGooglePlace;
+      });
+      setPlacesWithGooglePlaces(placesWithGooglePlaces);
+      return placesWithGooglePlaces;
     };
 
     const fetchData = async () => {
-      await fetchGooglePlaces();
-      await fetchPlaces();
+      const tsGooglePlaces: TSGooglePlace[] = await fetchGooglePlaces();
+      const places: Place[] = await fetchPlaces();
+      mergePlacesWithGooglePlaces(places, tsGooglePlaces);
       setLoading(false);
     };
 
@@ -81,6 +101,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setGooglePlaces: setGooglePlaces,
         places: places,
         setPlaces: setPlaces,
+        placesWithGooglePlaces: placesWithGooglePlaces,
+        setPlacesWithGooglePlaces: setPlacesWithGooglePlaces,
         settings,
         setFilters,
         setSettings,

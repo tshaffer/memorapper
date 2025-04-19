@@ -1,4 +1,4 @@
-import { GoogleGeometry, GooglePlace, Place, RestaurantType } from "../types";
+import { GoogleGeometry, PlaceWithGooglePlace, RestaurantType, TSGooglePlace } from "../types";
 import '../App.css';
 
 import { IconifyIcon } from '@iconify/react';
@@ -14,8 +14,8 @@ import burritoIcon from '@iconify/icons-noto/burrito';
 import coffeeIcon from '@iconify/icons-openmoji/electric-coffee-percolator';
 import shrimpIcon from '@iconify/icons-emojione/shrimp';
 
-export const getLatLngFromPlace = (place: Place): google.maps.LatLngLiteral => {
-  const geometry: GoogleGeometry | undefined = place.geometry;
+export const getLatLngFromPlace = (place: PlaceWithGooglePlace): google.maps.LatLngLiteral => {
+  const geometry: GoogleGeometry | undefined = place.googlePlace!.geometry;
   if (geometry) {
     return geometry.location;
   }
@@ -75,14 +75,14 @@ const getRestaurantType = (googlePlaceResult: google.maps.places.PlaceResult): R
   return RestaurantType.Restaurant
 }
 
-export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.PlaceResult): GooglePlace {
+export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.PlaceResult): TSGooglePlace {
   console.log('pickGooglePlaceProperties', googlePlaceResult);
   // console.log('aspects', googlePlaceResult.aspects);
   // console.log('rating', googlePlaceResult.rating);
   // console.log('userRatingsTotal', googlePlaceResult.user_ratings_total);
   // console.log('reviews', googlePlaceResult.reviews);
 
-  const googlePlace: GooglePlace = {
+  const googlePlace: TSGooglePlace = {
     googlePlaceId: googlePlaceResult.place_id!,
     name: googlePlaceResult.name!,
     address_components: googlePlaceResult.address_components,
@@ -106,7 +106,7 @@ export function pickGooglePlaceProperties(googlePlaceResult: google.maps.places.
     user_ratings_total: googlePlaceResult.user_ratings_total,
     utc_offset_minutes: googlePlaceResult.utc_offset_minutes,
     vicinity: googlePlaceResult.vicinity,
-    restaurantType: getRestaurantType(googlePlaceResult),
+    // restaurantType: getRestaurantType(googlePlaceResult),
   };
   return googlePlace;
 
