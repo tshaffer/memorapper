@@ -1,27 +1,27 @@
-import { OpenFilterMode, PlaceType, RestaurantType, SearchDistanceFilter } from "./enums";
+import { OpenFilterMode, PlaceType, RestaurantType, Distance } from "./enums";
 import { PlaceWithGooglePlace } from "./place";
 
 export interface FilterResultsParams {
-  distanceAwayFilter: SearchDistanceFilter;
-  placeTypesFilter: PlaceType[];
-  restaurantsTypeFilter: RestaurantType[];
+  distanceAway: Distance;
+  placeTypes: PlaceType[];
+  restaurantTypes: RestaurantType[];
   openFilterMode: OpenFilterMode;
   openMealsFilter: OpenMealsSpec;
+}
+
+export interface SearchQuery {
+  query: string;
+  distanceAwayQuery: DistanceAwayQuery;
+  placeTypes: PlaceType[];
+  restaurantTypes: RestaurantType[];
+  openFilterMode: OpenFilterMode;
+  openMeals: OpenMealsSpec;
 }
 
 export interface DistanceAwayQuery {
   lat: number;
   lng: number;
   radius: number;
-}
-
-export interface SearchQuery {
-  query: string;
-  distanceAway: DistanceAwayQuery;
-  placeTypes: PlaceType[];
-  restaurantTypes: RestaurantType[];
-  openFilterMode: OpenFilterMode;
-  openMeals: OpenMealsSpec;
 }
 
 export interface OpenMealsSpec {

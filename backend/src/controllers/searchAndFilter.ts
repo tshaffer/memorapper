@@ -10,16 +10,16 @@ export const searchAndFilterHandler = async (
   res: Response
 ): Promise<void> => {
   const { searchQuery } = req.body;
-  const { distanceAway, placeTypes, restaurantTypes, openFilterMode, openMeals }: SearchQuery = searchQuery;
+  const { distanceAwayQuery: distanceAway, placeTypes, restaurantTypes, openFilterMode, openMeals }: SearchQuery = searchQuery;
 
   try {
 
     const places: PlaceWithGooglePlace[] = await getPlaces();
 
     const filterResultsParams: FilterResultsParams = {
-      distanceAwayFilter: distanceAway.radius,
-      placeTypesFilter: placeTypes,
-      restaurantsTypeFilter: restaurantTypes,
+      distanceAway: distanceAway.radius,
+      placeTypes: placeTypes,
+      restaurantTypes: restaurantTypes,
       openFilterMode: openFilterMode,
       openMealsFilter: openMeals,
     };

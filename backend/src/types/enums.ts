@@ -1,4 +1,4 @@
-export enum SearchDistanceFilter {
+export enum Distance {
   HalfMile = 0.5,
   OneMile = 1,
   FiveMiles = 5,

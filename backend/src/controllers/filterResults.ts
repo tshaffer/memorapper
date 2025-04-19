@@ -6,9 +6,9 @@ export const filterResults = async (
   mapLocation: google.maps.LatLngLiteral,
 ): Promise<SearchResponse> => {
   const {
-    distanceAwayFilter,
-    placeTypesFilter,
-    restaurantsTypeFilter,
+    distanceAway: distanceAwayFilter,
+    placeTypes: placeTypesFilter,
+    restaurantTypes: restaurantsTypeFilter,
     openFilterMode,
     openMealsFilter,
   } = filter;
