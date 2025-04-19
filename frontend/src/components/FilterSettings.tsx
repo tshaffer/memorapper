@@ -1,5 +1,5 @@
 import { Box, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Checkbox, useMediaQuery, InputLabel, Select, MenuItem, SelectChangeEvent, FormGroup } from '@mui/material';
-import { DistanceAwayFilterValues, Filters, MealType, OpenFilterMode, Place, PlaceType, RestaurantType } from "../types";
+import { Distance, Filters, MealType, OpenFilterMode, Place, PlaceType, RestaurantType } from "../types";
 import { useState } from 'react';
 
 export interface FiltersSettingsProps {
@@ -12,11 +12,11 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
   // Destructure current filters; note that we now expect the filters to include an "openFilterMode"
   // and, if in "MEALS" mode, an "openMeals" object.
   const {
-    distanceAwayFilter = DistanceAwayFilterValues.AnyDistance,
+    distanceAway = Distance.AnyDistance,
     openFilterMode = OpenFilterMode.Any,
     placeTypes = [],
     restaurantTypes = [],
-    openMeals = { BREAKFAST: false, LUNCH: false, DINNER: false }
+    openMealsFilter = { BREAKFAST: false, LUNCH: false, DINNER: false }
   } = filters;
 
   const [selectedPlaceTypes, setSelectedPlaceTypes] = useState<PlaceType[]>([]);
@@ -44,9 +44,9 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
   const isMobile = useMediaQuery('(max-width:768px)');
 
   // --- Distance Filter Handlers ---
-  const handleDistanceAwayChange = (e: SelectChangeEvent<DistanceAwayFilterValues>) => {
+  const handleDistanceAwayChange = (e: SelectChangeEvent<Distance>) => {
     const newDistanceAway = Number(e.target.value);
-    onUpdateFilters({ ...filters, distanceAwayFilter: newDistanceAway });
+    onUpdateFilters({ ...filters, distanceAway: newDistanceAway });
   };
 
   // const handlePlaceTypeChange = (event: SelectChangeEvent<PlaceType>) => {
@@ -71,10 +71,10 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
   const handleMealCheckboxChange = (meal: MealType) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const updatedMeals = { ...openMeals, [meal]: event.target.checked };
+    const updatedMeals = { ...openMealsFilter, [meal]: event.target.checked };
     // When updating meal selections, set the mode to "MEALS" so that
     // the UI stays consistent with the user's intent.
-    onUpdateFilters({ ...filters, openFilterMode: OpenFilterMode.Meals, openMeals: updatedMeals });
+    onUpdateFilters({ ...filters, openFilterMode: OpenFilterMode.Meals, openMealsFilter: updatedMeals });
   };
 
   // --- Rendering Sub-Components ---
@@ -110,7 +110,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
         id="distance-away-select"
         notched
         label={isMobile ? 'DISTANCE' : 'DISTANCE AWAY'}
-        value={distanceAwayFilter}
+        value={distanceAway}
         onChange={handleDistanceAwayChange}
         sx={{
           color: '#1976D2',
@@ -126,11 +126,11 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
           },
         }}
       >
-        <MenuItem value={DistanceAwayFilterValues.HalfMile}>HALF MILE</MenuItem>
-        <MenuItem value={DistanceAwayFilterValues.OneMile}>1 MILE</MenuItem>
-        <MenuItem value={DistanceAwayFilterValues.FiveMiles}>5 MILES</MenuItem>
-        <MenuItem value={DistanceAwayFilterValues.TenMiles}>10 MILES</MenuItem>
-        <MenuItem value={DistanceAwayFilterValues.AnyDistance}>ANY DISTANCE</MenuItem>
+        <MenuItem value={Distance.HalfMile}>HALF MILE</MenuItem>
+        <MenuItem value={Distance.OneMile}>1 MILE</MenuItem>
+        <MenuItem value={Distance.FiveMiles}>5 MILES</MenuItem>
+        <MenuItem value={Distance.TenMiles}>10 MILES</MenuItem>
+        <MenuItem value={Distance.AnyDistance}>ANY DISTANCE</MenuItem>
       </Select>
     </FormControl>
   );
@@ -229,7 +229,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
           <FormControlLabel
             control={
               <Checkbox
-                checked={openMeals.BREAKFAST}
+                checked={openMealsFilter.BREAKFAST}
                 onChange={handleMealCheckboxChange(MealType.Breakfast)}
               />
             }
@@ -238,7 +238,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
           <FormControlLabel
             control={
               <Checkbox
-                checked={openMeals.LUNCH}
+                checked={openMealsFilter.LUNCH}
                 onChange={handleMealCheckboxChange(MealType.Lunch)}
               />
             }
@@ -247,7 +247,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
           <FormControlLabel
             control={
               <Checkbox
-                checked={openMeals.DINNER}
+                checked={openMealsFilter.DINNER}
                 onChange={handleMealCheckboxChange(MealType.Dinner)}
               />
             }

@@ -6,8 +6,6 @@ import LocationAutocomplete from '../../components/LocationAutocomplete';
 import {
   // ExtendedGooglePlaceToVisit,
   Filters,
-  GooglePlace,
-  FilterResultsParams,
   SearchQuery,
   Place,
   RestaurantReview,
@@ -123,7 +121,7 @@ const MapPage: React.FC = () => {
   const executeSearchAndFilter = async (searchQuery: SearchQuery): Promise<void> => {
 
     console.log('executeSearchAndFilter called with searchQuery:', searchQuery);
-    
+
     const requestBody = { searchQuery };
 
     try {
@@ -145,14 +143,14 @@ const MapPage: React.FC = () => {
     googlePlaces: PlaceWithGooglePlace[], location: google.maps.LatLngLiteral, filters: Filters,
   ) => {
 
-    const { distanceAwayFilter, openFilterMode, placeTypes: placeType, restaurantTypes: restaurantType, openMeals } = filters;
+    const { distanceAway, openFilterMode, placeTypes, restaurantTypes, openMealsFilter } = filters;
 
-    const filter: FilterResultsParams = {
-      distanceAwayFilter,
-      placeTypes: placeType,
-      restaurantTypes: restaurantType,
+    const filter: Filters = {
+      distanceAway,
+      placeTypes,
+      restaurantTypes,
       openFilterMode,
-      openMeals,
+      openMealsFilter,
     };
 
     const filteredPlaces: PlaceWithGooglePlace[] = newFilterResults(filter, googlePlaces, location);
@@ -176,11 +174,11 @@ const MapPage: React.FC = () => {
       openFilterMode: filters.openFilterMode,
       placeTypes: filters.placeTypes,
       restaurantTypes: filters.restaurantTypes,
-      openMeals: filters.openMeals,
+      openMeals: filters.openMealsFilter,
       distanceAway: {
         lat: mapLocation!.lat,
         lng: mapLocation!.lng,
-        radius: filters.distanceAwayFilter,
+        radius: filters.distanceAway,
       }
     };
 

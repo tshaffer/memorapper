@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { DistanceAwayFilterValues, Filters, OpenFilterMode, Place, PlaceWithGooglePlace, Settings } from '../types';
+import { Distance, Filters, OpenFilterMode, Place, PlaceWithGooglePlace, Settings } from '../types';
 
 interface UserContextValue {
 
@@ -24,11 +24,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const [settings, setSettingsState] = useState<Settings>({
     filters: {
-      distanceAwayFilter: DistanceAwayFilterValues.AnyDistance,
+      distanceAway: Distance.AnyDistance,
       openFilterMode: OpenFilterMode.Any,
       placeTypes: [],
       restaurantTypes: [],
-      openMeals: {
+      openMealsFilter: {
         BREAKFAST: false,
         LUNCH: false,
         DINNER: false,

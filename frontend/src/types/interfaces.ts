@@ -1,19 +1,11 @@
-import { DistanceAwayFilterValues, OpenFilterMode, PlaceType, RestaurantType } from "./enums";
+import { Distance, OpenFilterMode, PlaceType, RestaurantType } from "./enums";
 
 export interface Filters {
-  distanceAwayFilter: DistanceAwayFilterValues;
+  distanceAway: Distance;
   placeTypes: PlaceType[];
   restaurantTypes: RestaurantType[];
   openFilterMode: OpenFilterMode;
-  openMeals: OpenMealsSpec;
-}
-
-export interface FilterResultsParams {
-  distanceAwayFilter: DistanceAwayFilterValues;
-  placeTypes: PlaceType[];
-  restaurantTypes: RestaurantType[];
-  openFilterMode: OpenFilterMode;
-  openMeals: OpenMealsSpec;
+  openMealsFilter: OpenMealsSpec;
 }
 
 export interface SearchQuery {

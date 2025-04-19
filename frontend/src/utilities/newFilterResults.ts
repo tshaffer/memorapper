@@ -1,18 +1,18 @@
-import { GooglePlace, FilterResultsParams, PlaceWithGooglePlace } from "../types";
+import { GooglePlace, Filters, PlaceWithGooglePlace } from "../types";
 
 export const newFilterResults = (
-  filter: FilterResultsParams,
+  filter: Filters,
   googlePlaces: PlaceWithGooglePlace[],
   mapLocation: google.maps.LatLngLiteral,
 ): PlaceWithGooglePlace[] => {
-  const { distanceAwayFilter, placeTypes: placeType, restaurantTypes: restaurantType, openFilterMode, openMeals }: FilterResultsParams = filter;
+  const { distanceAway, placeTypes, restaurantTypes, openFilterMode, openMealsFilter }: Filters = filter;
 
   const filteredPlaces: PlaceWithGooglePlace[] = googlePlaces.filter((place: PlaceWithGooglePlace) => {
     if (!place.geometry || !place.geometry.location) return false;
 
     // Filter by distance
     const distanceInMiles = haversineDistance(mapLocation, place.geometry.location);
-    if (distanceInMiles > distanceAwayFilter) return false;
+    if (distanceInMiles > distanceAway) return false;
 
     // Filter by open now
     // if (openNowFilter && !isPlaceOpenNow(place.opening_hours)) {
