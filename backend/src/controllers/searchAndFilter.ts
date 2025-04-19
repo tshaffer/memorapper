@@ -10,7 +10,7 @@ export const searchAndFilterHandler = async (
   res: Response
 ): Promise<void> => {
   const { searchQuery } = req.body;
-  const { distanceAwayQuery: distanceAway, placeTypes, restaurantTypes, openFilterMode, openMeals }: SearchQuery = searchQuery;
+  const { distanceAway, placeTypes, restaurantTypes, openFilterMode, openMeals }: SearchQuery = searchQuery;
 
   try {
 

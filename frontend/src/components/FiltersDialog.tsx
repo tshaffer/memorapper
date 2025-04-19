@@ -24,14 +24,14 @@ const FiltersDialog: React.FC<FiltersDialogProps> = (props: FiltersDialogProps) 
   const isMobile = useMediaQuery('(max-width:768px)');
 
   const [query, setQuery] = useState('');
-  const [distanceAwayFilter, setDistanceAwayFilter] = useState<number>(props.filters.distanceAway);
+  const [distanceAway, setDistanceAway] = useState<number>(props.filters.distanceAway);
   const [placeTypes, setPlaceTypes] = useState<PlaceType[]>(props.filters.placeTypes);
   const [restaurantTypes, setRestaurantTypes] = useState<RestaurantType[]>(props.filters.restaurantTypes);
   const [openFilterMode, setOpenFilterMode] = useState(props.filters.openFilterMode);
   const [openMeals, setOpenMeals] = useState(props.filters.openMealsFilter);
 
   useEffect(() => {
-    setDistanceAwayFilter(props.filters.distanceAway);
+    setDistanceAway(props.filters.distanceAway);
     setOpenFilterMode(props.filters.openFilterMode);
     setPlaceTypes(props.filters.placeTypes);
     setRestaurantTypes(props.filters.restaurantTypes);
@@ -39,7 +39,7 @@ const FiltersDialog: React.FC<FiltersDialogProps> = (props: FiltersDialogProps) 
   }, [props.filters.distanceAway, props.filters.openFilterMode, props.filters.placeTypes, props.filters.restaurantTypes, props.filters.openMealsFilter]);
 
   const handleUpdateFilters = (filters: Filters) => {
-    setDistanceAwayFilter(filters.distanceAway);
+    setDistanceAway(filters.distanceAway);
     setOpenFilterMode(filters.openFilterMode);
     setPlaceTypes(filters.placeTypes);
     setRestaurantTypes(filters.restaurantTypes);
@@ -47,7 +47,7 @@ const FiltersDialog: React.FC<FiltersDialogProps> = (props: FiltersDialogProps) 
   }
 
   function handleSetFilters(): void {
-    props.onSetFilters(query, { distanceAway: distanceAwayFilter, openFilterMode, placeTypes: placeTypes, restaurantTypes: restaurantTypes, openMealsFilter: openMeals });
+    props.onSetFilters(query, { distanceAway, openFilterMode, placeTypes: placeTypes, restaurantTypes: restaurantTypes, openMealsFilter: openMeals });
     props.onClose();
   }
 
@@ -62,7 +62,7 @@ const FiltersDialog: React.FC<FiltersDialogProps> = (props: FiltersDialogProps) 
         <Box sx={{ padding: '8px', overflowY: 'auto' }}>
           <FiltersSettings
             filters={{
-              distanceAway: distanceAwayFilter,
+              distanceAway,
               openFilterMode,
               placeTypes: placeTypes,
               restaurantTypes: restaurantTypes,
