@@ -29,7 +29,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [settings, setSettingsState] = useState<Settings>({
     filters: {
       distanceAway: Distance.AnyDistance,
-      restaurantOpen: RestaurantOpen.Any,
+      restaurantOpen: RestaurantOpen.OpenAnyTime,
       placeTypes: [],
       restaurantTypes: [],
       openMeals: {

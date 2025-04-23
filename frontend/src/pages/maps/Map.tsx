@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Paper, Box, IconButton, useMediaQuery } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -38,6 +38,8 @@ const MapPage: React.FC = () => {
   const [isListVisible, setIsListVisible] = useState(true);
   const [visiblePlaces, setVisiblePlaces] = useState<PlaceWithGooglePlace[]>([]);
   const [selectedPlace, setSelectedPlace] = useState<PlaceWithGooglePlace | null>(null);
+
+  const prevVisiblePlacesList = useRef<PlaceWithGooglePlace[]>([])
 
   const toggleList = () => {
     setIsListVisible((prev) => !prev);
@@ -206,8 +208,36 @@ const MapPage: React.FC = () => {
     setMapLocation(location);
   }
 
+  const visiblePlacesChanged = (beforeList: PlaceWithGooglePlace[], afterList: PlaceWithGooglePlace[]): boolean => {
+
+    console.log('visiblePlacesChanged called with prevVisiblePlacesList:', beforeList);
+    console.log('visiblePlacesChanged called with visiblePlaces:', afterList);
+    
+    const prevPlaceIds = new Set(beforeList.map(place => place.placeId));
+    const currentPlaceIds = new Set(afterList.map(place => place.placeId));
+
+    if (prevPlaceIds.size !== currentPlaceIds.size) {
+      return true;
+    }
+
+    for (const id of prevPlaceIds) {
+      if (!currentPlaceIds.has(id)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   const handleVisiblePlacesChanged = (visiblePlaces: PlaceWithGooglePlace[]) => {
-    setVisiblePlaces(visiblePlaces);
+    console.log('handleVisiblePlacesChanged');
+    console.log('prevVisiblePlacesList:', prevVisiblePlacesList.current);
+    console.log('visiblePlaces:', visiblePlaces);
+    if (visiblePlacesChanged(prevVisiblePlacesList.current, visiblePlaces)) {
+      console.log('Visible places changed:', visiblePlaces);
+      setVisiblePlaces(visiblePlaces);
+      prevVisiblePlacesList.current = visiblePlaces;
+    }
   }
 
   // Handler called when a user clicks a place icon or a visible list item.
@@ -278,6 +308,7 @@ const MapPage: React.FC = () => {
     if (!mapLocation) {
       return null;
     }
+
     return (
       <div
         style={{
@@ -298,6 +329,7 @@ const MapPage: React.FC = () => {
   };
 
   const renderVisiblePlacesList = () => {
+    console.log('renderVisiblePlacesList called with visiblePlaces:', visiblePlaces);
     return (
       <div style={contentContainerStyle}>
         {isListVisible && (
