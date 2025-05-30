@@ -12,6 +12,7 @@ import PlaceForm from './pages/places/PlaceForm';
 import Map from './pages/maps/Map';
 import SettingsDialog from './components/SettingsDialog';
 import SettingsIcon from '@mui/icons-material/Settings';
+import WriteReviewPage from './pages/writeReview/WriteReviewPage';
 
 // soft orange: #FFA07A
 // other possibilities
@@ -97,6 +98,7 @@ const App: React.FC = () => {
         <Route path="/map" element={<Map />} />
         <Route path="/map/:_id" element={<Map />} />
         <Route path="/add-place" element={<PlaceForm />} />
+        <Route path="/write-review" element={<WriteReviewPage />} />
       </Routes>
     );
   }
@@ -141,6 +143,13 @@ const App: React.FC = () => {
                   to="/add-place"
                 >
                   Add Place
+                </Button>
+                <Button
+                  style={isActive('/write-review') ? activeButtonStyle : { color: 'white' }}
+                  component={Link}
+                  to="/write-review"
+                >
+                  Write Review
                 </Button>
               </>
             )}
