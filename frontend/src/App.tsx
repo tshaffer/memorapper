@@ -70,7 +70,7 @@ const App: React.FC = () => {
     }
 
     const appSettings: Settings = getAppSettings();
-    setSettings(appSettings);
+    dispatch(setSettings(appSettings));
     setFilters(appSettings.filters);
 
   }, []);
@@ -90,7 +90,7 @@ const App: React.FC = () => {
 
     console.log("handleSetSettings called with updatedSettings:", updatedSettings);
 
-    setSettings(updatedSettings);
+    dispatch(setSettings(updatedSettings));
 
     // Persist the updated settings to localStorage
     localStorage.setItem("appSettings", JSON.stringify(updatedSettings));
