@@ -13,16 +13,19 @@ import {
 } from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
 import PulsingDots from '../../components/PulsingDots';
-import { useUserContext } from '../../contexts/UserContext';
+// import { useUserContext } from '../../contexts/UserContext';
 import { newFilterResults } from '../../utilities/newFilterResults';
 import MapWithMarkers from '../../components/MapWIthMarkers';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import VisiblePlacesList from './VisiblePlacesList';
 import PlaceDetailPanel from './PlaceDetailPanel';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import { setFilters } from '../../redux/memorapperSlice';
 
 const MapPage: React.FC = () => {
-  const { placesWithGooglePlaces, places, settings, setFilters } = useUserContext();
+  const { placesWithGooglePlaces, places, settings } = useSelector((state: RootState) => state.memorapper);
   const { _id } = useParams<{ _id: string }>();
 
   const isMobile = useMediaQuery('(max-width:768px)');

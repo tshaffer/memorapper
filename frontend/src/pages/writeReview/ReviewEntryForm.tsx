@@ -18,7 +18,8 @@ import {
 } from '../../types';
 import PulsingDots from '../../components/PulsingDots';
 import React from 'react';
-import { useUserContext } from '../../contexts/UserContext';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 interface ReviewEntryFormProps {
   reviewData: ReviewData;
@@ -29,7 +30,8 @@ interface ReviewEntryFormProps {
 
 const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormProps) => {
 
-  const { placesWithGooglePlaces } = useUserContext();
+  // const { placesWithGooglePlaces } = useUserContext();
+  const { placesWithGooglePlaces } = useSelector((state: RootState) => state.memorapper);
 
   // const { currentDiningGroup, diners, newRestaurants } = useUserContext();
 

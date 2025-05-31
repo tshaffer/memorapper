@@ -7,7 +7,6 @@ import GoogleMapsProvider from './components/GoogleMapsProvider';
 
 import './App.css';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } from '@mui/material';
-// import { useUserContext } from './contexts/UserContext';
 import { Distance, RestaurantOpen, Settings, } from './types';
 import PlaceForm from './pages/places/PlaceForm';
 import Map from './pages/maps/Map';
@@ -91,7 +90,6 @@ const App: React.FC = () => {
 
     console.log("handleSetSettings called with updatedSettings:", updatedSettings);
 
-    // Update settings using the UserContext's setSettings
     setSettings(updatedSettings);
 
     // Persist the updated settings to localStorage

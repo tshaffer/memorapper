@@ -4,9 +4,11 @@ import { AdvancedMarker, APIProvider, Map } from '@vis.gl/react-google-maps';
 import '../App.css';
 
 // // https://icon-sets.iconify.design/?query=<query>
-import { useUserContext } from '../contexts/UserContext';
+// import { useUserContext } from '../contexts/UserContext';
 import PlaceMarker from './PlaceMarker';
 import PlaceInfoWindow from './PlaceInfoWindow';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 const DEFAULT_ZOOM = 14;
 
@@ -31,7 +33,7 @@ interface MapWithMarkersProps {
 
 const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, blueDotLocation, onVisiblePlacesChanged, onPlaceSelect }) => {
 
-  const { googlePlaces } = useUserContext();
+  const { googlePlaces } = useSelector((state: RootState) => state.memorapper);
 
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
