@@ -45,7 +45,7 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
 
   const getRestaurants = (): PlaceWithGooglePlace[] => {
     const result = placesWithGooglePlaces
-      .filter((item): item is PlaceWithGooglePlace => item.placeType! !== PlaceType.Restaurant)
+      .filter((item): item is PlaceWithGooglePlace => item.placeType! === PlaceType.Restaurant)
       .map(item => item!);
     return result;
   }
@@ -274,7 +274,7 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
       <Select
         id="restaurant-selector"
         value={reviewData?.place?.googlePlaceId || ''}
-        onChange={(event) => handleExistingRestaurantSelection(event.target.value)}
+        onChange={(event) => handleRestaurantSelection(event.target.value)}
         displayEmpty
         fullWidth
       >
@@ -290,7 +290,7 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     </div>
   );
 
-  const handleExistingRestaurantSelection = (googlePlaceId: string) => {
+  const handleRestaurantSelection = (googlePlaceId: string) => {
     // const selectedRestaurant = newRestaurants.find(
     //   (restaurant) => restaurant.googlePlace?.googlePlaceId === googlePlaceId
     // );
