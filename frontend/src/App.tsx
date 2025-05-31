@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 import HomeIcon from '@mui/icons-material/Home';
 import GoogleMapsProvider from './components/GoogleMapsProvider';
 
 import './App.css';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } from '@mui/material';
-import { useUserContext } from './contexts/UserContext';
+// import { useUserContext } from './contexts/UserContext';
 import { Distance, RestaurantOpen, Settings, } from './types';
 import PlaceForm from './pages/places/PlaceForm';
 import Map from './pages/maps/Map';
 import SettingsDialog from './components/SettingsDialog';
 import SettingsIcon from '@mui/icons-material/Settings';
 import WriteReviewPage from './pages/writeReview/WriteReviewPage';
+import { AppDispatch, RootState } from './redux/store';
+import { setSettings, setFilters, fetchGooglePlaces, fetchPlaces } from './redux/memorapperSlice';
 
 // soft orange: #FFA07A
 // other possibilities
@@ -27,12 +30,23 @@ const activeButtonStyle: React.CSSProperties = {
 };
 
 const App: React.FC = () => {
-  const { settings, setSettings, setFilters, loading, error } = useUserContext();
+  const dispatch = useDispatch<AppDispatch>();
+  const { settings, error, loading } = useSelector((state: RootState) => state.memorapper);
+
   const isMobile = useMediaQuery('(max-width:768px)');
   const location = useLocation(); // Track the current route
 
   useEffect(() => {
+    const loadData = async () => {
+      console.log('loadData useEffect called');
+      await dispatch(fetchGooglePlaces());
+      await dispatch(fetchPlaces());
+    };
+    loadData();
+  }, [dispatch]);
 
+  useEffect(() => {
+    console.log('getAppSettings useEffect called');
     const getAppSettings = (): Settings => {
       const appSettings: string | null = localStorage.getItem('appSettings');
       if (appSettings) {
