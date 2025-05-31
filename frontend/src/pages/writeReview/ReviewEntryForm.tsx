@@ -52,6 +52,10 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     return result;
   }
 
+  const getRestaurantByPlaceId = (placeId: string): PlaceWithGooglePlace | undefined => {
+    return getRestaurants().find((restaurant) => restaurant.placeId === placeId);
+  }
+
   const getDinerRestaurantReview = (dinerId: string): any | null => {
     // if (!reviewData || !reviewData.dinerRestaurantReviews) return null;
 
@@ -271,80 +275,89 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
     return <PulsingDots />;
   };
 
-  const renderRestaurantSelector = (): JSX.Element => (
-    <div className="form-group">
-      <Select
-        id="restaurant-selector"
-        value={reviewData?.place?.googlePlaceId || ''}
-        onChange={(event) => handleRestaurantSelection(event.target.value)}
-        displayEmpty
-        fullWidth
-      >
-        <MenuItem value="" disabled>
-          Select a restaurant
-        </MenuItem>
-        {getRestaurants().map((restaurantPlace: PlaceWithGooglePlace) => (
-          <MenuItem key={restaurantPlace.placeId} value={restaurantPlace.placeId}>
-            {restaurantPlace.googlePlace?.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </div>
-  );
+  const renderRestaurantSelector = (): JSX.Element => {
+    console.log('renderRestaurantSelector');
+    debugger;
+    console.log('value', reviewData?.place?.placeId || '');
+    const restaurantPlaces: PlaceWithGooglePlace[] = getRestaurants();
+    restaurantPlaces.forEach((restaurantPlace) => {
+      console.log(restaurantPlace.placeId);
+    });
 
-  const handleRestaurantSelection = (googlePlaceId: string) => {
-    // const selectedRestaurant = newRestaurants.find(
-    //   (restaurant) => restaurant.googlePlace?.googlePlaceId === googlePlaceId
-    // );
-    // if (selectedRestaurant) {
-    //   handleChange('place', selectedRestaurant.googlePlace);
-    // }
+    return (
+      <div className="form-group">
+        <Select
+          id="restaurant-selector"
+          value={reviewData?.place?.place_id || ''}
+          onChange={(event) => handleRestaurantSelection(event.target.value)}
+          displayEmpty
+          fullWidth
+        >
+          <MenuItem value="" disabled>
+            Select a restaurant
+          </MenuItem>
+          {getRestaurants().map((restaurantPlace: PlaceWithGooglePlace) => (
+            <MenuItem key={restaurantPlace.placeId} value={restaurantPlace.placeId}>
+              {restaurantPlace.googlePlace?.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </div>
+    );
   };
 
-  return (
-    <>
-      <div
-        id="form"
-        className="tab-panel active"
-        style={{
-          maxHeight: isMobile ? 'calc(60vh)' : '80vh',
-          overflowY: 'auto',
-          padding: '1rem',
-          paddingBottom: '4rem', // extra space so content isn’t hidden behind the fixed button
-        }}
+const handleRestaurantSelection = (placeId: string) => {
+  console.log('Selected PlaceId:', placeId);
+  const selectedRestaurant = getRestaurantByPlaceId(placeId);
+  if (selectedRestaurant) {
+    handleChange('place', selectedRestaurant);
+  }
+};
+
+return (
+  <>
+    <div
+      id="form"
+      className="tab-panel active"
+      style={{
+        maxHeight: isMobile ? 'calc(60vh)' : '80vh',
+        overflowY: 'auto',
+        padding: '1rem',
+        paddingBottom: '4rem', // extra space so content isn’t hidden behind the fixed button
+      }}
+    >
+      <form id="add-review-form">
+        <fieldset>
+          <legend>Restaurant Details</legend>
+          {renderRestaurantSelector()}
+        </fieldset>
+
+        <fieldset>
+          <legend>Ratings and Comments</legend>
+          {renderRatingsAndComments()}
+        </fieldset>
+
+        <fieldset>
+          <legend>Review</legend>
+          {renderReviewText()}
+          {renderDateOfVisit()}
+        </fieldset>
+      </form>
+
+      {renderPulsingDots()}
+    </div>
+    <div className="form-actions fixed-action">
+      <Button
+        disabled={!reviewData.place || !reviewData.reviewText}
+        onClick={handlePreview}
+        variant="contained"
+        color="primary"
       >
-        <form id="add-review-form">
-          <fieldset>
-            <legend>Restaurant Details</legend>
-            {renderRestaurantSelector()}
-          </fieldset>
-
-          <fieldset>
-            <legend>Ratings and Comments</legend>
-            {renderRatingsAndComments()}
-          </fieldset>
-
-          <fieldset>
-            <legend>Review</legend>
-            {renderReviewText()}
-            {renderDateOfVisit()}
-          </fieldset>
-        </form>
-
-        {renderPulsingDots()}
-      </div>
-      <div className="form-actions fixed-action">
-        <Button
-          disabled={!reviewData.place || !reviewData.reviewText}
-          onClick={handlePreview}
-          variant="contained"
-          color="primary"
-        >
-          Preview
-        </Button>
-      </div>
-    </>
-  );
+        Preview
+      </Button>
+    </div>
+  </>
+);
 };
 
 export default ReviewEntryForm;
