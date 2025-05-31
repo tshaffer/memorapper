@@ -8,7 +8,7 @@ import '../App.css';
 import PlaceMarker from './PlaceMarker';
 import PlaceInfoWindow from './PlaceInfoWindow';
 import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import { RootState } from '../redux';
 
 const DEFAULT_ZOOM = 14;
 

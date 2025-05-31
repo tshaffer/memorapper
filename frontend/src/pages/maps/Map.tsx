@@ -21,8 +21,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import VisiblePlacesList from './VisiblePlacesList';
 import PlaceDetailPanel from './PlaceDetailPanel';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import { setFilters } from '../../redux/memorapperSlice';
+import { RootState, setFilters } from '../../redux';
 
 const MapPage: React.FC = () => {
   const { placesWithGooglePlaces, places, settings } = useSelector((state: RootState) => state.memorapper);

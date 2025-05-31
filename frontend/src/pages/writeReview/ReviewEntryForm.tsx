@@ -19,7 +19,7 @@ import {
 import PulsingDots from '../../components/PulsingDots';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+import { RootState } from '../../redux';
 
 interface ReviewEntryFormProps {
   reviewData: ReviewData;

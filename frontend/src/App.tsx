@@ -13,8 +13,9 @@ import Map from './pages/maps/Map';
 import SettingsDialog from './components/SettingsDialog';
 import SettingsIcon from '@mui/icons-material/Settings';
 import WriteReviewPage from './pages/writeReview/WriteReviewPage';
-import { AppDispatch, RootState } from './redux/store';
-import { setSettings, setFilters, fetchGooglePlaces, fetchPlaces } from './redux/memorapperSlice';
+import { AppDispatch, RootState, setPlacesWithGooglePlaces } from './redux';
+import { setSettings, setFilters, fetchGooglePlaces, fetchPlaces } from './redux';
+import { mergePlacesWithGooglePlaces } from './utilities/mergePlaces';
 
 // soft orange: #FFA07A
 // other possibilities
@@ -30,7 +31,7 @@ const activeButtonStyle: React.CSSProperties = {
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { settings, error, loading } = useSelector((state: RootState) => state.memorapper);
+  const { googlePlaces, places, settings, error, loading } = useSelector((state: RootState) => state.memorapper);
 
   const isMobile = useMediaQuery('(max-width:768px)');
   const location = useLocation(); // Track the current route
@@ -43,6 +44,12 @@ const App: React.FC = () => {
     };
     loadData();
   }, [dispatch]);
+
+  useEffect(() => {
+    const merged = mergePlacesWithGooglePlaces(places, googlePlaces);
+    dispatch(setPlacesWithGooglePlaces(merged));
+  }, [places, googlePlaces, dispatch]);
+
 
   useEffect(() => {
     console.log('getAppSettings useEffect called');
