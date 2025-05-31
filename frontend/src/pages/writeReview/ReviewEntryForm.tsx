@@ -8,6 +8,9 @@ import '../../styles/multiPanelStyles.css';
 import '../../styles/reviewEntryForm.css';
 import { useEffect, useState } from 'react';
 import {
+  PlaceType,
+  PlaceWithGooglePlace,
+  Restaurant,
   // Diner,
   // DinerRestaurantReview,
   RestaurantType,
@@ -24,7 +27,9 @@ interface ReviewEntryFormProps {
   onReceivedPreviewResponse: () => any;
 }
 
-const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormProps) => {
+const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormProps) => {
+
+  const { placesWithGooglePlaces } = useUserContext();
 
   // const { currentDiningGroup, diners, newRestaurants } = useUserContext();
 
@@ -36,6 +41,14 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
 
   const [isLoading, setIsLoading] = useState(false);
   const [isUsingExistingRestaurant, setIsUsingExistingRestaurant] = useState(false);
+
+
+  const getRestaurants = (): PlaceWithGooglePlace[] => {
+    const result = placesWithGooglePlaces
+      .filter((item): item is PlaceWithGooglePlace => item.placeType! !== PlaceType.Restaurant)
+      .map(item => item!);
+    return result;
+  }
 
   const getDinerRestaurantReview = (dinerId: string): any | null => {
     // if (!reviewData || !reviewData.dinerRestaurantReviews) return null;
@@ -51,10 +64,6 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
   const handleChange = (field: keyof ReviewData, value: any) => {
     setReviewData((prev) => ({ ...prev, [field]: value }));
   };
-
-  const handleRestaurantTypeChange = (value: RestaurantType) => {
-    setReviewData((prev) => ({ ...prev, place: { ...prev.place!, restaurantType: value } }));
-  }
 
   const generateSessionId = (): string => Math.random().toString(36).substring(2) + Date.now().toString(36);
 
@@ -262,7 +271,6 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
 
   const renderRestaurantSelector = (): JSX.Element => (
     <div className="form-group">
-      <label htmlFor="restaurant-selector">Select Existing Restaurant</label>
       <Select
         id="restaurant-selector"
         value={reviewData?.place?.googlePlaceId || ''}
@@ -273,46 +281,12 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
         <MenuItem value="" disabled>
           Select a restaurant
         </MenuItem>
-        {/* {newRestaurants.map((restaurant) => (
-          <MenuItem key={restaurant.newRestaurantId} value={restaurant.googlePlace?.googlePlaceId}>
-            {restaurant.googlePlace?.name}
+        {getRestaurants().map((restaurantPlace: PlaceWithGooglePlace) => (
+          <MenuItem key={restaurantPlace.placeId} value={restaurantPlace.placeId}>
+            {restaurantPlace.googlePlace?.name}
           </MenuItem>
-        ))} */}
+        ))}
       </Select>
-    </div>
-  );
-
-  const renderRestaurantNameAndType = (): JSX.Element | null => {
-    if (isUsingExistingRestaurant) return null; // Don't show if using an existing restaurant
-
-    return (
-      <>
-        {renderRestaurantName()}
-        {renderRestaurantType()}
-      </>
-    );
-  };
-
-  const renderRestaurantDetailsToggle = (): JSX.Element => (
-    <div className="form-group">
-      <FormControl component="fieldset">
-        <RadioGroup
-          row
-          value={isUsingExistingRestaurant ? 'existing' : 'new'}
-          onChange={(event) => setIsUsingExistingRestaurant(event.target.value === 'existing')}
-        >
-          <FormControlLabel
-            value="existing"
-            control={<Radio />}
-            label="Existing Restaurant"
-          />
-          <FormControlLabel
-            value="new"
-            control={<Radio />}
-            label="New Restaurant"
-          />
-        </RadioGroup>
-      </FormControl>
     </div>
   );
 
@@ -340,24 +314,21 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
         <form id="add-review-form">
           <fieldset>
             <legend>Restaurant Details</legend>
-            {renderRestaurantDetailsToggle()}
-            {isUsingExistingRestaurant
-              ? renderRestaurantSelector()
-              : renderRestaurantNameAndType()}
+            {renderRestaurantSelector()}
           </fieldset>
-  
+
           <fieldset>
             <legend>Ratings and Comments</legend>
             {renderRatingsAndComments()}
           </fieldset>
-  
+
           <fieldset>
             <legend>Review</legend>
             {renderReviewText()}
             {renderDateOfVisit()}
           </fieldset>
         </form>
-  
+
         {renderPulsingDots()}
       </div>
       <div className="form-actions fixed-action">
@@ -372,6 +343,6 @@ const NewReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFo
       </div>
     </>
   );
-  };
+};
 
-export default NewReviewEntryForm;
+export default ReviewEntryForm;
