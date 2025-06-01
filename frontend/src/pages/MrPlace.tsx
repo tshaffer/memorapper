@@ -41,6 +41,15 @@ const MrPlaceForm = () => {
 
     try {
       console.log('handleAddPlace:', newPlace);
+      const response = await fetch('/api/submitMrPlace', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...newPlace,
+        }),
+      });
+      const data = await response.json();
+      console.log('Place submitted:', data);
       setIsLoading(false);
     } catch (error) {
       console.error('Error submitting place:', error);
