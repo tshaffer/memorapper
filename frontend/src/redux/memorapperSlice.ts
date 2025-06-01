@@ -63,27 +63,6 @@ export const fetchPlaces = createAsyncThunk('user/fetchPlaces', async () => {
   return data.places as Place[];
 });
 
-// export const fetchMrPlaces = createAsyncThunk('user/fetchPlaces', async () => {
-//   const response = await fetch('/api/places');
-//   const data = await response.json();
-//   const places: Place[] = data.places as Place[];
-//   const mrPlaces: MrPlace[] = places.map(place => ({
-//     _idPlace: place._idPlace,
-//     placeId: place.placeId,
-//     googlePlaceId: place.googlePlaceId,
-//     placeType: place.placeType || PlaceType.Restaurant,
-//     placeComments: place.placeComments || '',
-//     mrPlaceReviews: [],
-//     mrPlaceSpecificities: {
-//       restaurantType: place.restaurant?.restaurantType || '',
-//       openForBreakfast: place.restaurant?.openForBreakfast || false,
-//       openForLunch: place.restaurant?.openForLunch || false,
-//       openForDinner: place.restaurant?.openForDinner || false,
-//     },
-//   }));
-//   return mrPlaces;
-// });
-
 const memorapperSlice = createSlice({
   name: 'memorapper',
   initialState,
