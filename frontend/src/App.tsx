@@ -12,9 +12,9 @@ import Map from './pages/maps/Map';
 import SettingsDialog from './components/SettingsDialog';
 import SettingsIcon from '@mui/icons-material/Settings';
 import WriteReviewPage from './pages/writeReview/WriteReviewPage';
-import { AppDispatch, RootState, setPlacesWithGooglePlaces } from './redux';
+import { AppDispatch, fetchMrPlaces, RootState, setMrPlacesWithGooglePlaces, setPlacesWithGooglePlaces } from './redux';
 import { setSettings, setFilters, fetchGooglePlaces, fetchPlaces } from './redux';
-import { mergePlacesWithGooglePlaces } from './utilities/mergePlaces';
+import { mergeMrPlacesWithGooglePlaces, mergePlacesWithGooglePlaces } from './utilities/mergePlaces';
 import MrPlaceForm from './pages/MrPlace';
 import MrReviewEntry from './pages/MrReviewEntry';
 import MrWriteReviewPage from './pages/MrWriteReviewPage';
@@ -33,7 +33,7 @@ const activeButtonStyle: React.CSSProperties = {
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { googlePlaces, places, settings, error, loading } = useSelector((state: RootState) => state.memorapper);
+  const { googlePlaces, places, mrPlaces, settings, error, loading } = useSelector((state: RootState) => state.memorapper);
 
   const isMobile = useMediaQuery('(max-width:768px)');
   const location = useLocation(); // Track the current route
@@ -43,6 +43,7 @@ const App: React.FC = () => {
       console.log('loadData useEffect called');
       await dispatch(fetchGooglePlaces());
       await dispatch(fetchPlaces());
+      await dispatch(fetchMrPlaces());
     };
     loadData();
   }, [dispatch]);
@@ -51,6 +52,11 @@ const App: React.FC = () => {
     const merged = mergePlacesWithGooglePlaces(places, googlePlaces);
     dispatch(setPlacesWithGooglePlaces(merged));
   }, [places, googlePlaces, dispatch]);
+
+  useEffect(() => {
+    const merged = mergeMrPlacesWithGooglePlaces(mrPlaces, googlePlaces);
+    dispatch(setMrPlacesWithGooglePlaces(merged));
+  }, [mrPlaces, googlePlaces, dispatch]);
 
 
   useEffect(() => {

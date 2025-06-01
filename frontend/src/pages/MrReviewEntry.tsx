@@ -11,11 +11,13 @@ import {
   MrPlaceWithGooglePlace,
   RestaurantType,
   MrReviewData,
+  MrPlace,
 } from '../types';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import PulsingDots from '../components/PulsingDots';
 import { RootState } from '../redux';
+import { current } from '@reduxjs/toolkit';
 
 interface MrReviewEntryProps {
   mrReviewData: MrReviewData;
@@ -24,7 +26,7 @@ interface MrReviewEntryProps {
 
 const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) => {
 
-  const { mrPlacesWithGooglePlaces } = useSelector((state: RootState) => state.memorapper);
+  const { mrPlaces, mrPlacesWithGooglePlaces } = useSelector((state: RootState) => state.memorapper);
 
   const { mrReviewData, setMrReviewData } = props;
 
@@ -44,6 +46,10 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
   const getRestaurantByPlaceId = (placeId: string): MrPlaceWithGooglePlace | undefined => {
     return getRestaurants().find((restaurant) => restaurant.placeId === placeId);
   }
+
+  const getMrPlaceByPlaceId = (placeId: string): MrPlaceWithGooglePlace | undefined => {
+    return mrPlacesWithGooglePlaces.find((place) => place.placeId === placeId);
+  } 
 
   const getDinerRestaurantReview = (dinerId: string): any | null => {
     // if (!mrReviewData || !mrReviewData.dinerRestaurantReviews) return null;
@@ -86,69 +92,11 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
       value: RestaurantType[label as keyof typeof RestaurantType], // The corresponding numeric value
     }));
 
-  const handleSetRestaurantName = (name: string) => {
-    setMrReviewData((prev) => ({ ...prev, restaurantName: name }));
-  }
-
   const handleDinerRestaurantReviewChange = (
     dinerId: string,
     input: Partial<any>
   ) => {
 
-    // let matchedDinerRestaurantReview: DinerRestaurantReview | null = null;
-    // for (const dinerRestaurantReview of mrReviewData.dinerRestaurantReviews) {
-    //   if (dinerRestaurantReview.dinerId === dinerId) {
-    //     matchedDinerRestaurantReview = dinerRestaurantReview;
-    //     break;
-    //   }
-    // }
-    // if (!matchedDinerRestaurantReview) {
-    //   const newDinerRestaurantReview: DinerRestaurantReview = {
-    //     dinerRestaurantReviewId: uuidv4(),
-    //     dinerId: dinerId,
-    //     rating: input.rating ?? 0,
-    //     comments: input.comments ?? '',
-    //   };
-    //   const newDinerRestaurantReviews = [...mrReviewData.dinerRestaurantReviews, newDinerRestaurantReview];
-    //   const newMrReviewData = { ...mrReviewData, dinerRestaurantReviews: newDinerRestaurantReviews };
-    //   setMrReviewData(newMrReviewData);
-    //   return;
-    // } else {
-    //   const updatedDinerRestaurantReview = {
-    //     ...matchedDinerRestaurantReview,
-    //     ...input,
-    //   };
-    //   const newDinerRestaurantReviews = mrReviewData.dinerRestaurantReviews.map((dinerRestaurantReview) => {
-    //     if (dinerRestaurantReview.dinerId === dinerId) {
-    //       return updatedDinerRestaurantReview;
-    //     }
-    //     return dinerRestaurantReview;
-    //   });
-    //   const newMrReviewData = { ...mrReviewData, dinerRestaurantReviews: newDinerRestaurantReviews };
-    //   setMrReviewData(newMrReviewData);
-    // }
-
-  };
-
-  const renderRestaurantType = (): JSX.Element => {
-    return (<div>pizza place</div>);
-    // const value = mrReviewData?.place?.restaurantType || RestaurantType.Restaurant;
-    // return (
-    //   <div className="form-group">
-    //     <label htmlFor="restaurant-type">Restaurant Type</label>
-    //     <Select
-    //       id="restaurant-type"
-    //       value={value}
-    //       onChange={(event) => handleRestaurantTypeChange(Number(event.target.value) as RestaurantType)}
-    //     >
-    //       {restaurantTypeOptions.map(({ label, value }) => (
-    //         <MenuItem key={value} value={value}>
-    //           {label}
-    //         </MenuItem>
-    //       ))}
-    //     </Select>
-    //   </div>
-    // );
   };
 
   const renderDateOfVisit = (): JSX.Element => (
@@ -237,9 +185,21 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
   const handleRestaurantSelection = (placeId: string) => {
     console.log('Selected PlaceId:', placeId);
     const selectedRestaurant = getRestaurantByPlaceId(placeId);
-    if (selectedRestaurant) {
+    const selectedMrPlaceWithGooglePlace: MrPlaceWithGooglePlace | undefined = getMrPlaceByPlaceId(placeId);
+    if (selectedMrPlaceWithGooglePlace && selectedRestaurant) {
+
+      const selectedMrPlace: MrPlace = {
+        _idPlace: selectedMrPlaceWithGooglePlace._idPlace,
+        placeId: selectedMrPlaceWithGooglePlace.placeId,
+        googlePlaceId: selectedMrPlaceWithGooglePlace.googlePlaceId,
+        placeType: selectedMrPlaceWithGooglePlace.placeType || PlaceType.Restaurant,
+        placeComments: selectedMrPlaceWithGooglePlace.placeComments || '',
+        mrPlaceReviews: [],
+        mrPlaceSpecificities: {},  
+      }
       // handleChange('place', selectedRestaurant);
       const currentReviewData: MrReviewData = { ...mrReviewData };
+      currentReviewData.place = selectedMrPlace;
       currentReviewData.place!.placeId = selectedRestaurant.placeId;
       console.log('Updated Review Data:', currentReviewData);
       setMrReviewData(currentReviewData);

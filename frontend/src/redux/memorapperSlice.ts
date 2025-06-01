@@ -44,6 +44,12 @@ export const fetchGooglePlaces = createAsyncThunk('user/fetchGooglePlaces', asyn
 export const fetchPlaces = createAsyncThunk('user/fetchPlaces', async () => {
   const response = await fetch('/api/places');
   const data = await response.json();
+  return data.places as Place[];
+});
+
+export const fetchMrPlaces = createAsyncThunk('user/fetchMrPlaces', async () => {
+  const response = await fetch('/api/places');
+  const data = await response.json();
   const places: Place[] = data.places as Place[];
   const mrPlaces: MrPlace[] = places.map(place => ({
     _idPlace: place._idPlace,
@@ -60,7 +66,7 @@ export const fetchPlaces = createAsyncThunk('user/fetchPlaces', async () => {
     },
   }));
 
-  return data.places as Place[];
+  return mrPlaces as MrPlace[];
 });
 
 const memorapperSlice = createSlice({
