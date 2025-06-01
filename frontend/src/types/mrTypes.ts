@@ -5,13 +5,14 @@ export type MrPlaceReviews = MrRestaurantReview | any;
 export type MrPlaceSpecificities = MrRestaurant | any;
 
 export interface MrPlace {
-    _idPlace?: string;
-    placeId: string;
-    googlePlaceId: string;
-    placeType: PlaceType;
-    placeComments: string;
-    mrPlaceReviews: MrPlaceReviews[];
-    mrPlaceSpecificities: MrPlaceSpecificities;
+  _idPlace?: string;
+  placeId: string;
+  googlePlaceId: string;
+  placeType: PlaceType;
+  placeComments: string;
+  placeRating?: number;
+  mrPlaceReviews: MrPlaceReviews[];
+  mrPlaceSpecificities: MrPlaceSpecificities;
 }
 
 export interface MrRestaurant {
@@ -39,7 +40,6 @@ export interface MrReviewData {
   dateOfVisit: string;
   reviewText: string;
   itemReviews: MrItemOrdered[];
-  placeRating?: number;
 }
 
 export type MrPlaceWithGooglePlace = {

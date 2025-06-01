@@ -16,6 +16,8 @@ import { AppDispatch, RootState, setPlacesWithGooglePlaces } from './redux';
 import { setSettings, setFilters, fetchGooglePlaces, fetchPlaces } from './redux';
 import { mergePlacesWithGooglePlaces } from './utilities/mergePlaces';
 import MrPlaceForm from './pages/MrPlace';
+import MrReviewEntry from './pages/MrReviewEntry';
+import MrWriteReviewPage from './pages/MrWriteReviewPage';
 
 // soft orange: #FFA07A
 // other possibilities
@@ -118,7 +120,7 @@ const App: React.FC = () => {
         <Route path="/map" element={<Map />} />
         <Route path="/map/:_id" element={<Map />} />
         <Route path="/add-place" element={<MrPlaceForm />} />
-        <Route path="/write-review" element={<WriteReviewPage />} />
+        <Route path="/write-review" element={<MrWriteReviewPage />} />
       </Routes>
     );
   }
