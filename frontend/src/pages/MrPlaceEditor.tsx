@@ -274,6 +274,7 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
         {renderPlaceName()}
         {renderPlaceType()}
         {renderRestaurantType()}
+        {renderMealAvailability()}
         {renderDesirabilityRating()}
         {renderPlaceComments()}
       </form>
