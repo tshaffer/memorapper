@@ -61,17 +61,6 @@ export interface GooglePlace {
   website: string;
 }
 
-// other fields from google.maps.places.PlaceResult that I may want to add to NewGooglePlace
-// adr_address?: string;
-// formatted_phone_number?: string;
-// geometry?: google.maps.places.PlaceGeometry;
-// icon?: string;
-// icon_background_color?: string;
-// icon_mask_base_uri?: string;
-// international_phone_number?: string;
-// photos?: google.maps.places.PlacePhoto[];
-// url?: string;
-
 // User interface
 export interface User {
   _idUser?: string;

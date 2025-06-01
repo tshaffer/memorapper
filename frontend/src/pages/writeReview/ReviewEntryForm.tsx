@@ -277,7 +277,7 @@ const ReviewEntryForm: React.FC<ReviewEntryFormProps> = (props: ReviewEntryFormP
 
   const renderRestaurantSelector = (): JSX.Element => {
     console.log('renderRestaurantSelector');
-    console.log('value', reviewData?.place?.placeId || '');
+    // console.log('value', reviewData?.place?.placeId || '');
     const restaurantPlaces: PlaceWithGooglePlace[] = getRestaurants();
     restaurantPlaces.forEach((restaurantPlace) => {
       console.log(restaurantPlace.placeId);

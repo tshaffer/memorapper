@@ -8,7 +8,6 @@ import GoogleMapsProvider from './components/GoogleMapsProvider';
 import './App.css';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } from '@mui/material';
 import { Distance, RestaurantOpen, Settings, } from './types';
-import PlaceForm from './pages/places/PlaceForm';
 import Map from './pages/maps/Map';
 import SettingsDialog from './components/SettingsDialog';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -16,6 +15,7 @@ import WriteReviewPage from './pages/writeReview/WriteReviewPage';
 import { AppDispatch, RootState, setPlacesWithGooglePlaces } from './redux';
 import { setSettings, setFilters, fetchGooglePlaces, fetchPlaces } from './redux';
 import { mergePlacesWithGooglePlaces } from './utilities/mergePlaces';
+import MrPlaceForm from './pages/MrPlace';
 
 // soft orange: #FFA07A
 // other possibilities
@@ -116,7 +116,7 @@ const App: React.FC = () => {
         <Route path="/" element={<Map />} />
         <Route path="/map" element={<Map />} />
         <Route path="/map/:_id" element={<Map />} />
-        <Route path="/add-place" element={<PlaceForm />} />
+        <Route path="/add-place" element={<MrPlaceForm />} />
         <Route path="/write-review" element={<WriteReviewPage />} />
       </Routes>
     );
