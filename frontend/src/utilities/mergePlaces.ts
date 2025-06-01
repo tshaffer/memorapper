@@ -4,11 +4,12 @@ export const mergePlacesWithGooglePlaces = (
   places: Place[],
   googlePlaces: GooglePlace[]
 ): PlaceWithGooglePlace[] => {
-  return places.map((place) => {
-    const googlePlace = googlePlaces.find((g) => g.googlePlaceId === place.googlePlaceId);
-    return {
-      ...place,
-      googlePlace: googlePlace || undefined,
-    };
-  });
+  return [];
+  // return places.map((place) => {
+  //   const googlePlace = googlePlaces.find((g) => g.googlePlaceId === place.googlePlaceId);
+  //   return {
+  //     ...place,
+  //     googlePlace: googlePlace || undefined,
+  //   };
+  // });
 };

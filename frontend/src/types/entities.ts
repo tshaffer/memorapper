@@ -22,3 +22,6 @@ export interface BasePlace {
   vicinity?: string;
   restaurantType: RestaurantType;
 }
+
+// types/GooglePlace.ts
+

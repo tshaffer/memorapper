@@ -1,7 +1,7 @@
 // // frontend/node_modules/@types/google.maps/index.d.ts
 // // https://developers.google.com/maps/documentation/places/web-service/supported_types
 
-import { RestaurantType } from "./enums";
+import { PlaceType, RestaurantType } from "./enums";
 import { GooglePlace } from "./googlePlace";
 import { ItemOrdered } from "./itemOrdered";
 import { Review } from "./review";
@@ -50,7 +50,7 @@ export type PlaceWithGooglePlace = {
 //   restaurant?: Restaurant;
 // };
 
-// export interface GooglePlace {
+// export interface  {
 //   googlePlaceId: string;
 //   address_components?: google.maps.GeocoderAddressComponent[];
 //   formatted_address?: string;
@@ -112,7 +112,7 @@ export interface RestaurantReview {
 
 // types/Place.ts
 
-export type PlaceType = 'Restaurant' | 'Accommodation' | 'Grocery Store' | 'Other';
+// export type PlaceType = 'Restaurant' | 'Accommodation' | 'Grocery Store' | 'Other';
 
 export interface Place {
   googlePlaceId: string;

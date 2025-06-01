@@ -30,7 +30,7 @@ const SearchPage: React.FC = () => {
       {error && <p>Error: {error}</p>}
       <List>
         {googlePlaces.map((place) => (
-          <ListItem key={place.place_id} divider>
+          <ListItem key={place.googlePlaceId} divider>
             <ListItemText
               primary={place.name}
               secondary={place.formatted_address}
