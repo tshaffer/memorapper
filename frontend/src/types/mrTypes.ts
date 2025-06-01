@@ -1,4 +1,5 @@
 import { PlaceType, RestaurantType } from "./enums";
+import { GooglePlace, Restaurant } from "./place";
 
 export type MrPlaceReviews = MrRestaurantReview | any;
 export type MrPlaceSpecificities = MrRestaurant | any;
@@ -40,3 +41,23 @@ export interface MrReviewData {
   itemReviews: MrItemOrdered[];
   placeRating?: number;
 }
+
+export type MrPlaceWithGooglePlace = {
+  _idPlace?: string;
+  placeId: string;
+  googlePlaceId: string;
+  placeType?: PlaceType;
+  placeComments?: string;
+  googlePlace?: GooglePlace;
+  restaurant?: Restaurant;
+};
+
+export type MrSubmitPlaceRequestBody = {
+  _idPlace?: string;
+  placeId: string;
+  placeType?: PlaceType;
+  placeComments?: string;
+  googlePlace?: GooglePlace;
+  restaurant?: Restaurant;
+};
+

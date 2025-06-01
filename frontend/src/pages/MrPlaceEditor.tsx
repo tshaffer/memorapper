@@ -2,33 +2,31 @@ import React, { useState } from 'react';
 import { Button, MenuItem, Select, useMediaQuery, Checkbox, FormControlLabel, TextField } from "@mui/material";
 import { v4 as uuidv4 } from 'uuid';
 import { useParams } from 'react-router-dom';
-import { Place, GooglePlace, SubmitPlaceRequestBody, RestaurantType, PlaceType, PlaceWithGooglePlace, Restaurant } from "../types";
+import { Place, GooglePlace, MrSubmitPlaceRequestBody, RestaurantType, PlaceType, MrPlaceWithGooglePlace, Restaurant } from "../types";
 import RestaurantName from '../components/RestaurantName';
 import PulsingDots from '../components/PulsingDots';
 
 interface MrPlaceEditorProps {
-  initialPlace?: PlaceWithGooglePlace;
-  onSubmit: (place: PlaceWithGooglePlace) => Promise<void>;
+  initialPlace?: MrPlaceWithGooglePlace;
+  onSubmit: (place: MrPlaceWithGooglePlace) => Promise<void>;
   onCancel?: () => void;
 }
 
 const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, onCancel }) => {
-  const isMobile = useMediaQuery('(max-width:768px)');
   // If in create mode, get _id from URL params for new place, otherwise use the passed in place's _id.
   const { _id } = useParams<{ _id: string }>();
 
   // When creating, initialize an empty/default Place.
-  const defaultPlace: PlaceWithGooglePlace =
+  const defaultPlace: MrPlaceWithGooglePlace =
   {
     _idPlace: _id,
     placeId: uuidv4(),
     googlePlaceId: '',
-    visited: false,
     googlePlace: undefined,
   };
 
 
-  const [place, setPlace] = useState<PlaceWithGooglePlace>(defaultPlace);
+  const [place, setPlace] = useState<MrPlaceWithGooglePlace>(defaultPlace);
   const [placeName, setPlaceName] = useState(place.googlePlace ? (place.googlePlace.name ? place.googlePlace.name : '') : '');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -72,7 +70,7 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
 
   // Handles changes from the RestaurantName component.
   const handleChangeGooglePlace = (googlePlace: GooglePlace) => {
-    const currentPlace: SubmitPlaceRequestBody = { ...place };
+    const currentPlace: MrSubmitPlaceRequestBody = { ...place };
     currentPlace.googlePlace = googlePlace;
 
     if (currentPlace.placeType === PlaceType.Restaurant && googlePlace.opening_hours) {
@@ -124,6 +122,7 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
     e.preventDefault();
     setIsLoading(true);
     try {
+      place.googlePlaceId = place.googlePlace?.googlePlaceId || '';
       await onSubmit(place);
       setIsLoading(false);
     } catch (error) {
@@ -163,16 +162,6 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
         rows={4}
         value={place.placeComments || ''}
         onChange={(e) => handleChange('placeComments', e.target.value)}
-      />
-    </div>
-  );
-
-  const renderPlaceVisited = () => (
-    <div style={{ marginBottom: '1rem' }}>
-      <label>{'Visited:'}</label>
-      <Checkbox
-        checked={place.visited}
-        onChange={(e) => handleChange('visited', e.target.checked)}
       />
     </div>
   );
@@ -276,7 +265,7 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
           onClick={handleSubmit}
           disabled={isLoading || !place.googlePlace?.googlePlaceId}
         >
-          Add Place'
+          Add Place
         </Button>
       </div>
       {isLoading && <PulsingDots />}
