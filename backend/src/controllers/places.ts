@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import MongoPlaceModel, { IMongoPlace } from "../models/MongoPlace";
-import { GooglePlace, MongoPlace, Place, PlaceWithGooglePlace, SubmitPlaceRequestBody } from "../types";
+import { GooglePlace, MongoPlace, MrPlace, MrSubmitPlaceRequestBody, Place, PlaceWithGooglePlace, SubmitPlaceRequestBody } from "../types";
 import PlaceModel, { IPlace } from '../models/Place';
 import { convertMongoGeometryToGoogleGeometry } from '../utilities';
 import { MongoGeometry } from "../types";
 import { convertGoogleGeometryToMongoGeometry, convertMongoPlacesToGooglePlaces } from '../utilities';
 import { ObjectId } from 'mongoose';
+import MrPlaceModel, { IMrPlace } from '../models/MrPlace';
 
 export const getPlacesHandler = async (
   req: Request,
@@ -211,4 +212,74 @@ export const addMongoPlace = async (googlePlace: GooglePlace): Promise<IMongoPla
   }
 }
 
+
+export const submitMrPlaceHandler = async (
+  req: Request<{}, {}, MrSubmitPlaceRequestBody>,
+  res: Response
+): Promise<any> => {
+  const body: MrSubmitPlaceRequestBody = req.body;
+  try {
+    const place = await submitMrPlace(body);
+    return res.status(201).json({ message: 'MrPlace saved successfully!', place });
+  } catch (error) {
+    console.error('Error saving place:', error);
+    return res.status(500).json({ error: 'An error occurred while saving the place.' });
+  }
+};
+
+const submitMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<IMrPlace | null> => {
+
+  const { _idPlace, placeId, placeType, placeComments, googlePlace, restaurant } = placeRequestBody
+
+  let mongoPlace: IMongoPlace | null = await getMongoPlace(googlePlace!.googlePlaceId);
+  if (!mongoPlace) {
+    mongoPlace = await addMongoPlace(googlePlace!);
+    if (!mongoPlace) {
+      throw new Error('Error saving place.');
+    }
+  }
+
+  const addPlaceEntity: MrPlace = {
+    _idPlace,
+    placeId,
+    googlePlaceId: googlePlace!.googlePlaceId,
+    placeType: placeType!,
+    placeComments: placeComments || '',
+    mrPlaceReviews: [], // Initialize with an empty array or handle as needed
+    mrPlaceSpecificities: restaurant,
+  };
+
+  let savedPlace: IPlace | null;
+
+  if (_idPlace) {
+    // If _id is provided, update the existing document
+    savedPlace = await MrPlaceModel.findByIdAndUpdate(_idPlace, addPlaceEntity, {
+      new: true,    // Return the updated document
+      runValidators: true // Ensure the updated data complies with schema validation
+    });
+
+    if (!savedPlace) {
+      throw new Error('Place not found for update.');
+    }
+  } else {
+    delete addPlaceEntity._idPlace;
+    const newPlace: IMrPlace | null = await addMrPlaceToDb(addPlaceEntity);
+    console.log('newPlace:', newPlace?.toObject());
+  }
+
+  return null;
+}
+
+export const addMrPlaceToDb = async (place: MrPlace): Promise<IMrPlace | null> => {
+
+  const newPlace: IMrPlace = new MrPlaceModel(place);
+
+  try {
+    const savedPlace: IMrPlace | null = await newPlace.save();
+    return savedPlace;
+  } catch (error: any) {
+    console.error('Error saving place:', error);
+    throw new Error('An error occurred while saving the place.');
+  }
+}
 
