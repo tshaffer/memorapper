@@ -1,29 +1,25 @@
+// App.tsx
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import HomeIcon from '@mui/icons-material/Home';
-import GoogleMapsProvider from './components/GoogleMapsProvider';
-
-import './App.css';
-import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } from '@mui/material';
-import { Distance, RestaurantOpen, Settings, } from './types';
-import PlaceForm from './pages/places/PlaceForm';
-import Map from './pages/maps/Map';
-import SettingsDialog from './components/SettingsDialog';
+import SearchIcon from '@mui/icons-material/Search';
+import RestaurantIcon from '@mui/icons-material/Restaurant';
+import MapIcon from '@mui/icons-material/Map';
 import SettingsIcon from '@mui/icons-material/Settings';
-import WriteReviewPage from './pages/writeReview/WriteReviewPage';
+
+import GoogleMapsProvider from './components/GoogleMapsProvider';
+import Map from './pages/maps/Map';
+import PlacesPage from './pages/PlacesPage';
+import SearchPage from './pages/SearchPage';
+import ReviewPage from './pages/ReviewPage';
+import SettingsDialog from './components/SettingsDialog';
+
+import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } from '@mui/material';
 import { AppDispatch, RootState, setPlacesWithGooglePlaces } from './redux';
 import { setSettings, setFilters, fetchGooglePlaces, fetchPlaces } from './redux';
 import { mergePlacesWithGooglePlaces } from './utilities/mergePlaces';
-
-// soft orange: #FFA07A
-// other possibilities
-//    Light Yellow (#FFD700):
-//    Light Gray (#D3D3D3):\
-//    Sky Blue (#87CEFA):
-//    Soft Orange (#FFA07A):
-//    Teal (#20B2AA):
 
 const activeButtonStyle: React.CSSProperties = {
   color: '#FFA07A',
@@ -34,7 +30,7 @@ const App: React.FC = () => {
   const { googlePlaces, places, settings, error, loading } = useSelector((state: RootState) => state.memorapper);
 
   const isMobile = useMediaQuery('(max-width:768px)');
-  const location = useLocation(); // Track the current route
+  const location = useLocation();
 
   useEffect(() => {
     const loadData = async () => {
@@ -50,39 +46,27 @@ const App: React.FC = () => {
     dispatch(setPlacesWithGooglePlaces(merged));
   }, [places, googlePlaces, dispatch]);
 
-
   useEffect(() => {
-    console.log('getAppSettings useEffect called');
-    const getAppSettings = (): Settings => {
-      const appSettings: string | null = localStorage.getItem('appSettings');
+    const getAppSettings = () => {
+      const appSettings = localStorage.getItem('appSettings');
       if (appSettings) {
         return JSON.parse(appSettings);
-      } else {
-        const settings: Settings = {
-          filters: {
-            distanceAway: Distance.AnyDistance,
-            restaurantOpen: RestaurantOpen.OpenAnyTime,
-            placeTypes: [],
-            restaurantTypes: [],
-            openMeals: {
-              Breakfast: false,
-              Lunch: false,
-              Dinner: false,
-            }
-          },
-        };
-        localStorage.setItem("appSettings", JSON.stringify(settings));
-        return settings;
       }
-    }
-
-    const appSettings: Settings = getAppSettings();
-    dispatch(setSettings(appSettings));
-    setFilters(appSettings.filters);
-
+      const settings = {
+        filters: {
+          distanceAway: 'AnyDistance',
+          restaurantOpen: 'OpenAnyTime',
+          placeTypes: [],
+          restaurantTypes: [],
+          openMeals: { Breakfast: false, Lunch: false, Dinner: false },
+        },
+      };
+      localStorage.setItem('appSettings', JSON.stringify(settings));
+      return settings;
+    };
+    dispatch(setSettings(getAppSettings()));
   }, []);
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [settingsAnchorEl, setSettingsAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleOpenSettingsDialog = (event: React.MouseEvent<HTMLElement>) => {
@@ -93,21 +77,16 @@ const App: React.FC = () => {
     setSettingsAnchorEl(null);
   };
 
-  const handleSetSettings = (updatedSettings: Settings) => {
-
-    console.log("handleSetSettings called with updatedSettings:", updatedSettings);
-
+  const handleSetSettings = (updatedSettings: any) => {
     dispatch(setSettings(updatedSettings));
-
-    // Persist the updated settings to localStorage
-    localStorage.setItem("appSettings", JSON.stringify(updatedSettings));
+    localStorage.setItem('appSettings', JSON.stringify(updatedSettings));
   };
 
-  const isActive = (path: string) => location.pathname === path; // Check if the button corresponds to the current route
+  const isActive = (path: string) => location.pathname.startsWith(path);
 
   let content;
   if (loading) {
-    content = <p>Loading users...</p>;
+    content = <p>Loading places...</p>;
   } else if (error) {
     content = <p>Error: {error}</p>;
   } else {
@@ -115,82 +94,57 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<Map />} />
         <Route path="/map" element={<Map />} />
-        <Route path="/map/:_id" element={<Map />} />
-        <Route path="/add-place" element={<PlaceForm />} />
-        <Route path="/write-review" element={<WriteReviewPage />} />
+        <Route path="/places" element={<PlacesPage />} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/reviews" element={<ReviewPage />} />
       </Routes>
     );
   }
 
   return (
-
     <GoogleMapsProvider>
-      <Box id="mainLayoutContainer" sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <AppBar
-          id="memoRapperAppBar"
-          position="static"
-          style={{
-            marginBottom: isMobile ? '4px' : undefined, // Apply marginBottom only for mobile
-          }}
-        >
-          <Toolbar id="toolBar">
-
+      <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <AppBar position="static">
+          <Toolbar>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              MemoRapp
+              Memorapper
             </Typography>
 
             {isMobile ? (
-              // Render icons for mobile
               <>
-                <IconButton color="inherit" component={Link} to="/map">
-                  <HomeIcon />
-                </IconButton>
+                <IconButton color="inherit" component={Link} to="/map"><MapIcon /></IconButton>
+                <IconButton color="inherit" component={Link} to="/places"><RestaurantIcon /></IconButton>
+                <IconButton color="inherit" component={Link} to="/search"><SearchIcon /></IconButton>
+                <IconButton color="inherit" component={Link} to="/reviews"><HomeIcon /></IconButton>
               </>
             ) : (
-              // Render labels for desktop
               <>
-                <Button
-                  style={(isActive('/map') || isActive('/map')) ? activeButtonStyle : { color: 'white' }}
-                  component={Link}
-                  to="/map"
-                >
-                  Map
-                </Button>
-                <Button
-                  style={isActive('/add-place') ? activeButtonStyle : { color: 'white' }}
-                  component={Link}
-                  to="/add-place"
-                >
-                  Add Place
-                </Button>
-                <Button
-                  style={isActive('/write-review') ? activeButtonStyle : { color: 'white' }}
-                  component={Link}
-                  to="/write-review"
-                >
-                  Write Review
-                </Button>
+                <Button style={isActive('/map') ? activeButtonStyle : { color: 'white' }} component={Link} to="/map">Map</Button>
+                <Button style={isActive('/places') ? activeButtonStyle : { color: 'white' }} component={Link} to="/places">Places</Button>
+                <Button style={isActive('/search') ? activeButtonStyle : { color: 'white' }} component={Link} to="/search">Search</Button>
+                <Button style={isActive('/reviews') ? activeButtonStyle : { color: 'white' }} component={Link} to="/reviews">Reviews</Button>
               </>
             )}
+
             <IconButton onClick={handleOpenSettingsDialog} color="inherit">
               <SettingsIcon />
             </IconButton>
           </Toolbar>
         </AppBar>
 
-        <Box id="mainAppContentArea" sx={{ flexGrow: 1, overflow: 'hidden' }}>
+        <Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
           {content}
         </Box>
+
         <SettingsDialog
           open={settingsAnchorEl !== null}
           onClose={handleCloseSettingsDialog}
           settings={settings}
           onSetSettings={handleSetSettings}
         />
-      </Box >
-    </GoogleMapsProvider >
+      </Box>
+    </GoogleMapsProvider>
   );
 };
 
 export default App;
-

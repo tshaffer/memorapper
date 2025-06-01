@@ -1,8 +1,13 @@
-// frontend/node_modules/@types/google.maps/index.d.ts
-// https://developers.google.com/maps/documentation/places/web-service/supported_types
+// // frontend/node_modules/@types/google.maps/index.d.ts
+// // https://developers.google.com/maps/documentation/places/web-service/supported_types
 
-import { PlaceType, RestaurantType } from "./enums";
-import { GoogleGeometry } from "./googlePlace";
+import { RestaurantType } from "./enums";
+import { GooglePlace } from "./googlePlace";
+import { ItemOrdered } from "./itemOrdered";
+import { Review } from "./review";
+
+// import { PlaceType, RestaurantType } from "./enums";
+// import { GoogleGeometry } from "./googlePlace";
 
 export interface Restaurant {
   restaurantType?: RestaurantType;
@@ -14,15 +19,15 @@ export interface Restaurant {
   restaurantReviews?: RestaurantReview[];
 }
 
-export type Place = {
-  _idPlace?: string;
-  placeId: string;
-  googlePlaceId: string;
-  visited: boolean;
-  placeType?: PlaceType;
-  placeComments?: string;
-  restaurant?: Restaurant;
-};
+// export type Place = {
+//   _idPlace?: string;
+//   placeId: string;
+//   googlePlaceId: string;
+//   visited: boolean;
+//   placeType?: PlaceType;
+//   placeComments?: string;
+//   restaurant?: Restaurant;
+// };
 
 export type PlaceWithGooglePlace = {
   _idPlace?: string;
@@ -35,42 +40,42 @@ export type PlaceWithGooglePlace = {
   restaurant?: Restaurant;
 };
 
-export type SubmitPlaceRequestBody = {
-  _idPlace?: string;
-  placeId: string;
-  visited: boolean;
-  placeType?: PlaceType;
-  placeComments?: string;
-  googlePlace?: GooglePlace;
-  restaurant?: Restaurant;
-};
+// export type SubmitPlaceRequestBody = {
+//   _idPlace?: string;
+//   placeId: string;
+//   visited: boolean;
+//   placeType?: PlaceType;
+//   placeComments?: string;
+//   googlePlace?: GooglePlace;
+//   restaurant?: Restaurant;
+// };
 
-export interface GooglePlace {
-  googlePlaceId: string;
-  address_components?: google.maps.GeocoderAddressComponent[];
-  formatted_address?: string;
-  geometry?: GoogleGeometry;
-  name?: string;
-  opening_hours?: google.maps.places.PlaceOpeningHours;
-  place_id?: string;
-  price_level?: number;
-  rating?: number;
-  user_ratings_total?: number;
-  utc_offset_minutes?: number;
-  vicinity?: string;
-  website: string;
-}
+// export interface GooglePlace {
+//   googlePlaceId: string;
+//   address_components?: google.maps.GeocoderAddressComponent[];
+//   formatted_address?: string;
+//   geometry?: GoogleGeometry;
+//   name?: string;
+//   opening_hours?: google.maps.places.PlaceOpeningHours;
+//   place_id?: string;
+//   price_level?: number;
+//   rating?: number;
+//   user_ratings_total?: number;
+//   utc_offset_minutes?: number;
+//   vicinity?: string;
+//   website: string;
+// }
 
-// other fields from google.maps.places.PlaceResult that I may want to add to NewGooglePlace
-// adr_address?: string;
-// formatted_phone_number?: string;
-// geometry?: google.maps.places.PlaceGeometry;
-// icon?: string;
-// icon_background_color?: string;
-// icon_mask_base_uri?: string;
-// international_phone_number?: string;
-// photos?: google.maps.places.PlacePhoto[];
-// url?: string;
+// // other fields from google.maps.places.PlaceResult that I may want to add to NewGooglePlace
+// // adr_address?: string;
+// // formatted_phone_number?: string;
+// // geometry?: google.maps.places.PlaceGeometry;
+// // icon?: string;
+// // icon_background_color?: string;
+// // icon_mask_base_uri?: string;
+// // international_phone_number?: string;
+// // photos?: google.maps.places.PlacePhoto[];
+// // url?: string;
 
 // User interface
 export interface User {
@@ -78,7 +83,7 @@ export interface User {
   name: string;
 }
 
-// Per-user comment interface (for comments attached directly to the restaurant rather than a full review)
+// // Per-user comment interface (for comments attached directly to the restaurant rather than a full review)
 export interface UserComment {
   _idUserComment?: string;
   user: User;
@@ -96,10 +101,27 @@ export interface RestaurantReview {
   itemsOrdered?: ItemOrdered[];
 }
 
-// The details of an individual item ordered, which can include its own rating or comments.
-export interface ItemOrdered {
-  _idItemOrdered?: string;
-  name: string;
-  itemOrderedComments?: string;
-  rating?: number;
+// // The details of an individual item ordered, which can include its own rating or comments.
+// export interface ItemOrdered {
+//   _idItemOrdered?: string;
+//   name: string;
+//   itemOrderedComments?: string;
+//   rating?: number;
+// }
+
+
+// types/Place.ts
+
+export type PlaceType = 'Restaurant' | 'Accommodation' | 'Grocery Store' | 'Other';
+
+export interface Place {
+  googlePlaceId: string;
+  placeType: PlaceType;
+  placeComments?: string; // optional
+  rating?: number; // 1-10, optional
+  restaurantType?: string; // Italian, Mexican, etc. - only for restaurants
+  openForBreakfast?: boolean;
+  openForLunch?: boolean;
+  openForDinner?: boolean;
+  reviews?: Review[]; // optional
 }

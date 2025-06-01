@@ -1,6 +1,5 @@
 import { ItemReview } from "./entities";
 import { Distance, RestaurantOpen, PlaceType, RestaurantType } from "./enums";
-import { GooglePlace } from "./place";
 
 export interface Filters {
   distanceAway: Distance;

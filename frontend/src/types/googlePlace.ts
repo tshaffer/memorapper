@@ -1,13 +1,13 @@
-// import { BasePlace } from "./entities";
+import { BasePlace } from "./entities";
 
 // export interface ExtendedGooglePlaceToVisit extends GooglePlace {
 //   comments: string;
 //   rating: number;
 // }
 
-// export interface GooglePlace extends BasePlace {
-//   geometry?: GoogleGeometry;
-// }
+export interface GooglePlace extends BasePlace {
+  geometry?: GoogleGeometry;
+}
 
 export interface GoogleGeometry {
   location: google.maps.LatLngLiteral;
