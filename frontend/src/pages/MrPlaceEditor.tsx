@@ -26,8 +26,8 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
   };
 
 
-  const [place, setPlace] = useState<MrPlaceWithGooglePlace>(defaultPlace);
-  const [placeName, setPlaceName] = useState(place.googlePlace ? (place.googlePlace.name ? place.googlePlace.name : '') : '');
+  const [mrPlace, setMrPlace] = useState<MrPlaceWithGooglePlace>(defaultPlace);
+  const [placeName, setPlaceName] = useState(mrPlace.googlePlace ? (mrPlace.googlePlace.name ? mrPlace.googlePlace.name : '') : '');
   const [isLoading, setIsLoading] = useState(false);
 
   // Helper: infer meal availability from opening_hours data.
@@ -70,7 +70,7 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
 
   // Handles changes from the RestaurantName component.
   const handleChangeGooglePlace = (googlePlace: GooglePlace) => {
-    const currentPlace: MrSubmitPlaceRequestBody = { ...place };
+    const currentPlace: MrSubmitPlaceRequestBody = { ...mrPlace };
     currentPlace.googlePlace = googlePlace;
 
     if (currentPlace.placeType === PlaceType.Restaurant && googlePlace.opening_hours) {
@@ -83,16 +83,16 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
       };
     }
 
-    setPlace(prev => ({ ...prev, ...currentPlace }));
+    setMrPlace(prev => ({ ...prev, ...currentPlace }));
     setPlaceName(googlePlace.name!);
   };
 
   const handleChange = (field: keyof MrPlace, value: any) => {
-    setPlace(prev => ({ ...prev, [field]: value }));
+    setMrPlace(prev => ({ ...prev, [field]: value }));
   };
 
   const handlePlaceTypeChange = (newType: PlaceType) => {
-    setPlace(prev => ({
+    setMrPlace(prev => ({
       ...prev,
       placeType: newType,
       // only give it a restaurant payload if it's actually a Restaurant
@@ -108,7 +108,7 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
   };
 
   const handleRestaurantFieldChange = (field: keyof Restaurant, value: any) => {
-    setPlace(prev => ({
+    setMrPlace(prev => ({
       ...prev,
       restaurant: {
         ...prev.restaurant,
@@ -122,8 +122,8 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
     e.preventDefault();
     setIsLoading(true);
     try {
-      place.googlePlaceId = place.googlePlace?.googlePlaceId || '';
-      await onSubmit(place);
+      mrPlace.googlePlaceId = mrPlace.googlePlace?.googlePlaceId || '';
+      await onSubmit(mrPlace);
       setIsLoading(false);
     } catch (error) {
       console.error('Error during submit:', error);
@@ -143,7 +143,7 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
   // Render functions for various fields.
   const renderPlaceName = () => (
     <div style={{ marginBottom: '1rem' }}>
-      <label htmlFor="place-name">{'Place Name:'}</label>
+      <label htmlFor="place-name">{'Name:'}</label>
       <RestaurantName
         restaurantName={placeName}
         onSetRestaurantName={(name: string) => setPlaceName(name)}
@@ -152,26 +152,12 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
     </div>
   );
 
-  const renderPlaceComments = () => (
-    <div style={{ marginBottom: '1rem' }}>
-      <label>{'Comments:'}</label>
-      <TextField
-        label={'Comments'}
-        fullWidth
-        multiline
-        rows={4}
-        value={place.placeComments || ''}
-        onChange={(e) => handleChange('placeComments', e.target.value)}
-      />
-    </div>
-  );
-
   const renderPlaceType = () => (
     <div style={{ marginBottom: '1rem' }}>
-      <label>{'Place Type:'}</label>
+      <label>{'Type:'}</label>
       <Select
         labelId="place-type-select-label"
-        value={place.placeType}
+        value={mrPlace.placeType}
         onChange={e => handlePlaceTypeChange(e.target.value as PlaceType)}
         fullWidth
       >
@@ -183,14 +169,28 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
     </div>
   );
 
+  const renderPlaceComments = () => (
+    <div style={{ marginBottom: '1rem' }}>
+      <label>{'Comments:'}</label>
+      <TextField
+        label={'Comments'}
+        fullWidth
+        multiline
+        rows={4}
+        value={mrPlace.placeComments || ''}
+        onChange={(e) => handleChange('placeComments', e.target.value)}
+      />
+    </div>
+  );
+
   const renderRestaurantType = () => {
-    if (place.placeType !== PlaceType.Restaurant) return null;
+    if (mrPlace.placeType !== PlaceType.Restaurant) return null;
     return (
       <div style={{ marginBottom: '1rem' }}>
         <label>{'Restaurant Type:'}</label>
         <Select
           labelId="restaurant-type-select-label"
-          value={place.restaurant!.restaurantType}
+          value={mrPlace.restaurant!.restaurantType}
           onChange={(e) => handleRestaurantFieldChange('restaurantType', e.target.value as RestaurantType)}
           fullWidth
         >
@@ -209,7 +209,7 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
   };
 
   const renderMealAvailability = () => {
-    if (place.placeType !== PlaceType.Restaurant) return null;
+    if (mrPlace.placeType !== PlaceType.Restaurant) return null;
     return (
       <div style={{ marginBottom: '1rem' }}>
         <label>Meal Availability:</label>
@@ -217,7 +217,7 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
           <FormControlLabel
             control={
               <Checkbox
-                checked={!!place.restaurant!.openForBreakfast}
+                checked={!!mrPlace.restaurant!.openForBreakfast}
                 onChange={(e) => handleRestaurantFieldChange('openForBreakfast', e.target.checked)}
               />
             }
@@ -228,7 +228,7 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
           <FormControlLabel
             control={
               <Checkbox
-                checked={!!place.restaurant!.openForLunch}
+                checked={!!mrPlace.restaurant!.openForLunch}
                 onChange={(e) => handleRestaurantFieldChange('openForLunch', e.target.checked)}
               />
             }
@@ -239,7 +239,7 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
           <FormControlLabel
             control={
               <Checkbox
-                checked={!!place.restaurant!.openForDinner}
+                checked={!!mrPlace.restaurant!.openForDinner}
                 onChange={(e) => handleRestaurantFieldChange('openForDinner', e.target.checked)}
               />
             }
@@ -253,11 +253,11 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
   const renderDesirabilityRating = (): JSX.Element => {
     return (
       <div>
-        <label htmlFor={`rating-${place.placeRating}`}>Rating</label>
+        <label htmlFor={`rating-${mrPlace.placeRating}`}>Rating</label>
         <Rating
-          id={`rating-${place.placeId}`}
-          name={`rating-${place.placeId}`}
-          value={place.placeRating}
+          id={`rating-${mrPlace.placeId}`}
+          name={`rating-${mrPlace.placeId}`}
+          value={mrPlace.placeRating}
           max={5}
           onChange={(event, newValue) =>
             handleChange('placeRating', newValue || 0)
@@ -273,6 +273,7 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
       <form>
         {renderPlaceName()}
         {renderPlaceType()}
+        {renderRestaurantType()}
         {renderDesirabilityRating()}
         {renderPlaceComments()}
       </form>
@@ -280,7 +281,7 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
         <Button
           variant="contained"
           onClick={handleSubmit}
-          disabled={isLoading || !place.googlePlace?.googlePlaceId}
+          disabled={isLoading || !mrPlace.googlePlace?.googlePlaceId}
         >
           Add Place
         </Button>
