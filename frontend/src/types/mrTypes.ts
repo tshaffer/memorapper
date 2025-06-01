@@ -48,6 +48,7 @@ export type MrPlaceWithGooglePlace = {
   googlePlaceId: string;
   placeType?: PlaceType;
   placeComments?: string;
+  placeRating?: number;
   googlePlace?: GooglePlace;
   restaurant?: Restaurant;
 };

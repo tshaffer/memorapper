@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Button, MenuItem, Select, useMediaQuery, Checkbox, FormControlLabel, TextField } from "@mui/material";
+import { Button, MenuItem, Select, useMediaQuery, Checkbox, FormControlLabel, TextField, Rating } from "@mui/material";
 import { v4 as uuidv4 } from 'uuid';
 import { useParams } from 'react-router-dom';
-import { Place, GooglePlace, MrSubmitPlaceRequestBody, RestaurantType, PlaceType, MrPlaceWithGooglePlace, Restaurant } from "../types";
+import { GooglePlace, MrSubmitPlaceRequestBody, RestaurantType, PlaceType, MrPlaceWithGooglePlace, Restaurant, MrPlace } from "../types";
 import RestaurantName from '../components/RestaurantName';
 import PulsingDots from '../components/PulsingDots';
 
@@ -87,7 +87,7 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
     setPlaceName(googlePlace.name!);
   };
 
-  const handleChange = (field: keyof Place, value: any) => {
+  const handleChange = (field: keyof MrPlace, value: any) => {
     setPlace(prev => ({ ...prev, [field]: value }));
   };
 
@@ -250,13 +250,30 @@ const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, o
     );
   };
 
+  const renderDesirabilityRating = (): JSX.Element => {
+    return (
+      <div>
+        <label htmlFor={`rating-${place.placeRating}`}>Rating</label>
+        <Rating
+          id={`rating-${place.placeId}`}
+          name={`rating-${place.placeId}`}
+          value={place.placeRating}
+          max={5}
+          onChange={(event, newValue) =>
+            handleChange('placeRating', newValue || 0)
+          }
+        />
+      </div>
+    );
+  }
+
   return (
     <div id='MrPlaceEditor' style={containerStyle}>
       <h2>Add Place</h2>
       <form>
         {renderPlaceName()}
         {renderPlaceType()}
-        {/* {renderDesirabilityRating()} */}
+        {renderDesirabilityRating()}
         {renderPlaceComments()}
       </form>
       <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
