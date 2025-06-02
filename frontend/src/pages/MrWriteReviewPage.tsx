@@ -50,18 +50,18 @@ const MrWriteReviewPage = () => {
     };
 
     console.log('Persisting updated place to backend:', updatedPlace);
-    // try {
-    //   const response = await fetch('/api/updateMrPlace', {
-    //     method: 'POST', // Or 'PUT' if using RESTful convention
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(updatedPlace),
-    //   });
+    try {
+      const response = await fetch('/api/updateMrPlace', {
+        method: 'POST', // Or 'PUT' if using RESTful convention
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedPlace),
+      });
 
-    //   const data = await response.json();
-    //   console.log('Review persisted to backend:', data);
-    // } catch (error) {
-    //   console.error('Error persisting review to backend:', error);
-    // }
+      const data = await response.json();
+      console.log('Review persisted to backend:', data);
+    } catch (error) {
+      console.error('Error persisting review to backend:', error);
+    }
   };
   return (
     <div className="container">
