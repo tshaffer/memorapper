@@ -41,7 +41,7 @@ const MrWriteReviewPage = () => {
       ...mrReviewData.place,
       placeComments: mrReviewData.placeComments,
       mrPlaceReviews: [
-        ...(mrReviewData.place.mrPlaceReviews || []),
+        ...(mrReviewData.place.restaurantReviews || []),
         {
           dateOfVisit: mrReviewData.dateOfVisit,
           itemReviews: mrReviewData.itemReviews,

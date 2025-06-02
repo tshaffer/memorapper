@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Distance, Filters, RestaurantOpen, Place, PlaceWithGooglePlace, Settings, GooglePlace, MrPlace, MrPlaceWithGooglePlace, PlaceType, MrReviewData } from '../types';
+import { Distance, Filters, RestaurantOpen, Place, PlaceWithGooglePlace, Settings, GooglePlace, MrPlace, MrPlaceWithGooglePlace, PlaceType, MrReviewData, RestaurantType } from '../types';
 
 interface MemorapperState {
   googlePlaces: GooglePlace[];
@@ -57,9 +57,9 @@ export const fetchMrPlaces = createAsyncThunk('user/fetchMrPlaces', async () => 
     googlePlaceId: place.googlePlaceId,
     placeType: place.placeType || PlaceType.Restaurant,
     placeComments: place.placeComments || '',
-    mrPlaceReviews: [],
-    mrPlaceSpecificities: {
-      restaurantType: place.restaurant?.restaurantType || '',
+    restaurantReviews: [],
+    restaurantSpecs: {
+      restaurantType: place.restaurant?.restaurantType || RestaurantType.Restaurant,
       openForBreakfast: place.restaurant?.openForBreakfast || false,
       openForLunch: place.restaurant?.openForLunch || false,
       openForDinner: place.restaurant?.openForDinner || false,
@@ -108,7 +108,7 @@ const memorapperSlice = createSlice({
       };
 
       targetPlace.placeComments = placeComments || targetPlace.placeComments;
-      targetPlace.mrPlaceReviews.push(newReview);
+      targetPlace.restaurantReviews.push(newReview);
     }
   },
   extraReducers: (builder) => {
@@ -137,9 +137,9 @@ const memorapperSlice = createSlice({
           googlePlaceId: place.googlePlaceId,
           placeType: place.placeType || PlaceType.Restaurant,
           placeComments: place.placeComments || '',
-          mrPlaceReviews: [],
-          mrPlaceSpecificities: {
-            restaurantType: place.restaurant?.restaurantType || '',
+          restaurantReviews: [],
+          restaurantSpecs: {
+            restaurantType: place.restaurant?.restaurantType || RestaurantType.Restaurant,
             openForBreakfast: place.restaurant?.openForBreakfast || false,
             openForLunch: place.restaurant?.openForLunch || false,
             openForDinner: place.restaurant?.openForDinner || false,

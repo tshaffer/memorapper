@@ -212,6 +212,34 @@ export const addMongoPlace = async (googlePlace: GooglePlace): Promise<IMongoPla
   }
 }
 
+export const getMrPlacesHandler = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+
+    const mongoPlaceDocuments: IMongoPlace[] = await MongoPlaceModel.find({}).exec();
+    const mrPlacesDocuments: IMrPlace[] = await MrPlaceModel.find({}).exec();
+
+    const mrPlaces: MrPlace[] = [];
+
+    for (const placeDocument of mrPlacesDocuments) {
+      const placeGooglePlaceId = placeDocument.googlePlaceId;
+      for (const mongoPlaceDocument of mongoPlaceDocuments) {
+        if (mongoPlaceDocument.googlePlaceId === placeGooglePlaceId) {
+          const place: MrPlace = placeDocument.toObject();
+          place._idPlace = placeDocument._id!.toString();
+          mrPlaces.push(place);
+        }
+      }
+    }
+    return res.status(200).json({ places: mrPlaces });
+  } catch (error) {
+    console.error('Error fetching places:', error);
+    return res.status(500).json({ error: 'An error occurred while fetching places.' });
+  }
+};
+
 
 export const submitMrPlaceHandler = async (
   req: Request<{}, {}, MrSubmitPlaceRequestBody>,
@@ -245,8 +273,8 @@ const submitMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promis
     googlePlaceId: googlePlace!.googlePlaceId,
     placeType: placeType!,
     placeComments: placeComments || '',
-    mrPlaceReviews: [], // Initialize with an empty array or handle as needed
-    mrPlaceSpecificities: restaurant,
+    restaurantReviews: [], // Initialize with an empty array or handle as needed
+    restaurantSpecs: restaurant!,
   };
 
   let savedPlace: IPlace | null;
@@ -312,7 +340,7 @@ const updateMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promis
     googlePlaceId: googlePlace?.googlePlaceId || '',
     placeType: placeType!,
     placeComments: placeComments || '',
-    mrPlaceSpecificities: restaurant,
+    restaurantSpecs: restaurant || {},
   };
 
   const updatedPlace = await MrPlaceModel.findOneAndUpdate(filter, updateData, {

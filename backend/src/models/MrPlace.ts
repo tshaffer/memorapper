@@ -23,11 +23,12 @@ export interface IMrRestaurant {
 
 export interface IMrPlace extends Document {
   placeId: string;
-  placeType: PlaceType;
   googlePlaceId: string;
+  placeType: PlaceType;
   placeComments?: string;
-  mrPlaceReviews: IMrRestaurantReview[];
-  mrPlaceSpecificities: IMrRestaurant;
+  placeRating?: number;
+  restaurantSpecs: IMrRestaurant;
+  restaurantReviews: IMrRestaurantReview[];
 }
 
 const MrItemOrderedSchema: Schema = new Schema({
@@ -39,7 +40,7 @@ const MrItemOrderedSchema: Schema = new Schema({
 const RestaurantReviewSchema: Schema = new Schema({
   rating: { type: Number, required: true },
   date: { type: Date, required: true },
-  itemsOrdered: [MrItemOrderedSchema]
+  itemReviews: [MrItemOrderedSchema]
 }, { _id: true });
 
 const RestaurantSchema: Schema = new Schema({
@@ -64,8 +65,8 @@ const MrPlaceSchema: Schema = new Schema({
   googlePlaceId: { type: String, required: true, ref: 'MongoPlace' },
   placeComments: { type: String },
   placeRating: { type: Number },
-  placeReviews: [RestaurantReviewSchema],
-  placeSpecificities: RestaurantSchema
+  restaurantReviews: [RestaurantReviewSchema],
+  restaurantSpecs: RestaurantSchema
 });
 
 const MrPlaceModel: Model<IMrPlace> = mongoose.model<IMrPlace>('MrPlace', MrPlaceSchema);

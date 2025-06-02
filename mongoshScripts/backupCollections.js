@@ -3,9 +3,10 @@ use memorappy;
 const collections = [
   "mongoPlaces",
   "places",
+  "mrplaces",
 ];
 
-const outputDir = "/Users/tedshaffer/Documents/MongoDBBackups/memoRapper/backup-4-19-01";
+const outputDir = "/Users/tedshaffer/Documents/MongoDBBackups/memoRapper/backup-06-02-01";
 
 const fs = require("fs");
 

@@ -24,8 +24,8 @@ const MrPlaceForm = () => {
     googlePlaceId: '',
     placeType: PlaceType.Restaurant,
     placeComments: '',
-    mrPlaceReviews: [],
-    mrPlaceSpecificities: {} as any, // Adjust this type as needed
+    restaurantReviews: [],
+    restaurantSpecs: {} as any, // Adjust this type as needed
   };
 
   const [place, setPlace] = useState<MrPlace>(initialPlaceData);
@@ -73,7 +73,7 @@ const MrPlaceForm = () => {
       }}
     >
       <MrPlaceEditor
-        onSubmit={ (place: MrPlaceWithGooglePlace) => {
+        onSubmit={(place: MrPlaceWithGooglePlace) => {
           return handleAddPlace(place);
         }}
       >

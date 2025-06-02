@@ -152,8 +152,8 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
         googlePlaceId: selectedMrPlaceWithGooglePlace.googlePlaceId,
         placeType: selectedMrPlaceWithGooglePlace.placeType || PlaceType.Restaurant,
         placeComments: selectedMrPlaceWithGooglePlace.placeComments || '',
-        mrPlaceReviews: [],
-        mrPlaceSpecificities: {},
+        restaurantReviews: [],
+        restaurantSpecs: {},
       };
       const currentReviewData: MrReviewData = { ...mrReviewData };
       currentReviewData.place = selectedMrPlace;
