@@ -2,7 +2,6 @@ use memorappy;
 
 const collections = [
   "mongoPlaces",
-  "places",
   "mrplaces",
 ];
 

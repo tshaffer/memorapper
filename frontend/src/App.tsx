@@ -11,12 +11,10 @@ import { Distance, RestaurantOpen, Settings, } from './types';
 import Map from './pages/maps/Map';
 import SettingsDialog from './components/SettingsDialog';
 import SettingsIcon from '@mui/icons-material/Settings';
-import WriteReviewPage from './pages/writeReview/WriteReviewPage';
-import { AppDispatch, fetchMrPlaces, RootState, setMrPlacesWithGooglePlaces, setPlacesWithGooglePlaces } from './redux';
-import { setSettings, setFilters, fetchGooglePlaces, fetchPlaces } from './redux';
-import { mergeMrPlacesWithGooglePlaces, mergePlacesWithGooglePlaces } from './utilities/mergePlaces';
+import { AppDispatch, fetchMrPlaces, RootState, setMrPlacesWithGooglePlaces } from './redux';
+import { setSettings, setFilters, fetchGooglePlaces } from './redux';
+import { mergeMrPlacesWithGooglePlaces } from './utilities/mergePlaces';
 import MrPlaceForm from './pages/MrPlace';
-import MrReviewEntry from './pages/MrReviewEntry';
 import MrWriteReviewPage from './pages/MrWriteReviewPage';
 
 // soft orange: #FFA07A
@@ -33,7 +31,7 @@ const activeButtonStyle: React.CSSProperties = {
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { googlePlaces, places, mrPlaces, settings, error, loading } = useSelector((state: RootState) => state.memorapper);
+  const { googlePlaces, mrPlaces, settings, error, loading } = useSelector((state: RootState) => state.memorapper);
 
   const isMobile = useMediaQuery('(max-width:768px)');
   const location = useLocation(); // Track the current route
@@ -42,16 +40,10 @@ const App: React.FC = () => {
     const loadData = async () => {
       console.log('loadData useEffect called');
       await dispatch(fetchGooglePlaces());
-      await dispatch(fetchPlaces());
       await dispatch(fetchMrPlaces());
     };
     loadData();
   }, [dispatch]);
-
-  useEffect(() => {
-    const merged = mergePlacesWithGooglePlaces(places, googlePlaces);
-    dispatch(setPlacesWithGooglePlaces(merged));
-  }, [places, googlePlaces, dispatch]);
 
   useEffect(() => {
     const merged = mergeMrPlacesWithGooglePlaces(mrPlaces, googlePlaces);

@@ -41,32 +41,10 @@ export const fetchGooglePlaces = createAsyncThunk('user/fetchGooglePlaces', asyn
   return data.googlePlaces as GooglePlace[];
 });
 
-export const fetchPlaces = createAsyncThunk('user/fetchPlaces', async () => {
-  const response = await fetch('/api/places');
-  const data = await response.json();
-  return data.places as Place[];
-});
-
 export const fetchMrPlaces = createAsyncThunk('user/fetchMrPlaces', async () => {
-  const response = await fetch('/api/places');
+  const response = await fetch('/api/mrPlaces');
   const data = await response.json();
-  const places: Place[] = data.places as Place[];
-  const mrPlaces: MrPlace[] = places.map(place => ({
-    _idPlace: place._idPlace,
-    placeId: place.placeId,
-    googlePlaceId: place.googlePlaceId,
-    placeType: place.placeType || PlaceType.Restaurant,
-    placeComments: place.placeComments || '',
-    restaurantReviews: [],
-    restaurantSpecs: {
-      restaurantType: place.restaurant?.restaurantType || RestaurantType.Restaurant,
-      openForBreakfast: place.restaurant?.openForBreakfast || false,
-      openForLunch: place.restaurant?.openForLunch || false,
-      openForDinner: place.restaurant?.openForDinner || false,
-    },
-  }));
-
-  return mrPlaces as MrPlace[];
+  return data.places as MrPlace[];
 });
 
 const memorapperSlice = createSlice({
@@ -125,44 +103,18 @@ const memorapperSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch googlePlaces';
       })
-      .addCase(fetchPlaces.pending, (state) => {
+      .addCase(fetchMrPlaces.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchPlaces.fulfilled, (state, action) => {
-        state.places = action.payload;
-        state.mrPlaces = state.places.map(place => ({
-          _idPlace: place._idPlace,
-          placeId: place.placeId,
-          googlePlaceId: place.googlePlaceId,
-          placeType: place.placeType || PlaceType.Restaurant,
-          placeComments: place.placeComments || '',
-          restaurantReviews: [],
-          restaurantSpecs: {
-            restaurantType: place.restaurant?.restaurantType || RestaurantType.Restaurant,
-            openForBreakfast: place.restaurant?.openForBreakfast || false,
-            openForLunch: place.restaurant?.openForLunch || false,
-            openForDinner: place.restaurant?.openForDinner || false,
-          },
-        }));
+      .addCase(fetchMrPlaces.fulfilled, (state, action) => {
+        state.mrPlaces = action.payload;
         state.loading = false;
       })
-      .addCase(fetchPlaces.rejected, (state, action) => {
+      .addCase(fetchMrPlaces.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch places';
-      })
-    // .addCase(fetchMrPlaces.pending, (state) => {
-    //   state.loading = true;
-    //   state.error = null;
-    // })
-    // .addCase(fetchMrPlaces.fulfilled, (state, action) => {
-    //   state.mrPlaces = action.payload;
-    //   state.loading = false;
-    // })
-    // .addCase(fetchMrPlaces.rejected, (state, action) => {
-    //   state.loading = false;
-    //   state.error = action.error.message || 'Failed to fetch places';
-    // });
+      });
   },
 });
 

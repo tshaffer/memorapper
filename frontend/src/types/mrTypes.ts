@@ -43,7 +43,8 @@ export type MrPlaceWithGooglePlace = {
   placeComments?: string;
   placeRating?: number;
   googlePlace?: GooglePlace;
-  restaurant?: MrRestaurant;
+  restaurantSpecs?: MrRestaurant;
+  restaurantReviews: MrRestaurantReview[];
 };
 
 export type MrSubmitPlaceRequestBody = {
@@ -51,7 +52,9 @@ export type MrSubmitPlaceRequestBody = {
   placeId: string;
   placeType?: PlaceType;
   placeComments?: string;
+  placeRating?: number;
   googlePlace?: GooglePlace;
-  restaurant?: MrRestaurant;
+  restaurantSpecs?: MrRestaurant;
+  restaurantReviews: MrRestaurantReview[];
 };
 

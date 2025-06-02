@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 
 import { Button, MenuItem, Select, TextField, useMediaQuery } from '@mui/material';
 import Rating from '@mui/material/Rating';
@@ -42,7 +41,7 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
     return getRestaurants().find((restaurant) => restaurant.placeId === placeId);
   };
 
-  const getMrPlaceByPlaceId = (placeId: string): MrPlaceWithGooglePlace | undefined => {
+  const getMrPlaceWithGooglePlace = (placeId: string): MrPlaceWithGooglePlace | undefined => {
     return mrPlacesWithGooglePlaces.find((place) => place.placeId === placeId);
   };
 
@@ -144,7 +143,7 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
   const handleRestaurantSelection = (placeId: string) => {
     console.log('Selected PlaceId:', placeId);
     const selectedRestaurant = getRestaurantByPlaceId(placeId);
-    const selectedMrPlaceWithGooglePlace: MrPlaceWithGooglePlace | undefined = getMrPlaceByPlaceId(placeId);
+    const selectedMrPlaceWithGooglePlace: MrPlaceWithGooglePlace | undefined = getMrPlaceWithGooglePlace(placeId);
     if (selectedMrPlaceWithGooglePlace && selectedRestaurant) {
       const selectedMrPlace: MrPlace = {
         _idPlace: selectedMrPlaceWithGooglePlace._idPlace,
@@ -153,12 +152,13 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
         placeType: selectedMrPlaceWithGooglePlace.placeType || PlaceType.Restaurant,
         placeComments: selectedMrPlaceWithGooglePlace.placeComments || '',
         restaurantReviews: [],
-        restaurantSpecs: {},
+        restaurantSpecs: selectedRestaurant.restaurantSpecs || {},
       };
       const currentReviewData: MrReviewData = { ...mrReviewData };
       currentReviewData.place = selectedMrPlace;
       currentReviewData.placeComments = selectedMrPlace.placeComments;
       currentReviewData.place!.placeId = selectedRestaurant.placeId;
+      debugger;
       setMrReviewData(currentReviewData);
     }
   };

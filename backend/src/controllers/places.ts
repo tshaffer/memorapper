@@ -257,7 +257,7 @@ export const submitMrPlaceHandler = async (
 
 const submitMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<IMrPlace | null> => {
 
-  const { _idPlace, placeId, placeType, placeComments, googlePlace, restaurant } = placeRequestBody
+  const { _idPlace, placeId, placeType, placeComments, googlePlace, restaurantSpecs } = placeRequestBody
 
   let mongoPlace: IMongoPlace | null = await getMongoPlace(googlePlace!.googlePlaceId);
   if (!mongoPlace) {
@@ -274,7 +274,7 @@ const submitMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promis
     placeType: placeType!,
     placeComments: placeComments || '',
     restaurantReviews: [], // Initialize with an empty array or handle as needed
-    restaurantSpecs: restaurant!,
+    restaurantSpecs: restaurantSpecs!,
   };
 
   let savedPlace: IPlace | null;
@@ -327,7 +327,7 @@ export const updateMrPlaceHandler = async (
 };
 
 const updateMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<IMrPlace | null> => {
-  const { _idPlace, placeId, placeType, placeComments, googlePlace, restaurant } = placeRequestBody;
+  const { _idPlace, placeId, placeType, placeComments, googlePlace, restaurantSpecs, restaurantReviews, placeRating } = placeRequestBody;
 
   if (!_idPlace && !placeId) {
     throw new Error('Either _idPlace or placeId is required for updating.');
@@ -340,7 +340,9 @@ const updateMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promis
     googlePlaceId: googlePlace?.googlePlaceId || '',
     placeType: placeType!,
     placeComments: placeComments || '',
-    restaurantSpecs: restaurant || {},
+    placeRating: placeRating || 0,
+    restaurantSpecs: restaurantSpecs || {},
+    restaurantReviews: restaurantReviews || [],
   };
 
   const updatedPlace = await MrPlaceModel.findOneAndUpdate(filter, updateData, {

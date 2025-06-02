@@ -9,7 +9,7 @@ export interface IItemOrdered {
 }
 
 export interface IMrRestaurantReview {
-  date: Date;
+  dateOfVisit: Date;
   itemsOrdered?: IItemOrdered[];
   reviewText: string;
 }
@@ -38,8 +38,7 @@ const MrItemOrderedSchema: Schema = new Schema({
 }, { _id: true });
 
 const RestaurantReviewSchema: Schema = new Schema({
-  rating: { type: Number, required: true },
-  date: { type: Date, required: true },
+  dateOfVisit: { type: Date, required: true }, // appears as dateOfVisit, not date
   itemReviews: [MrItemOrderedSchema]
 }, { _id: true });
 

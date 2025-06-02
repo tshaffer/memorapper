@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { GooglePlace, MrReviewData } from "../types";
+import { GooglePlace, MrPlace, MrPlaceWithGooglePlace, MrReviewData, PlaceType } from "../types";
 import { getFormattedDate } from "../utilities";
 import MrReviewEntry from "./MrReviewEntry";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addMrRestaurantReview } from '../redux/memorapperSlice';
+import { RootState } from "../redux";
 
 const MrWriteReviewPage = () => {
+
+  const { mrPlacesWithGooglePlaces } = useSelector((state: RootState) => state.memorapper);
 
   const dispatch = useDispatch();
 
@@ -20,41 +23,59 @@ const MrWriteReviewPage = () => {
 
   const [mrReviewData, setMrReviewData] = useState<MrReviewData>(initialReviewData);
 
-  const old_handleAddReview = async () => {
-    console.log('Submitting review:', mrReviewData);
-    dispatch(addMrRestaurantReview(mrReviewData));
-  }
+  const getMrPlaceWithGooglePlace = (placeId: string): MrPlaceWithGooglePlace | undefined => {
+    return mrPlacesWithGooglePlaces.find((place) => place.placeId === placeId);
+  };
 
   const handleAddReview = async () => {
+
     console.log('Submitting review:', mrReviewData);
 
-    // 1️⃣ Update Redux state immediately
-    dispatch(addMrRestaurantReview(mrReviewData));
-
-    // 2️⃣ Send updated MrPlace to backend
     if (!mrReviewData.place) {
       console.error('handleAddReview: No place data found in mrReviewData');
       return;
     }
 
-    const updatedPlace = {
-      ...mrReviewData.place,
+    const mrPlaceWithGooglePlace: MrPlaceWithGooglePlace | undefined = getMrPlaceWithGooglePlace(mrReviewData.place.placeId);
+    if (!mrPlaceWithGooglePlace) {
+      console.error('handleAddReview: No matching place found for placeId:', mrReviewData.place.placeId);
+      return;
+    }
+
+    if (!mrPlaceWithGooglePlace.googlePlace) {
+      console.error('handleAddReview: No googlePlace data found for placeId:', mrReviewData.place.placeId);
+      return;
+    }
+
+    // 1️⃣ Update Redux state immediately
+    dispatch(addMrRestaurantReview(mrReviewData));
+
+    // 2️⃣ Send updated MrPlace to backend
+
+    const updatedPlaceWithGooglePlace: MrPlaceWithGooglePlace = {
+      _idPlace: mrReviewData.place._idPlace,
+      placeId: mrReviewData.place.placeId,
+      googlePlaceId: mrReviewData.place.googlePlaceId || '',
+      placeType: mrReviewData.place.placeType,
       placeComments: mrReviewData.placeComments,
-      mrPlaceReviews: [
+      placeRating: mrReviewData.place.placeRating || 0,
+      restaurantSpecs: mrReviewData.place.restaurantSpecs,
+      restaurantReviews: [
         ...(mrReviewData.place.restaurantReviews || []),
         {
           dateOfVisit: mrReviewData.dateOfVisit,
           itemReviews: mrReviewData.itemReviews,
         },
       ],
+      googlePlace: mrPlaceWithGooglePlace.googlePlace,
     };
 
-    console.log('Persisting updated place to backend:', updatedPlace);
+    console.log('Persisting updated place to backend:', updatedPlaceWithGooglePlace);
     try {
       const response = await fetch('/api/updateMrPlace', {
         method: 'POST', // Or 'PUT' if using RESTful convention
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedPlace),
+        body: JSON.stringify(updatedPlaceWithGooglePlace),
       });
 
       const data = await response.json();
