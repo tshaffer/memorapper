@@ -2,8 +2,12 @@ import { useState } from "react";
 import { GooglePlace, MrReviewData } from "../types";
 import { getFormattedDate } from "../utilities";
 import MrReviewEntry from "./MrReviewEntry";
+import { useDispatch } from 'react-redux';
+import { addMrRestaurantReview } from '../redux/memorapperSlice';
 
 const MrWriteReviewPage = () => {
+
+  const dispatch = useDispatch();
 
   let place: GooglePlace | null = null;
 
@@ -18,6 +22,8 @@ const MrWriteReviewPage = () => {
 
   const handleAddReview = async () => {
     console.log('Submitting review:', mrReviewData);
+    dispatch(addMrRestaurantReview(mrReviewData));
+
   }
 
   return (

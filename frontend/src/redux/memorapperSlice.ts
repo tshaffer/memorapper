@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Distance, Filters, RestaurantOpen, Place, PlaceWithGooglePlace, Settings, GooglePlace, MrPlace, MrPlaceWithGooglePlace, PlaceType } from '../types';
+import { Distance, Filters, RestaurantOpen, Place, PlaceWithGooglePlace, Settings, GooglePlace, MrPlace, MrPlaceWithGooglePlace, PlaceType, MrReviewData } from '../types';
 
 interface MemorapperState {
   googlePlaces: GooglePlace[];
@@ -88,6 +88,28 @@ const memorapperSlice = createSlice({
     addMrPlaceWithGooglePlace(state, action: PayloadAction<MrPlaceWithGooglePlace>) {
       state.mrPlacesWithGooglePlaces.push(action.payload);
     },
+    addMrRestaurantReview(state, action: PayloadAction<MrReviewData>) {
+      const { place, dateOfVisit, itemReviews, reviewText } = action.payload;
+
+      if (!place) {
+        console.warn('addMrRestaurantReview called without a place. Ignoring.');
+        return;
+      }
+
+      const targetPlace = state.mrPlaces.find((p) => p.placeId === place.placeId);
+      if (!targetPlace) {
+        console.warn(`Place not found for placeId: ${place.placeId}`);
+        return;
+      }
+
+      const newReview = {
+        dateOfVisit,
+        itemReviews,
+        reviewText,
+      };
+
+      targetPlace.mrPlaceReviews.push(newReview);
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -144,5 +166,13 @@ const memorapperSlice = createSlice({
   },
 });
 
-export const { setFilters, setSettings, setPlacesWithGooglePlaces, setMrPlacesWithGooglePlaces, addMrPlaceWithGooglePlace } = memorapperSlice.actions;
+export const {
+  setFilters,
+  setSettings,
+  setPlacesWithGooglePlaces,
+  setMrPlacesWithGooglePlaces,
+  addMrPlaceWithGooglePlace,
+  addMrRestaurantReview,
+} = memorapperSlice.actions;
+
 export default memorapperSlice.reducer;
