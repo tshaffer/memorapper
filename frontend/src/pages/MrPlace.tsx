@@ -70,9 +70,6 @@ const MrPlaceForm = () => {
         onSubmit={ (place: MrPlaceWithGooglePlace) => {
           return handleAddPlace(place);
         }}
-        onCancel={function () {
-          console.log('Add place cancelled.');
-        }}
       >
       </MrPlaceEditor>
     </div>

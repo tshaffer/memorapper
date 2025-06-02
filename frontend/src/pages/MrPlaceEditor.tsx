@@ -9,10 +9,9 @@ import PulsingDots from '../components/PulsingDots';
 interface MrPlaceEditorProps {
   initialPlace?: MrPlaceWithGooglePlace;
   onSubmit: (place: MrPlaceWithGooglePlace) => Promise<void>;
-  onCancel?: () => void;
 }
 
-const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit, onCancel }) => {
+const MrPlaceEditor: React.FC<MrPlaceEditorProps> = ({ initialPlace, onSubmit }) => {
   // If in create mode, get _id from URL params for new place, otherwise use the passed in place's _id.
   const { _id } = useParams<{ _id: string }>();
 

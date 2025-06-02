@@ -23,25 +23,18 @@ const MrWriteReviewPage = () => {
 
   const [activeTab, setActiveTab] = useState("form");
 
-  const handleTabClick = (tab: any) => {
-    setActiveTab(tab);
-  };
+  const handleAddReview = async () => {
+    console.log('Submitting review:', mrReviewData);
+  }
 
   return (
     <div className="container">
-      <nav className="tabs">
-        <Button
-          className={`tab-button ${activeTab === "form" ? "active" : ""}`}
-          onClick={() => handleTabClick("form")}
-        >
-          Form
-        </Button>
-      </nav>
       <section className="tab-content">
         {activeTab === "form" && (
           <MrReviewEntry
             mrReviewData={mrReviewData}
             setMrReviewData={setMrReviewData}
+            onSubmit={handleAddReview}
           />
         )}
       </section>
