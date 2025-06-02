@@ -24,11 +24,12 @@ export interface MrRestaurant {
 export interface MrRestaurantReview {
   dateOfVisit: string;
   itemReviews: MrItemOrdered[];
-  reviewText: string;
+  // reviewText: string;
 }
 
 export interface MrReviewData extends MrRestaurantReview {
   place: MrPlace | null;
+  placeComments: string;
 }
 
 export interface MrItemOrdered {

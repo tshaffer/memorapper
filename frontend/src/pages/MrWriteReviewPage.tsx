@@ -13,7 +13,7 @@ const MrWriteReviewPage = () => {
 
   const initialReviewData: MrReviewData = {
     place,
-    reviewText: '',
+    placeComments: '',
     dateOfVisit: getFormattedDate(),
     itemReviews: [],
   };

@@ -89,7 +89,7 @@ const memorapperSlice = createSlice({
       state.mrPlacesWithGooglePlaces.push(action.payload);
     },
     addMrRestaurantReview(state, action: PayloadAction<MrReviewData>) {
-      const { place, dateOfVisit, itemReviews, reviewText } = action.payload;
+      const { place, dateOfVisit, itemReviews, placeComments } = action.payload;
 
       if (!place) {
         console.warn('addMrRestaurantReview called without a place. Ignoring.');
@@ -105,9 +105,9 @@ const memorapperSlice = createSlice({
       const newReview = {
         dateOfVisit,
         itemReviews,
-        reviewText,
       };
 
+      targetPlace.placeComments = placeComments || targetPlace.placeComments;
       targetPlace.mrPlaceReviews.push(newReview);
     }
   },

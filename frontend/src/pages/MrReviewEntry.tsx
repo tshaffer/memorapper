@@ -63,7 +63,7 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
     </div>
   );
 
-  const renderReviewText = (): JSX.Element => (
+  const renderPlaceComments = (): JSX.Element => (
     <div className="form-group">
       <label htmlFor="review-text">Review Text</label>
       <TextField
@@ -71,8 +71,8 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
         fullWidth
         multiline
         rows={4}
-        value={mrReviewData.reviewText}
-        onChange={(e) => handleChange('reviewText', e.target.value)}
+        value={mrReviewData.placeComments}
+        onChange={(e) => handleChange('placeComments', e.target.value)}
       />
     </div>
   );
@@ -157,6 +157,7 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
       };
       const currentReviewData: MrReviewData = { ...mrReviewData };
       currentReviewData.place = selectedMrPlace;
+      currentReviewData.placeComments = selectedMrPlace.placeComments;
       currentReviewData.place!.placeId = selectedRestaurant.placeId;
       setMrReviewData(currentReviewData);
     }
@@ -217,7 +218,7 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
 
           <fieldset>
             <legend>Review</legend>
-            {renderReviewText()}
+            {renderPlaceComments()}
             {renderDateOfVisit()}
           </fieldset>
         </form>
