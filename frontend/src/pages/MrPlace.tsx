@@ -6,8 +6,12 @@ import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { PlaceType, MrPlace, MrPlaceWithGooglePlace } from '../types';
 import MrPlaceEditor from './MrPlaceEditor';
+import { useDispatch } from 'react-redux';
+import { addMrPlaceWithGooglePlace } from '../redux/memorapperSlice';
 
 const MrPlaceForm = () => {
+
+  const dispatch = useDispatch();
 
   const { _id } = useParams<{ _id: string }>();
   console.log('NewPlaceForm _id:', _id);
@@ -38,6 +42,8 @@ const MrPlaceForm = () => {
   const handleAddPlace = async (newPlace: MrPlaceWithGooglePlace): Promise<void> => {
 
     setIsLoading(true);
+
+    dispatch(addMrPlaceWithGooglePlace(newPlace));
 
     try {
       console.log('handleAddPlace:', newPlace);

@@ -85,6 +85,9 @@ const memorapperSlice = createSlice({
     setMrPlacesWithGooglePlaces(state, action: PayloadAction<MrPlaceWithGooglePlace[]>) {
       state.mrPlacesWithGooglePlaces = action.payload;
     },
+    addMrPlaceWithGooglePlace(state, action: PayloadAction<MrPlaceWithGooglePlace>) {
+      state.mrPlacesWithGooglePlaces.push(action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -141,5 +144,5 @@ const memorapperSlice = createSlice({
   },
 });
 
-export const { setFilters, setSettings, setPlacesWithGooglePlaces, setMrPlacesWithGooglePlaces } = memorapperSlice.actions;
+export const { setFilters, setSettings, setPlacesWithGooglePlaces, setMrPlacesWithGooglePlaces, addMrPlaceWithGooglePlace } = memorapperSlice.actions;
 export default memorapperSlice.reducer;
