@@ -33,3 +33,19 @@
 .contributor-comments {
   margin: 0.5rem 0;
 }
+
+.ordered-item {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background-color: #f9f9f9; /* optional */
+}
+
+.ordered-items-section {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Spacing between items */
+}
