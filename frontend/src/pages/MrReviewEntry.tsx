@@ -5,7 +5,7 @@ import Rating from '@mui/material/Rating';
 
 import '../styles/multiPanelStyles.css';
 import '../styles/reviewEntryForm.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   PlaceType,
   MrPlaceWithGooglePlace,
