@@ -270,7 +270,7 @@ const submitMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promis
   return null;
 }
 
-export const addMrPlaceToDb = async (place: MrPlace): Promise<IMrPlace | null> => {
+const addMrPlaceToDb = async (place: MrPlace): Promise<IMrPlace | null> => {
 
   const newPlace: IMrPlace = new MrPlaceModel(place);
 
@@ -283,3 +283,46 @@ export const addMrPlaceToDb = async (place: MrPlace): Promise<IMrPlace | null> =
   }
 }
 
+export const updateMrPlaceHandler = async (
+  req: Request<{}, {}, MrSubmitPlaceRequestBody>,
+  res: Response
+): Promise<any> => {
+  const body: MrSubmitPlaceRequestBody = req.body;
+
+  try {
+    const updatedPlace = await updateMrPlace(body);
+    return res.status(200).json({ message: 'MrPlace updated successfully!', place: updatedPlace });
+  } catch (error) {
+    console.error('Error updating place:', error);
+    return res.status(500).json({ error: 'An error occurred while updating the place.' });
+  }
+};
+
+const updateMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<IMrPlace | null> => {
+  const { _idPlace, placeId, placeType, placeComments, googlePlace, restaurant } = placeRequestBody;
+
+  if (!_idPlace && !placeId) {
+    throw new Error('Either _idPlace or placeId is required for updating.');
+  }
+
+  const filter = _idPlace ? { _id: _idPlace } : { placeId };
+
+  const updateData: Partial<MrPlace> = {
+    placeId: placeId || '',
+    googlePlaceId: googlePlace?.googlePlaceId || '',
+    placeType: placeType!,
+    placeComments: placeComments || '',
+    mrPlaceSpecificities: restaurant,
+  };
+
+  const updatedPlace = await MrPlaceModel.findOneAndUpdate(filter, updateData, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!updatedPlace) {
+    throw new Error(`MrPlace not found for update using filter: ${JSON.stringify(filter)}`);
+  }
+
+  return updatedPlace;
+};

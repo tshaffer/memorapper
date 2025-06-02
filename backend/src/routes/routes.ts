@@ -8,6 +8,7 @@ import {
   deletePlaceHandler,
   searchAndFilterHandler,
   submitMrPlaceHandler,
+  updateMrPlaceHandler,
 } from '../controllers';
 
 const router = Router();
@@ -19,9 +20,11 @@ router.get('/googlePlaces', getGooglePlaces);
 
 router.get('/places', getPlacesHandler);
 router.post('/submitPlace', submitPlaceHandler);
-router.post('/submitMrPlace', submitMrPlaceHandler);
 router.post('/deletePlace', deletePlaceHandler);
 
 router.post('/searchAndFilter', searchAndFilterHandler);
+
+router.post('/submitMrPlace', submitMrPlaceHandler);
+router.post('/updateMrPlace', updateMrPlaceHandler);
 
 export default router;
