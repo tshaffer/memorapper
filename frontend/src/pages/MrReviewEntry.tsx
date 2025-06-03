@@ -158,7 +158,6 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
       currentReviewData.place = selectedMrPlace;
       currentReviewData.placeComments = selectedMrPlace.placeComments;
       currentReviewData.place!.placeId = selectedRestaurant.placeId;
-      debugger;
       setMrReviewData(currentReviewData);
     }
   };

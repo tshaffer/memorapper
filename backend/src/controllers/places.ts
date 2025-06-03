@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import MongoPlaceModel, { IMongoPlace } from "../models/MongoPlace";
-import { GooglePlace, MongoPlace, MrPlace, MrSubmitPlaceRequestBody, Place, PlaceWithGooglePlace, SubmitPlaceRequestBody } from "../types";
+import { GooglePlace, MongoPlace, MrItemOrdered, MrPlace, MrSubmitAddReviewRequestBody, MrSubmitPlaceRequestBody, Place, PlaceWithGooglePlace, SubmitPlaceRequestBody } from "../types";
 import PlaceModel, { IPlace } from '../models/Place';
 import { convertMongoGeometryToGoogleGeometry } from '../utilities';
 import { MongoGeometry } from "../types";
@@ -355,4 +355,46 @@ const updateMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promis
   }
 
   return updatedPlace;
+};
+
+export const addReviewHandler = async (
+  req: Request<{}, {}, MrSubmitAddReviewRequestBody>,
+  res: Response
+): Promise<any> => {
+
+  const body: MrSubmitAddReviewRequestBody = req.body;
+  const { placeId, dateOfVisit, itemReviews } = body;
+
+  try {
+    const updatedPlace = await addReviewToDb(placeId, dateOfVisit, itemReviews);
+    return res.status(200).json({ message: 'Review added successfully!', place: updatedPlace });
+  } catch (error) {
+    console.error('Error adding review:', error);
+    return res.status(500).json({ error: 'An error occurred while adding the review.' });
+  }
+}
+
+const addReviewToDb = async (
+  placeId: string,
+  dateOfVisit: string,
+  itemReviews: MrItemOrdered[]
+): Promise<void> => {
+  try {
+    const place = await MrPlaceModel.findOne({ placeId });
+
+    if (!place) {
+      throw new Error(`Place with placeId ${placeId} not found`);
+    }
+
+    place.restaurantReviews.push({
+      dateOfVisit: new Date(dateOfVisit),
+      itemReviews,
+    });
+
+    await place.save();
+    console.log(`Review added to place ${placeId}`);
+  } catch (error) {
+    console.error(`Error adding review to place ${placeId}:`, error);
+    throw error;
+  }
 };

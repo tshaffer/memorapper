@@ -10,8 +10,7 @@ export interface IItemOrdered {
 
 export interface IMrRestaurantReview {
   dateOfVisit: Date;
-  itemsOrdered?: IItemOrdered[];
-  reviewText: string;
+  itemReviews?: IItemOrdered[];
 }
 
 export interface IMrRestaurant {

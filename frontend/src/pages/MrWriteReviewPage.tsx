@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { GooglePlace, MrPlace, MrPlaceWithGooglePlace, MrReviewData, PlaceType } from "../types";
+import { GooglePlace, MrPlaceWithGooglePlace, MrReviewData, MrSubmitAddReviewRequestBody, } from "../types";
 import { getFormattedDate } from "../utilities";
 import MrReviewEntry from "./MrReviewEntry";
 import { useDispatch, useSelector } from 'react-redux';
@@ -52,30 +52,19 @@ const MrWriteReviewPage = () => {
 
     // 2️⃣ Send updated MrPlace to backend
 
-    const updatedPlaceWithGooglePlace: MrPlaceWithGooglePlace = {
-      _idPlace: mrReviewData.place._idPlace,
+    const addReviewRequestBody: MrSubmitAddReviewRequestBody = {
       placeId: mrReviewData.place.placeId,
-      googlePlaceId: mrReviewData.place.googlePlaceId || '',
-      placeType: mrReviewData.place.placeType,
-      placeComments: mrReviewData.placeComments,
-      placeRating: mrReviewData.place.placeRating || 0,
-      restaurantSpecs: mrReviewData.place.restaurantSpecs,
-      restaurantReviews: [
-        ...(mrReviewData.place.restaurantReviews || []),
-        {
-          dateOfVisit: mrReviewData.dateOfVisit,
-          itemReviews: mrReviewData.itemReviews,
-        },
-      ],
-      googlePlace: mrPlaceWithGooglePlace.googlePlace,
+      dateOfVisit: mrReviewData.dateOfVisit,
+      itemReviews: mrReviewData.itemReviews,
     };
 
-    console.log('Persisting updated place to backend:', updatedPlaceWithGooglePlace);
+    // update place comments if necessary (and what about place rating?)
+    console.log('addReviewRequestBody:', addReviewRequestBody);
     try {
-      const response = await fetch('/api/updateMrPlace', {
-        method: 'POST', // Or 'PUT' if using RESTful convention
+      const response = await fetch('/api/addReview', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedPlaceWithGooglePlace),
+        body: JSON.stringify(addReviewRequestBody),
       });
 
       const data = await response.json();

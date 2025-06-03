@@ -58,3 +58,8 @@ export type MrSubmitPlaceRequestBody = {
   restaurantReviews: MrRestaurantReview[];
 };
 
+export type MrSubmitAddReviewRequestBody = {
+  placeId: string;
+  dateOfVisit: string;
+  itemReviews: MrItemOrdered[];
+}
