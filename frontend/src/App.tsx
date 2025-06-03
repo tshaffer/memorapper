@@ -16,6 +16,7 @@ import { setSettings, setFilters, fetchGooglePlaces } from './redux';
 import { mergeMrPlacesWithGooglePlaces } from './utilities/mergePlaces';
 import MrPlaceForm from './pages/MrPlace';
 import MrWriteReviewPage from './pages/MrWriteReviewPage';
+import MrPlaces from './pages/MrPlaces';
 
 // soft orange: #FFA07A
 // other possibilities
@@ -116,6 +117,7 @@ const App: React.FC = () => {
         <Route path="/" element={<Map />} />
         <Route path="/map" element={<Map />} />
         <Route path="/map/:_id" element={<Map />} />
+        <Route path="/places" element={<MrPlaces />} />
         <Route path="/add-place" element={<MrPlaceForm />} />
         <Route path="/write-review" element={<MrWriteReviewPage />} />
       </Routes>
@@ -155,6 +157,13 @@ const App: React.FC = () => {
                   to="/map"
                 >
                   Map
+                </Button>
+                <Button
+                  style={isActive('/places') ? activeButtonStyle : { color: 'white' }}
+                  component={Link}
+                  to="/places"
+                >
+                  Places
                 </Button>
                 <Button
                   style={isActive('/add-place') ? activeButtonStyle : { color: 'white' }}
