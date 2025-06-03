@@ -48,7 +48,7 @@ const MrPlaceForm = () => {
     restaurantSpecs,
   };
 
-  const [mrPlace, setMrPlace] = useState<MrPlaceWithGooglePlace>(initialPlaceData);
+  const [mrPlaceWithGooglePlace, setMrPlaceWithGooglePlace] = useState<MrPlaceWithGooglePlace>(initialPlaceData);
 
   const isMobile = useMediaQuery('(max-width:768px)');
   const [isLoading, setIsLoading] = useState(false);
@@ -106,8 +106,9 @@ const MrPlaceForm = () => {
 
   // Handles changes from the RestaurantName component.
   const handleChangeGooglePlace = (googlePlace: GooglePlace) => {
-    const currentPlace: MrSubmitPlaceRequestBody = { ...mrPlace };
+    const currentPlace: MrPlaceWithGooglePlace = { ...mrPlaceWithGooglePlace };
     currentPlace.googlePlace = googlePlace;
+    currentPlace.googlePlaceId = googlePlace.googlePlaceId;
 
     if (currentPlace.placeType === PlaceType.Restaurant && googlePlace.opening_hours) {
       const { openForBreakfast, openForLunch, openForDinner } = inferMealAvailability(googlePlace.opening_hours);
@@ -119,20 +120,19 @@ const MrPlaceForm = () => {
       };
     }
 
-    setMrPlace(prev => ({ ...prev, ...currentPlace }));
+    setMrPlaceWithGooglePlace(prev => ({ ...prev, ...currentPlace }));
     setPlaceName(googlePlace.name!);
   };
 
   const handleChange = (field: keyof MrPlace, value: any) => {
-    setMrPlace(prev => ({ ...prev, [field]: value }));
+    setMrPlaceWithGooglePlace(prev => ({ ...prev, [field]: value }));
   };
 
   const handlePlaceTypeChange = (newType: PlaceType) => {
-    setMrPlace(prev => ({
+    setMrPlaceWithGooglePlace(prev => ({
       ...prev,
       placeType: newType,
-      // only give it a restaurant payload if it's actually a Restaurant
-      restaurant: newType === PlaceType.Restaurant
+      restaurantSpecs: newType === PlaceType.Restaurant
         ? {
           restaurantType: RestaurantType.Restaurant,
           openForBreakfast: false,
@@ -144,9 +144,9 @@ const MrPlaceForm = () => {
   };
 
   const handleRestaurantFieldChange = (field: keyof MrRestaurant, value: any) => {
-    setMrPlace(prev => ({
+    setMrPlaceWithGooglePlace(prev => ({
       ...prev,
-      restaurant: {
+      restaurantSpecs: {
         ...prev.restaurantSpecs,
         [field]: value,
       },
@@ -177,8 +177,9 @@ const MrPlaceForm = () => {
     }
   };
 
-  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSubmitPlace = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    console.log('handleSubmitPlace called with mrPlace:', mrPlaceWithGooglePlace);
     // setIsLoading(true);
     // try {
     //   mrPlace.googlePlaceId = mrPlace.googlePlace?.googlePlaceId || '';
@@ -218,7 +219,7 @@ const MrPlaceForm = () => {
       <label>{'Type:'}</label>
       <Select
         labelId="place-type-select-label"
-        value={mrPlace.placeType}
+        value={mrPlaceWithGooglePlace.placeType}
         onChange={e => handlePlaceTypeChange(e.target.value as PlaceType)}
         fullWidth
       >
@@ -238,20 +239,20 @@ const MrPlaceForm = () => {
         fullWidth
         multiline
         rows={4}
-        value={mrPlace.placeComments || ''}
+        value={mrPlaceWithGooglePlace.placeComments || ''}
         onChange={(e) => handleChange('placeComments', e.target.value)}
       />
     </div>
   );
 
   const renderRestaurantType = () => {
-    if (mrPlace.placeType !== PlaceType.Restaurant) return null;
+    if (mrPlaceWithGooglePlace.placeType !== PlaceType.Restaurant) return null;
     return (
       <div style={{ marginBottom: '1rem' }}>
         <label>{'Restaurant Type:'}</label>
         <Select
           labelId="restaurant-type-select-label"
-          value={mrPlace.restaurantSpecs!.restaurantType}
+          value={mrPlaceWithGooglePlace.restaurantSpecs!.restaurantType}
           onChange={(e) => handleRestaurantFieldChange('restaurantType', e.target.value as RestaurantType)}
           fullWidth
         >
@@ -270,7 +271,7 @@ const MrPlaceForm = () => {
   };
 
   const renderMealAvailability = () => {
-    if (mrPlace.placeType !== PlaceType.Restaurant) return null;
+    if (mrPlaceWithGooglePlace.placeType !== PlaceType.Restaurant) return null;
     return (
       <div style={{ marginBottom: '1rem' }}>
         <label>Meal Availability:</label>
@@ -278,7 +279,7 @@ const MrPlaceForm = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={!!mrPlace.restaurantSpecs!.openForBreakfast}
+                checked={!!mrPlaceWithGooglePlace.restaurantSpecs!.openForBreakfast}
                 onChange={(e) => handleRestaurantFieldChange('openForBreakfast', e.target.checked)}
               />
             }
@@ -289,7 +290,7 @@ const MrPlaceForm = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={!!mrPlace.restaurantSpecs!.openForLunch}
+                checked={!!mrPlaceWithGooglePlace.restaurantSpecs!.openForLunch}
                 onChange={(e) => handleRestaurantFieldChange('openForLunch', e.target.checked)}
               />
             }
@@ -300,7 +301,7 @@ const MrPlaceForm = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={!!mrPlace.restaurantSpecs!.openForDinner}
+                checked={!!mrPlaceWithGooglePlace.restaurantSpecs!.openForDinner}
                 onChange={(e) => handleRestaurantFieldChange('openForDinner', e.target.checked)}
               />
             }
@@ -314,11 +315,11 @@ const MrPlaceForm = () => {
   const renderDesirabilityRating = (): JSX.Element => {
     return (
       <div>
-        <label htmlFor={`rating-${mrPlace.placeRating}`}>Rating</label>
+        <label htmlFor={`rating-${mrPlaceWithGooglePlace.placeRating}`}>Rating</label>
         <Rating
-          id={`rating-${mrPlace.placeId}`}
-          name={`rating-${mrPlace.placeId}`}
-          value={mrPlace.placeRating}
+          id={`rating-${mrPlaceWithGooglePlace.placeId}`}
+          name={`rating-${mrPlaceWithGooglePlace.placeId}`}
+          value={mrPlaceWithGooglePlace.placeRating}
           max={5}
           onChange={(event, newValue) =>
             handleChange('placeRating', newValue || 0)
@@ -350,8 +351,8 @@ const MrPlaceForm = () => {
         <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
           <Button
             variant="contained"
-            onClick={handleSubmit}
-            disabled={isLoading || !mrPlace.googlePlace?.googlePlaceId}
+            onClick={handleSubmitPlace}
+            disabled={isLoading || !mrPlaceWithGooglePlace.googlePlace?.googlePlaceId}
           >
             Add Place
           </Button>
