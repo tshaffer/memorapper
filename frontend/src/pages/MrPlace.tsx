@@ -23,9 +23,14 @@ const MrPlaceForm = () => {
 
   const location = useLocation();
 
-  const editablePlace = location.state as EditablePlace | null;
+  const editablePlace = location.state as MrPlaceWithGooglePlace | null;
+  const placeId = editablePlace?.placeId || uuidv4();
   const googlePlace: GooglePlace | undefined = editablePlace?.googlePlace;
+  const googlePlaceId = googlePlace?.googlePlaceId || '';
+  const placeType = editablePlace?.placeType || PlaceType.Restaurant;
   const placeComments = editablePlace?.placeComments ?? '';
+  const restaurantReviews = editablePlace?.restaurantReviews || [];
+  const restaurantSpecs = editablePlace?.restaurantSpecs || {} as MrRestaurant;
 
   useEffect(() => {
     if (googlePlace?.name) {
@@ -35,12 +40,12 @@ const MrPlaceForm = () => {
 
   const initialPlaceData: MrPlace = {
     _idPlace: _id,
-    placeId: uuidv4(),
-    googlePlaceId: googlePlace?.googlePlaceId || '',
-    placeType: PlaceType.Restaurant,
+    placeId,
+    googlePlaceId,
+    placeType,
     placeComments,
-    restaurantReviews: [],
-    restaurantSpecs: {} as any, // Adjust this type as needed
+    restaurantReviews,
+    restaurantSpecs,
   };
 
   const [mrPlace, setMrPlace] = useState<MrPlaceWithGooglePlace>(initialPlaceData);
