@@ -190,8 +190,20 @@ const MrPlaceForm = () => {
     // }
   };
 
+  const getPlaceNameStyle = (): React.CSSProperties => {
+    return editablePlace ?
+      {
+        marginBottom: '1rem',
+        pointerEvents: 'none',
+        opacity: 0.5,
+      }
+      : {
+        marginBottom: '1rem',
+      };
+  }
+
   const renderPlaceName = () => (
-    <div style={{ marginBottom: '1rem' }}>
+    <div style={getPlaceNameStyle()}>
       <label htmlFor="place-name">{'Name:'}</label>
       <RestaurantName
         restaurantName={placeName}
