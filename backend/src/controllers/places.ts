@@ -240,6 +240,20 @@ export const getMrPlacesHandler = async (
   }
 };
 
+export const upsertMrPlaceHandler = async (
+  req: Request<{}, {}, MrSubmitPlaceRequestBody>,
+  res: Response
+): Promise<any> => {
+  const body: MrSubmitPlaceRequestBody = req.body;
+  const { _idPlace, placeId, placeType, placeComments, googlePlace, restaurantSpecs, restaurantReviews, placeRating } = body;
+
+  if (!_idPlace && !placeId) {
+    console.log('add place');
+  } else {
+    console.log('update place');
+  }
+
+}
 
 export const submitMrPlaceHandler = async (
   req: Request<{}, {}, MrSubmitPlaceRequestBody>,

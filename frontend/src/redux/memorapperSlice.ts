@@ -64,7 +64,6 @@ const memorapperSlice = createSlice({
       state.mrPlacesWithGooglePlaces = action.payload;
     },
     addMrPlaceWithGooglePlace(state, action: PayloadAction<MrPlaceWithGooglePlace>) {
-      debugger;
       const incoming = action.payload;
 
       if (!incoming._idPlace) {
@@ -72,7 +71,9 @@ const memorapperSlice = createSlice({
         state.mrPlacesWithGooglePlaces.push(incoming);
         console.log('Adding new place with Google Place:', state.mrPlacesWithGooglePlaces);
       } else {
+        if (!(incoming as any)._id) {
         (incoming as any)._id = incoming._idPlace; // Ensure _id is set to _idPlace
+        }
         // If _idPlace is defined, replace existing entry
         const index = state.mrPlacesWithGooglePlaces.findIndex(
           (place) => place._idPlace === incoming._idPlace

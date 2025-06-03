@@ -156,20 +156,21 @@ const MrPlaceForm = () => {
     }));
   };
 
-  const handleAddPlace = async (newPlace: MrPlaceWithGooglePlace): Promise<void> => {
+  const handleSubmitPlace = async (e: React.MouseEvent<HTMLButtonElement>) => {
+
+    e.preventDefault();
+    console.log('handleSubmitPlace called with mrPlace:', mrPlaceWithGooglePlace);
+
+    dispatch(addMrPlaceWithGooglePlace(mrPlaceWithGooglePlace));
 
     setIsLoading(true);
 
-    dispatch(addMrPlaceWithGooglePlace(newPlace));
-
     try {
-      console.log('handleAddPlace:', newPlace);
-      const response = await fetch('/api/submitMrPlace', {
+
+      const response = await fetch('/api/upsertMrPlace', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...newPlace,
-        }),
+        body: JSON.stringify(mrPlaceWithGooglePlace),
       });
       const data = await response.json();
       console.log('Place submitted:', data);
@@ -178,22 +179,6 @@ const MrPlaceForm = () => {
       console.error('Error submitting place:', error);
       setIsLoading(false);
     }
-  };
-
-  const handleSubmitPlace = async (e: React.MouseEvent<HTMLButtonElement>) => {
-
-    e.preventDefault();
-    console.log('handleSubmitPlace called with mrPlace:', mrPlaceWithGooglePlace);
-    dispatch(addMrPlaceWithGooglePlace(mrPlaceWithGooglePlace));
-    // setIsLoading(true);
-    // try {
-    //   mrPlace.googlePlaceId = mrPlace.googlePlace?.googlePlaceId || '';
-    //   await onSubmit(mrPlace);
-    //   setIsLoading(false);
-    // } catch (error) {
-    //   console.error('Error during submit:', error);
-    //   setIsLoading(false);
-    // }
   };
 
   const getPlaceNameStyle = (): React.CSSProperties => {
