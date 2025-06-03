@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { GooglePlace } from "./place";
+import { GooglePlace } from "./mrTypes";
 
 export interface MongoPlace extends Omit<GooglePlace, 'geometry'> {
   _id?: mongoose.Types.ObjectId;

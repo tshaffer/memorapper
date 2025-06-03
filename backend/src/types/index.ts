@@ -3,5 +3,4 @@ export * from './mrTypes';
 export * from './googlePlace';
 export * from './interfaces';
 export * from './mongoTypes';
-export * from './place';
 
