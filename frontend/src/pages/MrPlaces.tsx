@@ -30,7 +30,7 @@ const MrPlaces: React.FC<any> = () => {
     // For now, just log the place to the console.
     // In a real app, you might open a dialog or navigate to an edit page.
     console.log('Edit place:', mrPlaceWithGooglePlace);
-    // navigate(`/add-place/${mrPlaceWithGooglePlace._idPlace}`, { state: mrPlaceWithGooglePlace });
+    navigate(`/add-place/${mrPlaceWithGooglePlace._id}`, { state: mrPlaceWithGooglePlace });
   }
 
   function handleDeletePlace(mrPlaceWithGooglePlace: MrPlaceWithGooglePlace) {

@@ -146,6 +146,7 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
     const selectedMrPlaceWithGooglePlace: MrPlaceWithGooglePlace | undefined = getMrPlaceWithGooglePlace(placeId);
     if (selectedMrPlaceWithGooglePlace && selectedRestaurant) {
       const selectedMrPlace: MrPlace = {
+        _id: selectedMrPlaceWithGooglePlace._id,
         placeId: selectedMrPlaceWithGooglePlace.placeId,
         googlePlaceId: selectedMrPlaceWithGooglePlace.googlePlaceId,
         placeType: selectedMrPlaceWithGooglePlace.placeType || PlaceType.Restaurant,

@@ -13,6 +13,7 @@ export interface Place {
 
 
 export interface MrPlace {
+  _id?: string;
   placeId: string;
   googlePlaceId: string;
   placeType: PlaceType;
@@ -58,6 +59,7 @@ export interface MrItemOrdered {
 }
 
 export type MrPlaceWithGooglePlace = {
+  _id?: string;
   placeId: string;
   googlePlaceId: string;
   placeType?: PlaceType;
@@ -84,16 +86,6 @@ export type EditablePlace = {
   placeComments: string;
 
 }
-
-export type MrSubmitPlaceRequestBody = {
-  placeId: string;
-  placeType?: PlaceType;
-  placeComments?: string;
-  placeRating?: number;
-  googlePlace?: GooglePlace;
-  restaurantSpecs?: MrRestaurant;
-  restaurantReviews: MrRestaurantReview[];
-};
 
 export type SubmitPlaceRequestBody = {
   placeId: string;
