@@ -170,3 +170,11 @@ export const iconFromRestaurantType = (restaurantType: RestaurantType): IconifyI
   return restaurantIcon;
 }
 
+export const getCityNameFromPlace = (place: GooglePlace): string => {
+  const addressComponents = place.address_components;
+  const cityComponent = addressComponents?.find((component: any) =>
+    component.types.includes("locality")
+  );
+  const cityName: string = cityComponent ? cityComponent.long_name : ''
+  return cityName;
+}
