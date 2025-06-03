@@ -47,6 +47,12 @@ export type MrPlaceWithGooglePlace = {
   restaurantReviews: MrRestaurantReview[];
 };
 
+export type EditablePlace = {
+  googlePlace: GooglePlace;
+  placeComments: string;
+
+}
+
 export type MrSubmitPlaceRequestBody = {
   _idPlace?: string;
   placeId: string;

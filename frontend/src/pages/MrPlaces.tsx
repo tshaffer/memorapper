@@ -11,6 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { MrPlaceWithGooglePlace } from '../types';
 import { getCityNameFromPlace } from '../utilities';
+import { useNavigate } from 'react-router-dom';
 
 const smallColumnStyle: React.CSSProperties = {
   width: '35px',
@@ -23,10 +24,13 @@ const MrPlaces: React.FC<any> = () => {
 
   const { mrPlacesWithGooglePlaces } = useSelector((state: RootState) => state.memorapper);
 
+  const navigate = useNavigate();
+
   function handleEditPlace(mrPlaceWithGooglePlace: MrPlaceWithGooglePlace) {
     // For now, just log the place to the console.
     // In a real app, you might open a dialog or navigate to an edit page.
     console.log('Edit place:', mrPlaceWithGooglePlace);
+    navigate(`/add-place/${mrPlaceWithGooglePlace._idPlace}`, { state: mrPlaceWithGooglePlace });
   }
 
   function handleDeletePlace(mrPlaceWithGooglePlace: MrPlaceWithGooglePlace) {
@@ -94,8 +98,8 @@ const MrPlaces: React.FC<any> = () => {
                           </IconButton>
                         </Tooltip>
                       </TableCell>
-                    <TableCell>{mrPlaceWithGooglePlace.googlePlace!.name}</TableCell>
-                    <TableCell>{getCityNameFromPlace(mrPlaceWithGooglePlace.googlePlace!) || 'Not provided'}</TableCell>
+                      <TableCell>{mrPlaceWithGooglePlace.googlePlace!.name}</TableCell>
+                      <TableCell>{getCityNameFromPlace(mrPlaceWithGooglePlace.googlePlace!) || 'Not provided'}</TableCell>
                     </TableRow>
                   </React.Fragment>
                 );

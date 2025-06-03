@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../styles/multiPanelStyles.css';
 import { useMediaQuery } from "@mui/material";
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { PlaceType, MrPlace, MrPlaceWithGooglePlace } from '../types';
-import MrPlaceEditor from './MrPlaceEditor';
+import { PlaceType, MrPlace, MrPlaceWithGooglePlace, EditablePlace } from '../types';
 import { useDispatch } from 'react-redux';
 import { addMrPlaceWithGooglePlace } from '../redux/memorapperSlice';
 import { Button, MenuItem, Select, Checkbox, FormControlLabel, TextField, Rating } from "@mui/material";
@@ -22,12 +21,24 @@ const MrPlaceForm = () => {
 
   const [placeName, setPlaceName] = React.useState('');
 
+  const location = useLocation();
+
+  const editablePlace = location.state as EditablePlace | null;
+  const googlePlace: GooglePlace | undefined = editablePlace?.googlePlace;
+  const placeComments = editablePlace?.placeComments ?? '';
+
+  useEffect(() => {
+    if (googlePlace?.name) {
+      setPlaceName(googlePlace.name);
+    }
+  }, [googlePlace]);
+
   const initialPlaceData: MrPlace = {
     _idPlace: _id,
     placeId: uuidv4(),
-    googlePlaceId: '',
+    googlePlaceId: googlePlace?.googlePlaceId || '',
     placeType: PlaceType.Restaurant,
-    placeComments: '',
+    placeComments,
     restaurantReviews: [],
     restaurantSpecs: {} as any, // Adjust this type as needed
   };
@@ -163,15 +174,15 @@ const MrPlaceForm = () => {
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setIsLoading(true);
-    try {
-      mrPlace.googlePlaceId = mrPlace.googlePlace?.googlePlaceId || '';
-      await onSubmit(mrPlace);
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error during submit:', error);
-      setIsLoading(false);
-    }
+    // setIsLoading(true);
+    // try {
+    //   mrPlace.googlePlaceId = mrPlace.googlePlace?.googlePlaceId || '';
+    //   await onSubmit(mrPlace);
+    //   setIsLoading(false);
+    // } catch (error) {
+    //   console.error('Error during submit:', error);
+    //   setIsLoading(false);
+    // }
   };
 
   const renderPlaceName = () => (

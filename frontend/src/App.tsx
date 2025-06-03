@@ -119,6 +119,7 @@ const App: React.FC = () => {
         <Route path="/map/:_id" element={<Map />} />
         <Route path="/places" element={<MrPlaces />} />
         <Route path="/add-place" element={<MrPlaceForm />} />
+        <Route path="/add-place/:_id" element={<MrPlaceForm />} />
         <Route path="/write-review" element={<MrWriteReviewPage />} />
       </Routes>
     );
