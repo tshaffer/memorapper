@@ -81,6 +81,7 @@ export const upsertMrPlaceHandler = async (
   req: Request<{}, {}, MrSubmitPlaceRequestBody>,
   res: Response
 ): Promise<any> => {
+  return submitMrPlaceHandler(req, res);
 }
 
 export const submitMrPlaceHandler = async (
@@ -119,6 +120,9 @@ const submitMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promis
   };
 
   let savedPlace: IMrPlace | null;
+
+  const newPlace: IMrPlace | null = await addMrPlaceToDb(addPlaceEntity);
+  console.log('newPlace:', newPlace?.toObject());
 
   // if (_idPlace) {
   //   // If _id is provided, update the existing document
