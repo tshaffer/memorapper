@@ -22,7 +22,6 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
   const defaultPlace: PlaceWithGooglePlace =
     mode === 'create'
       ? {
-        _idPlace: _id,
         placeId: uuidv4(),
         googlePlaceId: '',
         // visited: false,

@@ -59,28 +59,28 @@ const memorapperSlice = createSlice({
     addMrPlaceWithGooglePlace(state, action: PayloadAction<MrPlaceWithGooglePlace>) {
       const incoming = action.payload;
 
-      if (!incoming._idPlace) {
-        // If _idPlace is undefined, add new entry
-        state.mrPlacesWithGooglePlaces.push(incoming);
-        console.log('Adding new place with Google Place:', state.mrPlacesWithGooglePlaces);
-      } else {
-        if (!(incoming as any)._id) {
-        (incoming as any)._id = incoming._idPlace; // Ensure _id is set to _idPlace
-        }
-        // If _idPlace is defined, replace existing entry
-        const index = state.mrPlacesWithGooglePlaces.findIndex(
-          (place) => place._idPlace === incoming._idPlace
-        );
+      // if (!incoming._idPlace) {
+      //   // If _idPlace is undefined, add new entry
+      //   state.mrPlacesWithGooglePlaces.push(incoming);
+      //   console.log('Adding new place with Google Place:', state.mrPlacesWithGooglePlaces);
+      // } else {
+      //   if (!(incoming as any)._id) {
+      //   (incoming as any)._id = incoming._idPlace; // Ensure _id is set to _idPlace
+      //   }
+      //   // If _idPlace is defined, replace existing entry
+      //   const index = state.mrPlacesWithGooglePlaces.findIndex(
+      //     (place) => place._idPlace === incoming._idPlace
+      //   );
 
-        if (index !== -1) {
-          // Replace the existing entry
-          state.mrPlacesWithGooglePlaces[index] = incoming;
-        } else {
-          // No match found, add it as new
-          state.mrPlacesWithGooglePlaces.push(incoming);
-        }
-        console.log('Updated place with Google Place:', state.mrPlacesWithGooglePlaces);
-      }
+      //   if (index !== -1) {
+      //     // Replace the existing entry
+      //     state.mrPlacesWithGooglePlaces[index] = incoming;
+      //   } else {
+      //     // No match found, add it as new
+      //     state.mrPlacesWithGooglePlaces.push(incoming);
+      //   }
+      //   console.log('Updated place with Google Place:', state.mrPlacesWithGooglePlaces);
+      // }
     },
     addMrRestaurantReview(state, action: PayloadAction<MrReviewData>) {
       const { place, dateOfVisit, itemReviews, placeComments } = action.payload;

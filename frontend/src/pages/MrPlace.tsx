@@ -40,7 +40,6 @@ const MrPlaceForm = () => {
   }, [googlePlace]);
 
   const initialPlaceData: MrPlaceWithGooglePlace = {
-    _idPlace: _id,
     placeId,
     googlePlace,
     googlePlaceId,

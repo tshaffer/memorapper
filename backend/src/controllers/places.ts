@@ -66,7 +66,6 @@ export const getMrPlacesHandler = async (
       for (const mongoPlaceDocument of mongoPlaceDocuments) {
         if (mongoPlaceDocument.googlePlaceId === placeGooglePlaceId) {
           const place: MrPlace = placeDocument.toObject();
-          place._idPlace = placeDocument._id!.toString();
           mrPlaces.push(place);
         }
       }
@@ -82,15 +81,6 @@ export const upsertMrPlaceHandler = async (
   req: Request<{}, {}, MrSubmitPlaceRequestBody>,
   res: Response
 ): Promise<any> => {
-  const body: MrSubmitPlaceRequestBody = req.body;
-  const { _idPlace, placeId, placeType, placeComments, googlePlace, restaurantSpecs, restaurantReviews, placeRating } = body;
-
-  if (!_idPlace && !placeId) {
-    console.log('add place');
-  } else {
-    console.log('update place');
-  }
-
 }
 
 export const submitMrPlaceHandler = async (
@@ -109,7 +99,7 @@ export const submitMrPlaceHandler = async (
 
 const submitMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<IMrPlace | null> => {
 
-  const { _idPlace, placeId, placeType, placeComments, googlePlace, restaurantSpecs } = placeRequestBody
+  const { placeId, placeType, placeComments, googlePlace, restaurantSpecs } = placeRequestBody
 
   let mongoPlace: IMongoPlace | null = await getMongoPlace(googlePlace!.googlePlaceId);
   if (!mongoPlace) {
@@ -120,7 +110,6 @@ const submitMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promis
   }
 
   const addPlaceEntity: MrPlace = {
-    _idPlace,
     placeId,
     googlePlaceId: googlePlace!.googlePlaceId,
     placeType: placeType!,
@@ -131,21 +120,21 @@ const submitMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promis
 
   let savedPlace: IMrPlace | null;
 
-  if (_idPlace) {
-    // If _id is provided, update the existing document
-    savedPlace = await MrPlaceModel.findByIdAndUpdate(_idPlace, addPlaceEntity, {
-      new: true,    // Return the updated document
-      runValidators: true // Ensure the updated data complies with schema validation
-    });
+  // if (_idPlace) {
+  //   // If _id is provided, update the existing document
+  //   savedPlace = await MrPlaceModel.findByIdAndUpdate(_idPlace, addPlaceEntity, {
+  //     new: true,    // Return the updated document
+  //     runValidators: true // Ensure the updated data complies with schema validation
+  //   });
 
-    if (!savedPlace) {
-      throw new Error('Place not found for update.');
-    }
-  } else {
-    delete addPlaceEntity._idPlace;
-    const newPlace: IMrPlace | null = await addMrPlaceToDb(addPlaceEntity);
-    console.log('newPlace:', newPlace?.toObject());
-  }
+  //   if (!savedPlace) {
+  //     throw new Error('Place not found for update.');
+  //   }
+  // } else {
+  //   delete addPlaceEntity._idPlace;
+  //   const newPlace: IMrPlace | null = await addMrPlaceToDb(addPlaceEntity);
+  //   console.log('newPlace:', newPlace?.toObject());
+  // }
 
   return null;
 }
@@ -179,13 +168,13 @@ export const updateMrPlaceHandler = async (
 };
 
 const updateMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<IMrPlace | null> => {
-  const { _idPlace, placeId, placeType, placeComments, googlePlace, restaurantSpecs, restaurantReviews, placeRating } = placeRequestBody;
+  const { placeId, placeType, placeComments, googlePlace, restaurantSpecs, restaurantReviews, placeRating } = placeRequestBody;
 
-  if (!_idPlace && !placeId) {
-    throw new Error('Either _idPlace or placeId is required for updating.');
+  if (!placeId) {
+    throw new Error('placeId is required for updating.');
   }
 
-  const filter = _idPlace ? { _id: _idPlace } : { placeId };
+  const filter = { placeId };
 
   const updateData: Partial<MrPlace> = {
     placeId: placeId || '',

@@ -2,7 +2,6 @@ import { PlaceType, RestaurantType } from "./enums";
 import { GooglePlace } from "./place";
 
 export interface Place {
-  _idPlace?: string;
   placeId: string;
   googlePlaceId: string;
   placeType: PlaceType;
@@ -14,7 +13,6 @@ export interface Place {
 
 
 export interface MrPlace {
-  _idPlace?: string;
   placeId: string;
   googlePlaceId: string;
   placeType: PlaceType;
@@ -60,7 +58,6 @@ export interface MrItemOrdered {
 }
 
 export type MrPlaceWithGooglePlace = {
-  _idPlace?: string;
   placeId: string;
   googlePlaceId: string;
   placeType?: PlaceType;
@@ -72,7 +69,6 @@ export type MrPlaceWithGooglePlace = {
 };
 
 export type PlaceWithGooglePlace = {
-  _idPlace?: string;
   placeId: string;
   googlePlaceId: string;
   placeType?: PlaceType;
@@ -90,7 +86,6 @@ export type EditablePlace = {
 }
 
 export type MrSubmitPlaceRequestBody = {
-  _idPlace?: string;
   placeId: string;
   placeType?: PlaceType;
   placeComments?: string;
@@ -101,7 +96,6 @@ export type MrSubmitPlaceRequestBody = {
 };
 
 export type SubmitPlaceRequestBody = {
-  _idPlace?: string;
   placeId: string;
   placeType?: PlaceType;
   placeComments?: string;
