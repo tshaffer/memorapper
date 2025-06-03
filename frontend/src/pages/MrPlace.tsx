@@ -4,11 +4,11 @@ import { useMediaQuery } from "@mui/material";
 import { useLocation, useParams } from 'react-router-dom';
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { PlaceType, MrPlace, MrPlaceWithGooglePlace, EditablePlace } from '../types';
+import { PlaceType, MrPlace, MrPlaceWithGooglePlace } from '../types';
 import { useDispatch } from 'react-redux';
 import { addMrPlaceWithGooglePlace } from '../redux/memorapperSlice';
 import { Button, MenuItem, Select, Checkbox, FormControlLabel, TextField, Rating } from "@mui/material";
-import { GooglePlace, MrSubmitPlaceRequestBody, RestaurantType, Restaurant, MrRestaurant } from "../types";
+import { GooglePlace, RestaurantType, MrRestaurant } from "../types";
 import RestaurantName from '../components/RestaurantName';
 import PulsingDots from '../components/PulsingDots';
 

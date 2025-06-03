@@ -55,7 +55,8 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
   }
 
   const getMarkerColor = (): string => {
-    return place.visited ? '#1e7e34' : '#0056b3';
+    // return place.visited ? '#1e7e34' : '#0056b3';
+    return '#0056b3';
   };
 
   const textStyle = (): React.CSSProperties => ({

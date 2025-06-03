@@ -1,4 +1,4 @@
-import { GoogleGeometry, PlaceWithGooglePlace, RestaurantType, GooglePlace } from "../types";
+import { GoogleGeometry, RestaurantType, GooglePlace, MrPlaceWithGooglePlace } from "../types";
 import '../App.css';
 
 import { IconifyIcon } from '@iconify/react';
@@ -14,7 +14,7 @@ import burritoIcon from '@iconify/icons-noto/burrito';
 import coffeeIcon from '@iconify/icons-openmoji/electric-coffee-percolator';
 import shrimpIcon from '@iconify/icons-emojione/shrimp';
 
-export const getLatLngFromPlace = (place: PlaceWithGooglePlace): google.maps.LatLngLiteral => {
+export const getLatLngFromPlace = (place: MrPlaceWithGooglePlace): google.maps.LatLngLiteral => {
   const geometry: GoogleGeometry | undefined = place.googlePlace!.geometry;
   if (geometry) {
     return geometry.location;

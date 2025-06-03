@@ -25,8 +25,9 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
         _idPlace: _id,
         placeId: uuidv4(),
         googlePlaceId: '',
-        visited: false,
+        // visited: false,
         googlePlace: undefined,
+        restaurantReviews: [],
       }
       : (initialPlace as PlaceWithGooglePlace);
 
@@ -77,15 +78,15 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
     const currentPlace: SubmitPlaceRequestBody = { ...place };
     currentPlace.googlePlace = googlePlace;
 
-    if (currentPlace.placeType === PlaceType.Restaurant && googlePlace.opening_hours) {
-      const { openForBreakfast, openForLunch, openForDinner } = inferMealAvailability(googlePlace.opening_hours);
-      currentPlace.restaurant = {
-        restaurantType: RestaurantType.Restaurant,
-        openForBreakfast,
-        openForLunch,
-        openForDinner,
-      };
-    }
+    // if (currentPlace.placeType === PlaceType.Restaurant && googlePlace.opening_hours) {
+    //   const { openForBreakfast, openForLunch, openForDinner } = inferMealAvailability(googlePlace.opening_hours);
+    //   currentPlace.restaurant = {
+    //     restaurantType: RestaurantType.Restaurant,
+    //     openForBreakfast,
+    //     openForLunch,
+    //     openForDinner,
+    //   };
+    // }
 
     setPlace(prev => ({ ...prev, ...currentPlace }));
     setPlaceName(googlePlace.name!);
@@ -176,15 +177,15 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
     </div>
   );
 
-  const renderPlaceVisited = () => (
-    <div style={{ marginBottom: '1rem' }}>
-      <label>{'Visited:'}</label>
-      <Checkbox
-        checked={place.visited}
-        onChange={(e) => handleChange('visited', e.target.checked)}
-      />
-    </div>
-  );
+  // const renderPlaceVisited = () => (
+    // <div style={{ marginBottom: '1rem' }}>
+    //   <label>{'Visited:'}</label>
+    //   <Checkbox
+    //     checked={place.visited}
+    //     onChange={(e) => handleChange('visited', e.target.checked)}
+    //   />
+    // </div>
+  // );
 
   const renderPlaceType = () => (
     <div style={{ marginBottom: '1rem' }}>
@@ -276,7 +277,7 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
       <form>
         {renderPlaceName()}
         {renderPlaceComments()}
-        {renderPlaceVisited()}
+        {/* {renderPlaceVisited()} */}
         {renderPlaceType()}
         {renderRestaurantType()}
         {renderMealAvailability()}

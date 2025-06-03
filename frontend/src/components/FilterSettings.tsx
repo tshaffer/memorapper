@@ -1,5 +1,5 @@
 import { Box, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Checkbox, useMediaQuery, InputLabel, Select, MenuItem, SelectChangeEvent, FormGroup } from '@mui/material';
-import { Distance, Filters, MealType, RestaurantOpen, Place, PlaceType, RestaurantType } from "../types";
+import { Distance, Filters, MealType, RestaurantOpen, PlaceType, RestaurantType } from "../types";
 import { useState } from 'react';
 
 export interface FiltersSettingsProps {

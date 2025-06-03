@@ -1,17 +1,4 @@
-import { Place, GooglePlace, PlaceWithGooglePlace, MrPlaceWithGooglePlace, MrPlace } from '../types';
-
-export const mergePlacesWithGooglePlaces = (
-  places: Place[],
-  googlePlaces: GooglePlace[]
-): PlaceWithGooglePlace[] => {
-  return places.map((place) => {
-    const googlePlace = googlePlaces.find((g) => g.googlePlaceId === place.googlePlaceId);
-    return {
-      ...place,
-      googlePlace: googlePlace || undefined,
-    };
-  });
-};
+import { GooglePlace, MrPlaceWithGooglePlace, MrPlace } from '../types';
 
 export const mergeMrPlacesWithGooglePlaces = (
   places: MrPlace[],

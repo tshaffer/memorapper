@@ -24,7 +24,7 @@ import { useSelector } from 'react-redux';
 import { RootState, setFilters } from '../../redux';
 
 const MapPage: React.FC = () => {
-  const { placesWithGooglePlaces, places, settings } = useSelector((state: RootState) => state.memorapper);
+  const { mrPlacesWithGooglePlaces, settings } = useSelector((state: RootState) => state.memorapper);
   const { _id } = useParams<{ _id: string }>();
 
   const isMobile = useMediaQuery('(max-width:768px)');
@@ -106,7 +106,7 @@ const MapPage: React.FC = () => {
 
     const fetchData = async () => {
       const location = await fetchCurrentLocation();
-      filterOnEntry(placesWithGooglePlaces, location!, settings.filters);
+      filterOnEntry(mrPlacesWithGooglePlaces, location!, settings.filters);
     };
 
     fetchData();
@@ -115,8 +115,8 @@ const MapPage: React.FC = () => {
 
   // Update map location based on the provided placeId (_id)
   useEffect(() => {
-    if (_id && placesWithGooglePlaces.length > 0) {
-      const googlePlace = placesWithGooglePlaces.find((placesWithGooglePlaces) => placesWithGooglePlaces.googlePlaceId === _id);
+    if (_id && mrPlacesWithGooglePlaces.length > 0) {
+      const googlePlace = mrPlacesWithGooglePlaces.find((placesWithGooglePlaces) => placesWithGooglePlaces.googlePlaceId === _id);
       if (googlePlace && googlePlace.googlePlace!.geometry) {
         const location = {
           lat: googlePlace.googlePlace!.geometry.location.lat,
@@ -127,7 +127,7 @@ const MapPage: React.FC = () => {
         console.warn('Place not found or missing geometry for placeId:', _id);
       }
     }
-  }, [_id, placesWithGooglePlaces]);
+  }, [_id, mrPlacesWithGooglePlaces]);
 
   const handleOpenFiltersDialog = () => {
     setShowFiltersDialog(true);
