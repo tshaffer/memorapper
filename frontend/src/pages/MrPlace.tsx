@@ -29,6 +29,7 @@ const MrPlaceForm = () => {
   const googlePlaceId = googlePlace?.googlePlaceId || '';
   const placeType = editablePlace?.placeType || PlaceType.Restaurant;
   const placeComments = editablePlace?.placeComments ?? '';
+  const placeRating = editablePlace?.placeRating ?? 0;
   const restaurantReviews = editablePlace?.restaurantReviews || [];
   const restaurantSpecs = editablePlace?.restaurantSpecs || {} as MrRestaurant;
 
@@ -38,12 +39,14 @@ const MrPlaceForm = () => {
     }
   }, [googlePlace]);
 
-  const initialPlaceData: MrPlace = {
+  const initialPlaceData: MrPlaceWithGooglePlace = {
     _idPlace: _id,
     placeId,
+    googlePlace,
     googlePlaceId,
     placeType,
     placeComments,
+    placeRating,
     restaurantReviews,
     restaurantSpecs,
   };
@@ -178,6 +181,7 @@ const MrPlaceForm = () => {
   };
 
   const handleSubmitPlace = async (e: React.MouseEvent<HTMLButtonElement>) => {
+
     e.preventDefault();
     console.log('handleSubmitPlace called with mrPlace:', mrPlaceWithGooglePlace);
     // setIsLoading(true);
