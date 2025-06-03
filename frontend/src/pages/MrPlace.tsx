@@ -184,6 +184,7 @@ const MrPlaceForm = () => {
 
     e.preventDefault();
     console.log('handleSubmitPlace called with mrPlace:', mrPlaceWithGooglePlace);
+    dispatch(addMrPlaceWithGooglePlace(mrPlaceWithGooglePlace));
     // setIsLoading(true);
     // try {
     //   mrPlace.googlePlaceId = mrPlace.googlePlace?.googlePlaceId || '';
