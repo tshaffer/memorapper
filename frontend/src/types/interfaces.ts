@@ -1,6 +1,4 @@
-import { ItemReview } from "./entities";
 import { Distance, RestaurantOpen, PlaceType, RestaurantType } from "./enums";
-import { GooglePlace } from "./place";
 
 export interface Filters {
   distanceAway: Distance;
@@ -29,18 +27,5 @@ export interface OpenForMeals {
   Breakfast: boolean;
   Lunch: boolean;
   Dinner: boolean;
-}
-
-export interface ReviewData {
-  _id: string;
-  // diningGroupid: string;
-  place: GooglePlace | null;
-  // dinerRestaurantReviews: DinerRestaurantReview[];
-  dateOfVisit: string | null;
-  reviewText: string | null;
-  itemReviews: ItemReview[];
-  sessionId: string | null;
-  restaurantName: string;
-  // chatHistory: ChatMessage[]; // Chat history
 }
 
