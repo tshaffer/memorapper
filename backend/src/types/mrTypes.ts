@@ -45,6 +45,7 @@ export type MrPlaceWithGooglePlace = {
 };
 
 export type MrSubmitPlaceRequestBody = {
+  _id?: string; // Optional for updates
   placeId: string;
   placeType?: PlaceType;
   placeComments?: string;

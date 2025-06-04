@@ -4,8 +4,6 @@ import {
   healthHandler,
   testHandler,
   searchAndFilterHandler,
-  submitMrPlaceHandler,
-  updateMrPlaceHandler,
   getMrPlacesHandler,
   addReviewHandler,
   upsertMrPlaceHandler,
@@ -21,8 +19,6 @@ router.get('/googlePlaces', getGooglePlaces);
 router.post('/searchAndFilter', searchAndFilterHandler);
 
 router.get('/mrPlaces', getMrPlacesHandler);
-router.post('/submitMrPlace', submitMrPlaceHandler);
-router.post('/updateMrPlace', updateMrPlaceHandler);
 router.post('/upsertMrPlace', upsertMrPlaceHandler);
 router.post('/addReview', addReviewHandler);
 export default router;

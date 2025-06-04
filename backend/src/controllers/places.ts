@@ -81,26 +81,30 @@ export const upsertMrPlaceHandler = async (
   req: Request<{}, {}, MrSubmitPlaceRequestBody>,
   res: Response
 ): Promise<any> => {
-  return submitMrPlaceHandler(req, res);
+
+  // return submitMrPlaceHandler(req, res);
+  const body: MrSubmitPlaceRequestBody = req.body;
+  const { _id } = body;
+
+  console.log('submitMrPlace _id:', _id);
+
+  if (_id) {
+    const place = await MrPlaceModel.findOne({ _id }).exec();
+    if (!place) {
+      console.error(`Place with _id ${_id} not found`);
+      return res.status(500).json({ error: `An error occurred upsertMrPlaceHandler, Place with _id ${_id} not found.` });
+    }
+    const mrPlace: IMrPlace | null = await updateMrPlace(body);
+    return res.status(200).json({ place: mrPlace });
+  } else {
+    const mrPlace: IMrPlace | null = await addMrPlace(body);
+    return res.status(200).json({ place: mrPlace });
+  }
 }
 
-export const submitMrPlaceHandler = async (
-  req: Request<{}, {}, MrSubmitPlaceRequestBody>,
-  res: Response
-): Promise<any> => {
-  const body: MrSubmitPlaceRequestBody = req.body;
-  try {
-    const place = await submitMrPlace(body);
-    return res.status(201).json({ message: 'MrPlace saved successfully!', place });
-  } catch (error) {
-    console.error('Error saving place:', error);
-    return res.status(500).json({ error: 'An error occurred while saving the place.' });
-  }
-};
+const addMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<IMrPlace | null> => {
 
-const submitMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<IMrPlace | null> => {
-
-  const { placeId, placeType, placeComments, googlePlace, restaurantSpecs } = placeRequestBody
+  const { placeId, placeType, placeComments, placeRating, googlePlace, restaurantSpecs } = placeRequestBody;
 
   let mongoPlace: IMongoPlace | null = await getMongoPlace(googlePlace!.googlePlaceId);
   if (!mongoPlace) {
@@ -108,6 +112,8 @@ const submitMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promis
     if (!mongoPlace) {
       throw new Error('Error saving place.');
     }
+  } else {
+    throw new Error('Mongo place already exists:' + mongoPlace.googlePlaceId);
   }
 
   const addPlaceEntity: MrPlace = {
@@ -115,32 +121,15 @@ const submitMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promis
     googlePlaceId: googlePlace!.googlePlaceId,
     placeType: placeType!,
     placeComments: placeComments || '',
+    placeRating: placeRating || 0,
     restaurantReviews: [], // Initialize with an empty array or handle as needed
     restaurantSpecs: restaurantSpecs!,
   };
 
-  let savedPlace: IMrPlace | null;
-
   const newPlace: IMrPlace | null = await addMrPlaceToDb(addPlaceEntity);
   console.log('newPlace:', newPlace?.toObject());
 
-  // if (_idPlace) {
-  //   // If _id is provided, update the existing document
-  //   savedPlace = await MrPlaceModel.findByIdAndUpdate(_idPlace, addPlaceEntity, {
-  //     new: true,    // Return the updated document
-  //     runValidators: true // Ensure the updated data complies with schema validation
-  //   });
-
-  //   if (!savedPlace) {
-  //     throw new Error('Place not found for update.');
-  //   }
-  // } else {
-  //   delete addPlaceEntity._idPlace;
-  //   const newPlace: IMrPlace | null = await addMrPlaceToDb(addPlaceEntity);
-  //   console.log('newPlace:', newPlace?.toObject());
-  // }
-
-  return null;
+  return newPlace;
 }
 
 const addMrPlaceToDb = async (place: MrPlace): Promise<IMrPlace | null> => {
@@ -156,23 +145,8 @@ const addMrPlaceToDb = async (place: MrPlace): Promise<IMrPlace | null> => {
   }
 }
 
-export const updateMrPlaceHandler = async (
-  req: Request<{}, {}, MrSubmitPlaceRequestBody>,
-  res: Response
-): Promise<any> => {
-  const body: MrSubmitPlaceRequestBody = req.body;
-
-  try {
-    const updatedPlace = await updateMrPlace(body);
-    return res.status(200).json({ message: 'MrPlace updated successfully!', place: updatedPlace });
-  } catch (error) {
-    console.error('Error updating place:', error);
-    return res.status(500).json({ error: 'An error occurred while updating the place.' });
-  }
-};
-
 const updateMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<IMrPlace | null> => {
-  const { placeId, placeType, placeComments, googlePlace, restaurantSpecs, restaurantReviews, placeRating } = placeRequestBody;
+  const { placeId, placeType, placeComments, placeRating, googlePlace, restaurantSpecs, restaurantReviews } = placeRequestBody;
 
   if (!placeId) {
     throw new Error('placeId is required for updating.');
