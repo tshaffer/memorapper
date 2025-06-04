@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { SearchQuery, Filters, SearchResponse, MrPlaceWithGooglePlace } from "../types";
 import { filterResults } from './filterResults';
+import { getMrPlaces, getMrPlacesWithGooglePlace } from './places';
 
 export const searchAndFilterHandler = async (
   req: Request<{}, {}, {
@@ -13,18 +14,18 @@ export const searchAndFilterHandler = async (
 
   try {
 
-    // const places: MrPlaceWithGooglePlace[] = await getMrPlaces();
+    const places: MrPlaceWithGooglePlace[] = await getMrPlacesWithGooglePlace();
 
-    // const filterResultsParams: Filters = {
-    //   distanceAway: distanceSpec.radius,
-    //   placeTypes,
-    //   restaurantTypes,
-    //   restaurantOpen,
-    //   openMeals,
-    // };
-    // const searchResponse: SearchResponse = await (filterResults(filterResultsParams, places, { lat: distanceSpec.lat, lng: distanceSpec.lng }));
+    const filterResultsParams: Filters = {
+      distanceAway: distanceSpec.radius,
+      placeTypes,
+      restaurantTypes,
+      restaurantOpen,
+      openMeals,
+    };
+    const searchResponse: SearchResponse = await (filterResults(filterResultsParams, places, { lat: distanceSpec.lat, lng: distanceSpec.lng }));
 
-    // res.status(200).json(searchResponse);
+    res.status(200).json(searchResponse);
 
 
   } catch (error) {

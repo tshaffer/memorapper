@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import MongoPlaceModel, { IMongoPlace } from "../models/MongoPlace";
-import { GooglePlace, MongoPlace, MrItemOrdered, MrPlace, MrSubmitAddReviewRequestBody, MrSubmitPlaceRequestBody } from "../types";
+import { GooglePlace, MongoPlace, MrItemOrdered, MrPlace, MrPlaceWithGooglePlace, MrSubmitAddReviewRequestBody, MrSubmitPlaceRequestBody } from "../types";
 import { MongoGeometry } from "../types";
-import { convertGoogleGeometryToMongoGeometry, convertMongoPlacesToGooglePlaces } from '../utilities';
+import { convertGoogleGeometryToMongoGeometry, convertMongoGeometryToGoogleGeometry, convertMongoPlacesToGooglePlaces } from '../utilities';
 import MrPlaceModel, { IMrPlace } from '../models/MrPlace';
 
 export const getMongoPlace = async (placeId: any): Promise<IMongoPlace | null> => {
@@ -55,7 +55,16 @@ export const getMrPlacesHandler = async (
   res: Response
 ): Promise<any> => {
   try {
+    const mrPlaces: MrPlace[] = await getMrPlaces();
+    return res.status(200).json({ places: mrPlaces });
+  } catch (error) {
+    console.error('Error fetching places:', error);
+    return res.status(500).json({ error: 'An error occurred while fetching places.' });
+  }
+};
 
+export const getMrPlaces = async (): Promise<MrPlace[]> => {
+  try {
     const mongoPlaceDocuments: IMongoPlace[] = await MongoPlaceModel.find({}).exec();
     const mrPlacesDocuments: IMrPlace[] = await MrPlaceModel.find({}).exec();
 
@@ -70,12 +79,52 @@ export const getMrPlacesHandler = async (
         }
       }
     }
-    return res.status(200).json({ places: mrPlaces });
+    return mrPlaces;
   } catch (error) {
     console.error('Error fetching places:', error);
-    return res.status(500).json({ error: 'An error occurred while fetching places.' });
+    return [];
+  }
+}
+
+export const getMrPlacesWithGooglePlace = async (): Promise<MrPlaceWithGooglePlace[]> => {
+  try {
+    const mongoPlaceDocuments: IMongoPlace[] = await MongoPlaceModel.find({}).exec();
+    const placesDocuments: IMrPlace[] = await MrPlaceModel.find({}).exec();
+
+    const places: MrPlaceWithGooglePlace[] = [];
+
+    for (const placeDocument of placesDocuments) {
+      const placeGooglePlaceId = placeDocument.googlePlaceId;
+      for (const mongoPlaceDocument of mongoPlaceDocuments) {
+        if (mongoPlaceDocument.googlePlaceId === placeGooglePlaceId) {
+          const mongoPlace: MongoPlace = mongoPlaceDocument.toObject();
+          let place: MrPlaceWithGooglePlace = placeDocument.toObject();
+          place.googlePlace = {
+            googlePlaceId: placeGooglePlaceId,
+            address_components: mongoPlace.address_components,
+            formatted_address: mongoPlace.formatted_address,
+            geometry: convertMongoGeometryToGoogleGeometry(mongoPlace.geometry!),
+            name: mongoPlace.name,
+            opening_hours: mongoPlace.opening_hours,
+            price_level: mongoPlace.price_level,
+            rating: mongoPlace.rating,
+            user_ratings_total: mongoPlace.user_ratings_total,
+            utc_offset_minutes: mongoPlace.utc_offset_minutes,
+            vicinity: mongoPlace.vicinity,
+            website: mongoPlace.website,
+          };
+
+          places.push(place);
+        }
+      }
+    }
+    return places;
+  } catch (error) {
+    console.error('Error fetching places:', error);
+    throw new Error('An error occurred while fetching places.');
   }
 };
+
 
 export const upsertMrPlaceHandler = async (
   req: Request<{}, {}, MrSubmitPlaceRequestBody>,

@@ -1,5 +1,5 @@
 import { RestaurantOpen, PlaceType, RestaurantType, Distance } from "./enums";
-import { PlaceWithGooglePlace } from "./mrTypes";
+import { MrPlaceWithGooglePlace } from "./mrTypes";
 
 export interface Filters {
   distanceAway: Distance;
@@ -31,6 +31,6 @@ interface OpenForMeals {
 }
 
 export interface SearchResponse {
-  places: PlaceWithGooglePlace[];
+  places: MrPlaceWithGooglePlace[];
 }
 

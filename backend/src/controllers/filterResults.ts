@@ -1,8 +1,8 @@
-import { Filters, SearchResponse, RestaurantType, RestaurantOpen, MealType, PlaceWithGooglePlace, PlaceType } from "../types";
+import { Filters, SearchResponse, RestaurantType, RestaurantOpen, MealType, PlaceType, MrPlaceWithGooglePlace } from "../types";
 
 export const filterResults = async (
   filter: Filters,
-  places: PlaceWithGooglePlace[],
+  places: MrPlaceWithGooglePlace[],
   mapLocation: google.maps.LatLngLiteral,
 ): Promise<SearchResponse> => {
   const {
@@ -15,12 +15,12 @@ export const filterResults = async (
 
   const filteredPlaces = places.filter(place => {
     // 1) Must have geometry
-    if (!place.googlePlace.geometry?.location) return false;
+    if (!place.googlePlace!.geometry?.location) return false;
 
     // 2) Distance filter
     const distanceInMiles = haversineDistance(
       mapLocation,
-      place.googlePlace.geometry.location
+      place.googlePlace!.geometry.location
     );
     if (distanceInMiles > distanceAwayFilter) return false;
 
@@ -38,7 +38,7 @@ export const filterResults = async (
     ) {
       if (
         !restaurantsTypeFilter.includes(
-          place.restaurant!.restaurantType as RestaurantType
+          place.restaurantSpecs!.restaurantType as RestaurantType
         )
       ) {
         return false;
@@ -47,7 +47,7 @@ export const filterResults = async (
 
     // 5) Open‐now vs. open‐for‐meals vs. no open filter
     if (restaurantOpen === RestaurantOpen.OpenNow) {
-      if (!isPlaceOpenNow(place.googlePlace.opening_hours)) return false;
+      if (!isPlaceOpenNow(place.googlePlace!.opening_hours)) return false;
 
     } else if (restaurantOpen === RestaurantOpen.OpenByMeal) {
       // figure out which meals are checked
@@ -60,9 +60,9 @@ export const filterResults = async (
 
       // only apply if at least one meal is checked
       if (selectedMeals.length > 0) {
-        if (!place.googlePlace.opening_hours) return false;
+        if (!place.googlePlace!.opening_hours) return false;
 
-        const availability = inferMealAvailability(place.googlePlace.opening_hours);
+        const availability = inferMealAvailability(place.googlePlace!.opening_hours);
         const isOpenForAny = selectedMeals.some(meal => {
           switch (meal) {
             case MealType.Breakfast:
