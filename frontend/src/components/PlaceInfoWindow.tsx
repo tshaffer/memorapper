@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import directionsIcon from '@iconify/icons-mdi/directions';
-import { GoogleGeometry, Place, PlaceType, PlaceWithGooglePlace } from '../types';
+import { GoogleGeometry, Place, PlaceType, MrPlaceWithGooglePlace } from '../types';
 import { InfoWindow } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace, restaurantTypeLabelFromRestaurantType } from '../utilities';
 import '../App.css';
@@ -9,8 +9,8 @@ import { Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 interface PlaceInfoWindowProps {
-  place: PlaceWithGooglePlace;
-  onLinkClick: (place: PlaceWithGooglePlace) => void;
+  place: MrPlaceWithGooglePlace;
+  onLinkClick: (place: MrPlaceWithGooglePlace) => void;
   onClose: () => void;
 }
 
@@ -121,7 +121,7 @@ const PlaceInfoWindow: React.FC<PlaceInfoWindowProps> = ({ place, onLinkClick, o
 
         {place.placeType === PlaceType.Restaurant && (
           <Typography variant="body2" style={{ margin: '0 0 8px 0' }}>
-            {restaurantTypeLabelFromRestaurantType(place.restaurant!.restaurantType!)}
+            {restaurantTypeLabelFromRestaurantType(place.restaurantSpecs!.restaurantType!)}
           </Typography>
         )}
         <Typography variant="body2" style={{ margin: '0 0 8px 0' }}>

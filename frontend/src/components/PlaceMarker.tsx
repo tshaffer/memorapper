@@ -40,10 +40,10 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
   const getMarkerIcon = (): any => {
     switch (place.placeType) {
       case PlaceType.Restaurant:
-        if (!place.restaurant) {
+        if (!place.restaurantSpecs) {
           return restaurantIcon;
         } else {
-          return iconFromRestaurantType(place.restaurant.restaurantType!);
+          return iconFromRestaurantType(place.restaurantSpecs.restaurantType!);
         }
       case PlaceType.Accommodations:
         return loveHotelIcon;

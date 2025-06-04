@@ -71,13 +71,14 @@ export type MrPlaceWithGooglePlace = {
 };
 
 export type PlaceWithGooglePlace = {
+  _id?: string;
   placeId: string;
   googlePlaceId: string;
   placeType?: PlaceType;
   placeComments?: string;
   placeRating?: number;
   googlePlace?: GooglePlace;
-  restaurant?: MrRestaurant;
+  restaurantSpecs?: MrRestaurant;
   restaurantReviews: MrRestaurantReview[];
 };
 

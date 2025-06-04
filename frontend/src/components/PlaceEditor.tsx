@@ -115,7 +115,7 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
     setPlace(prev => ({
       ...prev,
       restaurant: {
-        ...prev.restaurant,
+        ...prev.restaurantSpecs,
         [field]: value,
       },
     }));
@@ -200,7 +200,7 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
         <label>{'Restaurant Type:'}</label>
         <Select
           labelId="restaurant-type-select-label"
-          value={place.restaurant!.restaurantType}
+          value={place.restaurantSpecs!.restaurantType}
           onChange={(e) => handleRestaurantFieldChange('restaurantType', e.target.value as RestaurantType)}
           fullWidth
         >
@@ -227,7 +227,7 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
           <FormControlLabel
             control={
               <Checkbox
-                checked={!!place.restaurant!.openForBreakfast}
+                checked={!!place.restaurantSpecs!.openForBreakfast}
                 onChange={(e) => handleRestaurantFieldChange('openForBreakfast', e.target.checked)}
               />
             }
@@ -238,7 +238,7 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
           <FormControlLabel
             control={
               <Checkbox
-                checked={!!place.restaurant!.openForLunch}
+                checked={!!place.restaurantSpecs!.openForLunch}
                 onChange={(e) => handleRestaurantFieldChange('openForLunch', e.target.checked)}
               />
             }
@@ -249,7 +249,7 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
           <FormControlLabel
             control={
               <Checkbox
-                checked={!!place.restaurant!.openForDinner}
+                checked={!!place.restaurantSpecs!.openForDinner}
                 onChange={(e) => handleRestaurantFieldChange('openForDinner', e.target.checked)}
               />
             }
