@@ -111,7 +111,7 @@ const MapPage: React.FC = () => {
 
     fetchData();
 
-  }, [_id]);
+  }, [_id, mrPlacesWithGooglePlaces]);
 
   // Update map location based on the provided placeId (_id)
   useEffect(() => {
@@ -157,6 +157,8 @@ const MapPage: React.FC = () => {
   const filterOnEntry = (
     googlePlaces: PlaceWithGooglePlace[], location: google.maps.LatLngLiteral, filters: Filters,
   ) => {
+
+    console.log('filterOnEntry called with googlePlaces:', googlePlaces);
 
     const { distanceAway, restaurantOpen, placeTypes, restaurantTypes, openMeals } = filters;
 
