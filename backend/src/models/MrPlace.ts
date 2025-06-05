@@ -24,7 +24,7 @@ export interface IMrPlace extends Document {
   googlePlaceId: string;
   placeType: PlaceType;
   interestRating?: number;
-  placePreview: string;
+  placePreview?: string;
   placeReview?: string;
   placeRating?: number;
   restaurantSpecs: IMrRestaurant;
