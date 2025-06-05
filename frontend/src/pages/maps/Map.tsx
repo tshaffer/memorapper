@@ -7,7 +7,7 @@ import {
   // ExtendedGooglePlaceToVisit,
   Filters,
   SearchQuery,
-  RestaurantReview,
+  MrRestaurantReview,
   PlaceWithGooglePlace,
 } from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
@@ -278,7 +278,7 @@ const MapPage: React.FC = () => {
     setSelectedPlace(null);
   };
 
-  const handleAddReview = (_id: string, review: RestaurantReview) => {
+  const handleAddReview = (_id: string, review: MrRestaurantReview) => {
     // Update the selected place with a new review
     // if (selectedPlace) {
     //   const updatedReviews = selectedPlace.restaurant!.restaurantReviews ? [...selectedPlace.restaurantReviews, review] : [review];
@@ -286,7 +286,7 @@ const MapPage: React.FC = () => {
     // }
   };
 
-  const handleEditReview = (_id: string, review: RestaurantReview) => {
+  const handleEditReview = (_id: string, review: MrRestaurantReview) => {
     // if (selectedPlace && selectedPlace.restaurantReviews) {
     //   const updatedReviews = selectedPlace.restaurantReviews.map(r => r._idRestaurantReview === review._idRestaurantReview ? review : r);
     //   setSelectedPlace({ ...selectedPlace, restaurantReviews: updatedReviews });

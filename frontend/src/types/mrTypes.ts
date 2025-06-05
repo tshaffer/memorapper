@@ -23,11 +23,6 @@ export interface MrRestaurantReview {
   itemReviews: MrItemOrdered[];
 }
 
-export interface RestaurantReview {
-  dateOfVisit: string;
-  itemReviews: MrItemOrdered[];
-}
-
 export interface MrReviewData extends MrRestaurantReview {
   place: MrPlace | null;
   placeComments: string;
