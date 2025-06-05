@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useParams } from 'react-router-dom';
 import RestaurantName from './RestaurantName';
 import PulsingDots from './PulsingDots';
-import { MrPlace, GooglePlace, SubmitPlaceRequestBody, RestaurantType, PlaceType, PlaceWithGooglePlace, Restaurant } from "../types";
+import { MrPlace, GooglePlace, SubmitPlaceRequestBody, RestaurantType, PlaceType, PlaceWithGooglePlace, MrRestaurant } from "../types";
 
 interface PlaceEditorProps {
   mode: 'create' | 'edit';
@@ -110,7 +110,7 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
     }));
   };
 
-  const handleRestaurantFieldChange = (field: keyof Restaurant, value: any) => {
+  const handleRestaurantFieldChange = (field: keyof MrRestaurant, value: any) => {
     setPlace(prev => ({
       ...prev,
       restaurant: {

@@ -18,13 +18,6 @@ export interface MrRestaurant {
   openForDinner?: boolean;
 }
 
-export interface Restaurant {
-  restaurantType?: RestaurantType;
-  openForBreakfast?: boolean;
-  openForLunch?: boolean;
-  openForDinner?: boolean;
-}
-
 export interface MrRestaurantReview {
   dateOfVisit: string;
   itemReviews: MrItemOrdered[];
