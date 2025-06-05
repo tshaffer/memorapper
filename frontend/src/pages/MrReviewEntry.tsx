@@ -188,9 +188,11 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
   }
 
   function renderRestaurantRating(): React.ReactNode {
+    console.log('mrReviewData: ', mrReviewData);  // mrReviewData.place is null
+
     return (
       <div className="form-group">
-      <label htmlFor="review-text">Restaurant Rating</label>
+        <label htmlFor="review-text">Restaurant Rating</label>
         <PlaceStarRatingInput
           rating={mrReviewData?.place?.placeRating || null}
           onChange={(newRating) => {
@@ -203,16 +205,22 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
     );
   }
 
+  const getDisabledStyle = (condition: boolean): React.CSSProperties => {
+    return condition ? { opacity: 0.5, pointerEvents: 'none' } : {};
+  };
+
   return (
     <>
       <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
         <Button
           variant="contained"
           onClick={onSubmit}
+          disabled={!mrReviewData?.place}
+          style={getDisabledStyle(!mrReviewData?.place)}
         >
           Add Review
         </Button>
-      </div>
+      </div >
 
       <div
         id="form"
@@ -230,17 +238,17 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
             {renderRestaurantSelector()}
           </fieldset>
 
-          <fieldset>
+          <fieldset disabled={!mrReviewData?.place} style={getDisabledStyle(!mrReviewData?.place)}>
             <legend>Rating</legend>
             {renderRestaurantRating()}
           </fieldset>
 
-          <fieldset>
+          <fieldset disabled={!mrReviewData?.place} style={getDisabledStyle(!mrReviewData?.place)}>
             <legend>Items Ordered</legend>
             {renderOrderedItems()}
           </fieldset>
 
-          <fieldset>
+          <fieldset disabled={!mrReviewData?.place} style={getDisabledStyle(!mrReviewData?.place)}>
             <legend>Review</legend>
             {renderPlaceComments()}
             {renderDateOfVisit()}
