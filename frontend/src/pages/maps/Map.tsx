@@ -7,7 +7,6 @@ import {
   // ExtendedGooglePlaceToVisit,
   Filters,
   SearchQuery,
-  Place,
   RestaurantReview,
   PlaceWithGooglePlace,
 } from '../../types';

@@ -1,5 +1,5 @@
 import React, { } from 'react';
-import { Place, PlaceType, PlaceWithGooglePlace } from '../types';
+import { PlaceType, PlaceWithGooglePlace } from '../types';
 import { AdvancedMarker } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace, iconFromRestaurantType } from '../utilities';
 import '../App.css';

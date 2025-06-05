@@ -1,6 +1,6 @@
 import React, { } from 'react';
 import { useMediaQuery, List, ListItemButton } from '@mui/material';
-import { Place, PlaceWithGooglePlace } from '../../types';
+import { PlaceWithGooglePlace } from '../../types';
 
 export interface VisiblePlacesListProps {
   visiblePlaces: PlaceWithGooglePlace[];

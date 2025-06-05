@@ -1,16 +1,6 @@
 import { PlaceType, RestaurantType } from "./enums";
 import { GooglePlace } from "./place";
 
-export interface Place {
-  googlePlaceId: string;
-  placeType: PlaceType;
-  placeComments: string;
-  placeRating?: number;
-  restaurantSpecs: MrRestaurant;
-  restaurantReviews: MrRestaurantReview[];
-}
-
-
 export interface MrPlace {
   _id?: string;
   googlePlaceId: string;
