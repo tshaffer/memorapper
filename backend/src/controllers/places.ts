@@ -5,9 +5,9 @@ import { MongoGeometry } from "../types";
 import { convertGoogleGeometryToMongoGeometry, convertMongoGeometryToGoogleGeometry, convertMongoPlacesToGooglePlaces } from '../utilities';
 import MrPlaceModel, { IMrPlace } from '../models/MrPlace';
 
-export const getMongoPlace = async (placeId: any): Promise<IMongoPlace | null> => {
+export const getMongoPlace = async (googlePlaceId: any): Promise<IMongoPlace | null> => {
   try {
-    const existingPlace: IMongoPlace | null = await MongoPlaceModel.findOne({ googlePlaceId: placeId }).exec();
+    const existingPlace: IMongoPlace | null = await MongoPlaceModel.findOne({ googlePlaceId: googlePlaceId }).exec();
     return existingPlace;
   } catch (error) {
     throw new Error('An error occurred while retrieving the place.');
@@ -153,7 +153,7 @@ export const upsertMrPlaceHandler = async (
 
 const addMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<IMrPlace | null> => {
 
-  const { placeId, placeType, placeComments, placeRating, googlePlace, restaurantSpecs } = placeRequestBody;
+  const { _id, placeType, placeComments, placeRating, googlePlace, restaurantSpecs } = placeRequestBody;
 
   let mongoPlace: IMongoPlace | null = await getMongoPlace(googlePlace!.googlePlaceId);
   if (!mongoPlace) {
@@ -166,7 +166,7 @@ const addMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<I
   }
 
   const addPlaceEntity: MrPlace = {
-    placeId,
+    _id,
     googlePlaceId: googlePlace!.googlePlaceId,
     placeType: placeType!,
     placeComments: placeComments || '',
@@ -195,16 +195,16 @@ const addMrPlaceToDb = async (place: MrPlace): Promise<IMrPlace | null> => {
 }
 
 const updateMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<IMrPlace | null> => {
-  const { placeId, placeType, placeComments, placeRating, googlePlace, restaurantSpecs, restaurantReviews } = placeRequestBody;
+  const { _id, placeType, placeComments, placeRating, googlePlace, restaurantSpecs, restaurantReviews } = placeRequestBody;
 
-  if (!placeId) {
-    throw new Error('placeId is required for updating.');
+  if (!_id) {
+    throw new Error('_id is required for updating.');
   }
 
-  const filter = { placeId };
+  const filter = { _id };
 
   const updateData: Partial<MrPlace> = {
-    placeId: placeId || '',
+    _id: _id || '',
     googlePlaceId: googlePlace?.googlePlaceId || '',
     placeType: placeType!,
     placeComments: placeComments || '',
@@ -231,10 +231,10 @@ export const addReviewHandler = async (
 ): Promise<any> => {
 
   const body: MrSubmitAddReviewRequestBody = req.body;
-  const { placeId, dateOfVisit, itemReviews } = body;
+  const { _id, dateOfVisit, itemReviews } = body;
 
   try {
-    const updatedPlace = await addReviewToDb(placeId, dateOfVisit, itemReviews);
+    const updatedPlace = await addReviewToDb(_id, dateOfVisit, itemReviews);
     return res.status(200).json({ message: 'Review added successfully!', place: updatedPlace });
   } catch (error) {
     console.error('Error adding review:', error);
@@ -243,15 +243,15 @@ export const addReviewHandler = async (
 }
 
 const addReviewToDb = async (
-  placeId: string,
+  _id: string,
   dateOfVisit: string,
   itemReviews: MrItemOrdered[]
 ): Promise<void> => {
   try {
-    const place = await MrPlaceModel.findOne({ placeId });
+    const place = await MrPlaceModel.findOne({ _id });
 
     if (!place) {
-      throw new Error(`Place with placeId ${placeId} not found`);
+      throw new Error(`Place with _id ${_id} not found`);
     }
 
     place.restaurantReviews.push({
@@ -260,9 +260,9 @@ const addReviewToDb = async (
     });
 
     await place.save();
-    console.log(`Review added to place ${placeId}`);
+    console.log(`Review added to place ${_id}`);
   } catch (error) {
-    console.error(`Error adding review to place ${placeId}:`, error);
+    console.error(`Error adding review to place ${_id}:`, error);
     throw error;
   }
 };

@@ -23,8 +23,8 @@ const MrWriteReviewPage = () => {
 
   const [mrReviewData, setMrReviewData] = useState<MrReviewData>(initialReviewData);
 
-  const getMrPlaceWithGooglePlace = (placeId: string): MrPlaceWithGooglePlace | undefined => {
-    return mrPlacesWithGooglePlaces.find((place) => place.placeId === placeId);
+  const getMrPlaceWithGooglePlace = (_id: string): MrPlaceWithGooglePlace | undefined => {
+    return mrPlacesWithGooglePlaces.find((place) => place._id === _id);
   };
 
   const handleAddReview = async () => {
@@ -36,14 +36,16 @@ const MrWriteReviewPage = () => {
       return;
     }
 
-    const mrPlaceWithGooglePlace: MrPlaceWithGooglePlace | undefined = getMrPlaceWithGooglePlace(mrReviewData.place.placeId);
+    console.log('handleAddReview: mrReviewData.place._id:', mrReviewData.place._id);
+
+    const mrPlaceWithGooglePlace: MrPlaceWithGooglePlace | undefined = getMrPlaceWithGooglePlace(mrReviewData.place._id!);
     if (!mrPlaceWithGooglePlace) {
-      console.error('handleAddReview: No matching place found for placeId:', mrReviewData.place.placeId);
+      console.error('handleAddReview: No matching place found for _id:', mrReviewData.place._id);
       return;
     }
 
     if (!mrPlaceWithGooglePlace.googlePlace) {
-      console.error('handleAddReview: No googlePlace data found for placeId:', mrReviewData.place.placeId);
+      console.error('handleAddReview: No googlePlace data found for _id:', mrReviewData.place._id);
       return;
     }
 
@@ -53,7 +55,7 @@ const MrWriteReviewPage = () => {
     // 2️⃣ Send updated MrPlace to backend
 
     const addReviewRequestBody: MrSubmitAddReviewRequestBody = {
-      placeId: mrReviewData.place.placeId,
+      _id: mrReviewData.place._id!,
       dateOfVisit: mrReviewData.dateOfVisit,
       itemReviews: mrReviewData.itemReviews,
     };

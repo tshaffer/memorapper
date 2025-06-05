@@ -24,7 +24,6 @@ const MrPlaceForm = () => {
   const location = useLocation();
 
   const editablePlace = location.state as MrPlaceWithGooglePlace | null;
-  const placeId = editablePlace?.placeId || uuidv4();
   const googlePlace: GooglePlace | undefined = editablePlace?.googlePlace;
   const googlePlaceId = googlePlace?.googlePlaceId || '';
   const placeType = editablePlace?.placeType || PlaceType.Restaurant;
@@ -41,7 +40,6 @@ const MrPlaceForm = () => {
 
   const initialPlaceData: MrPlaceWithGooglePlace = {
     _id,
-    placeId,
     googlePlace,
     googlePlaceId,
     placeType,
@@ -307,8 +305,8 @@ const MrPlaceForm = () => {
       <div>
         <label htmlFor={`rating-${mrPlaceWithGooglePlace.placeRating}`}>Rating</label>
         <Rating
-          id={`rating-${mrPlaceWithGooglePlace.placeId}`}
-          name={`rating-${mrPlaceWithGooglePlace.placeId}`}
+          id={`rating-${mrPlaceWithGooglePlace._id}`}
+          name={`rating-${mrPlaceWithGooglePlace._id}`}
           value={mrPlaceWithGooglePlace.placeRating}
           max={5}
           onChange={(event, newValue) =>

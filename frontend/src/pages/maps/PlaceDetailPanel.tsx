@@ -19,10 +19,10 @@ interface PlaceDetailPanelProps {
   place: MrPlaceWithGooglePlace;
   onClose: () => void;
   onUpdatePlace: (place: MrPlaceWithGooglePlace) => Promise<any>;
-  onDeletePlace: (placeId: string) => void;
-  onAddReview: (placeId: string, review: MrRestaurantReview) => void;
-  onEditReview: (placeId: string, review: MrRestaurantReview) => void;
-  onDeleteReview: (placeId: string, reviewId: string) => void;
+  onDeletePlace: (_id: string) => void;
+  onAddReview: (_id: string, review: MrRestaurantReview) => void;
+  onEditReview: (_id: string, review: MrRestaurantReview) => void;
+  onDeleteReview: (_id: string, reviewId: string) => void;
 }
 
 const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({

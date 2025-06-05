@@ -37,12 +37,12 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
       .filter((item): item is MrPlaceWithGooglePlace => item.placeType! === PlaceType.Restaurant);
   };
 
-  const getRestaurantByPlaceId = (placeId: string): MrPlaceWithGooglePlace | undefined => {
-    return getRestaurants().find((restaurant) => restaurant.placeId === placeId);
+  const getRestaurantByPlaceId = (_id: string): MrPlaceWithGooglePlace | undefined => {
+    return getRestaurants().find((restaurant) => restaurant._id === _id);
   };
 
-  const getMrPlaceWithGooglePlace = (placeId: string): MrPlaceWithGooglePlace | undefined => {
-    return mrPlacesWithGooglePlaces.find((place) => place.placeId === placeId);
+  const getMrPlaceWithGooglePlace = (_id: string): MrPlaceWithGooglePlace | undefined => {
+    return mrPlacesWithGooglePlaces.find((place) => place._id === _id);
   };
 
   const handleChange = (field: keyof MrReviewData, value: any) => {
@@ -140,14 +140,13 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
     return <PulsingDots />;
   };
 
-  const handleRestaurantSelection = (placeId: string) => {
-    console.log('Selected PlaceId:', placeId);
-    const selectedRestaurant = getRestaurantByPlaceId(placeId);
-    const selectedMrPlaceWithGooglePlace: MrPlaceWithGooglePlace | undefined = getMrPlaceWithGooglePlace(placeId);
+  const handleRestaurantSelection = (_id: string) => {
+    console.log('Selected PlaceId:', _id);
+    const selectedRestaurant = getRestaurantByPlaceId(_id);
+    const selectedMrPlaceWithGooglePlace: MrPlaceWithGooglePlace | undefined = getMrPlaceWithGooglePlace(_id);
     if (selectedMrPlaceWithGooglePlace && selectedRestaurant) {
       const selectedMrPlace: MrPlace = {
         _id: selectedMrPlaceWithGooglePlace._id,
-        placeId: selectedMrPlaceWithGooglePlace.placeId,
         googlePlaceId: selectedMrPlaceWithGooglePlace.googlePlaceId,
         placeType: selectedMrPlaceWithGooglePlace.placeType || PlaceType.Restaurant,
         placeComments: selectedMrPlaceWithGooglePlace.placeComments || '',
@@ -157,31 +156,34 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
       const currentReviewData: MrReviewData = { ...mrReviewData };
       currentReviewData.place = selectedMrPlace;
       currentReviewData.placeComments = selectedMrPlace.placeComments;
-      currentReviewData.place!.placeId = selectedRestaurant.placeId;
+      currentReviewData.place!._id = selectedRestaurant._id;
       setMrReviewData(currentReviewData);
     }
   };
 
-  const renderRestaurantSelector = (): JSX.Element => (
-    <div className="form-group">
-      <Select
-        id="restaurant-selector"
-        value={mrReviewData?.place?.placeId || ''}
-        onChange={(event) => handleRestaurantSelection(event.target.value)}
-        displayEmpty
-        fullWidth
-      >
-        <MenuItem value="" disabled>
-          Select a restaurant
-        </MenuItem>
-        {getRestaurants().map((restaurantPlace: MrPlaceWithGooglePlace) => (
-          <MenuItem key={restaurantPlace.placeId} value={restaurantPlace.placeId}>
-            {restaurantPlace.googlePlace?.name}
+  const renderRestaurantSelector = (): JSX.Element => {
+    console.log(mrReviewData?.place?._id);
+    return (
+      <div className="form-group">
+        <Select
+          id="restaurant-selector"
+          value={mrReviewData?.place?._id || ''}
+          onChange={(event) => handleRestaurantSelection(event.target.value)}
+          displayEmpty
+          fullWidth
+        >
+          <MenuItem value="" disabled>
+            Select a restaurant
           </MenuItem>
-        ))}
-      </Select>
-    </div>
-  );
+          {getRestaurants().map((restaurantPlace: MrPlaceWithGooglePlace) => (
+            <MenuItem key={restaurantPlace._id} value={restaurantPlace._id}>
+              {restaurantPlace.googlePlace?.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </div>
+    );
+  }
 
   return (
     <>

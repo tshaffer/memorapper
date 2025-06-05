@@ -21,7 +21,6 @@ export interface IMrRestaurant {
 }
 
 export interface IMrPlace extends Document {
-  placeId: string;
   googlePlaceId: string;
   placeType: PlaceType;
   placeComments?: string;
@@ -54,7 +53,6 @@ const RestaurantSchema: Schema = new Schema({
 
 // Place schema with embedded restaurant fields
 const MrPlaceSchema: Schema = new Schema({
-  placeId: { type: String, required: true, unique: true },
   placeType: {
     type: Number,
     required: true,

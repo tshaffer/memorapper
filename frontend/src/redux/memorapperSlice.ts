@@ -84,9 +84,9 @@ const memorapperSlice = createSlice({
         return;
       }
 
-      const targetPlace = state.mrPlaces.find((p) => p.placeId === place.placeId);
+      const targetPlace = state.mrPlaces.find((p) => p._id === place._id);
       if (!targetPlace) {
-        console.warn(`Place not found for placeId: ${place.placeId}`);
+        console.warn(`Place not found for _id: ${place._id}`);
         return;
       }
 

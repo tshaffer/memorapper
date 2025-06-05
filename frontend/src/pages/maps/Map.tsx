@@ -113,7 +113,7 @@ const MapPage: React.FC = () => {
 
   }, [_id, mrPlacesWithGooglePlaces]);
 
-  // Update map location based on the provided placeId (_id)
+  // Update map location based on the provided place Id (_id)
   useEffect(() => {
     if (_id && mrPlacesWithGooglePlaces.length > 0) {
       const googlePlace = mrPlacesWithGooglePlaces.find((placesWithGooglePlaces) => placesWithGooglePlaces.googlePlaceId === _id);
@@ -124,7 +124,7 @@ const MapPage: React.FC = () => {
         };
         setMapLocation(location);
       } else {
-        console.warn('Place not found or missing geometry for placeId:', _id);
+        console.warn('Place not found or missing geometry for _id:', _id);
       }
     }
   }, [_id, mrPlacesWithGooglePlaces]);
@@ -217,8 +217,8 @@ const MapPage: React.FC = () => {
     console.log('visiblePlacesChanged called with prevVisiblePlacesList:', beforeList);
     console.log('visiblePlacesChanged called with visiblePlaces:', afterList);
     
-    const prevPlaceIds = new Set(beforeList.map(place => place.placeId));
-    const currentPlaceIds = new Set(afterList.map(place => place.placeId));
+    const prevPlaceIds = new Set(beforeList.map(place => place._id));
+    const currentPlaceIds = new Set(afterList.map(place => place._id));
 
     if (prevPlaceIds.size !== currentPlaceIds.size) {
       return true;
@@ -273,13 +273,13 @@ const MapPage: React.FC = () => {
 
   };
 
-  const handleDeletePlace = (placeId: string) => {
+  const handleDeletePlace = (_id: string) => {
     // Implement deletion logic (backend call, state update, etc.)
-    console.log('Delete place with id: ', placeId);
+    console.log('Delete place with id: ', _id);
     setSelectedPlace(null);
   };
 
-  const handleAddReview = (placeId: string, review: RestaurantReview) => {
+  const handleAddReview = (_id: string, review: RestaurantReview) => {
     // Update the selected place with a new review
     // if (selectedPlace) {
     //   const updatedReviews = selectedPlace.restaurant!.restaurantReviews ? [...selectedPlace.restaurantReviews, review] : [review];
@@ -287,14 +287,14 @@ const MapPage: React.FC = () => {
     // }
   };
 
-  const handleEditReview = (placeId: string, review: RestaurantReview) => {
+  const handleEditReview = (_id: string, review: RestaurantReview) => {
     // if (selectedPlace && selectedPlace.restaurantReviews) {
     //   const updatedReviews = selectedPlace.restaurantReviews.map(r => r._idRestaurantReview === review._idRestaurantReview ? review : r);
     //   setSelectedPlace({ ...selectedPlace, restaurantReviews: updatedReviews });
     // }
   };
 
-  const handleDeleteReview = (placeId: string, reviewId: string) => {
+  const handleDeleteReview = (_id: string, reviewId: string) => {
     // if (selectedPlace && selectedPlace.restaurantReviews) {
     //   const updatedReviews = selectedPlace.restaurantReviews.filter(r => r._idRestaurantReview !== reviewId);
     //   setSelectedPlace({ ...selectedPlace, restaurantReviews: updatedReviews });

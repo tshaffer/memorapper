@@ -3,7 +3,6 @@ import { GoogleGeometry } from "./googlePlace";
 
 export interface MrPlace {
   _id?: string;
-  placeId: string;
   googlePlaceId: string;
   placeType: PlaceType;
   placeComments: string;
@@ -37,7 +36,6 @@ export interface MrItemOrdered {
 
 export type MrPlaceWithGooglePlace = {
   _id?: string;
-  placeId: string;
   googlePlaceId: string;
   placeType?: PlaceType;
   placeComments?: string;
@@ -49,7 +47,6 @@ export type MrPlaceWithGooglePlace = {
 
 export type MrSubmitPlaceRequestBody = {
   _id?: string; // Optional for updates
-  placeId: string;
   placeType?: PlaceType;
   placeComments?: string;
   placeRating?: number;
@@ -59,7 +56,7 @@ export type MrSubmitPlaceRequestBody = {
 };
 
 export type MrSubmitAddReviewRequestBody = {
-  placeId: string;
+  _id: string;
   dateOfVisit: string;
   itemReviews: MrItemOrdered[];
 }
@@ -81,7 +78,6 @@ export interface GooglePlace {
 }
 
 export type PlaceWithGooglePlace = {
-  placeId: string;
   googlePlaceId: string;
   visited: boolean;
   placeType?: PlaceType;

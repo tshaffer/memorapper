@@ -75,7 +75,7 @@ const MrPlaces: React.FC<any> = () => {
             <TableBody>
               {mrPlacesWithGooglePlaces.map((mrPlaceWithGooglePlace: MrPlaceWithGooglePlace) => {
                 return (
-                  <React.Fragment key={mrPlaceWithGooglePlace.placeId}>
+                  <React.Fragment key={mrPlaceWithGooglePlace._id}>
                     <TableRow>
                       <TableCell align="right" className="dimmed" style={smallColumnStyle}>
                         <Tooltip title="View/Edit">
