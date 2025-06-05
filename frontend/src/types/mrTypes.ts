@@ -40,6 +40,7 @@ export type MrPlaceWithGooglePlace = {
   _id?: string;
   googlePlaceId: string;
   placeType?: PlaceType;
+  interestRating?: number;
   placePreview?: string;
   placeReview?: string;
   placeRating?: number;
@@ -56,6 +57,7 @@ export type EditablePlace = {
 export type MrSubmitPlaceRequestBody = {
   _id?: string; // Optional for updates
   placeType?: PlaceType;
+  interestRating?: number;
   placePreview?: string;
   placeReview?: string;
   placeRating?: number;
