@@ -50,7 +50,7 @@ export type EditablePlace = {
   placeComments: string;
 }
 
-export type SubmitPlaceRequestBody = {
+export type MrSubmitPlaceRequestBody = {
   _id?: string; // Optional for updates
   placeType?: PlaceType;
   placeComments?: string;
