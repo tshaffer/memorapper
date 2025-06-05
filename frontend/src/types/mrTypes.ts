@@ -1,5 +1,5 @@
 import { PlaceType, RestaurantType } from "./enums";
-import { GooglePlace } from "./place";
+import { GoogleGeometry } from "./googlePlace";
 
 export interface MrPlace {
   _id?: string;
@@ -76,3 +76,20 @@ export type MrSubmitAddReviewRequestBody = {
   dateOfVisit: string;
   itemReviews: MrItemOrdered[];
 }
+
+export interface GooglePlace {
+  googlePlaceId: string;
+  address_components?: google.maps.GeocoderAddressComponent[];
+  formatted_address?: string;
+  geometry?: GoogleGeometry;
+  name?: string;
+  opening_hours?: google.maps.places.PlaceOpeningHours;
+  place_id?: string;
+  price_level?: number;
+  rating?: number;
+  user_ratings_total?: number;
+  utc_offset_minutes?: number;
+  vicinity?: string;
+  website: string;
+}
+
