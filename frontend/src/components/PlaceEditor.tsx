@@ -4,12 +4,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { useParams } from 'react-router-dom';
 import RestaurantName from './RestaurantName';
 import PulsingDots from './PulsingDots';
-import { MrPlace, GooglePlace, SubmitPlaceRequestBody, RestaurantType, PlaceType, PlaceWithGooglePlace, MrRestaurant } from "../types";
+import { MrPlace, GooglePlace, SubmitPlaceRequestBody, RestaurantType, PlaceType, MrPlaceWithGooglePlace, MrRestaurant } from "../types";
 
 interface PlaceEditorProps {
   mode: 'create' | 'edit';
-  initialPlace?: PlaceWithGooglePlace;
-  onSubmit: (place: PlaceWithGooglePlace) => Promise<void>;
+  initialPlace?: MrPlaceWithGooglePlace;
+  onSubmit: (place: MrPlaceWithGooglePlace) => Promise<void>;
   onCancel?: () => void;
 }
 
@@ -19,7 +19,7 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
   const { _id } = useParams<{ _id: string }>();
 
   // When creating, initialize an empty/default Place.
-  const defaultPlace: PlaceWithGooglePlace =
+  const defaultPlace: MrPlaceWithGooglePlace =
     mode === 'create'
       ? {
         googlePlaceId: '',
@@ -27,9 +27,9 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
         googlePlace: undefined,
         restaurantReviews: [],
       }
-      : (initialPlace as PlaceWithGooglePlace);
+      : (initialPlace as MrPlaceWithGooglePlace);
 
-  const [place, setPlace] = useState<PlaceWithGooglePlace>(defaultPlace);
+  const [place, setPlace] = useState<MrPlaceWithGooglePlace>(defaultPlace);
   const [placeName, setPlaceName] = useState(place.googlePlace ? (place.googlePlace.name ? place.googlePlace.name : '') : '');
   const [isLoading, setIsLoading] = useState(false);
 

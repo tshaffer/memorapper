@@ -1,10 +1,10 @@
 import React, { } from 'react';
 import { useMediaQuery, List, ListItemButton } from '@mui/material';
-import { PlaceWithGooglePlace } from '../../types';
+import { MrPlaceWithGooglePlace } from '../../types';
 
 export interface VisiblePlacesListProps {
-  visiblePlaces: PlaceWithGooglePlace[];
-  onPlaceSelect: (place: PlaceWithGooglePlace) => void;
+  visiblePlaces: MrPlaceWithGooglePlace[];
+  onPlaceSelect: (place: MrPlaceWithGooglePlace) => void;
 }
 
 const VisiblePlacesList: React.FC<VisiblePlacesListProps> = (props: VisiblePlacesListProps) => {
@@ -21,11 +21,11 @@ const VisiblePlacesList: React.FC<VisiblePlacesListProps> = (props: VisiblePlace
     borderRight: isMobile ? 'none' : '1px solid #ccc',
     borderBottom: isMobile ? '1px solid #ccc' : 'none',
   };
-  
+
   return (
     <div style={listContainerStyle}>
       <List>
-        {props.visiblePlaces.map((place: PlaceWithGooglePlace, index) => (
+        {props.visiblePlaces.map((place: MrPlaceWithGooglePlace, index) => (
           <ListItemButton key={index}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <h4

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PlaceWithGooglePlace } from '../types';
+import { MrPlaceWithGooglePlace } from '../types';
 import { AdvancedMarker, APIProvider, Map } from '@vis.gl/react-google-maps';
 import '../App.css';
 
@@ -25,10 +25,10 @@ const CustomBlueDot = () => (
 
 interface MapWithMarkersProps {
   initialCenter: google.maps.LatLngLiteral;
-  places: PlaceWithGooglePlace[];
+  places: MrPlaceWithGooglePlace[];
   blueDotLocation?: google.maps.LatLngLiteral;
-  onVisiblePlacesChanged: (places: PlaceWithGooglePlace[]) => void;
-  onPlaceSelect: (place: PlaceWithGooglePlace) => void;
+  onVisiblePlacesChanged: (places: MrPlaceWithGooglePlace[]) => void;
+  onPlaceSelect: (place: MrPlaceWithGooglePlace) => void;
 }
 
 const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, blueDotLocation, onVisiblePlacesChanged, onPlaceSelect }) => {
@@ -38,7 +38,7 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, 
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
 
-  const [selectedPlace, setSelectedPlace] = useState<PlaceWithGooglePlace | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<MrPlaceWithGooglePlace | null>(null);
 
   const [bounds, setBounds] = useState<google.maps.LatLngBounds | null>(null);
 
@@ -67,26 +67,26 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, 
     }
   }, []);
 
-  const handlePlaceClicked = (place: PlaceWithGooglePlace) => {
+  const handlePlaceClicked = (place: MrPlaceWithGooglePlace) => {
     console.log('Place clicked:', place);
     setSelectedPlace(place);
   };
 
   const handleLinkClick = (): void => {
     console.log('handleLinkClick', selectedPlace);
-    onPlaceSelect(selectedPlace!); 
+    onPlaceSelect(selectedPlace!);
   }
 
   const handleCloseInfoWindow = () => {
     setSelectedPlace(null);
   };
 
-  const renderPlaceMarker = (place: PlaceWithGooglePlace, index: number): JSX.Element => {
+  const renderPlaceMarker = (place: MrPlaceWithGooglePlace, index: number): JSX.Element => {
     return (
       <PlaceMarker
         key={`location-${index}`}
         place={place}
-        onMarkerClick={(place: PlaceWithGooglePlace) => handlePlaceClicked(place)}
+        onMarkerClick={(place: MrPlaceWithGooglePlace) => handlePlaceClicked(place)}
       >
       </PlaceMarker>
     );
@@ -114,8 +114,8 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, 
 
     let markerIsVisibleCount = 0;
 
-    const visiblePlaces: PlaceWithGooglePlace[] = [];
-    
+    const visiblePlaces: MrPlaceWithGooglePlace[] = [];
+
     for (const place of places) {
       if (place && place.googlePlace!.geometry) {
         const markerIsVisible = isMarkerVisible(place.googlePlace!.geometry.location, bounds);
@@ -125,50 +125,50 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, 
         }
       }
     }
-  
+
     onVisiblePlacesChanged(visiblePlaces);
 
-}, [centerLat, centerLng, neLat, neLng, swLat, swLng]);
+  }, [centerLat, centerLng, neLat, neLng, swLat, swLng]);
 
 
-return (
-  <APIProvider apiKey={googleMapsApiKey} version="beta">
-    <Map
-      style={{ width: '100%', height: '100%' }}
-      id="gmap"
-      mapId="1ca0b6526e7d4819"
-      defaultCenter={initialCenter}
-      zoom={zoom}
-      onZoomChanged={(event) => setZoom(event.detail.zoom)}
-      fullscreenControl={false}
-      zoomControl
-      gestureHandling="greedy"
-      scrollwheel
-      mapTypeControl={false}
-      streetViewControl={false}
-      rotateControl={false}
-      scaleControl={false}
-      onBoundsChanged={(event) => {
-        const boundsLiteral = event.detail.bounds as google.maps.LatLngBoundsLiteral;
-        const newBounds = new google.maps.LatLngBounds(
-          new google.maps.LatLng(boundsLiteral.south, boundsLiteral.west),
-          new google.maps.LatLng(boundsLiteral.north, boundsLiteral.east)
-        );
-        setBounds(newBounds);
-      }}
-    >
-      {places.map((place, index) => renderPlaceMarker(place, index))}
-      {currentLocation && (
-        <AdvancedMarker position={blueDotLocation || currentLocation}>
-          <CustomBlueDot />
-        </AdvancedMarker>
-      )}
-      {selectedPlace && (
-        <PlaceInfoWindow place={selectedPlace} onLinkClick={handleLinkClick} onClose={handleCloseInfoWindow} />
-      )}
-    </Map>
-  </APIProvider>
-);
+  return (
+    <APIProvider apiKey={googleMapsApiKey} version="beta">
+      <Map
+        style={{ width: '100%', height: '100%' }}
+        id="gmap"
+        mapId="1ca0b6526e7d4819"
+        defaultCenter={initialCenter}
+        zoom={zoom}
+        onZoomChanged={(event) => setZoom(event.detail.zoom)}
+        fullscreenControl={false}
+        zoomControl
+        gestureHandling="greedy"
+        scrollwheel
+        mapTypeControl={false}
+        streetViewControl={false}
+        rotateControl={false}
+        scaleControl={false}
+        onBoundsChanged={(event) => {
+          const boundsLiteral = event.detail.bounds as google.maps.LatLngBoundsLiteral;
+          const newBounds = new google.maps.LatLngBounds(
+            new google.maps.LatLng(boundsLiteral.south, boundsLiteral.west),
+            new google.maps.LatLng(boundsLiteral.north, boundsLiteral.east)
+          );
+          setBounds(newBounds);
+        }}
+      >
+        {places.map((place, index) => renderPlaceMarker(place, index))}
+        {currentLocation && (
+          <AdvancedMarker position={blueDotLocation || currentLocation}>
+            <CustomBlueDot />
+          </AdvancedMarker>
+        )}
+        {selectedPlace && (
+          <PlaceInfoWindow place={selectedPlace} onLinkClick={handleLinkClick} onClose={handleCloseInfoWindow} />
+        )}
+      </Map>
+    </APIProvider>
+  );
 };
 
 export default MapWithMarkers;

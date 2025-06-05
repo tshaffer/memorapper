@@ -1,5 +1,5 @@
 import React, { } from 'react';
-import { PlaceType, PlaceWithGooglePlace } from '../types';
+import { PlaceType, MrPlaceWithGooglePlace } from '../types';
 import { AdvancedMarker } from '@vis.gl/react-google-maps';
 import { getLatLngFromPlace, iconFromRestaurantType } from '../utilities';
 import '../App.css';
@@ -27,8 +27,8 @@ const iconContainerStyle: React.CSSProperties = {
 };
 
 interface PlaceMarkerProps {
-  place: PlaceWithGooglePlace;
-  onMarkerClick: (place: PlaceWithGooglePlace) => void;
+  place: MrPlaceWithGooglePlace;
+  onMarkerClick: (place: MrPlaceWithGooglePlace) => void;
 }
 
 const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {

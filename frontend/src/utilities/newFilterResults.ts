@@ -1,13 +1,13 @@
-import { Filters, PlaceWithGooglePlace } from "../types";
+import { Filters, MrPlaceWithGooglePlace } from "../types";
 
 export const newFilterResults = (
   filter: Filters,
-  googlePlaces: PlaceWithGooglePlace[],
+  googlePlaces: MrPlaceWithGooglePlace[],
   mapLocation: google.maps.LatLngLiteral,
-): PlaceWithGooglePlace[] => {
+): MrPlaceWithGooglePlace[] => {
   const { distanceAway }: Filters = filter;
 
-  const filteredPlaces: PlaceWithGooglePlace[] = googlePlaces.filter((place: PlaceWithGooglePlace) => {
+  const filteredPlaces: MrPlaceWithGooglePlace[] = googlePlaces.filter((place: MrPlaceWithGooglePlace) => {
     if (!place.googlePlace!.geometry || !place.googlePlace!.geometry.location) return false;
 
     // Filter by distance

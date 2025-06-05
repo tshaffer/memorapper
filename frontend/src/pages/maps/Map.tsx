@@ -8,7 +8,7 @@ import {
   Filters,
   SearchQuery,
   MrRestaurantReview,
-  PlaceWithGooglePlace,
+  MrPlaceWithGooglePlace,
 } from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
 import PulsingDots from '../../components/PulsingDots';
@@ -32,15 +32,15 @@ const MapPage: React.FC = () => {
 
   const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
-  const [filteredGooglePlaces, setFilteredGooglePlaces] = useState<PlaceWithGooglePlace[]>([]);
+  const [filteredGooglePlaces, setFilteredGooglePlaces] = useState<MrPlaceWithGooglePlace[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
   const [isListVisible, setIsListVisible] = useState(true);
-  const [visiblePlaces, setVisiblePlaces] = useState<PlaceWithGooglePlace[]>([]);
-  const [selectedPlace, setSelectedPlace] = useState<PlaceWithGooglePlace | null>(null);
+  const [visiblePlaces, setVisiblePlaces] = useState<MrPlaceWithGooglePlace[]>([]);
+  const [selectedPlace, setSelectedPlace] = useState<MrPlaceWithGooglePlace | null>(null);
 
-  const prevVisiblePlacesList = useRef<PlaceWithGooglePlace[]>([])
+  const prevVisiblePlacesList = useRef<MrPlaceWithGooglePlace[]>([])
 
   const toggleList = () => {
     setIsListVisible((prev) => !prev);
@@ -154,7 +154,7 @@ const MapPage: React.FC = () => {
   }
 
   const filterOnEntry = (
-    googlePlaces: PlaceWithGooglePlace[], location: google.maps.LatLngLiteral, filters: Filters,
+    googlePlaces: MrPlaceWithGooglePlace[], location: google.maps.LatLngLiteral, filters: Filters,
   ) => {
 
     console.log('filterOnEntry called with googlePlaces:', googlePlaces);
@@ -169,7 +169,7 @@ const MapPage: React.FC = () => {
       openMeals,
     };
 
-    const filteredPlaces: PlaceWithGooglePlace[] = newFilterResults(filter, googlePlaces, location);
+    const filteredPlaces: MrPlaceWithGooglePlace[] = newFilterResults(filter, googlePlaces, location);
 
     setFilteredGooglePlaces(filteredPlaces);
   }
@@ -211,11 +211,11 @@ const MapPage: React.FC = () => {
     setMapLocation(location);
   }
 
-  const visiblePlacesChanged = (beforeList: PlaceWithGooglePlace[], afterList: PlaceWithGooglePlace[]): boolean => {
+  const visiblePlacesChanged = (beforeList: MrPlaceWithGooglePlace[], afterList: MrPlaceWithGooglePlace[]): boolean => {
 
     console.log('visiblePlacesChanged called with prevVisiblePlacesList:', beforeList);
     console.log('visiblePlacesChanged called with visiblePlaces:', afterList);
-    
+
     const prevPlaceIds = new Set(beforeList.map(place => place._id));
     const currentPlaceIds = new Set(afterList.map(place => place._id));
 
@@ -232,7 +232,7 @@ const MapPage: React.FC = () => {
     return false;
   }
 
-  const handleVisiblePlacesChanged = (visiblePlaces: PlaceWithGooglePlace[]) => {
+  const handleVisiblePlacesChanged = (visiblePlaces: MrPlaceWithGooglePlace[]) => {
     console.log('handleVisiblePlacesChanged');
     console.log('prevVisiblePlacesList:', prevVisiblePlacesList.current);
     console.log('visiblePlaces:', visiblePlaces);
@@ -244,11 +244,11 @@ const MapPage: React.FC = () => {
   }
 
   // Handler called when a user clicks a place icon or a visible list item.
-  const handlePlaceSelect = (place: PlaceWithGooglePlace) => {
+  const handlePlaceSelect = (place: MrPlaceWithGooglePlace) => {
     setSelectedPlace(place);
   };
 
-  const handleUpdatePlace = async (updatedPlace: PlaceWithGooglePlace) => {
+  const handleUpdatePlace = async (updatedPlace: MrPlaceWithGooglePlace) => {
 
     // Update the place in your state (and optionally propagate changes to your backend/global store)
     setSelectedPlace(updatedPlace);
