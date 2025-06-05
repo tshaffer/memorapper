@@ -16,7 +16,7 @@ const MrWriteReviewPage = () => {
 
   const initialReviewData: MrReviewData = {
     place,
-    placeComments: '',
+    placeReview: '',
     dateOfVisit: getFormattedDate(),
     itemReviews: [],
   };

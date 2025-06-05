@@ -27,7 +27,7 @@ const MrPlaceForm = () => {
   const googlePlace: GooglePlace | undefined = editablePlace?.googlePlace;
   const googlePlaceId = googlePlace?.googlePlaceId || '';
   const placeType = editablePlace?.placeType || PlaceType.Restaurant;
-  const placeComments = editablePlace?.placeComments ?? '';
+  const placeReview = editablePlace?.placeReview ?? '';
   const placeRating = editablePlace?.placeRating ?? 0;
   const restaurantReviews = editablePlace?.restaurantReviews || [];
   const restaurantSpecs = editablePlace?.restaurantSpecs || {} as MrRestaurant;
@@ -43,7 +43,7 @@ const MrPlaceForm = () => {
     googlePlace,
     googlePlaceId,
     placeType,
-    placeComments,
+    placeReview,
     placeRating,
     restaurantReviews,
     restaurantSpecs,
@@ -219,7 +219,7 @@ const MrPlaceForm = () => {
     </div>
   );
 
-  const renderPlaceComments = () => (
+  const renderPlaceReview = () => (
     <div style={{ marginBottom: '1rem' }}>
       <label>{'Comments:'}</label>
       <TextField
@@ -227,8 +227,8 @@ const MrPlaceForm = () => {
         fullWidth
         multiline
         rows={4}
-        value={mrPlaceWithGooglePlace.placeComments || ''}
-        onChange={(e) => handleChange('placeComments', e.target.value)}
+        value={mrPlaceWithGooglePlace.placeReview || ''}
+        onChange={(e) => handleChange('placeReview', e.target.value)}
       />
     </div>
   );
@@ -334,7 +334,7 @@ const MrPlaceForm = () => {
           {renderRestaurantType()}
           {renderMealAvailability()}
           {renderDesirabilityRating()}
-          {renderPlaceComments()}
+          {renderPlaceReview()}
         </form>
         <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
           <Button

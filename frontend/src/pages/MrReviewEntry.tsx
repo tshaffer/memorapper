@@ -64,7 +64,7 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
     </div>
   );
 
-  const renderPlaceComments = (): JSX.Element => (
+  const renderPlaceReview = (): JSX.Element => (
     <div className="form-group">
       <label htmlFor="review-text">Review Text</label>
       <TextField
@@ -72,8 +72,8 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
         fullWidth
         multiline
         rows={4}
-        value={mrReviewData.placeComments}
-        onChange={(e) => handleChange('placeComments', e.target.value)}
+        value={mrReviewData.placeReview}
+        onChange={(e) => handleChange('placeReview', e.target.value)}
       />
     </div>
   );
@@ -151,13 +151,14 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
         _id: selectedMrPlaceWithGooglePlace._id,
         googlePlaceId: selectedMrPlaceWithGooglePlace.googlePlaceId,
         placeType: selectedMrPlaceWithGooglePlace.placeType || PlaceType.Restaurant,
-        placeComments: selectedMrPlaceWithGooglePlace.placeComments || '',
+        placePreview: selectedMrPlaceWithGooglePlace.placePreview || '',
+        placeReview: selectedMrPlaceWithGooglePlace.placeReview || '',
         restaurantReviews: [],
         restaurantSpecs: selectedRestaurant.restaurantSpecs || {},
       };
       const currentReviewData: MrReviewData = { ...mrReviewData };
       currentReviewData.place = selectedMrPlace;
-      currentReviewData.placeComments = selectedMrPlace.placeComments;
+      currentReviewData.placeReview = selectedMrPlace.placeReview;
       currentReviewData.place!._id = selectedRestaurant._id;
       setMrReviewData(currentReviewData);
     }
@@ -250,7 +251,7 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
 
           <fieldset disabled={!mrReviewData?.place} style={getDisabledStyle(!mrReviewData?.place)}>
             <legend>Review</legend>
-            {renderPlaceComments()}
+            {renderPlaceReview()}
             {renderDateOfVisit()}
           </fieldset>
         </form>

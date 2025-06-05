@@ -5,7 +5,9 @@ export interface MrPlace {
   _id?: string;
   googlePlaceId: string;
   placeType: PlaceType;
-  placeComments: string;
+  interestRating?: number;
+  placePreview: string;
+  placeReview: string;
   placeRating?: number;
   restaurantSpecs: MrRestaurant;
   restaurantReviews: MrRestaurantReview[];
@@ -25,7 +27,7 @@ export interface MrRestaurantReview {
 
 export interface MrReviewData extends MrRestaurantReview {
   place: MrPlace | null;
-  placeComments: string;
+  placeReview: string;
 }
 
 export interface MrItemOrdered {
@@ -38,7 +40,8 @@ export type MrPlaceWithGooglePlace = {
   _id?: string;
   googlePlaceId: string;
   placeType?: PlaceType;
-  placeComments?: string;
+  placePreview?: string;
+  placeReview?: string;
   placeRating?: number;
   googlePlace?: GooglePlace;
   restaurantSpecs?: MrRestaurant;
@@ -47,13 +50,14 @@ export type MrPlaceWithGooglePlace = {
 
 export type EditablePlace = {
   googlePlace: GooglePlace;
-  placeComments: string;
+  placeReview: string;
 }
 
 export type MrSubmitPlaceRequestBody = {
   _id?: string; // Optional for updates
   placeType?: PlaceType;
-  placeComments?: string;
+  placePreview?: string;
+  placeReview?: string;
   placeRating?: number;
   googlePlace?: GooglePlace;
   restaurantSpecs?: MrRestaurant;
@@ -81,4 +85,3 @@ export interface GooglePlace {
   vicinity?: string;
   website: string;
 }
-

@@ -23,7 +23,9 @@ export interface IMrRestaurant {
 export interface IMrPlace extends Document {
   googlePlaceId: string;
   placeType: PlaceType;
-  placeComments?: string;
+  interestRating?: number;
+  placePreview: string;
+  placeReview?: string;
   placeRating?: number;
   restaurantSpecs: IMrRestaurant;
   restaurantReviews: IMrRestaurantReview[];
@@ -40,7 +42,7 @@ const RestaurantReviewSchema: Schema = new Schema({
   itemReviews: [MrItemOrderedSchema]
 }, { _id: true });
 
-const RestaurantSchema: Schema = new Schema({
+const RestaurantSpecsSchema: Schema = new Schema({
   restaurantType: {
     type: Number,
     enum: [RestaurantType.Restaurant, RestaurantType.Seafood, RestaurantType.CoffeeShop, RestaurantType.Bar, RestaurantType.Bakery, RestaurantType.Taqueria, RestaurantType.PizzaPlace, RestaurantType.ItalianRestaurant, RestaurantType.DessertShop],
@@ -53,16 +55,18 @@ const RestaurantSchema: Schema = new Schema({
 
 // Place schema with embedded restaurant fields
 const MrPlaceSchema: Schema = new Schema({
+  googlePlaceId: { type: String, required: true, ref: 'MongoPlace' },
   placeType: {
     type: Number,
     required: true,
     enum: [PlaceType.Restaurant, PlaceType.Accommodations, PlaceType.GroceryStore, PlaceType.Destination]
   },
-  googlePlaceId: { type: String, required: true, ref: 'MongoPlace' },
-  placeComments: { type: String },
+  interestRating: { type: Number },
+  placePreview: { type: String },
+  placeReview: { type: String },
   placeRating: { type: Number },
+  restaurantSpecs: RestaurantSpecsSchema,
   restaurantReviews: [RestaurantReviewSchema],
-  restaurantSpecs: RestaurantSchema
 });
 
 const MrPlaceModel: Model<IMrPlace> = mongoose.model<IMrPlace>('MrPlace', MrPlaceSchema);

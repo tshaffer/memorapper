@@ -125,7 +125,7 @@ const PlaceInfoWindow: React.FC<PlaceInfoWindowProps> = ({ place, onLinkClick, o
           </Typography>
         )}
         <Typography variant="body2" style={{ margin: '0 0 8px 0' }}>
-          {place.placeComments}
+          {place.placeReview}
         </Typography>
       </div>
     </InfoWindow>

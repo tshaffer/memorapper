@@ -77,7 +77,7 @@ const memorapperSlice = createSlice({
       }
     },
     addMrRestaurantReview(state, action: PayloadAction<MrReviewData>) {
-      const { place, dateOfVisit, itemReviews, placeComments } = action.payload;
+      const { place, dateOfVisit, itemReviews, placeReview } = action.payload;
 
       if (!place) {
         console.warn('addMrRestaurantReview called without a place. Ignoring.');
@@ -95,7 +95,7 @@ const memorapperSlice = createSlice({
         itemReviews,
       };
 
-      targetPlace.placeComments = placeComments || targetPlace.placeComments;
+      targetPlace.placeReview = placeReview || targetPlace.placeReview;
       targetPlace.restaurantReviews.push(newReview);
     }
   },

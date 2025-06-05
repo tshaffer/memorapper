@@ -153,7 +153,7 @@ export const upsertMrPlaceHandler = async (
 
 const addMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<IMrPlace | null> => {
 
-  const { _id, placeType, placeComments, placeRating, googlePlace, restaurantSpecs } = placeRequestBody;
+  const { _id, placeType, placePreview, placeReview, placeRating, googlePlace, restaurantSpecs } = placeRequestBody;
 
   let mongoPlace: IMongoPlace | null = await getMongoPlace(googlePlace!.googlePlaceId);
   if (!mongoPlace) {
@@ -169,7 +169,8 @@ const addMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<I
     _id,
     googlePlaceId: googlePlace!.googlePlaceId,
     placeType: placeType!,
-    placeComments: placeComments || '',
+    placeReview: placeReview || '',
+    placePreview: placePreview || '',
     placeRating: placeRating || 0,
     restaurantReviews: [], // Initialize with an empty array or handle as needed
     restaurantSpecs: restaurantSpecs!,
@@ -195,7 +196,7 @@ const addMrPlaceToDb = async (place: MrPlace): Promise<IMrPlace | null> => {
 }
 
 const updateMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<IMrPlace | null> => {
-  const { _id, placeType, placeComments, placeRating, googlePlace, restaurantSpecs, restaurantReviews } = placeRequestBody;
+  const { _id, placeType, placeReview: placeComments, placeRating, googlePlace, restaurantSpecs, restaurantReviews } = placeRequestBody;
 
   if (!_id) {
     throw new Error('_id is required for updating.');
@@ -207,7 +208,7 @@ const updateMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promis
     _id: _id || '',
     googlePlaceId: googlePlace?.googlePlaceId || '',
     placeType: placeType!,
-    placeComments: placeComments || '',
+    placeReview: placeComments || '',
     placeRating: placeRating || 0,
     restaurantSpecs: restaurantSpecs || {},
     restaurantReviews: restaurantReviews || [],

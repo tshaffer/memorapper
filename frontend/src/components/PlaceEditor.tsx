@@ -161,7 +161,7 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
     </div>
   );
 
-  const renderPlaceComments = () => (
+  const renderPlaceReview = () => (
     <div style={{ marginBottom: '1rem' }}>
       <label>{'Comments:'}</label>
       <TextField
@@ -169,8 +169,8 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
         fullWidth
         multiline
         rows={4}
-        value={place.placeComments || ''}
-        onChange={(e) => handleChange('placeComments', e.target.value)}
+        value={place.placeReview || ''}
+        onChange={(e) => handleChange('placeReview', e.target.value)}
       />
     </div>
   );
@@ -264,7 +264,7 @@ const PlaceEditor: React.FC<PlaceEditorProps> = ({ mode, initialPlace, onSubmit,
       <h2>{mode === 'create' ? 'Add Place' : 'Edit Place'}</h2>
       <form>
         {renderPlaceName()}
-        {renderPlaceComments()}
+        {renderPlaceReview()}
         {/* {renderPlaceVisited()} */}
         {renderPlaceType()}
         {renderRestaurantType()}
