@@ -45,24 +45,13 @@ export type MrPlaceWithGooglePlace = {
   restaurantReviews: MrRestaurantReview[];
 };
 
-export type PlaceWithGooglePlace = {
-  _id?: string;
-  googlePlaceId: string;
-  placeType?: PlaceType;
-  placeComments?: string;
-  placeRating?: number;
-  googlePlace?: GooglePlace;
-  restaurantSpecs?: MrRestaurant;
-  restaurantReviews: MrRestaurantReview[];
-};
-
 export type EditablePlace = {
   googlePlace: GooglePlace;
   placeComments: string;
-
 }
 
 export type SubmitPlaceRequestBody = {
+  _id?: string; // Optional for updates
   placeType?: PlaceType;
   placeComments?: string;
   placeRating?: number;

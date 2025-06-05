@@ -45,6 +45,11 @@ export type MrPlaceWithGooglePlace = {
   restaurantReviews: MrRestaurantReview[];
 };
 
+export type EditablePlace = {
+  googlePlace: GooglePlace;
+  placeComments: string;
+}
+
 export type MrSubmitPlaceRequestBody = {
   _id?: string; // Optional for updates
   placeType?: PlaceType;
@@ -76,12 +81,3 @@ export interface GooglePlace {
   vicinity?: string;
   website: string;
 }
-
-export type PlaceWithGooglePlace = {
-  googlePlaceId: string;
-  visited: boolean;
-  placeType?: PlaceType;
-  placeComments?: string;
-  googlePlace: GooglePlace;
-  restaurant?: MrRestaurant;
-};
