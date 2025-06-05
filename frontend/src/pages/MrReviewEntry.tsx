@@ -193,7 +193,6 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
 
     return (
       <div className="form-group">
-        <label htmlFor="review-text">Restaurant Rating</label>
         <PlaceStarRatingInput
           rating={mrReviewData?.place?.placeRating || null}
           onChange={(newRating) => {
@@ -235,7 +234,7 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
       >
         <form id="add-review-form">
           <fieldset>
-            <legend>Restaurant Details</legend>
+            <legend>Name</legend>
             {renderRestaurantSelector()}
           </fieldset>
 
