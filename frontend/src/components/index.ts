@@ -3,6 +3,7 @@ export * from './GoogleMapsProvider';
 export * from './LocationAutocomplete';
 export * from './OpeningHours';
 export * from './PlaceEditor';
+export * from './PlaceStarRatingInput';
 export * from './PulsingDots';
 export * from './Query';
 export * from './RestaurantName';

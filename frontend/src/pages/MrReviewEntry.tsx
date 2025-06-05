@@ -15,6 +15,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import PulsingDots from '../components/PulsingDots';
 import { RootState } from '../redux';
+import PlaceStarRatingInput from '../components/PlaceStarRatingInput';
+import GoogleMapsProvider from '../components/GoogleMapsProvider';
 
 interface MrReviewEntryProps {
   mrReviewData: MrReviewData;
@@ -185,6 +187,22 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
     );
   }
 
+  function renderRestaurantRating(): React.ReactNode {
+    return (
+      <div className="form-group">
+      <label htmlFor="review-text">Restaurant Rating</label>
+        <PlaceStarRatingInput
+          rating={mrReviewData?.place?.placeRating || null}
+          onChange={(newRating) => {
+            const updatedPlace: MrPlace = mrReviewData?.place as MrPlace;
+            updatedPlace.placeRating = newRating ? newRating : undefined; // Set to undefined if null
+            setMrReviewData((prev) => ({ ...prev, place: updatedPlace }));
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <>
       <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
@@ -210,6 +228,11 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
           <fieldset>
             <legend>Restaurant Details</legend>
             {renderRestaurantSelector()}
+          </fieldset>
+
+          <fieldset>
+            <legend>Rating</legend>
+            {renderRestaurantRating()}
           </fieldset>
 
           <fieldset>
