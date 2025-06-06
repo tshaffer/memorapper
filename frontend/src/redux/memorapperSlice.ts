@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Distance, Filters, RestaurantOpen, Settings, GooglePlace, MrPlace, MrPlaceWithGooglePlace, PlaceType, MrReviewData, RestaurantType } from '../types';
+import { Distance, Filters, RestaurantOpen, Settings, GooglePlace, MrPlace, MrPlaceWithGooglePlace, PlaceType, MrReviewData, RestaurantType, MrRestaurantReview, MrRestaurant } from '../types';
 
 interface MemorapperState {
   googlePlaces: GooglePlace[];
@@ -43,6 +43,15 @@ export const fetchMrPlaces = createAsyncThunk('user/fetchMrPlaces', async () => 
   return data.places as MrPlace[];
 });
 
+const restaurantSpecsChanged = (restaurantSpecs: MrRestaurant, targetPlaceRestaurantSpecs: MrRestaurant): boolean => {
+  return (
+    restaurantSpecs.restaurantType !== targetPlaceRestaurantSpecs.restaurantType ||
+    restaurantSpecs.openForBreakfast !== targetPlaceRestaurantSpecs.openForBreakfast ||
+    restaurantSpecs.openForLunch !== targetPlaceRestaurantSpecs.openForLunch ||
+    restaurantSpecs.openForDinner !== targetPlaceRestaurantSpecs.openForDinner
+  );
+}
+
 const memorapperSlice = createSlice({
   name: 'memorapper',
   initialState,
@@ -83,18 +92,45 @@ const memorapperSlice = createSlice({
         return;
       }
 
-      const targetPlace = state.mrPlaces.find((p) => p._id === place._id);
+      const targetPlace: MrPlace | undefined = state.mrPlaces.find((p) => p._id === place._id);
       if (!targetPlace) {
         console.warn(`Place not found for _id: ${place._id}`);
         return;
       }
 
-      const newReview = {
+      const newReview: MrRestaurantReview = {
         dateOfVisit,
         itemReviews,
       };
 
       targetPlace.restaurantReviews.push(newReview);
+
+      // determine if other targetPlace properties need to be updated
+      const { placeType, interestRating, placePreview, placeReview, placeRating, restaurantSpecs } = action.payload.place!;
+      if ((targetPlace.placeType !== placeType) && placeType) {
+        targetPlace.placeType = placeType;
+      }
+      if ((targetPlace.interestRating !== interestRating) && interestRating) {
+        targetPlace.interestRating = interestRating;
+      }
+      if ((targetPlace.placePreview !== placePreview) && placePreview) {
+        targetPlace.placePreview = placePreview;
+      }
+      if ((targetPlace.placeReview !== placeReview) && placeReview) {
+        targetPlace.placeReview = placeReview;
+      }
+      if ((targetPlace.placeRating !== placeRating) && placeRating) {
+        targetPlace.placeRating = placeRating;
+      }
+      if (restaurantSpecsChanged(restaurantSpecs, targetPlace.restaurantSpecs)) {
+        targetPlace.restaurantSpecs = {
+          restaurantType: restaurantSpecs.restaurantType,
+          openForBreakfast: restaurantSpecs.openForBreakfast,
+          openForLunch: restaurantSpecs.openForLunch,
+          openForDinner: restaurantSpecs.openForDinner,
+        };
+      }
+    
     }
   },
   extraReducers: (builder) => {
