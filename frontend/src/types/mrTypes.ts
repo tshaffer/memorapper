@@ -1,6 +1,31 @@
 import { PlaceType, RestaurantType } from "./enums";
 import { GoogleGeometry } from "./googlePlace";
 
+export interface MrPlace {
+  _id?: string;
+  googlePlaceId: string;
+  placeType: PlaceType;
+  interestLevel?: number;
+  placePreview: string;
+  placeReview: string;
+  placeRating?: number;
+  restaurantSpecs: MrRestaurant;
+  restaurantReviews: MrRestaurantReview[];
+}
+
+export type MrPlaceWithGooglePlace = {
+  _id?: string;
+  googlePlaceId: string;
+  placeType?: PlaceType;
+  interestLevel?: number;
+  placePreview?: string;
+  placeReview?: string;
+  placeRating?: number;
+  googlePlace?: GooglePlace;
+  restaurantSpecs?: MrRestaurant;
+  restaurantReviews: MrRestaurantReview[];
+};
+
 export interface MrRestaurant {
   restaurantType?: RestaurantType;
   openForBreakfast?: boolean;
@@ -23,31 +48,6 @@ export interface MrItemOrdered {
   comments: string;
 }
 
-export interface MrPlace {
-  _id?: string;
-  googlePlaceId: string;
-  placeType: PlaceType;
-  interestRating?: number;
-  placePreview: string;
-  placeReview: string;
-  placeRating?: number;
-  restaurantSpecs: MrRestaurant;
-  restaurantReviews: MrRestaurantReview[];
-}
-
-export type MrPlaceWithGooglePlace = {
-  _id?: string;
-  googlePlaceId: string;
-  placeType?: PlaceType;
-  interestRating?: number;
-  placePreview?: string;
-  placeReview?: string;
-  placeRating?: number;
-  googlePlace?: GooglePlace;
-  restaurantSpecs?: MrRestaurant;
-  restaurantReviews: MrRestaurantReview[];
-};
-
 export type EditablePlace = {
   googlePlace: GooglePlace;
   placeReview: string;
@@ -56,7 +56,7 @@ export type EditablePlace = {
 export type MrSubmitPlaceRequestBody = {
   _id?: string; // Optional for updates
   placeType?: PlaceType;
-  interestRating?: number;
+  interestLevel?: number;
   placePreview?: string;
   placeReview?: string;
   placeRating?: number;

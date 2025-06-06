@@ -125,12 +125,12 @@ const memorapperSlice = createSlice({
       targetPlace.restaurantReviews.push(newReview);
 
       // determine if other targetPlace properties need to be updated
-      const { placeType, interestRating, placePreview, placeReview, placeRating, restaurantSpecs } = action.payload.place!;
+      const { placeType, interestLevel, placePreview, placeReview, placeRating, restaurantSpecs } = action.payload.place!;
       if ((targetPlace.placeType !== placeType) && placeType) {
         targetPlace.placeType = placeType;
       }
-      if ((targetPlace.interestRating !== interestRating) && interestRating) {
-        targetPlace.interestRating = interestRating;
+      if ((targetPlace.interestLevel !== interestLevel) && interestLevel) {
+        targetPlace.interestLevel = interestLevel;
       }
       if ((targetPlace.placePreview !== placePreview) && placePreview) {
         targetPlace.placePreview = placePreview;
@@ -149,7 +149,7 @@ const memorapperSlice = createSlice({
           openForDinner: restaurantSpecs.openForDinner,
         };
       }
-    
+
     }
   },
   extraReducers: (builder) => {

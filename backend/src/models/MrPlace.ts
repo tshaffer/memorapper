@@ -23,7 +23,7 @@ export interface IMrRestaurant {
 export interface IMrPlace extends Document {
   googlePlaceId: string;
   placeType: PlaceType;
-  interestRating?: number;
+  interestLevel?: number;
   placePreview?: string;
   placeReview?: string;
   placeRating?: number;
@@ -61,7 +61,7 @@ const MrPlaceSchema: Schema = new Schema({
     required: true,
     enum: [PlaceType.Restaurant, PlaceType.Accommodations, PlaceType.GroceryStore, PlaceType.Destination]
   },
-  interestRating: { type: Number },
+  interestLevel: { type: Number },
   placePreview: { type: String },
   placeReview: { type: String },
   placeRating: { type: Number },

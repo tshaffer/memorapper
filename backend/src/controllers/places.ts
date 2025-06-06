@@ -153,7 +153,7 @@ export const upsertMrPlaceHandler = async (
 
 const addMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<IMrPlace | null> => {
 
-  const { _id, placeType, placePreview, placeReview, placeRating, googlePlace, restaurantSpecs } = placeRequestBody;
+  const { _id, placeType, interestLevel, placePreview, placeReview, placeRating, googlePlace, restaurantSpecs } = placeRequestBody;
 
   let mongoPlace: IMongoPlace | null = await getMongoPlace(googlePlace!.googlePlaceId);
   if (!mongoPlace) {
@@ -169,9 +169,10 @@ const addMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<I
     _id,
     googlePlaceId: googlePlace!.googlePlaceId,
     placeType: placeType!,
-    placeReview: placeReview || '',
+    interestLevel: interestLevel || 0,
     placePreview: placePreview || '',
     placeRating: placeRating || 0,
+    placeReview: placeReview || '',
     restaurantReviews: [], // Initialize with an empty array or handle as needed
     restaurantSpecs: restaurantSpecs!,
   };
@@ -263,7 +264,7 @@ const addReviewToDb = async (
     });
 
     existingPlace.placeType = place.placeType!;
-    existingPlace.interestRating = place.interestRating || 0;
+    existingPlace.interestLevel = place.interestLevel || 0;
     existingPlace.placePreview = place.placePreview || '';
     existingPlace.placeReview = place.placeReview || '';
     existingPlace.placeRating = place.placeRating || 0;

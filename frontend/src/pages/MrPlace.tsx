@@ -163,7 +163,7 @@ const MrPlaceForm = () => {
       _id: mrPlaceWithGooglePlace._id || uuidv4(),
       googlePlaceId: mrPlaceWithGooglePlace.googlePlaceId,
       placeType: mrPlaceWithGooglePlace.placeType || PlaceType.Restaurant,
-      interestRating: mrPlaceWithGooglePlace.interestRating || 0,
+      interestLevel: mrPlaceWithGooglePlace.interestLevel || 0,
       placePreview: mrPlaceWithGooglePlace.placePreview || '',
       placeReview: mrPlaceWithGooglePlace.placeReview || '',
       placeRating: mrPlaceWithGooglePlace.placeRating || 0,
@@ -179,22 +179,22 @@ const MrPlaceForm = () => {
 
     dispatch(addMrPlaceWithGooglePlace(mrPlaceWithGooglePlace));
 
-    // setIsLoading(true);
+    setIsLoading(true);
 
-    // try {
+    try {
 
-    //   const response = await fetch('/api/upsertMrPlace', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(mrPlaceWithGooglePlace),
-    //   });
-    //   const data = await response.json();
-    //   console.log('Place submitted:', data);
-    //   setIsLoading(false);
-    // } catch (error) {
-    //   console.error('Error submitting place:', error);
-    //   setIsLoading(false);
-    // }
+      const response = await fetch('/api/upsertMrPlace', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(mrPlaceWithGooglePlace),
+      });
+      const data = await response.json();
+      console.log('Place submitted:', data);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error submitting place:', error);
+      setIsLoading(false);
+    }
   };
 
   const getPlaceNameStyle = (): React.CSSProperties => {
@@ -339,10 +339,10 @@ const MrPlaceForm = () => {
       <>
         <label>{'Interest Level:'}</label>
         <PlaceRatingInput
-          rating={mrPlaceWithGooglePlace.interestRating || null}
+          rating={mrPlaceWithGooglePlace.interestLevel || null}
           onChange={(newRating) => {
             const updatedPlace: MrPlaceWithGooglePlace = mrPlaceWithGooglePlace;
-            updatedPlace.interestRating = newRating ? newRating : undefined; // Set to undefined if null
+            updatedPlace.interestLevel = newRating ? newRating : undefined; // Set to undefined if null
             setMrPlaceWithGooglePlace((prev) => ({ ...prev, place: updatedPlace }));
           }}
           legendLabels={["Interested", "Very Interested"]}
