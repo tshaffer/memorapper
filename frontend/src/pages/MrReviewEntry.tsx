@@ -1,5 +1,5 @@
 
-import { Button, MenuItem, Select, TextField, useMediaQuery } from '@mui/material';
+import { Box, Button, Divider, MenuItem, Paper, Select, Stack, TextField, Typography, useMediaQuery } from '@mui/material';
 import Rating from '@mui/material/Rating';
 
 import '../styles/multiPanelStyles.css';
@@ -15,7 +15,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import PulsingDots from '../components/PulsingDots';
 import { RootState } from '../redux';
-import PlaceStarRatingInput from '../components/PlaceStarRatingInput';
 import PlaceRatingInput from '../components/PlaceRatingInput';
 
 interface MrReviewEntryProps {
@@ -47,22 +46,79 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
     return mrPlacesWithGooglePlaces.find((place) => place._id === _id);
   };
 
+  const getDisabledStyle = (condition: boolean): React.CSSProperties => {
+    return condition ? { opacity: 0.5, pointerEvents: 'none' } : {};
+  };
+
   const handleChange = (field: keyof MrReviewData, value: any) => {
     setMrReviewData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const renderDateOfVisit = (): JSX.Element => (
-    <div className="form-group">
-      <label htmlFor="date-of-visit">Date of Visit</label>
-      <TextField
-        id="date-of-visit"
-        type="date"
-        fullWidth
-        value={mrReviewData.dateOfVisit}
-        onChange={(e) => handleChange('dateOfVisit', e.target.value)}
-      />
-    </div>
-  );
+  const handleRestaurantSelection = (_id: string) => {
+    console.log('Selected PlaceId:', _id);
+    const selectedRestaurant = getRestaurantByPlaceId(_id);
+    const selectedMrPlaceWithGooglePlace: MrPlaceWithGooglePlace | undefined = getMrPlaceWithGooglePlace(_id);
+    if (selectedMrPlaceWithGooglePlace && selectedRestaurant) {
+      const selectedMrPlace: MrPlace = {
+        _id: selectedMrPlaceWithGooglePlace._id,
+        googlePlaceId: selectedMrPlaceWithGooglePlace.googlePlaceId,
+        placeType: selectedMrPlaceWithGooglePlace.placeType || PlaceType.Restaurant,
+        placePreview: selectedMrPlaceWithGooglePlace.placePreview || '',
+        placeReview: selectedMrPlaceWithGooglePlace.placeReview || '',
+        restaurantReviews: [],
+        restaurantSpecs: selectedRestaurant.restaurantSpecs || {},
+      };
+      const currentReviewData: MrReviewData = { ...mrReviewData };
+      currentReviewData.place = selectedMrPlace;
+      currentReviewData.placeReview = selectedMrPlace.placeReview;
+      currentReviewData.place!._id = selectedRestaurant._id;
+      setMrReviewData(currentReviewData);
+    }
+  };
+
+  const renderRestaurantSelector = (): JSX.Element => {
+    console.log(mrReviewData?.place?._id);
+    return (
+      <div className="form-group">
+        <Select
+          id="restaurant-selector"
+          value={mrReviewData?.place?._id || ''}
+          onChange={(event) => handleRestaurantSelection(event.target.value)}
+          displayEmpty
+          fullWidth
+        >
+          <MenuItem value="" disabled>
+            Select a restaurant
+          </MenuItem>
+          {getRestaurants().map((restaurantPlace: MrPlaceWithGooglePlace) => (
+            <MenuItem key={restaurantPlace._id} value={restaurantPlace._id}>
+              {restaurantPlace.googlePlace?.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </div>
+    );
+  }
+
+  function renderRestaurantRating(): React.ReactNode {
+    console.log('mrReviewData: ', mrReviewData);  // mrReviewData.place is null
+
+    return (
+      <div className="form-group">
+        <PlaceRatingInput
+          rating={mrReviewData?.place?.placeRating || null}
+          onChange={(newRating) => {
+            const updatedPlace: MrPlace = mrReviewData?.place as MrPlace;
+            updatedPlace.placeRating = newRating ? newRating : undefined; // Set to undefined if null
+            setMrReviewData((prev) => ({ ...prev, place: updatedPlace }));
+          }}
+          legendLabels={["Won’t return", "Would try again", "Would return"]}
+          colorBands={["#f44336", "#fdd835", "#4caf50"]}
+          rangeBands={[[1, 3], [4, 7], [8, 10]]}
+        />
+      </div>
+    );
+  }
 
   const renderPlaceReview = (): JSX.Element => (
     <div className="form-group">
@@ -137,79 +193,22 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
     );
   };
 
+  const renderDateOfVisit = (): JSX.Element => (
+    <div className="form-group">
+      <label htmlFor="date-of-visit">Date of Visit</label>
+      <TextField
+        id="date-of-visit"
+        type="date"
+        fullWidth
+        value={mrReviewData.dateOfVisit}
+        onChange={(e) => handleChange('dateOfVisit', e.target.value)}
+      />
+    </div>
+  );
+
   const renderPulsingDots = (): JSX.Element | null => {
     if (!isLoading) return null;
     return <PulsingDots />;
-  };
-
-  const handleRestaurantSelection = (_id: string) => {
-    console.log('Selected PlaceId:', _id);
-    const selectedRestaurant = getRestaurantByPlaceId(_id);
-    const selectedMrPlaceWithGooglePlace: MrPlaceWithGooglePlace | undefined = getMrPlaceWithGooglePlace(_id);
-    if (selectedMrPlaceWithGooglePlace && selectedRestaurant) {
-      const selectedMrPlace: MrPlace = {
-        _id: selectedMrPlaceWithGooglePlace._id,
-        googlePlaceId: selectedMrPlaceWithGooglePlace.googlePlaceId,
-        placeType: selectedMrPlaceWithGooglePlace.placeType || PlaceType.Restaurant,
-        placePreview: selectedMrPlaceWithGooglePlace.placePreview || '',
-        placeReview: selectedMrPlaceWithGooglePlace.placeReview || '',
-        restaurantReviews: [],
-        restaurantSpecs: selectedRestaurant.restaurantSpecs || {},
-      };
-      const currentReviewData: MrReviewData = { ...mrReviewData };
-      currentReviewData.place = selectedMrPlace;
-      currentReviewData.placeReview = selectedMrPlace.placeReview;
-      currentReviewData.place!._id = selectedRestaurant._id;
-      setMrReviewData(currentReviewData);
-    }
-  };
-
-  const renderRestaurantSelector = (): JSX.Element => {
-    console.log(mrReviewData?.place?._id);
-    return (
-      <div className="form-group">
-        <Select
-          id="restaurant-selector"
-          value={mrReviewData?.place?._id || ''}
-          onChange={(event) => handleRestaurantSelection(event.target.value)}
-          displayEmpty
-          fullWidth
-        >
-          <MenuItem value="" disabled>
-            Select a restaurant
-          </MenuItem>
-          {getRestaurants().map((restaurantPlace: MrPlaceWithGooglePlace) => (
-            <MenuItem key={restaurantPlace._id} value={restaurantPlace._id}>
-              {restaurantPlace.googlePlace?.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </div>
-    );
-  }
-
-  function renderRestaurantRating(): React.ReactNode {
-    console.log('mrReviewData: ', mrReviewData);  // mrReviewData.place is null
-
-    return (
-      <div className="form-group">
-        <PlaceRatingInput
-          rating={mrReviewData?.place?.placeRating || null}
-          onChange={(newRating) => {
-            const updatedPlace: MrPlace = mrReviewData?.place as MrPlace;
-            updatedPlace.placeRating = newRating ? newRating : undefined; // Set to undefined if null
-            setMrReviewData((prev) => ({ ...prev, place: updatedPlace }));
-          }}
-          legendLabels={["Won’t return", "Would try again", "Would return"]}
-          colorBands={["#f44336", "#fdd835", "#4caf50"]}
-          rangeBands={[[1, 3], [4, 7], [8, 10]]}
-        />
-      </div>
-    );
-  }
-
-  const getDisabledStyle = (condition: boolean): React.CSSProperties => {
-    return condition ? { opacity: 0.5, pointerEvents: 'none' } : {};
   };
 
   return (
@@ -225,43 +224,82 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
         </Button>
       </div >
 
-      <div
-        id="form"
-        className="tab-panel active"
-        style={{
-          maxHeight: isMobile ? 'calc(60vh)' : '80vh',
-          overflowY: 'auto',
-          padding: '1rem',
-          paddingBottom: '4rem', // extra space so content isn’t hidden behind the fixed button
-        }}
-      >
-        <form id="add-review-form">
-          <fieldset>
-            <legend>Name</legend>
+      <Box sx={{ padding: 2 }}>
+        <Paper elevation={3} sx={{ padding: 2, mb: 4 }}>
+          <Typography variant="h6" gutterBottom>
+            About the Restaurant
+          </Typography>
+          <Divider sx={{ mb: 2 }} />
+          <Stack spacing={2}>
             {renderRestaurantSelector()}
-          </fieldset>
-
-          <fieldset disabled={!mrReviewData?.place} style={getDisabledStyle(!mrReviewData?.place)}>
-            <legend>Rating</legend>
             {renderRestaurantRating()}
-          </fieldset>
-
-          <fieldset disabled={!mrReviewData?.place} style={getDisabledStyle(!mrReviewData?.place)}>
-            <legend>Items Ordered</legend>
-            {renderOrderedItems()}
-          </fieldset>
-
-          <fieldset disabled={!mrReviewData?.place} style={getDisabledStyle(!mrReviewData?.place)}>
-            <legend>Review</legend>
             {renderPlaceReview()}
-            {renderDateOfVisit()}
-          </fieldset>
-        </form>
+          </Stack>
+        </Paper>
 
-        {renderPulsingDots()}
-      </div>
+        <Paper elevation={1} sx={{ padding: 2 }}>
+          <Typography variant="h6" gutterBottom>
+            This Visit
+          </Typography>
+          <Divider sx={{ mb: 2 }} />
+          <Stack spacing={2}>
+            {renderOrderedItems()}
+            {renderDateOfVisit()}
+          </Stack>
+        </Paper>
+      </Box>
     </>
   );
+  // return (
+  //   <>
+  //     <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
+  //       <Button
+  //         variant="contained"
+  //         onClick={onSubmit}
+  //         disabled={!mrReviewData?.place}
+  //         style={getDisabledStyle(!mrReviewData?.place)}
+  //       >
+  //         Add Review
+  //       </Button>
+  //     </div >
+
+  //     <div
+  //       id="form"
+  //       className="tab-panel active"
+  //       style={{
+  //         maxHeight: isMobile ? 'calc(60vh)' : '80vh',
+  //         overflowY: 'auto',
+  //         padding: '1rem',
+  //         paddingBottom: '4rem', // extra space so content isn’t hidden behind the fixed button
+  //       }}
+  //     >
+  //       <form id="add-review-form">
+  //         <fieldset>
+  //           <legend>Name</legend>
+  //           {renderRestaurantSelector()}
+  //         </fieldset>
+
+  //         <fieldset disabled={!mrReviewData?.place} style={getDisabledStyle(!mrReviewData?.place)}>
+  //           <legend>Rating</legend>
+  //           {renderRestaurantRating()}
+  //         </fieldset>
+
+  //         <fieldset disabled={!mrReviewData?.place} style={getDisabledStyle(!mrReviewData?.place)}>
+  //           <legend>Items Ordered</legend>
+  //           {renderOrderedItems()}
+  //         </fieldset>
+
+  //         <fieldset disabled={!mrReviewData?.place} style={getDisabledStyle(!mrReviewData?.place)}>
+  //           <legend>Review</legend>
+  //           {renderPlaceReview()}
+  //           {renderDateOfVisit()}
+  //         </fieldset>
+  //       </form>
+
+  //       {renderPulsingDots()}
+  //     </div>
+  //   </>
+  // );
 };
 
 export default MrReviewEntry;
