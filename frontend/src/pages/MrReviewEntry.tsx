@@ -242,58 +242,11 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
           </Stack>
         </Paper>
       </Box>
+
+      {renderPulsingDots()}
+
     </>
   );
-  // return (
-  //   <>
-  //     <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
-  //       <Button
-  //         variant="contained"
-  //         onClick={onSubmit}
-  //         disabled={!mrReviewData?.place}
-  //         style={getDisabledStyle(!mrReviewData?.place)}
-  //       >
-  //         Add Review
-  //       </Button>
-  //     </div >
-
-  //     <div
-  //       id="form"
-  //       className="tab-panel active"
-  //       style={{
-  //         maxHeight: isMobile ? 'calc(60vh)' : '80vh',
-  //         overflowY: 'auto',
-  //         padding: '1rem',
-  //         paddingBottom: '4rem', // extra space so content isn’t hidden behind the fixed button
-  //       }}
-  //     >
-  //       <form id="add-review-form">
-  //         <fieldset>
-  //           <legend>Name</legend>
-  //           {renderRestaurantSelector()}
-  //         </fieldset>
-
-  //         <fieldset disabled={!mrReviewData?.place} style={getDisabledStyle(!mrReviewData?.place)}>
-  //           <legend>Rating</legend>
-  //           {renderRestaurantRating()}
-  //         </fieldset>
-
-  //         <fieldset disabled={!mrReviewData?.place} style={getDisabledStyle(!mrReviewData?.place)}>
-  //           <legend>Items Ordered</legend>
-  //           {renderOrderedItems()}
-  //         </fieldset>
-
-  //         <fieldset disabled={!mrReviewData?.place} style={getDisabledStyle(!mrReviewData?.place)}>
-  //           <legend>Review</legend>
-  //           {renderPlaceReview()}
-  //           {renderDateOfVisit()}
-  //         </fieldset>
-  //       </form>
-
-  //       {renderPulsingDots()}
-  //     </div>
-  //   </>
-  // );
 };
 
 export default MrReviewEntry;
