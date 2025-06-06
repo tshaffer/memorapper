@@ -6,7 +6,7 @@ import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { PlaceType, MrPlace, MrPlaceWithGooglePlace } from '../types';
 import { useDispatch } from 'react-redux';
-import { addMrPlaceWithGooglePlace } from '../redux/memorapperSlice';
+import { addMrPlace, addMrPlaceWithGooglePlace } from '../redux/memorapperSlice';
 import { Button, MenuItem, Select, Checkbox, FormControlLabel, TextField, Rating } from "@mui/material";
 import { GooglePlace, RestaurantType, MrRestaurant } from "../types";
 import RestaurantName from '../components/RestaurantName';
@@ -158,6 +158,24 @@ const MrPlaceForm = () => {
 
     e.preventDefault();
     console.log('handleSubmitPlace called with mrPlace:', mrPlaceWithGooglePlace);
+
+    const mrPlace: MrPlace = {
+      _id: mrPlaceWithGooglePlace._id || uuidv4(),
+      googlePlaceId: mrPlaceWithGooglePlace.googlePlaceId,
+      placeType: mrPlaceWithGooglePlace.placeType || PlaceType.Restaurant,
+      interestRating: mrPlaceWithGooglePlace.interestRating || 0,
+      placePreview: mrPlaceWithGooglePlace.placePreview || '',
+      placeReview: mrPlaceWithGooglePlace.placeReview || '',
+      placeRating: mrPlaceWithGooglePlace.placeRating || 0,
+      restaurantSpecs: mrPlaceWithGooglePlace.restaurantSpecs || {
+        restaurantType: RestaurantType.Restaurant,
+        openForBreakfast: false,
+        openForLunch: false,
+        openForDinner: false,
+      },
+      restaurantReviews: mrPlaceWithGooglePlace.restaurantReviews || [],
+    }
+    dispatch(addMrPlace(mrPlace));
 
     dispatch(addMrPlaceWithGooglePlace(mrPlaceWithGooglePlace));
 

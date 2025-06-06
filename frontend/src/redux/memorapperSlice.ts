@@ -65,6 +65,25 @@ const memorapperSlice = createSlice({
     setMrPlacesWithGooglePlaces(state, action: PayloadAction<MrPlaceWithGooglePlace[]>) {
       state.mrPlacesWithGooglePlaces = action.payload;
     },
+    addMrPlace(state, action: PayloadAction<MrPlace>) {
+      const incoming = action.payload;
+      if (!incoming._id) {
+        state.mrPlaces.push(incoming);
+      } else {
+        // If _id is defined, replace existing entry
+        const index = state.mrPlaces.findIndex(
+          (place) => place._id === incoming._id
+        );
+        if (index !== -1) {
+          // Replace the existing entry
+          state.mrPlaces[index] = incoming;
+        } else {
+          // No match found, add it as new
+          state.mrPlaces.push(incoming);
+        }
+        console.log('Updated place :', state.mrPlaces);
+      }
+    },
     addMrPlaceWithGooglePlace(state, action: PayloadAction<MrPlaceWithGooglePlace>) {
       const incoming = action.payload;
       if (!incoming._id) {
@@ -167,6 +186,7 @@ export const {
   setSettings,
   setMrPlacesWithGooglePlaces,
   addMrPlaceWithGooglePlace,
+  addMrPlace,
   addMrRestaurantReview,
 } = memorapperSlice.actions;
 
