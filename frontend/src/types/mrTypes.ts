@@ -1,18 +1,6 @@
 import { PlaceType, RestaurantType } from "./enums";
 import { GoogleGeometry } from "./googlePlace";
 
-export interface MrPlace {
-  _id?: string;
-  googlePlaceId: string;
-  placeType: PlaceType;
-  interestRating?: number;
-  placePreview: string;
-  placeReview: string;
-  placeRating?: number;
-  restaurantSpecs: MrRestaurant;
-  restaurantReviews: MrRestaurantReview[];
-}
-
 export interface MrRestaurant {
   restaurantType?: RestaurantType;
   openForBreakfast?: boolean;
@@ -27,13 +15,24 @@ export interface MrRestaurantReview {
 
 export interface MrReviewData extends MrRestaurantReview {
   place: MrPlace | null;
-  placeReview: string;
 }
 
 export interface MrItemOrdered {
   itemName: string;
   rating: number;
   comments: string;
+}
+
+export interface MrPlace {
+  _id?: string;
+  googlePlaceId: string;
+  placeType: PlaceType;
+  interestRating?: number;
+  placePreview: string;
+  placeReview: string;
+  placeRating?: number;
+  restaurantSpecs: MrRestaurant;
+  restaurantReviews: MrRestaurantReview[];
 }
 
 export type MrPlaceWithGooglePlace = {

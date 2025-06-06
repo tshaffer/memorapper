@@ -18,7 +18,6 @@ const MrPlaceForm = () => {
   const dispatch = useDispatch();
 
   const { _id } = useParams<{ _id: string }>();
-  console.log('NewPlaceForm _id:', _id);
 
   const [placeName, setPlaceName] = React.useState('');
 
@@ -162,22 +161,22 @@ const MrPlaceForm = () => {
 
     dispatch(addMrPlaceWithGooglePlace(mrPlaceWithGooglePlace));
 
-    setIsLoading(true);
+    // setIsLoading(true);
 
-    try {
+    // try {
 
-      const response = await fetch('/api/upsertMrPlace', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(mrPlaceWithGooglePlace),
-      });
-      const data = await response.json();
-      console.log('Place submitted:', data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error submitting place:', error);
-      setIsLoading(false);
-    }
+    //   const response = await fetch('/api/upsertMrPlace', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify(mrPlaceWithGooglePlace),
+    //   });
+    //   const data = await response.json();
+    //   console.log('Place submitted:', data);
+    //   setIsLoading(false);
+    // } catch (error) {
+    //   console.error('Error submitting place:', error);
+    //   setIsLoading(false);
+    // }
   };
 
   const getPlaceNameStyle = (): React.CSSProperties => {

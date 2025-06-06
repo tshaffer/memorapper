@@ -16,7 +16,6 @@ const MrWriteReviewPage = () => {
 
   const initialReviewData: MrReviewData = {
     place,
-    placeReview: '',
     dateOfVisit: getFormattedDate(),
     itemReviews: [],
   };
@@ -62,19 +61,20 @@ const MrWriteReviewPage = () => {
 
     // update place comments if necessary (and what about place rating?)
     console.log('addReviewRequestBody:', addReviewRequestBody);
-    try {
-      const response = await fetch('/api/addReview', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(addReviewRequestBody),
-      });
+    // try {
+    //   const response = await fetch('/api/addReview', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify(addReviewRequestBody),
+    //   });
 
-      const data = await response.json();
-      console.log('Review persisted to backend:', data);
-    } catch (error) {
-      console.error('Error persisting review to backend:', error);
-    }
+    //   const data = await response.json();
+    //   console.log('Review persisted to backend:', data);
+    // } catch (error) {
+    //   console.error('Error persisting review to backend:', error);
+    // }
   };
+
   return (
     <div className="container">
       <section className="tab-content">

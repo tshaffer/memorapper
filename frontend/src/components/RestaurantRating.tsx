@@ -43,9 +43,11 @@ const RestaurantRating: React.FC<RestaurantRatingProps> = (props: RestaurantRati
     return mrPlacesWithGooglePlaces.find((place) => place._id === _id);
   };
 
-  const handleChange = (field: keyof MrReviewData, value: any) => {
-    setMrReviewData((prev) => ({ ...prev, [field]: value }));
-  };
+  const handlePlaceReviewChange = (value: string) => {
+    const updatedPlace: MrPlace = mrReviewData.place as MrPlace;
+    updatedPlace.placeReview = value;
+    setMrReviewData((prev) => ({ ...prev, place: updatedPlace }));
+  }
 
   const handleRestaurantSelection = (_id: string) => {
     console.log('Selected PlaceId:', _id);
@@ -63,7 +65,6 @@ const RestaurantRating: React.FC<RestaurantRatingProps> = (props: RestaurantRati
       };
       const currentReviewData: MrReviewData = { ...mrReviewData };
       currentReviewData.place = selectedMrPlace;
-      currentReviewData.placeReview = selectedMrPlace.placeReview;
       currentReviewData.place!._id = selectedRestaurant._id;
       setMrReviewData(currentReviewData);
     }
@@ -121,8 +122,8 @@ const RestaurantRating: React.FC<RestaurantRatingProps> = (props: RestaurantRati
         fullWidth
         multiline
         rows={4}
-        value={mrReviewData.placeReview}
-        onChange={(e) => handleChange('placeReview', e.target.value)}
+        value={mrReviewData.place?.placeReview || ''}
+        onChange={(e) => handlePlaceReviewChange(e.target.value)}
       />
     </div>
   );
