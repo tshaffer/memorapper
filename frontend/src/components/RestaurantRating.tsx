@@ -59,6 +59,7 @@ const RestaurantRating: React.FC<RestaurantRatingProps> = (props: RestaurantRati
         googlePlaceId: selectedMrPlaceWithGooglePlace.googlePlaceId,
         placeType: selectedMrPlaceWithGooglePlace.placeType || PlaceType.Restaurant,
         placePreview: selectedMrPlaceWithGooglePlace.placePreview || '',
+        placeRating: selectedMrPlaceWithGooglePlace.placeRating || null,
         placeReview: selectedMrPlaceWithGooglePlace.placeReview || '',
         restaurantReviews: [],
         restaurantSpecs: selectedRestaurant.restaurantSpecs || {},
