@@ -220,20 +220,6 @@ const MrPlaceForm = () => {
     </div>
   );
 
-  const old_renderPlaceReview = () => (
-    <div style={{ marginBottom: '1rem' }}>
-      <label>{'Comments:'}</label>
-      <TextField
-        label={'Comments'}
-        fullWidth
-        multiline
-        rows={4}
-        value={mrPlaceWithGooglePlace.placeReview || ''}
-        onChange={(e) => handleChange('placeReview', e.target.value)}
-      />
-    </div>
-  );
-
   function renderRestaurantRating(): React.ReactNode {
     return (
       <div className="form-group">
@@ -385,8 +371,10 @@ const MrPlaceForm = () => {
       id="form"
       className="tab-panel active"
       style={{
-        maxHeight: isMobile ? 'calc(60vh)' : 'auto',
+        height: '92vh',           // fill the viewport height
+        overflowY: 'auto',         // enable vertical scrolling
         padding: '1rem',
+        boxSizing: 'border-box',
       }}
     >
       <div id='MrPlace' style={containerStyle}>
