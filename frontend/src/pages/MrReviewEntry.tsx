@@ -226,9 +226,6 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
 
       <Box sx={{ padding: 2 }}>
         <Paper elevation={3} sx={{ padding: 2, mb: 4 }}>
-          <Typography variant="h6" gutterBottom>
-            About the Restaurant
-          </Typography>
           <Divider sx={{ mb: 2 }} />
           <Stack spacing={2}>
             {renderRestaurantSelector()}
@@ -238,9 +235,6 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
         </Paper>
 
         <Paper elevation={1} sx={{ padding: 2 }}>
-          <Typography variant="h6" gutterBottom>
-            This Visit
-          </Typography>
           <Divider sx={{ mb: 2 }} />
           <Stack spacing={2}>
             {renderOrderedItems()}
