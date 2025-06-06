@@ -234,15 +234,31 @@ const MrPlaceForm = () => {
     </div>
   );
 
+  function renderRestaurantRating(): React.ReactNode {
+    return (
+      <div className="form-group">
+        <PlaceRatingInput
+          rating={mrPlaceWithGooglePlace.placeRating || null}
+          onChange={(newRating) => {
+            handleChange('placeRating', newRating);
+          }}
+          legendLabels={["Won’t return", "Would try again", "Would return"]}
+          colorBands={["#f44336", "#fdd835", "#4caf50"]}
+          rangeBands={[[1, 3], [4, 7], [8, 10]]}
+        />
+      </div>
+    );
+  }
+
   const renderPlaceReview = (): JSX.Element => (
     <div className="form-group">
-      <label htmlFor="review-text">Review Text</label>
+      <label htmlFor="review-text">Review</label>
       <TextField
         id="review-text"
         fullWidth
         multiline
         rows={4}
-        value={mrPlaceWithGooglePlace.placeReview}
+        value={mrPlaceWithGooglePlace.placeReview || ''}
         onChange={(e) => handleChange('placeReview', e.target.value)}
       />
     </div>
@@ -350,6 +366,20 @@ const MrPlaceForm = () => {
     */
   }
 
+  const renderPlacePreview = (): JSX.Element => (
+    <div className="form-group">
+      <label htmlFor="review-text">Preview</label>
+      <TextField
+        id="preview-text"
+        fullWidth
+        multiline
+        rows={4}
+        value={mrPlaceWithGooglePlace.placePreview || ''}
+        onChange={(e) => handleChange('placePreview', e.target.value)}
+      />
+    </div>
+  );
+
   return (
     <div
       id="form"
@@ -366,7 +396,9 @@ const MrPlaceForm = () => {
           {/* {renderPlaceType()} */}
           {renderRestaurantType()}
           {renderInterestLevel()}
-          {renderMealAvailability()}
+          {renderPlacePreview()}
+          {/* {renderMealAvailability()} */}
+          {renderRestaurantRating()}
           {renderPlaceReview()}
         </form>
         <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
