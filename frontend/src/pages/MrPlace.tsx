@@ -11,6 +11,7 @@ import { Button, MenuItem, Select, Checkbox, FormControlLabel, TextField, Rating
 import { GooglePlace, RestaurantType, MrRestaurant } from "../types";
 import RestaurantName from '../components/RestaurantName';
 import PulsingDots from '../components/PulsingDots';
+import PlaceRatingInput from '../components/PlaceRatingInput';
 
 const MrPlaceForm = () => {
 
@@ -300,7 +301,24 @@ const MrPlaceForm = () => {
     );
   };
 
-  const renderDesirabilityRating = (): JSX.Element => {
+  const renderInterestLevel = (): JSX.Element => {
+    return (
+      <>
+        <label>{'Interest Level:'}</label>
+        <PlaceRatingInput
+          rating={mrPlaceWithGooglePlace.interestRating || null}
+          onChange={(newRating) => {
+            const updatedPlace: MrPlaceWithGooglePlace = mrPlaceWithGooglePlace;
+            updatedPlace.interestRating = newRating ? newRating : undefined; // Set to undefined if null
+            setMrPlaceWithGooglePlace((prev) => ({ ...prev, place: updatedPlace }));
+          }}
+          legendLabels={["Interested", "Very Interested"]}
+          colorBands={["#f44336", "#4caf50"]}
+          rangeBands={[[1, 5], [6, 10]]}
+        />
+      </>
+    )
+    /*
     return (
       <div>
         <label htmlFor={`rating-${mrPlaceWithGooglePlace.placeRating}`}>Rating</label>
@@ -315,6 +333,7 @@ const MrPlaceForm = () => {
         />
       </div>
     );
+    */
   }
 
   return (
@@ -332,8 +351,8 @@ const MrPlaceForm = () => {
           {renderPlaceName()}
           {renderPlaceType()}
           {renderRestaurantType()}
+          {renderInterestLevel()}
           {renderMealAvailability()}
-          {renderDesirabilityRating()}
           {renderPlaceReview()}
         </form>
         <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
