@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { GooglePlace, MrPlaceWithGooglePlace, MrReviewData, MrSubmitAddReviewRequestBody, } from "../types";
+import { GooglePlace, MrPlaceWithGooglePlace, MrReviewData } from "../types";
 import { getFormattedDate } from "../utilities";
 import MrReviewEntry from "./MrReviewEntry";
 import { useDispatch, useSelector } from 'react-redux';
@@ -53,26 +53,20 @@ const MrWriteReviewPage = () => {
 
     // 2️⃣ Send updated MrPlace to backend
 
-    const addReviewRequestBody: MrSubmitAddReviewRequestBody = {
-      _id: mrReviewData.place._id!,
-      dateOfVisit: mrReviewData.dateOfVisit,
-      itemReviews: mrReviewData.itemReviews,
-    };
+    // update place properties if necessary
+    console.log('addReviewRequestBody:', mrReviewData);
+    try {
+      const response = await fetch('/api/addReview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(mrReviewData),
+      });
 
-    // update place comments if necessary (and what about place rating?)
-    console.log('addReviewRequestBody:', addReviewRequestBody);
-    // try {
-    //   const response = await fetch('/api/addReview', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(addReviewRequestBody),
-    //   });
-
-    //   const data = await response.json();
-    //   console.log('Review persisted to backend:', data);
-    // } catch (error) {
-    //   console.error('Error persisting review to backend:', error);
-    // }
+      const data = await response.json();
+      console.log('Review persisted to backend:', data);
+    } catch (error) {
+      console.error('Error persisting review to backend:', error);
+    }
   };
 
   return (

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import MongoPlaceModel, { IMongoPlace } from "../models/MongoPlace";
-import { GooglePlace, MongoPlace, MrItemOrdered, MrPlace, MrPlaceWithGooglePlace, MrSubmitAddReviewRequestBody, MrSubmitPlaceRequestBody } from "../types";
+import { GooglePlace, MongoPlace, MrItemOrdered, MrPlace, MrPlaceWithGooglePlace, MrReviewData, MrSubmitPlaceRequestBody } from "../types";
 import { MongoGeometry } from "../types";
 import { convertGoogleGeometryToMongoGeometry, convertMongoGeometryToGoogleGeometry, convertMongoPlacesToGooglePlaces } from '../utilities';
 import MrPlaceModel, { IMrPlace } from '../models/MrPlace';
@@ -227,15 +227,15 @@ const updateMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promis
 };
 
 export const addReviewHandler = async (
-  req: Request<{}, {}, MrSubmitAddReviewRequestBody>,
+  req: Request<{}, {}, MrReviewData>,
   res: Response
 ): Promise<any> => {
 
-  const body: MrSubmitAddReviewRequestBody = req.body;
-  const { _id, dateOfVisit, itemReviews } = body;
+  const reviewData: MrReviewData = req.body;
+  const { place, dateOfVisit, itemReviews } = reviewData;
 
   try {
-    const updatedPlace = await addReviewToDb(_id, dateOfVisit, itemReviews);
+    const updatedPlace = await addReviewToDb(place!, dateOfVisit, itemReviews);
     return res.status(200).json({ message: 'Review added successfully!', place: updatedPlace });
   } catch (error) {
     console.error('Error adding review:', error);
@@ -244,26 +244,38 @@ export const addReviewHandler = async (
 }
 
 const addReviewToDb = async (
-  _id: string,
+  place: MrPlace,
+  // placeId: string,
   dateOfVisit: string,
   itemReviews: MrItemOrdered[]
 ): Promise<void> => {
   try {
-    const place = await MrPlaceModel.findOne({ _id });
+    // is this necessary or was the place already fetched in the handler?
+    const existingPlace = await MrPlaceModel.findOne({ _id: place._id }).exec();
 
-    if (!place) {
-      throw new Error(`Place with _id ${_id} not found`);
+    if (!existingPlace) {
+      throw new Error(`Place with _id ${place._id} not found`);
     }
 
-    place.restaurantReviews.push({
+    existingPlace.restaurantReviews.push({
       dateOfVisit: new Date(dateOfVisit),
       itemReviews,
     });
 
-    await place.save();
-    console.log(`Review added to place ${_id}`);
+    existingPlace.placeType = place.placeType!;
+    existingPlace.interestRating = place.interestRating || 0;
+    existingPlace.placePreview = place.placePreview || '';
+    existingPlace.placeReview = place.placeReview || '';
+    existingPlace.placeRating = place.placeRating || 0;
+    existingPlace.restaurantSpecs.restaurantType = place.restaurantSpecs?.restaurantType!;
+    existingPlace.restaurantSpecs.openForBreakfast = place.restaurantSpecs?.openForBreakfast || false;
+    existingPlace.restaurantSpecs.openForLunch = place.restaurantSpecs?.openForLunch || false;
+    existingPlace.restaurantSpecs.openForDinner = place.restaurantSpecs?.openForDinner || false;
+
+    await existingPlace.save();
+    console.log(`Review added to place ${place._id}`);
   } catch (error) {
-    console.error(`Error adding review to place ${_id}:`, error);
+    console.error(`Error adding review to place ${place._id}:`, error);
     throw error;
   }
 };

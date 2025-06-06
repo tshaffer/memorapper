@@ -65,12 +65,6 @@ export type MrSubmitPlaceRequestBody = {
   restaurantReviews: MrRestaurantReview[];
 };
 
-export type MrSubmitAddReviewRequestBody = {
-  _id: string;
-  dateOfVisit: string;
-  itemReviews: MrItemOrdered[];
-}
-
 export interface GooglePlace {
   googlePlaceId: string;
   address_components?: google.maps.GeocoderAddressComponent[];

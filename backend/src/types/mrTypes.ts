@@ -27,7 +27,6 @@ export interface MrRestaurantReview {
 
 export interface MrReviewData extends MrRestaurantReview {
   place: MrPlace | null;
-  placeReview: string;
 }
 
 export interface MrItemOrdered {
@@ -63,12 +62,6 @@ export type MrSubmitPlaceRequestBody = {
   restaurantSpecs?: MrRestaurant;
   restaurantReviews: MrRestaurantReview[];
 };
-
-export type MrSubmitAddReviewRequestBody = {
-  _id: string;
-  dateOfVisit: string;
-  itemReviews: MrItemOrdered[];
-}
 
 export interface GooglePlace {
   googlePlaceId: string;
