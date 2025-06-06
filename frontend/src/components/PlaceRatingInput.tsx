@@ -8,35 +8,38 @@ import {
   Stack,
 } from '@mui/material';
 
-interface PlaceStarRatingInputProps {
+export interface PlaceRatingInputProps {
   rating: number | null;
   onChange: (newRating: number | null) => void;
+  legendLabels: string[];
+  colorBands: string[];
+  rangeBands: [number, number][];
 }
 
-const getRatingLabel = (rating: number | null): string => {
-  if (rating === null) return 'Not Rated';
-  if (rating >= 1 && rating <= 3) return 'Won’t return';
-  if (rating >= 4 && rating <= 7) return 'Would try again';
-  if (rating >= 8 && rating <= 10) return 'Would return';
-  return '';
+const getBandIndex = (rating: number | null, rangeBands: [number, number][]): number | null => {
+  if (rating === null) return null;
+  for (let i = 0; i < rangeBands.length; i++) {
+    const [min, max] = rangeBands[i];
+    if (rating >= min && rating <= max) return i;
+  }
+  return null;
 };
 
-const getRatingColor = (rating: number | null): string => {
-  if (rating === null) return 'grey';
-  if (rating <= 3) return '#f44336';
-  if (rating <= 7) return '#fdd835'; // bright yellow
-  return '#4caf50';
-};
-
-const PlaceStarRatingInput: React.FC<PlaceStarRatingInputProps> = ({ rating, onChange }) => {
-
+const PlaceRatingInput: React.FC<PlaceRatingInputProps> = ({
+  rating,
+  onChange,
+  legendLabels,
+  colorBands,
+  rangeBands,
+}) => {
   const [hover, setHover] = useState<number | null>(null);
 
-  console.log('hover', hover);
-  console.log('rating', rating);
   const displayRating: number | null =
     hover !== null ? Math.round(hover * 2) : rating;
-  console.log('displayRating', displayRating);
+
+  const bandIndex = getBandIndex(displayRating, rangeBands);
+  const displayLabel = bandIndex !== null ? legendLabels[bandIndex] : 'Not Rated';
+  const displayColor = bandIndex !== null ? colorBands[bandIndex] : 'grey';
 
   const handleStarChange = (_: any, value: number | null) => {
     if (value !== null) {
@@ -56,10 +59,12 @@ const PlaceStarRatingInput: React.FC<PlaceStarRatingInputProps> = ({ rating, onC
           precision={0.5}
           value={rating === null ? 0 : rating / 2}
           onChange={handleStarChange}
-          onChangeActive={(_, value) => setHover(value !== null && value !== -1 ? value : null)}
+          onChangeActive={(_, value) =>
+            setHover(value !== null && value !== -1 ? value : null)
+          }
           sx={{
             fontSize: '2rem',
-            color: getRatingColor(displayRating),
+            color: displayColor,
             opacity: rating === null ? 0.6 : 1.0,
           }}
         />
@@ -76,16 +81,22 @@ const PlaceStarRatingInput: React.FC<PlaceStarRatingInputProps> = ({ rating, onC
 
       <Typography variant="subtitle1" sx={{ mt: 1 }}>
         {displayRating !== null ? `${displayRating} – ` : ''}
-        {getRatingLabel(displayRating)}
+        {displayLabel}
       </Typography>
 
       <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-        <Typography variant="body2" color="error.main">1–3: Won’t return</Typography>
-        <Typography variant="body2" sx={{ color: '#fdd835' }}>4–7: Would try again</Typography>
-        <Typography variant="body2" color="success.main">8–10: Would return</Typography>
+        {rangeBands.map(([min, max], index) => (
+          <Typography
+            key={index}
+            variant="body2"
+            sx={{ color: colorBands[index] }}
+          >
+            {min}–{max}: {legendLabels[index]}
+          </Typography>
+        ))}
       </Stack>
     </Box>
   );
 };
 
-export default PlaceStarRatingInput;
+export default PlaceRatingInput;

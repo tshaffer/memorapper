@@ -16,7 +16,7 @@ import { useSelector } from 'react-redux';
 import PulsingDots from '../components/PulsingDots';
 import { RootState } from '../redux';
 import PlaceStarRatingInput from '../components/PlaceStarRatingInput';
-import GoogleMapsProvider from '../components/GoogleMapsProvider';
+import PlaceRatingInput from '../components/PlaceRatingInput';
 
 interface MrReviewEntryProps {
   mrReviewData: MrReviewData;
@@ -193,13 +193,16 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
 
     return (
       <div className="form-group">
-        <PlaceStarRatingInput
+        <PlaceRatingInput
           rating={mrReviewData?.place?.placeRating || null}
           onChange={(newRating) => {
             const updatedPlace: MrPlace = mrReviewData?.place as MrPlace;
             updatedPlace.placeRating = newRating ? newRating : undefined; // Set to undefined if null
             setMrReviewData((prev) => ({ ...prev, place: updatedPlace }));
           }}
+          legendLabels={["Won’t return", "Would try again", "Would return"]}
+          colorBands={["#f44336", "#fdd835", "#4caf50"]}
+          rangeBands={[[1, 3], [4, 7], [8, 10]]}
         />
       </div>
     );
