@@ -220,7 +220,7 @@ const MrPlaceForm = () => {
     </div>
   );
 
-  const renderPlaceReview = () => (
+  const old_renderPlaceReview = () => (
     <div style={{ marginBottom: '1rem' }}>
       <label>{'Comments:'}</label>
       <TextField
@@ -229,6 +229,20 @@ const MrPlaceForm = () => {
         multiline
         rows={4}
         value={mrPlaceWithGooglePlace.placeReview || ''}
+        onChange={(e) => handleChange('placeReview', e.target.value)}
+      />
+    </div>
+  );
+
+  const renderPlaceReview = (): JSX.Element => (
+    <div className="form-group">
+      <label htmlFor="review-text">Review Text</label>
+      <TextField
+        id="review-text"
+        fullWidth
+        multiline
+        rows={4}
+        value={mrPlaceWithGooglePlace.placeReview}
         onChange={(e) => handleChange('placeReview', e.target.value)}
       />
     </div>
@@ -349,7 +363,7 @@ const MrPlaceForm = () => {
         <h2>Add Place</h2>
         <form>
           {renderPlaceName()}
-          {renderPlaceType()}
+          {/* {renderPlaceType()} */}
           {renderRestaurantType()}
           {renderInterestLevel()}
           {renderMealAvailability()}
