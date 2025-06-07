@@ -71,7 +71,7 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
     `,
   });
 
-  const renderPlaceMarker = (): JSX.Element => (
+  const poo = (): JSX.Element => (
     <AdvancedMarker
       position={getLatLngFromPlace(place)}
       onClick={handlePlaceMarkerClick}
@@ -91,6 +91,25 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
       </div>
     </AdvancedMarker>
   );
+
+  const renderPlaceMarker = (): JSX.Element => {
+    return (
+      <AdvancedMarker
+        position={getLatLngFromPlace(place)}
+        onClick={handlePlaceMarkerClick}
+      >
+        <div
+          style={{ position: 'relative' }}
+          title={place.googlePlace?.name || 'Unnamed Place'} // ✅ This adds hover text
+        >
+          <div style={iconContainerStyle}>
+            <Icon icon={getMarkerIcon()} style={{ fontSize: '30px' }} />
+          </div>
+        </div>
+      </AdvancedMarker>
+
+    )
+  };
 
   return <>{renderPlaceMarker()}</>;
 };
