@@ -197,7 +197,7 @@ const addMrPlaceToDb = async (place: MrPlace): Promise<IMrPlace | null> => {
 }
 
 const updateMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promise<IMrPlace | null> => {
-  const { _id, placeType, placeReview: placeComments, placeRating, googlePlace, restaurantSpecs, restaurantReviews } = placeRequestBody;
+  const { _id, placeType, interestLevel, placePreview, placeReview, placeRating, googlePlace, restaurantSpecs, restaurantReviews } = placeRequestBody;
 
   if (!_id) {
     throw new Error('_id is required for updating.');
@@ -209,7 +209,9 @@ const updateMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promis
     _id: _id || '',
     googlePlaceId: googlePlace?.googlePlaceId || '',
     placeType: placeType!,
-    placeReview: placeComments || '',
+    interestLevel: interestLevel || 0,
+    placePreview: placePreview || '',
+    placeReview: placeReview || '',
     placeRating: placeRating || 0,
     restaurantSpecs: restaurantSpecs || {},
     restaurantReviews: restaurantReviews || [],
