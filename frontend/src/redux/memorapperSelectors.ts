@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from './store';
-import { MrPlace } from '../types';
+import { MrPlace, MrPlaceWithGooglePlace } from '../types';
 
 // Base selectors
 export const selectMemorapperState = (state: RootState) => state.memorapper;
@@ -43,12 +43,37 @@ export const selectMrPlaceWithGooglePlace = (placeId: string) =>
 export const selectAllMrPlacesWithGooglePlaces = createSelector(
   selectMrPlaces,
   selectGooglePlacesById,
-  (mrPlaces, googlePlacesById) =>
-    mrPlaces.map((place) => ({
-      ...place,
-      googlePlace: googlePlacesById[place.googlePlaceId],
-    }))
+  (mrPlaces, googlePlacesById): (MrPlaceWithGooglePlace & { visited: boolean })[] =>
+    mrPlaces.map((place) => {
+      const visited =
+        (typeof place.placeRating === 'number' && place.placeRating > 0) ||
+        (place.placeReview?.trim() ?? '') !== '' ||
+        (place.restaurantReviews?.length ?? 0) > 0;
+
+      return {
+        ...place,
+        googlePlace: googlePlacesById[place.googlePlaceId],
+        visited,
+      };
+    })
 );
+
+export const selectVisitedPlaceIds = createSelector(
+  (state: RootState) => state.memorapper.mrPlacesById,
+  (mrPlacesById) =>
+    Object.entries(mrPlacesById)
+      .filter(([_, place]: [string, MrPlace]) =>
+        (typeof place.placeRating === 'number' && place.placeRating > 0) ||
+        (place.placeReview?.trim() ?? '') !== '' ||
+        (place.restaurantReviews?.length ?? 0) > 0
+      )
+      .map(([id]) => id)
+);
+
+export const isPlaceVisited = (place: MrPlace): boolean =>
+  (typeof place.placeRating === 'number' && place.placeRating > 0) ||
+  (place.placeReview?.trim() ?? '') !== '' ||
+  (place.restaurantReviews?.length ?? 0) > 0;
 
 export const selectGooglePlaces = (state: RootState) =>
   Object.values(state.memorapper.googlePlacesById);
