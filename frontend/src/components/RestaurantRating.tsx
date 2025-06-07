@@ -1,5 +1,13 @@
-
-import { Box, Divider, MenuItem, Paper, Select, Stack, TextField, useMediaQuery } from '@mui/material';
+import {
+  Box,
+  Divider,
+  MenuItem,
+  Paper,
+  Select,
+  Stack,
+  TextField,
+  useMediaQuery,
+} from '@mui/material';
 
 import '../styles/multiPanelStyles.css';
 import '../styles/reviewEntryForm.css';
@@ -12,108 +20,85 @@ import {
 } from '../types';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../redux';
 import PlaceRatingInput from '../components/PlaceRatingInput';
+import { selectAllMrPlacesWithGooglePlaces } from '../redux/memorapperSelectors';
 
 interface RestaurantRatingProps {
   mrReviewData: MrReviewData;
   setMrReviewData: React.Dispatch<React.SetStateAction<MrReviewData>>;
 }
 
-const RestaurantRating: React.FC<RestaurantRatingProps> = (props: RestaurantRatingProps) => {
-
-  const { mrPlacesWithGooglePlaces } = useSelector((state: RootState) => state.memorapper);
-
-  const { mrReviewData, setMrReviewData } = props;
+const RestaurantRating: React.FC<RestaurantRatingProps> = ({ mrReviewData, setMrReviewData }) => {
+  const mrPlacesWithGooglePlaces: MrPlaceWithGooglePlace[] = useSelector(selectAllMrPlacesWithGooglePlaces);
 
   const isMobile = useMediaQuery('(max-width:768px)');
-
   const [isLoading, setIsLoading] = useState(false);
 
-  const getRestaurants = (): MrPlaceWithGooglePlace[] => {
-    return mrPlacesWithGooglePlaces
-      .filter((item): item is MrPlaceWithGooglePlace => item.placeType! === PlaceType.Restaurant);
-  };
-
-  const getRestaurantByPlaceId = (_id: string): MrPlaceWithGooglePlace | undefined => {
-    return getRestaurants().find((restaurant) => restaurant._id === _id);
-  };
-
-  const getMrPlaceWithGooglePlace = (_id: string): MrPlaceWithGooglePlace | undefined => {
-    return mrPlacesWithGooglePlaces.find((place) => place._id === _id);
-  };
+  const restaurantPlaces: MrPlaceWithGooglePlace[] = mrPlacesWithGooglePlaces
+    .filter((place) => place.placeType === PlaceType.Restaurant);
 
   const handlePlaceReviewChange = (value: string) => {
-    const updatedPlace: MrPlace = mrReviewData.place as MrPlace;
-    updatedPlace.placeReview = value;
+    const updatedPlace: MrPlace = { ...mrReviewData.place!, placeReview: value };
     setMrReviewData((prev) => ({ ...prev, place: updatedPlace }));
-  }
+  };
 
   const handleRestaurantSelection = (_id: string) => {
     console.log('Selected PlaceId:', _id);
-    const selectedRestaurant = getRestaurantByPlaceId(_id);
-    const selectedMrPlaceWithGooglePlace: MrPlaceWithGooglePlace | undefined = getMrPlaceWithGooglePlace(_id);
-    if (selectedMrPlaceWithGooglePlace && selectedRestaurant) {
-      const selectedMrPlace: MrPlace = {
-        _id: selectedMrPlaceWithGooglePlace._id,
-        googlePlaceId: selectedMrPlaceWithGooglePlace.googlePlaceId,
-        placeType: selectedMrPlaceWithGooglePlace.placeType || PlaceType.Restaurant,
-        placePreview: selectedMrPlaceWithGooglePlace.placePreview || '',
-        placeRating: selectedMrPlaceWithGooglePlace.placeRating || 0,
-        placeReview: selectedMrPlaceWithGooglePlace.placeReview || '',
-        restaurantReviews: [],
-        restaurantSpecs: selectedRestaurant.restaurantSpecs || {},
-      };
-      const currentReviewData: MrReviewData = { ...mrReviewData };
-      currentReviewData.place = selectedMrPlace;
-      currentReviewData.place!._id = selectedRestaurant._id;
-      setMrReviewData(currentReviewData);
-    }
+    const selected = restaurantPlaces.find((p) => p._id === _id);
+    if (!selected) return;
+
+    const selectedMrPlace: MrPlace = {
+      _id: selected._id,
+      googlePlaceId: selected.googlePlaceId,
+      placeType: selected.placeType || PlaceType.Restaurant,
+      placePreview: selected.placePreview || '',
+      placeRating: selected.placeRating || 0,
+      placeReview: selected.placeReview || '',
+      restaurantReviews: [],
+      restaurantSpecs: selected.restaurantSpecs || {},
+    };
+
+    setMrReviewData((prev) => ({ ...prev, place: selectedMrPlace }));
   };
 
-  const renderRestaurantSelector = (): JSX.Element => {
-    console.log(mrReviewData?.place?._id);
-    return (
-      <div className="form-group">
-        <Select
-          id="restaurant-selector"
-          value={mrReviewData?.place?._id || ''}
-          onChange={(event) => handleRestaurantSelection(event.target.value)}
-          displayEmpty
-          fullWidth
-        >
-          <MenuItem value="" disabled>
-            Select a restaurant
+  const renderRestaurantSelector = (): JSX.Element => (
+    <div className="form-group">
+      <Select
+        id="restaurant-selector"
+        value={mrReviewData?.place?._id || ''}
+        onChange={(event) => handleRestaurantSelection(event.target.value)}
+        displayEmpty
+        fullWidth
+      >
+        <MenuItem value="" disabled>
+          Select a restaurant
+        </MenuItem>
+        {restaurantPlaces.map((restaurant) => (
+          <MenuItem key={restaurant._id} value={restaurant._id}>
+            {restaurant.googlePlace?.name || 'Unnamed Place'}
           </MenuItem>
-          {getRestaurants().map((restaurantPlace: MrPlaceWithGooglePlace) => (
-            <MenuItem key={restaurantPlace._id} value={restaurantPlace._id}>
-              {restaurantPlace.googlePlace?.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </div>
-    );
-  }
+        ))}
+      </Select>
+    </div>
+  );
 
-  function renderRestaurantRating(): React.ReactNode {
-    console.log('mrReviewData: ', mrReviewData);  // mrReviewData.place is null
-
-    return (
-      <div className="form-group">
-        <PlaceRatingInput
-          rating={mrReviewData?.place?.placeRating || null}
-          onChange={(newRating) => {
-            const updatedPlace: MrPlace = mrReviewData?.place as MrPlace;
-            updatedPlace.placeRating = newRating ? newRating : undefined; // Set to undefined if null
-            setMrReviewData((prev) => ({ ...prev, place: updatedPlace }));
-          }}
-          legendLabels={["Won’t return", "Would try again", "Would return"]}
-          colorBands={["#f44336", "#fdd835", "#4caf50"]}
-          rangeBands={[[1, 3], [4, 7], [8, 10]]}
-        />
-      </div>
-    );
-  }
+  const renderRestaurantRating = (): JSX.Element => (
+    <div className="form-group">
+      <PlaceRatingInput
+        rating={mrReviewData?.place?.placeRating || null}
+        onChange={(newRating) => {
+          const updatedPlace: MrPlace = {
+            ...mrReviewData.place!,
+            placeRating: newRating ?? undefined,
+          };
+          setMrReviewData((prev) => ({ ...prev, place: updatedPlace }));
+        }}
+        legendLabels={["Won’t return", "Would try again", "Would return"]}
+        colorBands={["#f44336", "#fdd835", "#4caf50"]}
+        rangeBands={[[1, 3], [4, 7], [8, 10]]}
+      />
+    </div>
+  );
 
   const renderPlaceReview = (): JSX.Element => (
     <div className="form-group">
@@ -130,17 +115,14 @@ const RestaurantRating: React.FC<RestaurantRatingProps> = (props: RestaurantRati
   );
 
   return (
-    <>
-        <Paper elevation={3} sx={{ padding: 2, mb: 4 }}>
-          <Divider sx={{ mb: 2 }} />
-          <Stack spacing={2}>
-            {renderRestaurantSelector()}
-            {renderRestaurantRating()}
-            {renderPlaceReview()}
-          </Stack>
-        </Paper>
-
-    </>
+    <Paper elevation={3} sx={{ padding: 2, mb: 4 }}>
+      <Divider sx={{ mb: 2 }} />
+      <Stack spacing={2}>
+        {renderRestaurantSelector()}
+        {renderRestaurantRating()}
+        {renderPlaceReview()}
+      </Stack>
+    </Paper>
   );
 };
 

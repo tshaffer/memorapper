@@ -11,9 +11,8 @@ import { Distance, RestaurantOpen, Settings, } from './types';
 import Map from './pages/maps/Map';
 import SettingsDialog from './components/SettingsDialog';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { AppDispatch, fetchMrPlaces, RootState, setMrPlacesWithGooglePlaces } from './redux';
+import { AppDispatch, fetchMrPlaces, RootState } from './redux';
 import { setSettings, setFilters, fetchGooglePlaces } from './redux';
-import { mergeMrPlacesWithGooglePlaces } from './utilities/mergePlaces';
 import MrPlaceForm from './pages/MrPlace';
 import MrWriteReviewPage from './pages/MrWriteReviewPage';
 import MrPlaces from './pages/MrPlaces';
@@ -32,7 +31,7 @@ const activeButtonStyle: React.CSSProperties = {
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { googlePlaces, mrPlaces, settings, error, loading } = useSelector((state: RootState) => state.memorapper);
+  const { settings, error, loading } = useSelector((state: RootState) => state.memorapper);
 
   const isMobile = useMediaQuery('(max-width:768px)');
   const location = useLocation(); // Track the current route
@@ -45,12 +44,6 @@ const App: React.FC = () => {
     };
     loadData();
   }, [dispatch]);
-
-  useEffect(() => {
-    const merged = mergeMrPlacesWithGooglePlaces(mrPlaces, googlePlaces);
-    dispatch(setMrPlacesWithGooglePlaces(merged));
-  }, [mrPlaces, googlePlaces, dispatch]);
-
 
   useEffect(() => {
     console.log('getAppSettings useEffect called');

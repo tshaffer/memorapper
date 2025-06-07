@@ -7,9 +7,6 @@ import '../App.css';
 // import { useUserContext } from '../contexts/UserContext';
 import PlaceMarker from './PlaceMarker';
 import PlaceInfoWindow from './PlaceInfoWindow';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux';
-
 const DEFAULT_ZOOM = 14;
 
 const CustomBlueDot = () => (
@@ -32,8 +29,6 @@ interface MapWithMarkersProps {
 }
 
 const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, blueDotLocation, onVisiblePlacesChanged, onPlaceSelect }) => {
-
-  const { googlePlaces } = useSelector((state: RootState) => state.memorapper);
 
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);

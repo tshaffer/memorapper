@@ -1,19 +1,29 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Distance, Filters, RestaurantOpen, Settings, GooglePlace, MrPlace, MrPlaceWithGooglePlace, PlaceType, MrReviewData, RestaurantType, MrRestaurantReview, MrRestaurant } from '../types';
+import {
+  Distance,
+  Filters,
+  RestaurantOpen,
+  Settings,
+  GooglePlace,
+  MrPlace,
+  MrRestaurantReview,
+  MrReviewData,
+  MrRestaurant
+} from '../types';
 
 interface MemorapperState {
-  googlePlaces: GooglePlace[];
-  mrPlaces: MrPlace[];
-  mrPlacesWithGooglePlaces: MrPlaceWithGooglePlace[];
+  googlePlacesById: Record<string, GooglePlace>;
+  mrPlacesById: Record<string, MrPlace>;
+  mrPlaceIds: string[];
   settings: Settings;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: MemorapperState = {
-  googlePlaces: [],
-  mrPlaces: [],
-  mrPlacesWithGooglePlaces: [],
+  googlePlacesById: {},
+  mrPlacesById: {},
+  mrPlaceIds: [],
   settings: {
     filters: {
       distanceAway: Distance.AnyDistance,
@@ -43,14 +53,14 @@ export const fetchMrPlaces = createAsyncThunk('user/fetchMrPlaces', async () => 
   return data.places as MrPlace[];
 });
 
-const restaurantSpecsChanged = (restaurantSpecs: MrRestaurant, targetPlaceRestaurantSpecs: MrRestaurant): boolean => {
+const restaurantSpecsChanged = (a: MrRestaurant, b: MrRestaurant): boolean => {
   return (
-    restaurantSpecs.restaurantType !== targetPlaceRestaurantSpecs.restaurantType ||
-    restaurantSpecs.openForBreakfast !== targetPlaceRestaurantSpecs.openForBreakfast ||
-    restaurantSpecs.openForLunch !== targetPlaceRestaurantSpecs.openForLunch ||
-    restaurantSpecs.openForDinner !== targetPlaceRestaurantSpecs.openForDinner
+    a.restaurantType !== b.restaurantType ||
+    a.openForBreakfast !== b.openForBreakfast ||
+    a.openForLunch !== b.openForLunch ||
+    a.openForDinner !== b.openForDinner
   );
-}
+};
 
 const memorapperSlice = createSlice({
   name: 'memorapper',
@@ -62,95 +72,64 @@ const memorapperSlice = createSlice({
     setSettings(state, action: PayloadAction<Settings>) {
       state.settings = action.payload;
     },
-    setMrPlacesWithGooglePlaces(state, action: PayloadAction<MrPlaceWithGooglePlace[]>) {
-      state.mrPlacesWithGooglePlaces = action.payload;
+    setGooglePlaces(state, action: PayloadAction<GooglePlace[]>) {
+      const map: Record<string, GooglePlace> = {};
+      for (const place of action.payload) {
+        map[place.googlePlaceId] = place;
+      }
+      state.googlePlacesById = map;
+    },
+    setMrPlaces(state, action: PayloadAction<MrPlace[]>) {
+      const map: Record<string, MrPlace> = {};
+      const ids: string[] = [];
+
+      for (const place of action.payload) {
+        if (place._id) {
+          map[place._id] = place;
+          ids.push(place._id);
+        }
+      }
+
+      state.mrPlacesById = map;
+      state.mrPlaceIds = ids;
     },
     addMrPlace(state, action: PayloadAction<MrPlace>) {
-      const incoming = action.payload;
-      if (!incoming._id) {
-        state.mrPlaces.push(incoming);
-      } else {
-        // If _id is defined, replace existing entry
-        const index = state.mrPlaces.findIndex(
-          (place) => place._id === incoming._id
-        );
-        if (index !== -1) {
-          // Replace the existing entry
-          state.mrPlaces[index] = incoming;
-        } else {
-          // No match found, add it as new
-          state.mrPlaces.push(incoming);
-        }
-        console.log('Updated place :', state.mrPlaces);
-      }
-    },
-    addMrPlaceWithGooglePlace(state, action: PayloadAction<MrPlaceWithGooglePlace>) {
-      const incoming = action.payload;
-      if (!incoming._id) {
-        state.mrPlacesWithGooglePlaces.push(incoming);
-      } else {
-        // If _id is defined, replace existing entry
-        const index = state.mrPlacesWithGooglePlaces.findIndex(
-          (place) => place._id === incoming._id
-        );
-        if (index !== -1) {
-          // Replace the existing entry
-          state.mrPlacesWithGooglePlaces[index] = incoming;
-        } else {
-          // No match found, add it as new
-          state.mrPlacesWithGooglePlaces.push(incoming);
-        }
-        console.log('Updated place with Google Place:', state.mrPlacesWithGooglePlaces);
+      const place = action.payload;
+      if (!place._id) return;
+      state.mrPlacesById[place._id] = place;
+      if (!state.mrPlaceIds.includes(place._id)) {
+        state.mrPlaceIds.push(place._id);
       }
     },
     addMrRestaurantReview(state, action: PayloadAction<MrReviewData>) {
       const { place, dateOfVisit, itemReviews } = action.payload;
 
-      if (!place) {
-        console.warn('addMrRestaurantReview called without a place. Ignoring.');
+      if (!place || !place._id) {
+        console.warn('addMrRestaurantReview called without a valid place. Ignoring.');
         return;
       }
 
-      const targetPlace: MrPlace | undefined = state.mrPlaces.find((p) => p._id === place._id);
-      if (!targetPlace) {
+      const target = state.mrPlacesById[place._id];
+      if (!target) {
         console.warn(`Place not found for _id: ${place._id}`);
         return;
       }
 
-      const newReview: MrRestaurantReview = {
-        dateOfVisit,
-        itemReviews,
-      };
+      const newReview: MrRestaurantReview = { dateOfVisit, itemReviews };
+      target.restaurantReviews.push(newReview);
 
-      targetPlace.restaurantReviews.push(newReview);
+      const { placeType, interestLevel, placePreview, placeReview, placeRating, restaurantSpecs } = place;
 
-      // determine if other targetPlace properties need to be updated
-      const { placeType, interestLevel, placePreview, placeReview, placeRating, restaurantSpecs } = action.payload.place!;
-      if ((targetPlace.placeType !== placeType) && placeType) {
-        targetPlace.placeType = placeType;
-      }
-      if ((targetPlace.interestLevel !== interestLevel) && interestLevel) {
-        targetPlace.interestLevel = interestLevel;
-      }
-      if ((targetPlace.placePreview !== placePreview) && placePreview) {
-        targetPlace.placePreview = placePreview;
-      }
-      if ((targetPlace.placeReview !== placeReview) && placeReview) {
-        targetPlace.placeReview = placeReview;
-      }
-      if ((targetPlace.placeRating !== placeRating) && placeRating) {
-        targetPlace.placeRating = placeRating;
-      }
-      if (restaurantSpecsChanged(restaurantSpecs, targetPlace.restaurantSpecs)) {
-        targetPlace.restaurantSpecs = {
-          restaurantType: restaurantSpecs.restaurantType,
-          openForBreakfast: restaurantSpecs.openForBreakfast,
-          openForLunch: restaurantSpecs.openForLunch,
-          openForDinner: restaurantSpecs.openForDinner,
-        };
-      }
+      if (placeType !== undefined) target.placeType = placeType;
+      if (interestLevel !== undefined) target.interestLevel = interestLevel;
+      if (placePreview !== undefined) target.placePreview = placePreview;
+      if (placeReview !== undefined) target.placeReview = placeReview;
+      if (placeRating !== undefined) target.placeRating = placeRating;
 
-    }
+      if (restaurantSpecs && restaurantSpecsChanged(restaurantSpecs, target.restaurantSpecs)) {
+        target.restaurantSpecs = { ...restaurantSpecs };
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -159,7 +138,11 @@ const memorapperSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchGooglePlaces.fulfilled, (state, action) => {
-        state.googlePlaces = action.payload;
+        const map: Record<string, GooglePlace> = {};
+        for (const place of action.payload) {
+          map[place.googlePlaceId] = place;
+        }
+        state.googlePlacesById = map;
         state.loading = false;
       })
       .addCase(fetchGooglePlaces.rejected, (state, action) => {
@@ -171,7 +154,18 @@ const memorapperSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchMrPlaces.fulfilled, (state, action) => {
-        state.mrPlaces = action.payload;
+        const map: Record<string, MrPlace> = {};
+        const ids: string[] = [];
+
+        for (const place of action.payload) {
+          if (place._id) {
+            map[place._id] = place;
+            ids.push(place._id);
+          }
+        }
+
+        state.mrPlacesById = map;
+        state.mrPlaceIds = ids;
         state.loading = false;
       })
       .addCase(fetchMrPlaces.rejected, (state, action) => {
@@ -184,8 +178,8 @@ const memorapperSlice = createSlice({
 export const {
   setFilters,
   setSettings,
-  setMrPlacesWithGooglePlaces,
-  addMrPlaceWithGooglePlace,
+  setGooglePlaces,
+  setMrPlaces,
   addMrPlace,
   addMrRestaurantReview,
 } = memorapperSlice.actions;

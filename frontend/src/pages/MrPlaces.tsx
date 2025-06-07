@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useSelector } from 'react-redux';
-import { RootState } from '../redux';
+import { RootState, selectAllMrPlacesWithGooglePlaces } from '../redux';
 
 import { Box, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Tooltip, IconButton } from '@mui/material';
 
@@ -22,7 +22,7 @@ const smallColumnStyle: React.CSSProperties = {
 
 const MrPlaces: React.FC<any> = () => {
 
-  const { mrPlacesWithGooglePlaces } = useSelector((state: RootState) => state.memorapper);
+  const mrPlacesWithGooglePlaces: MrPlaceWithGooglePlace[] = useSelector(selectAllMrPlacesWithGooglePlaces);
 
   const navigate = useNavigate();
 

@@ -1,50 +1,43 @@
 import { useState } from "react";
-import { GooglePlace, MrPlaceWithGooglePlace, MrReviewData } from "../types";
+import { MrPlaceWithGooglePlace, MrReviewData } from "../types";
 import { getFormattedDate } from "../utilities";
 import MrReviewEntry from "./MrReviewEntry";
 import { useDispatch, useSelector } from 'react-redux';
 import { addMrRestaurantReview } from '../redux/memorapperSlice';
-import { RootState } from "../redux";
+import {
+  selectAllMrPlacesWithGooglePlaces
+} from "../redux/memorapperSelectors";
 
 const MrWriteReviewPage = () => {
-
-  const { mrPlacesWithGooglePlaces } = useSelector((state: RootState) => state.memorapper);
-
   const dispatch = useDispatch();
 
-  let place: GooglePlace | null = null;
-
-  const initialReviewData: MrReviewData = {
-    place,
+  const [mrReviewData, setMrReviewData] = useState<MrReviewData>({
+    place: null,
     dateOfVisit: getFormattedDate(),
     itemReviews: [],
-  };
+  });
 
-  const [mrReviewData, setMrReviewData] = useState<MrReviewData>(initialReviewData);
-
-  const getMrPlaceWithGooglePlace = (_id: string): MrPlaceWithGooglePlace | undefined => {
-    return mrPlacesWithGooglePlaces.find((place) => place._id === _id);
-  };
+  const allMrPlacesWithGooglePlaces = useSelector(selectAllMrPlacesWithGooglePlaces);
 
   const handleAddReview = async () => {
-
     console.log('Submitting review:', mrReviewData);
 
-    if (!mrReviewData.place) {
-      console.error('handleAddReview: No place data found in mrReviewData');
+    if (!mrReviewData.place || !mrReviewData.place._id) {
+      console.error('handleAddReview: No valid place in mrReviewData');
       return;
     }
 
-    console.log('handleAddReview: mrReviewData.place._id:', mrReviewData.place._id);
+    const placeId = mrReviewData.place._id;
+    const mrPlaceWithGooglePlace: MrPlaceWithGooglePlace | undefined =
+      allMrPlacesWithGooglePlaces.find(p => p._id === placeId);
 
-    const mrPlaceWithGooglePlace: MrPlaceWithGooglePlace | undefined = getMrPlaceWithGooglePlace(mrReviewData.place._id!);
     if (!mrPlaceWithGooglePlace) {
-      console.error('handleAddReview: No matching place found for _id:', mrReviewData.place._id);
+      console.error('handleAddReview: No matching place found for _id:', placeId);
       return;
     }
 
     if (!mrPlaceWithGooglePlace.googlePlace) {
-      console.error('handleAddReview: No googlePlace data found for _id:', mrReviewData.place._id);
+      console.error('handleAddReview: No googlePlace data found for _id:', placeId);
       return;
     }
 
@@ -52,9 +45,6 @@ const MrWriteReviewPage = () => {
     dispatch(addMrRestaurantReview(mrReviewData));
 
     // 2️⃣ Send updated MrPlace to backend
-
-    // update place properties if necessary
-    console.log('addReviewRequestBody:', mrReviewData);
     try {
       const response = await fetch('/api/addReview', {
         method: 'POST',
@@ -80,6 +70,6 @@ const MrWriteReviewPage = () => {
       </section>
     </div>
   );
-}
+};
 
 export default MrWriteReviewPage;

@@ -6,7 +6,7 @@ import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { PlaceType, MrPlace, MrPlaceWithGooglePlace } from '../types';
 import { useDispatch } from 'react-redux';
-import { addMrPlace, addMrPlaceWithGooglePlace } from '../redux/memorapperSlice';
+import { addMrPlace } from '../redux/memorapperSlice';
 import { Button, MenuItem, Select, Checkbox, FormControlLabel, TextField, Rating } from "@mui/material";
 import { GooglePlace, RestaurantType, MrRestaurant } from "../types";
 import RestaurantName from '../components/RestaurantName';
@@ -27,8 +27,10 @@ const MrPlaceForm = () => {
   const googlePlace: GooglePlace | undefined = editablePlace?.googlePlace;
   const googlePlaceId = googlePlace?.googlePlaceId || '';
   const placeType = editablePlace?.placeType || PlaceType.Restaurant;
-  const placeReview = editablePlace?.placeReview ?? '';
+  const interestLevel = editablePlace?.interestLevel || 0;
+  const placePreview = editablePlace?.placePreview || '';
   const placeRating = editablePlace?.placeRating ?? 0;
+  const placeReview = editablePlace?.placeReview ?? '';
   const restaurantReviews = editablePlace?.restaurantReviews || [];
   const restaurantSpecs = editablePlace?.restaurantSpecs || {} as MrRestaurant;
 
@@ -43,6 +45,8 @@ const MrPlaceForm = () => {
     googlePlace,
     googlePlaceId,
     placeType,
+    interestLevel,
+    placePreview,
     placeReview,
     placeRating,
     restaurantReviews,
@@ -155,10 +159,7 @@ const MrPlaceForm = () => {
   };
 
   const handleSubmitPlace = async (e: React.MouseEvent<HTMLButtonElement>) => {
-
     e.preventDefault();
-    console.log('handleSubmitPlace called with mrPlace:', mrPlaceWithGooglePlace);
-
     const mrPlace: MrPlace = {
       _id: mrPlaceWithGooglePlace._id || uuidv4(),
       googlePlaceId: mrPlaceWithGooglePlace.googlePlaceId,
@@ -174,15 +175,12 @@ const MrPlaceForm = () => {
         openForDinner: false,
       },
       restaurantReviews: mrPlaceWithGooglePlace.restaurantReviews || [],
-    }
+    };
+
     dispatch(addMrPlace(mrPlace));
-
-    dispatch(addMrPlaceWithGooglePlace(mrPlaceWithGooglePlace));
-
     setIsLoading(true);
 
     try {
-
       const response = await fetch('/api/upsertMrPlace', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
