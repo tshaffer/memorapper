@@ -349,22 +349,6 @@ const MrPlaceForm = () => {
         />
       </>
     )
-    /*
-    return (
-      <div>
-        <label htmlFor={`rating-${mrPlaceWithGooglePlace.placeRating}`}>Rating</label>
-        <Rating
-          id={`rating-${mrPlaceWithGooglePlace._id}`}
-          name={`rating-${mrPlaceWithGooglePlace._id}`}
-          value={mrPlaceWithGooglePlace.placeRating}
-          max={5}
-          onChange={(event, newValue) =>
-            handleChange('placeRating', newValue || 0)
-          }
-        />
-      </div>
-    );
-    */
   }
 
   const renderPlacePreview = (): JSX.Element => (

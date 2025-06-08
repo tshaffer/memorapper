@@ -11,6 +11,7 @@ import restaurantIcon from '@iconify/icons-openmoji/fork-and-knife-with-plate';
 import roundPushpin from '@iconify/icons-openmoji/round-pushpin';
 import loveHotelIcon from '@iconify/icons-openmoji/love-hotel';
 import convenienceStoreIcon from '@iconify/icons-openmoji/convenience-store';
+import { Rating } from '@mui/material';
 
 const iconContainerStyle: React.CSSProperties = {
   position: 'absolute',
@@ -32,6 +33,9 @@ interface PlaceMarkerProps {
 }
 
 const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
+
+  const [hovered, setHovered] = React.useState(false);
+
   const handlePlaceMarkerClick = () => {
     onMarkerClick(place);
   };
@@ -71,26 +75,80 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
     `,
   });
 
-  const poo = (): JSX.Element => (
-    <AdvancedMarker
-      position={getLatLngFromPlace(place)}
-      onClick={handlePlaceMarkerClick}
-    >
-      <div style={{ position: 'relative' }}>
-        <div style={{
-          position: 'relative',
-          background: 'rgba(255, 255, 255, 0.5)',
-          padding: '2px 4px',
-          borderRadius: '4px',
-        }}>
-          <div style={textStyle()}>{place.googlePlace?.name}</div>
-        </div>
-        <div style={iconContainerStyle}>
-          <Icon icon={getMarkerIcon()} style={{ fontSize: '30px' }} />
-        </div>
+  const renderHoverRating = (value: number | null | undefined): JSX.Element => {
+    return (
+      <Rating
+        value={!value ? 0 : value / 2}
+        max={5}
+        readOnly
+        size="small"
+        precision={0.5}
+      />
+    );
+  };
+
+  const getVisitedPlaceHoverElement = (): JSX.Element => {
+
+    console.log('getVisitedPlaceHoverElement called for place:', place.googlePlace?.name);
+
+    const elements: JSX.Element[] = [];
+
+    if (place.placeRating && place.placeRating > 0) {
+      elements.push(
+        <span key="rating-label">
+          Rating: {renderHoverRating(place.placeRating)}
+        </span>
+      );
+    }
+
+    if (place.placeReview && place.placeReview.length > 0) {
+      elements.push(<span key="review">{place.placeReview}</span>);
+    }
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        {elements}
       </div>
-    </AdvancedMarker>
-  );
+    );
+  }
+
+  const getUnvisitedPlaceHoverElement = (): JSX.Element => {
+    const elements: JSX.Element[] = [];
+
+    if (place.interestLevel && place.interestLevel > 0) {
+      elements.push(
+        <span key="preview-label">
+          Interest level: {renderHoverRating(place.interestLevel)}
+        </span>
+      );
+    }
+
+    if (place.placePreview && place.placePreview.length > 0) {
+      elements.push(<span key="preview">{place.placePreview}</span>);
+    }
+
+    if (elements.length === 0) {
+      elements.push(
+        <span key="rating-label">
+          Google rating: {renderHoverRating(place.googlePlace?.rating)}
+        </span>
+      );
+    }
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        {elements}
+      </div>
+    );
+  }
+
+  const getPlaceHoverElement = (): JSX.Element => {
+    if (place.visited) {
+      return getVisitedPlaceHoverElement();
+    } else {
+      return getUnvisitedPlaceHoverElement();
+    }
+  };
 
   const renderPlaceMarker = (): JSX.Element => {
     return (
@@ -99,16 +157,50 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
         onClick={handlePlaceMarkerClick}
       >
         <div
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
           style={{ position: 'relative' }}
-          title={place.googlePlace?.name || 'Unnamed Place'} // ✅ This adds hover text
         >
+          {hovered && (
+            <div
+              style={{
+                position: 'absolute',
+                top: '-2.5rem',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                padding: '4px 8px',
+                backgroundColor: '#333',
+                color: 'white',
+                borderRadius: '4px',
+                fontSize: '12px',
+                whiteSpace: 'nowrap',
+                zIndex: 1000,
+              }}
+            >
+              {getPlaceHoverElement()}
+            </div>
+          )}
+
+          {/* Re-add the place name label */}
+          <div
+            style={{
+              position: 'relative',
+              background: 'rgba(255, 255, 255, 0.5)',
+              padding: '2px 4px',
+              borderRadius: '4px',
+              textAlign: 'center',
+              marginBottom: '4px',
+            }}
+          >
+            <div style={textStyle()}>{place.googlePlace?.name}</div>
+          </div>
+
           <div style={iconContainerStyle}>
             <Icon icon={getMarkerIcon()} style={{ fontSize: '30px' }} />
           </div>
         </div>
       </AdvancedMarker>
-
-    )
+    );
   };
 
   return <>{renderPlaceMarker()}</>;
