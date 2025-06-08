@@ -46,8 +46,13 @@ const PlaceInfoWindow: React.FC<PlaceInfoWindowProps> = ({ place, onLinkClick, o
     if (placeLocation && currentLocation) {
       const destinationLocation: google.maps.LatLngLiteral = placeLocation.location;
       const destinationLatLng: google.maps.LatLngLiteral = { lat: destinationLocation.lat, lng: destinationLocation.lng };
-      const url = `https://www.google.com/maps/dir/?api=1&origin=${currentLocation.lat},${currentLocation.lng}&destination=${destinationLatLng.lat},${destinationLatLng.lng}&destination_place_id=${place.googlePlace!.name}`;
-      window.open(url, '_blank');
+      const subject = encodeURIComponent("Directions to " + place.googlePlace!.name);
+      const body = encodeURIComponent(
+        `Directions to ${place.googlePlace!.name}\n\n` +
+        `https://www.google.com/maps/dir/?api=1&origin=${currentLocation.lat},${currentLocation.lng}` +
+        `&destination=${destinationLatLng.lat},${destinationLatLng.lng}`
+      ); const mailtoUrl = `mailto:shaffer.family@gmail.com?subject=${subject}&body=${body}`;
+      window.open(mailtoUrl, '_blank');
     }
   };
 
