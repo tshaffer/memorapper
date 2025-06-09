@@ -159,32 +159,33 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
         <div
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
-          style={{ position: 'relative' }}
+          style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
         >
+          {/* Hover Info Box */}
           {hovered && (
             <div
               style={{
                 position: 'absolute',
-                top: '-2.5rem',
+                top: '-4.5rem', // adjust higher if needed
                 left: '50%',
                 transform: 'translateX(-50%)',
-                padding: '4px 8px',
+                padding: '6px 10px',
                 backgroundColor: '#333',
                 color: 'white',
                 borderRadius: '4px',
                 fontSize: '12px',
                 whiteSpace: 'nowrap',
                 zIndex: 1000,
+                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
               }}
             >
               {getPlaceHoverElement()}
             </div>
           )}
 
-          {/* Re-add the place name label */}
+          {/* Name Label */}
           <div
             style={{
-              position: 'relative',
               background: 'rgba(255, 255, 255, 0.5)',
               padding: '2px 4px',
               borderRadius: '4px',
@@ -195,6 +196,7 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
             <div style={textStyle()}>{place.googlePlace?.name}</div>
           </div>
 
+          {/* Marker Icon */}
           <div style={iconContainerStyle}>
             <Icon icon={getMarkerIcon()} style={{ fontSize: '30px' }} />
           </div>

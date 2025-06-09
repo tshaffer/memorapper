@@ -6,7 +6,6 @@ import '../App.css';
 // // https://icon-sets.iconify.design/?query=<query>
 // import { useUserContext } from '../contexts/UserContext';
 import PlaceMarker from './PlaceMarker';
-import PlaceInfoWindow from './PlaceInfoWindow';
 const DEFAULT_ZOOM = 14;
 
 const CustomBlueDot = () => (
@@ -63,8 +62,7 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, 
   }, []);
 
   const handlePlaceClicked = (place: MrPlaceWithGooglePlace) => {
-    console.log('Place clicked:', place);
-    setSelectedPlace(place);
+    onPlaceSelect(place);
   };
 
   const handleLinkClick = (): void => {
@@ -157,9 +155,6 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, 
           <AdvancedMarker position={blueDotLocation || currentLocation}>
             <CustomBlueDot />
           </AdvancedMarker>
-        )}
-        {selectedPlace && (
-          <PlaceInfoWindow place={selectedPlace} onLinkClick={handleLinkClick} onClose={handleCloseInfoWindow} />
         )}
       </Map>
     </APIProvider>
