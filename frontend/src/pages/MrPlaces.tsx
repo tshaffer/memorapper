@@ -23,6 +23,13 @@ const smallColumnStyle: React.CSSProperties = {
 const MrPlaces: React.FC<any> = () => {
 
   const mrPlacesWithGooglePlaces: MrPlaceWithGooglePlace[] = useSelector(selectAllMrPlacesWithGooglePlaces);
+  const sortedPlaces = mrPlacesWithGooglePlaces
+    .slice()
+    .sort((a, b) => {
+      const nameA = a.googlePlace?.name?.toLowerCase() || '';
+      const nameB = b.googlePlace?.name?.toLowerCase() || '';
+      return nameA.localeCompare(nameB);
+    });
 
   const navigate = useNavigate();
 
@@ -73,7 +80,7 @@ const MrPlaces: React.FC<any> = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {mrPlacesWithGooglePlaces.map((mrPlaceWithGooglePlace: MrPlaceWithGooglePlace) => {
+              {sortedPlaces.map((mrPlaceWithGooglePlace: MrPlaceWithGooglePlace) => {
                 return (
                   <React.Fragment key={mrPlaceWithGooglePlace._id}>
                     <TableRow>
