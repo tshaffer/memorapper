@@ -412,11 +412,7 @@ const MapPage: React.FC = () => {
           open={true}
           place={selectedPlace}
           onClose={() => setSelectedPlace(null)}
-          onUpdatePlace={handleUpdatePlace}
           onDeletePlace={handleDeletePlace}
-          onAddReview={handleAddReview}
-          onEditReview={handleEditReview}
-          onDeleteReview={handleDeleteReview}
         />
       )}
 

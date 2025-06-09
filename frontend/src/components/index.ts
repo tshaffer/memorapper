@@ -2,7 +2,6 @@ export * from './FiltersDialog';
 export * from './GoogleMapsProvider';
 export * from './LocationAutocomplete';
 export * from './OpeningHours';
-export * from './PlaceEditor';
 export * from './PlaceRatingInput';
 export * from './PulsingDots';
 export * from './Query';
