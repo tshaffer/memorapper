@@ -79,6 +79,7 @@ const MrPlaceForm = () => {
   }
 
   const inferMealAvailability = (opening_hours: any): MealAvailability => {
+
     let openForBreakfast = false;
     let openForLunch = false;
     let openForDinner = false;
@@ -99,10 +100,11 @@ const MrPlaceForm = () => {
     if (opening_hours.periods && Array.isArray(opening_hours.periods)) {
       opening_hours.periods.forEach((period: any) => {
         if (period.open && period.open.time) {
-          const hour = parseInt(period.open.time.substring(0, 2), 10);
-          if (hour < 10) openForBreakfast = true;
-          if (hour >= 10 && hour < 14) openForLunch = true;
-          if (hour >= 14) openForDinner = true;
+          const openingHour = parseInt(period.open.time.substring(0, 2), 10);
+          const closingHour = parseInt(period.close.time.substring(0, 2), 10);
+          if (openingHour < 10) openForBreakfast = true;
+          if (openingHour <= 12 && closingHour >= 14) openForLunch = true;
+          if (openingHour <= 18 && closingHour >= 20) openForDinner = true;
         }
       });
     }
