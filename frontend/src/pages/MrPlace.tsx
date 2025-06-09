@@ -386,7 +386,7 @@ const MrPlaceForm = () => {
           {renderRestaurantType()}
           {renderInterestLevel()}
           {renderPlacePreview()}
-          {/* {renderMealAvailability()} */}
+          {renderMealAvailability()}
           {renderRestaurantRating()}
           {renderPlaceReview()}
         </form>
