@@ -8,7 +8,8 @@ import {
   MrPlace,
   MrRestaurantReview,
   MrReviewData,
-  MrRestaurant
+  MrRestaurant,
+  VisitedStatus
 } from '../types';
 
 interface MemorapperState {
@@ -35,6 +36,7 @@ const initialState: MemorapperState = {
         Lunch: false,
         Dinner: false,
       },
+      visitedStatus: VisitedStatus.VisitedAndUnvisited,
     },
   },
   loading: true,

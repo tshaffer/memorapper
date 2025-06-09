@@ -7,7 +7,7 @@ import GoogleMapsProvider from './components/GoogleMapsProvider';
 
 import './App.css';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } from '@mui/material';
-import { Distance, RestaurantOpen, Settings, } from './types';
+import { Distance, RestaurantOpen, Settings, VisitedStatus, } from './types';
 import Map from './pages/maps/Map';
 import SettingsDialog from './components/SettingsDialog';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -62,7 +62,8 @@ const App: React.FC = () => {
               Breakfast: false,
               Lunch: false,
               Dinner: false,
-            }
+            },
+            visitedStatus: VisitedStatus.VisitedAndUnvisited,
           },
         };
         localStorage.setItem("appSettings", JSON.stringify(settings));

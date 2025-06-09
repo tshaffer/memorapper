@@ -1,4 +1,4 @@
-import { Distance, RestaurantOpen, PlaceType, RestaurantType } from "./enums";
+import { Distance, RestaurantOpen, PlaceType, RestaurantType, VisitedStatus } from "./enums";
 
 export interface Filters {
   distanceAway: Distance;
@@ -6,6 +6,7 @@ export interface Filters {
   restaurantTypes: RestaurantType[];
   restaurantOpen: RestaurantOpen;
   openMeals: OpenForMeals;
+  visitedStatus: VisitedStatus;
 }
 
 export interface SearchQuery {
@@ -15,6 +16,7 @@ export interface SearchQuery {
   restaurantTypes: RestaurantType[];
   restaurantOpen: RestaurantOpen;
   openMeals: OpenForMeals;
+  visitedStatus: VisitedStatus;
 }
 
 export interface DistanceAwayQuery {
@@ -28,4 +30,3 @@ export interface OpenForMeals {
   Lunch: boolean;
   Dinner: boolean;
 }
-

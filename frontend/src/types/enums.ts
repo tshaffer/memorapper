@@ -36,3 +36,9 @@ export enum MealType {
   Lunch = 'LUNCH',
   Dinner = 'DINNER',
 }
+
+export enum VisitedStatus {
+  NotVisited = 'NOT_VISITED',
+  Visited = 'VISITED',
+  VisitedAndUnvisited = 'VISITED_AND_UNVISITED',
+}

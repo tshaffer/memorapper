@@ -1,5 +1,5 @@
 import { Box, Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Checkbox, useMediaQuery, InputLabel, Select, MenuItem, SelectChangeEvent, FormGroup } from '@mui/material';
-import { Distance, Filters, MealType, RestaurantOpen, PlaceType, RestaurantType } from "../types";
+import { Distance, Filters, MealType, RestaurantOpen, PlaceType, RestaurantType, VisitedStatus } from "../types";
 import { useState } from 'react';
 
 export interface FiltersSettingsProps {
@@ -16,7 +16,8 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     restaurantOpen = RestaurantOpen.OpenAnyTime,
     placeTypes = [],
     restaurantTypes = [],
-    openMeals = { Breakfast: false, Lunch: false, Dinner: false }
+    openMeals = { Breakfast: false, Lunch: false, Dinner: false },
+    visitedStatus = VisitedStatus.VisitedAndUnvisited,
   } = filters;
 
   const [selectedPlaceTypes, setSelectedPlaceTypes] = useState<PlaceType[]>([]);
@@ -67,10 +68,14 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     onUpdateFilters({ ...filters, restaurantOpen });
   };
 
+  const handleVisitedStatusChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('Visited status changed:', event.target.value);
+    const visitedStatus = event.target.value as VisitedStatus;
+    onUpdateFilters({ ...filters, visitedStatus });
+  };
+
   // Handle the toggling of specific meal checkboxes.
-  const handleMealCheckboxChange = (meal: MealType) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleMealCheckboxChange = (meal: MealType) => (event: React.ChangeEvent<HTMLInputElement>) => {
     const updatedMeals = { ...openMeals, [meal]: event.target.checked };
     // When updating meal selections, set the mode to "MEALS" so that
     // the UI stays consistent with the user's intent.
@@ -213,6 +218,21 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
     );
   };
 
+  const renderVisitedStatus = (): JSX.Element => {
+    return (
+      <FormControl component="fieldset">
+        <FormLabel component="legend" sx={{ fontWeight: 500, fontSize: '14px', color: '#1976D2' }}>
+          VISITED STATUS
+        </FormLabel>
+        <RadioGroup row value={visitedStatus} onChange={handleVisitedStatusChanged}>
+          <FormControlLabel value={VisitedStatus.VisitedAndUnvisited} control={<Radio />} label="Visited and Unvisited" />
+          <FormControlLabel value={VisitedStatus.Visited} control={<Radio />} label="Visited" />
+          <FormControlLabel value={VisitedStatus.NotVisited} control={<Radio />} label="Unvisited" />
+        </RadioGroup>
+      </FormControl>
+    );
+  };
+
   // Renders the open status radio group and, if applicable, the meal checkboxes.
   const renderOpenFilter = (): JSX.Element => (
     <FormControl component="fieldset">
@@ -273,6 +293,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
       {renderDistanceAway()}
       {renderPlaceType()}
       {placeTypes.includes(PlaceType.Restaurant) && renderRestaurantType()}
+      {renderVisitedStatus()}
       {placeTypes.includes(PlaceType.Restaurant) && renderOpenFilter()}
     </Box>
   );

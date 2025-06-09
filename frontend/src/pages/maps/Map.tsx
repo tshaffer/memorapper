@@ -160,7 +160,7 @@ const MapPage: React.FC = () => {
 
     console.log('filterOnEntry called with googlePlaces:', googlePlaces);
 
-    const { distanceAway, restaurantOpen, placeTypes, restaurantTypes, openMeals } = filters;
+    const { distanceAway, restaurantOpen, placeTypes, restaurantTypes, openMeals, visitedStatus } = filters;
 
     const filter: Filters = {
       distanceAway,
@@ -168,6 +168,7 @@ const MapPage: React.FC = () => {
       restaurantTypes,
       restaurantOpen,
       openMeals,
+      visitedStatus,
     };
 
     const filteredPlaces: MrPlaceWithGooglePlace[] = newFilterResults(filter, googlePlaces, location);
@@ -196,7 +197,8 @@ const MapPage: React.FC = () => {
         lat: mapLocation!.lat,
         lng: mapLocation!.lng,
         radius: filters.distanceAway,
-      }
+      },
+      visitedStatus: filters.visitedStatus,
     };
 
     await executeSearchAndFilter(searchQuery);
