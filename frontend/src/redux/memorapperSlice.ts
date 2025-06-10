@@ -16,6 +16,7 @@ interface MemorapperState {
   googlePlacesById: Record<string, GooglePlace>;
   mrPlacesById: Record<string, MrPlace>;
   mrPlaceIds: string[];
+  currentMapLocation: google.maps.LatLngLiteral | null;
   settings: Settings;
   loading: boolean;
   error: string | null;
@@ -39,6 +40,7 @@ const initialState: MemorapperState = {
       visitedStatus: VisitedStatus.VisitedAndUnvisited,
     },
   },
+  currentMapLocation: null,
   loading: true,
   error: null,
 };
@@ -73,6 +75,9 @@ const memorapperSlice = createSlice({
     },
     setSettings(state, action: PayloadAction<Settings>) {
       state.settings = action.payload;
+    },
+    setCurrentMapLocation(state, action: PayloadAction<google.maps.LatLngLiteral | null>) {
+      state.currentMapLocation = action.payload;
     },
     setGooglePlaces(state, action: PayloadAction<GooglePlace[]>) {
       const map: Record<string, GooglePlace> = {};
@@ -180,6 +185,7 @@ const memorapperSlice = createSlice({
 export const {
   setFilters,
   setSettings,
+  setCurrentMapLocation,
   setGooglePlaces,
   setMrPlaces,
   addMrPlace,

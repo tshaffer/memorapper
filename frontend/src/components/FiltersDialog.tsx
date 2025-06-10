@@ -50,13 +50,14 @@ const FiltersDialog: React.FC<FiltersDialogProps> = (props: FiltersDialogProps) 
   }
 
   function handleSetFilters(): void {
-    props.onSetFilters(query, { 
-      distanceAway, 
-      restaurantOpen: restaurantOpen, 
-      placeTypes: placeTypes, 
-      restaurantTypes: restaurantTypes, 
+    props.onSetFilters(query, {
+      distanceAway,
+      restaurantOpen: restaurantOpen,
+      placeTypes: placeTypes,
+      restaurantTypes: restaurantTypes,
       openMeals: openMeals,
-    visitedStatus: props.filters.visitedStatus });
+      visitedStatus: visitedStatus,
+    });
     props.onClose();
   }
 

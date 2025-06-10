@@ -38,7 +38,7 @@ export enum MealType {
 }
 
 export enum VisitedStatus {
-  NotVisited = 'NOT_VISITED',
+  Unvisited = 'UNVISITED',
   Visited = 'VISITED',
   VisitedAndUnvisited = 'VISITED_AND_UNVISITED',
 }

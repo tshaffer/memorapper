@@ -19,10 +19,15 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import VisiblePlacesList from './VisiblePlacesList';
 import PlaceDetailPanel from './PlaceDetailPanel';
-import { useSelector } from 'react-redux';
-import { RootState, selectAllMrPlacesWithGooglePlaces, setFilters } from '../../redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, selectAllMrPlacesWithGooglePlaces, setCurrentMapLocation, setFilters } from '../../redux';
 
 const MapPage: React.FC = () => {
+
+  const dispatch = useDispatch();
+
+    const { currentMapLocation } = useSelector((state: RootState) => state.memorapper);
+  
   const mrPlacesWithGooglePlaces: MrPlaceWithGooglePlace[] = useSelector(selectAllMrPlacesWithGooglePlaces);
   const { settings } = useSelector((state: RootState) => state.memorapper);
   const { _id } = useParams<{ _id: string }>();
@@ -30,8 +35,6 @@ const MapPage: React.FC = () => {
   const isMobile = useMediaQuery('(max-width:768px)');
 
   const [showFiltersDialog, setShowFiltersDialog] = React.useState(false);
-
-  const [mapLocation, setMapLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
   const [filteredGooglePlaces, setFilteredGooglePlaces] = useState<MrPlaceWithGooglePlace[]>([]);
 
@@ -82,7 +85,7 @@ const MapPage: React.FC = () => {
         };
 
         if (!_id) {
-          setMapLocation(location);
+          dispatch(setCurrentMapLocation(location));
         }
 
         return location;
@@ -97,7 +100,7 @@ const MapPage: React.FC = () => {
         console.warn('Using default location:', defaultLocation);
 
         if (!_id) {
-          setMapLocation(defaultLocation);
+          dispatch(setCurrentMapLocation(defaultLocation));
         }
 
         return defaultLocation;
@@ -122,7 +125,7 @@ const MapPage: React.FC = () => {
           lat: googlePlace.googlePlace!.geometry.location.lat,
           lng: googlePlace.googlePlace!.geometry.location.lng,
         };
-        setMapLocation(location);
+        dispatch(setCurrentMapLocation(location));
       } else {
         console.warn('Place not found or missing geometry for _id:', _id);
       }
@@ -194,8 +197,8 @@ const MapPage: React.FC = () => {
       restaurantTypes: filters.restaurantTypes,
       openMeals: filters.openMeals,
       distanceSpec: {
-        lat: mapLocation!.lat,
-        lng: mapLocation!.lng,
+        lat: currentMapLocation!.lat,
+        lng: currentMapLocation!.lng,
         radius: filters.distanceAway,
       },
       visitedStatus: filters.visitedStatus,
@@ -211,7 +214,7 @@ const MapPage: React.FC = () => {
   };
 
   const handleSetMapLocation = (location: google.maps.LatLngLiteral): void => {
-    setMapLocation(location);
+    dispatch(setCurrentMapLocation(location));
   }
 
   const visiblePlacesChanged = (beforeList: MrPlaceWithGooglePlace[], afterList: MrPlaceWithGooglePlace[]): boolean => {
@@ -311,7 +314,7 @@ const MapPage: React.FC = () => {
   };
 
   const renderMap = () => {
-    if (!mapLocation) {
+    if (!currentMapLocation) {
       return null;
     }
 
@@ -324,8 +327,8 @@ const MapPage: React.FC = () => {
         }}
       >
         <MapWithMarkers
-          key={JSON.stringify({ googlePlaces: filteredGooglePlaces, specifiedLocation: mapLocation })} // Forces re-render on prop change
-          initialCenter={mapLocation!}
+          key={JSON.stringify({ googlePlaces: filteredGooglePlaces, specifiedLocation: currentMapLocation })} // Forces re-render on prop change
+          initialCenter={currentMapLocation!}
           places={filteredGooglePlaces}
           onVisiblePlacesChanged={(visiblePlaces) => handleVisiblePlacesChanged(visiblePlaces)}
           onPlaceSelect={handlePlaceSelect}  // new callback for when a list item is clicked

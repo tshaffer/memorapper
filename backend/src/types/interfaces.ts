@@ -1,4 +1,4 @@
-import { RestaurantOpen, PlaceType, RestaurantType, Distance } from "./enums";
+import { RestaurantOpen, PlaceType, RestaurantType, Distance, VisitedStatus } from "./enums";
 import { MrPlaceWithGooglePlace } from "./mrTypes";
 
 export interface Filters {
@@ -7,6 +7,7 @@ export interface Filters {
   restaurantTypes: RestaurantType[];
   restaurantOpen: RestaurantOpen;
   openMeals: OpenForMeals;
+  visitedStatus: VisitedStatus;
 }
 
 export interface SearchQuery {
@@ -16,6 +17,7 @@ export interface SearchQuery {
   restaurantTypes: RestaurantType[];
   restaurantOpen: RestaurantOpen;
   openMeals: OpenForMeals;
+  visitedStatus: VisitedStatus;
 }
 
 export interface DistanceAwayQuery {

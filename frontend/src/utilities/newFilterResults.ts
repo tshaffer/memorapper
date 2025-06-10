@@ -22,7 +22,7 @@ export const newFilterResults = (
 };
 
 // Helper function to calculate distance between two coordinates
-function haversineDistance(
+export function haversineDistance(
   coord1: google.maps.LatLngLiteral,
   coord2: google.maps.LatLngLiteral
 ): number {

@@ -227,7 +227,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
         <RadioGroup row value={visitedStatus} onChange={handleVisitedStatusChanged}>
           <FormControlLabel value={VisitedStatus.VisitedAndUnvisited} control={<Radio />} label="Visited and Unvisited" />
           <FormControlLabel value={VisitedStatus.Visited} control={<Radio />} label="Visited" />
-          <FormControlLabel value={VisitedStatus.NotVisited} control={<Radio />} label="Unvisited" />
+          <FormControlLabel value={VisitedStatus.Unvisited} control={<Radio />} label="Unvisited" />
         </RadioGroup>
       </FormControl>
     );

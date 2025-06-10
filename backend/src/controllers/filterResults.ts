@@ -1,4 +1,4 @@
-import { Filters, SearchResponse, RestaurantType, RestaurantOpen, MealType, PlaceType, MrPlaceWithGooglePlace } from "../types";
+import { Filters, SearchResponse, RestaurantType, RestaurantOpen, MealType, PlaceType, MrPlaceWithGooglePlace, MrPlace, VisitedStatus } from "../types";
 
 export const filterResults = async (
   filter: Filters,
@@ -11,6 +11,7 @@ export const filterResults = async (
     restaurantTypes: restaurantsTypeFilter,
     restaurantOpen,
     openMeals,
+    visitedStatus,
   } = filter;
 
   const filteredPlaces = places.filter(place => {
@@ -43,6 +44,14 @@ export const filterResults = async (
       ) {
         return false;
       }
+    }
+
+    // 4.5 Visited status filter
+    if (visitedStatus === VisitedStatus.Visited) {
+      if (!isVisited(place)) return false;
+    } else if (visitedStatus === VisitedStatus.Unvisited) {
+      if (isVisited(place)) return false;
+      // } else if (visitedStatus === VisitedStatus.VisitedAndUnvisited) {
     }
 
     // 5) Open‐now vs. open‐for‐meals vs. no open filter
@@ -125,6 +134,14 @@ const isPlaceOpenNow = (openingHours?: google.maps.places.PlaceOpeningHours): bo
   const closingTime = todayPeriod.close ? parseInt(todayPeriod.close.time, 10) : 2400; // Default close to midnight
 
   return currentTime >= openingTime && currentTime < closingTime;
+};
+
+const isVisited = (place: MrPlaceWithGooglePlace): boolean => {
+  const visited =
+    (typeof place.placeRating === 'number' && place.placeRating > 0) ||
+    (place.placeReview?.trim() ?? '') !== '' ||
+    (place.restaurantReviews?.length ?? 0) > 0;
+  return visited
 };
 
 interface MealAvailability {
