@@ -25,9 +25,10 @@ interface MapWithMarkersProps {
   blueDotLocation?: google.maps.LatLngLiteral;
   onVisiblePlacesChanged: (places: MrPlaceWithGooglePlace[]) => void;
   onPlaceSelect: (place: MrPlaceWithGooglePlace) => void;
+  hoveredPlaceId: string | null;
 }
 
-const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, blueDotLocation, onVisiblePlacesChanged, onPlaceSelect }) => {
+const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, blueDotLocation, onVisiblePlacesChanged, onPlaceSelect, hoveredPlaceId }) => {
 
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
@@ -80,6 +81,7 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, 
         key={`location-${index}`}
         place={place}
         onMarkerClick={(place: MrPlaceWithGooglePlace) => handlePlaceClicked(place)}
+        isHovered={place._id === hoveredPlaceId}
       >
       </PlaceMarker>
     );

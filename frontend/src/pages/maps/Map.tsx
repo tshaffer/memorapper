@@ -26,8 +26,8 @@ const MapPage: React.FC = () => {
 
   const dispatch = useDispatch();
 
-    const { currentMapLocation } = useSelector((state: RootState) => state.memorapper);
-  
+  const { currentMapLocation } = useSelector((state: RootState) => state.memorapper);
+
   const mrPlacesWithGooglePlaces: MrPlaceWithGooglePlace[] = useSelector(selectAllMrPlacesWithGooglePlaces);
   const { settings } = useSelector((state: RootState) => state.memorapper);
   const { _id } = useParams<{ _id: string }>();
@@ -43,6 +43,8 @@ const MapPage: React.FC = () => {
   const [isListVisible, setIsListVisible] = useState(true);
   const [visiblePlaces, setVisiblePlaces] = useState<MrPlaceWithGooglePlace[]>([]);
   const [selectedPlace, setSelectedPlace] = useState<MrPlaceWithGooglePlace | null>(null);
+
+  const [hoveredPlaceId, setHoveredPlaceId] = useState<string | null>(null);
 
   const prevVisiblePlacesList = useRef<MrPlaceWithGooglePlace[]>([])
 
@@ -331,7 +333,8 @@ const MapPage: React.FC = () => {
           initialCenter={currentMapLocation!}
           places={filteredGooglePlaces}
           onVisiblePlacesChanged={(visiblePlaces) => handleVisiblePlacesChanged(visiblePlaces)}
-          onPlaceSelect={handlePlaceSelect}  // new callback for when a list item is clicked
+          onPlaceSelect={handlePlaceSelect}
+          hoveredPlaceId={hoveredPlaceId}
         />
       </div>
     );
@@ -344,7 +347,8 @@ const MapPage: React.FC = () => {
         {isListVisible && (
           <VisiblePlacesList
             visiblePlaces={visiblePlaces}
-            onPlaceSelect={handlePlaceSelect}  // new callback for when a list item is clicked
+            onPlaceSelect={handlePlaceSelect}
+            onPlaceHover={setHoveredPlaceId}
           />
         )}
         <div style={{ flex: 1 }}>{renderMap()}</div>

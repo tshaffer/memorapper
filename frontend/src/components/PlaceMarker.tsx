@@ -30,11 +30,14 @@ const iconContainerStyle: React.CSSProperties = {
 interface PlaceMarkerProps {
   place: MrPlaceWithGooglePlace & { visited?: boolean }; // <- includes visited
   onMarkerClick: (place: MrPlaceWithGooglePlace) => void;
+  isHovered?: boolean;
 }
 
-const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
+const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick, isHovered }) => {
 
   const [hovered, setHovered] = React.useState(false);
+
+  const effectiveHover = hovered || isHovered;
 
   const handlePlaceMarkerClick = () => {
     onMarkerClick(place);
@@ -162,7 +165,7 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick }) => {
           style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
         >
           {/* Hover Info Box */}
-          {hovered && (
+          {effectiveHover && (
             <div
               style={{
                 position: 'absolute',

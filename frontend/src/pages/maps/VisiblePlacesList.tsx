@@ -17,6 +17,7 @@ import { haversineDistance } from '../../utilities';
 export interface VisiblePlacesListProps {
   visiblePlaces: (MrPlaceWithGooglePlace & { visited?: boolean })[];
   onPlaceSelect: (place: MrPlaceWithGooglePlace) => void;
+  onPlaceHover: (placeId: string | null) => void;
 }
 
 type SortOption = 'name' | 'distance' | 'rating' | 'visitedFirst' | 'unvisitedFirst';
@@ -24,6 +25,7 @@ type SortOption = 'name' | 'distance' | 'rating' | 'visitedFirst' | 'unvisitedFi
 const VisiblePlacesList: React.FC<VisiblePlacesListProps> = ({
   visiblePlaces,
   onPlaceSelect,
+  onPlaceHover,
 }) => {
   const isMobile = useMediaQuery('(max-width:768px)');
   const [sortOption, setSortOption] = useState<SortOption>('name');
@@ -47,7 +49,7 @@ const VisiblePlacesList: React.FC<VisiblePlacesListProps> = ({
       return place.googlePlace.rating;
     } else {
       return 0; // Default rating if none available
-    }     
+    }
   }
 
   const sortedPlaces = useMemo(() => {
@@ -108,7 +110,11 @@ const VisiblePlacesList: React.FC<VisiblePlacesListProps> = ({
 
       <List>
         {sortedPlaces.map((place, index) => (
-          <ListItemButton key={index}>
+          <ListItemButton
+            key={index}
+            onMouseEnter={() => onPlaceHover(place._id!)}
+            onMouseLeave={() => onPlaceHover(null)}
+          >
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <h4
                 style={{
