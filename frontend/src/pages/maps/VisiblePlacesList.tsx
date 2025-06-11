@@ -9,6 +9,10 @@ import {
   InputLabel,
   Box,
 } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
+
 import { MrPlaceWithGooglePlace } from '../../types';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux';
@@ -18,6 +22,8 @@ export interface VisiblePlacesListProps {
   visiblePlaces: (MrPlaceWithGooglePlace & { visited?: boolean })[];
   onPlaceSelect: (place: MrPlaceWithGooglePlace) => void;
   onPlaceHover: (placeId: string | null) => void;
+  onEditPlace: (place: MrPlaceWithGooglePlace) => void;
+  onDeletePlace: (place: MrPlaceWithGooglePlace) => void;
 }
 
 type SortOption = 'name' | 'distance' | 'rating' | 'visitedFirst' | 'unvisitedFirst';
@@ -26,6 +32,8 @@ const VisiblePlacesList: React.FC<VisiblePlacesListProps> = ({
   visiblePlaces,
   onPlaceSelect,
   onPlaceHover,
+  onEditPlace,
+  onDeletePlace,
 }) => {
   const isMobile = useMediaQuery('(max-width:768px)');
   const [sortOption, setSortOption] = useState<SortOption>('name');
@@ -114,21 +122,39 @@ const VisiblePlacesList: React.FC<VisiblePlacesListProps> = ({
             key={index}
             onMouseEnter={() => onPlaceHover(place._id!)}
             onMouseLeave={() => onPlaceHover(null)}
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: 1,
+            }}
           >
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <IconButton size="small" onClick={(e) => { e.stopPropagation(); onEditPlace(place); }}>
+                <EditIcon fontSize="small" />
+              </IconButton>
+              <IconButton size="small" onClick={(e) => { e.stopPropagation(); onDeletePlace(place); }}>
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </Box>
+            <Box
+              sx={{ cursor: 'pointer', flexGrow: 1 }}
+              onClick={() => onPlaceSelect(place)}
+            >
               <h4
                 style={{
                   margin: '0',
                   color: 'blue',
                   textDecoration: 'underline',
-                  cursor: 'pointer',
                   fontWeight: 'bold',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
                 }}
-                onClick={() => onPlaceSelect(place)}
               >
-                {place.googlePlace!.name}
+                {place.googlePlace?.name}
               </h4>
-            </div>
+            </Box>
           </ListItemButton>
         ))}
       </List>

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Paper, Box, IconButton, useMediaQuery } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import LocationAutocomplete from '../../components/LocationAutocomplete';
@@ -20,7 +20,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import VisiblePlacesList from './VisiblePlacesList';
 import PlaceDetailPanel from './PlaceDetailPanel';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState, selectAllMrPlacesWithGooglePlaces, setCurrentMapLocation, setFilters } from '../../redux';
+import { deleteMrPlace, RootState, selectAllMrPlacesWithGooglePlaces, setCurrentMapLocation, setFilters } from '../../redux';
 
 const MapPage: React.FC = () => {
 
@@ -133,6 +133,16 @@ const MapPage: React.FC = () => {
       }
     }
   }, [_id, mrPlacesWithGooglePlaces]);
+
+  const navigate = useNavigate();
+
+  const handleEditPlace = (mrPlaceWithGooglePlace: MrPlaceWithGooglePlace) => {
+    navigate(`/add-place/${mrPlaceWithGooglePlace._id}`, { state: mrPlaceWithGooglePlace });
+  };
+
+  const handleDeletePlaceFromList = (place: MrPlaceWithGooglePlace) => {
+    handleDeletePlace(place._id!);
+  };
 
   const handleOpenFiltersDialog = () => {
     setShowFiltersDialog(true);
@@ -280,9 +290,18 @@ const MapPage: React.FC = () => {
 
   };
 
-  const handleDeletePlace = (_id: string) => {
-    // Implement deletion logic (backend call, state update, etc.)
+  const handleDeletePlace = async (_id: string) => {
     console.log('Delete place with id: ', _id);
+    const deletePlaceBody = {
+      placeId: _id,
+    };
+    await fetch('/api/deletePlace', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(deletePlaceBody),
+    });
+
+    dispatch(deleteMrPlace(_id));
     setSelectedPlace(null);
   };
 
@@ -349,6 +368,8 @@ const MapPage: React.FC = () => {
             visiblePlaces={visiblePlaces}
             onPlaceSelect={handlePlaceSelect}
             onPlaceHover={setHoveredPlaceId}
+            onEditPlace={handleEditPlace}
+            onDeletePlace={handleDeletePlaceFromList}
           />
         )}
         <div style={{ flex: 1 }}>{renderMap()}</div>
