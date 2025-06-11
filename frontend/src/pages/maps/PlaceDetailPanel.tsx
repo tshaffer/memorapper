@@ -117,7 +117,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
     if (place.googlePlace?.rating) {
       elements.push(
         <span key="rating-label">
-          Google rating: {place.googlePlace.rating.toString()}{renderRating(place.googlePlace.rating)} ({place.googlePlace?.user_ratings_total})
+          Google rating: {(place.googlePlace.rating * 2).toString()}{renderRating((place.googlePlace.rating * 2))} ({place.googlePlace?.user_ratings_total})
         </span>
       );
     }

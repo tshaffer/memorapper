@@ -129,7 +129,7 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick, isHover
     if (place.googlePlace?.rating) {
       elements.push(
         <span key="rating-label">
-          Google rating: {place.googlePlace.rating.toString()}{renderHoverRating(place.googlePlace?.rating)}
+          Google rating: {(place.googlePlace.rating * 2).toString()}{renderHoverRating((place.googlePlace.rating * 2))}
         </span>
       );
     }

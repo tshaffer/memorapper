@@ -54,7 +54,7 @@ const VisiblePlacesList: React.FC<VisiblePlacesListProps> = ({
     } else if (place.interestLevel) {
       return place.interestLevel;
     } else if (place.googlePlace?.rating) {
-      return place.googlePlace.rating;
+      return (place.googlePlace.rating * 2);
     } else {
       return 0; // Default rating if none available
     }
