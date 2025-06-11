@@ -282,3 +282,23 @@ const addReviewToDb = async (
     throw error;
   }
 };
+
+export const deletePlaceHandler = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const body = req.body;
+  const placeId = body.placeId;
+
+  try {
+    await deletePlace(placeId);
+    return res.status(200).json({ message: 'Place deleted successfully.' }); // ✅ ends the response
+  } catch (error) {
+    console.error('Error deleting place:', error);
+    return res.status(500).json({ error: 'An error occurred while deleting the place.' });
+  }
+};
+
+const deletePlace = async (placeId: string) => {
+  await MrPlaceModel.findOneAndDelete({ _id: placeId });
+}

@@ -1,13 +1,12 @@
 import React from 'react';
 
-import { useSelector } from 'react-redux';
-import { RootState, selectAllMrPlacesWithGooglePlaces } from '../redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteMrPlace, selectAllMrPlacesWithGooglePlaces } from '../redux';
 
 import { Box, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Tooltip, IconButton } from '@mui/material';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-
 
 import { MrPlaceWithGooglePlace } from '../types';
 import { getCityNameFromPlace } from '../utilities';
@@ -21,6 +20,8 @@ const smallColumnStyle: React.CSSProperties = {
 };
 
 const MrPlaces: React.FC<any> = () => {
+
+  const dispatch = useDispatch();
 
   const mrPlacesWithGooglePlaces: MrPlaceWithGooglePlace[] = useSelector(selectAllMrPlacesWithGooglePlaces);
   const sortedPlaces = mrPlacesWithGooglePlaces
@@ -40,10 +41,17 @@ const MrPlaces: React.FC<any> = () => {
     navigate(`/add-place/${mrPlaceWithGooglePlace._id}`, { state: mrPlaceWithGooglePlace });
   }
 
-  function handleDeletePlace(mrPlaceWithGooglePlace: MrPlaceWithGooglePlace) {
-    // For now, just log the place to the console.
-    // In a real app, you might open a dialog or navigate to an edit page.
-    console.log('Delete place:', mrPlaceWithGooglePlace);
+  const handleDeletePlace = async (mrPlaceWithGooglePlace: MrPlaceWithGooglePlace) => {
+    const deletePlaceBody = {
+      placeId: mrPlaceWithGooglePlace._id,
+    };
+    const response = await fetch('/api/deletePlace', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(deletePlaceBody),
+    });
+
+    dispatch(deleteMrPlace(mrPlaceWithGooglePlace._id!));
   }
 
   const renderPlaces = (): JSX.Element | null => {

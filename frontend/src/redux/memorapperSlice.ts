@@ -108,6 +108,26 @@ const memorapperSlice = createSlice({
         state.mrPlaceIds.push(place._id);
       }
     },
+    deleteMrPlace(state, action: PayloadAction<string>) {
+      const placeId = action.payload;
+
+      // Get the MrPlace before deleting it to retrieve its googlePlaceId
+      const placeToDelete = state.mrPlacesById[placeId];
+      if (!placeToDelete) return;
+
+      const { googlePlaceId } = placeToDelete;
+
+      // Remove from mrPlacesById
+      delete state.mrPlacesById[placeId];
+
+      // Remove from mrPlaceIds
+      state.mrPlaceIds = state.mrPlaceIds.filter(id => id !== placeId);
+
+      // Remove from googlePlacesById if matching googlePlaceId exists
+      if (state.googlePlacesById[googlePlaceId]) {
+        delete state.googlePlacesById[googlePlaceId];
+      }
+    },
     addMrRestaurantReview(state, action: PayloadAction<MrReviewData>) {
       const { place, dateOfVisit, itemReviews } = action.payload;
 
@@ -190,6 +210,7 @@ export const {
   setMrPlaces,
   addMrPlace,
   addMrRestaurantReview,
+  deleteMrPlace,
 } = memorapperSlice.actions;
 
 export default memorapperSlice.reducer;
