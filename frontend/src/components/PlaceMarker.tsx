@@ -99,7 +99,7 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick, isHover
     if (place.placeRating && place.placeRating > 0) {
       elements.push(
         <span key="rating-label">
-          Rating: {renderHoverRating(place.placeRating)}
+          Memorapper Rating: {place.placeRating.toString()}{renderHoverRating(place.placeRating)}
         </span>
       );
     }
@@ -121,21 +121,21 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick, isHover
     if (place.interestLevel && place.interestLevel > 0) {
       elements.push(
         <span key="preview-label">
-          Interest level: {renderHoverRating(place.interestLevel)}
+          Interest level: {place.interestLevel.toString()}{renderHoverRating(place.interestLevel)}
+        </span>
+      );
+    }
+
+    if (place.googlePlace?.rating) {
+      elements.push(
+        <span key="rating-label">
+          Google rating: {place.googlePlace.rating.toString()}{renderHoverRating(place.googlePlace?.rating)}
         </span>
       );
     }
 
     if (place.placePreview && place.placePreview.length > 0) {
       elements.push(<span key="preview">{place.placePreview}</span>);
-    }
-
-    if (elements.length === 0) {
-      elements.push(
-        <span key="rating-label">
-          Google rating: {renderHoverRating(place.googlePlace?.rating)}
-        </span>
-      );
     }
 
     return (

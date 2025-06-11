@@ -83,10 +83,15 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
     if (place.placeRating && place.placeRating > 0) {
       elements.push(
         <span key="rating-label">
-          Rating: {renderRating(place.placeRating)}
+          Memorapper Rating: {place.placeRating.toString()}{renderRating(place.placeRating)}
         </span>
       );
     }
+
+    if (place.placeReview && place.placeReview.length > 0) {
+      elements.push(<span key="review">{place.placeReview}</span>);
+    }
+
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -104,21 +109,21 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
     if (place.interestLevel && place.interestLevel > 0) {
       elements.push(
         <span key="preview-label">
-          Interest level: {renderRating(place.interestLevel)}
+          Interest level: {place.interestLevel.toString()}{renderRating(place.interestLevel)}
+        </span>
+      );
+    }
+
+    if (place.googlePlace?.rating) {
+      elements.push(
+        <span key="rating-label">
+          Google rating: {place.googlePlace.rating.toString()}{renderRating(place.googlePlace.rating)} ({place.googlePlace?.user_ratings_total})
         </span>
       );
     }
 
     if (place.placePreview && place.placePreview.length > 0) {
       elements.push(<span key="preview">{place.placePreview}</span>);
-    }
-
-    if (elements.length === 0 && place.googlePlace?.rating) {
-      elements.push(
-        <span key="rating-label">
-          Google rating: {place.googlePlace.rating.toString()}{renderRating(place.googlePlace.rating)} ({place.googlePlace?.user_ratings_total})
-        </span>
-      );
     }
 
     return (
