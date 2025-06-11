@@ -35,8 +35,6 @@ const MrPlaces: React.FC<any> = () => {
   const navigate = useNavigate();
 
   function handleEditPlace(mrPlaceWithGooglePlace: MrPlaceWithGooglePlace) {
-    // For now, just log the place to the console.
-    // In a real app, you might open a dialog or navigate to an edit page.
     console.log('Edit place:', mrPlaceWithGooglePlace);
     navigate(`/add-place/${mrPlaceWithGooglePlace._id}`, { state: mrPlaceWithGooglePlace });
   }
@@ -45,7 +43,7 @@ const MrPlaces: React.FC<any> = () => {
     const deletePlaceBody = {
       placeId: mrPlaceWithGooglePlace._id,
     };
-    const response = await fetch('/api/deletePlace', {
+    await fetch('/api/deletePlace', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(deletePlaceBody),

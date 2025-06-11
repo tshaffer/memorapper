@@ -54,7 +54,7 @@ export type EditablePlace = {
 }
 
 export type MrSubmitPlaceRequestBody = {
-  _id?: string; // Optional for updates
+  _id?: string;
   placeType?: PlaceType;
   interestLevel?: number;
   placePreview?: string;
