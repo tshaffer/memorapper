@@ -12,6 +12,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import { PlaceType, MrPlaceWithGooglePlace, GoogleGeometry } from '../../types';
 import { restaurantTypeLabelFromRestaurantType } from '../../utilities';
 import { OpeningHours } from '../../components';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useNavigate } from 'react-router-dom';
 
 interface PlaceDetailPanelProps {
   open: boolean;
@@ -24,6 +27,8 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
   place,
   onClose,
 }) => {
+
+  const navigate = useNavigate();
 
   const placeLocation: GoogleGeometry = place.googlePlace!.geometry!;
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
@@ -43,6 +48,15 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
     }
   }, []);
 
+  const handleEditReview = (reviewId: string) => {
+    console.log('handleEditReview called for reviewId:', reviewId);
+    // navigate(`/write-review/${place._id}/${reviewId}`);
+  };
+
+  const handleDeleteReview = (reviewId: string) => {
+    console.log('handleDeleteReview called for reviewId:', reviewId);
+    // confirm and then call deleteReview API
+  };
 
   const handleShowDirections = () => {
     if (placeLocation && currentLocation) {
@@ -72,8 +86,6 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
 
   const renderVisitedPlaceRatingLine = (): JSX.Element | null => {
 
-    console.log('getVisitedPlaceHoverElement called for place:', place.googlePlace?.name);
-
     const elements: JSX.Element[] = [];
 
     if (place.placeRating && place.placeRating > 0) {
@@ -97,8 +109,6 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
   }
 
   const renderUnvisitedPlaceRatingLine = (): JSX.Element | null => {
-
-    console.log('renderUnvisitedPlaceRatingLine called for place:', place.googlePlace?.name);
 
     const elements: JSX.Element[] = [];
 
@@ -214,6 +224,14 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
             <Typography variant="subtitle2">
               Date of Visit: {new Date(review.dateOfVisit).toLocaleDateString()}
             </Typography>
+            <Box>
+              <IconButton onClick={() => handleEditReview('x')}>
+                <EditIcon fontSize="small" />
+              </IconButton>
+              <IconButton onClick={() => handleDeleteReview('y')}>
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </Box>
             <Box sx={{ ml: 2 }}>
               {review.itemReviews && review.itemReviews.length > 0 ? (
                 review.itemReviews.map((item, itemIndex) => (

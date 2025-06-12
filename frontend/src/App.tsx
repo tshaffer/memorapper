@@ -115,6 +115,8 @@ const App: React.FC = () => {
         <Route path="/add-place" element={<MrPlaceForm />} />
         <Route path="/add-place/:_id" element={<MrPlaceForm />} />
         <Route path="/write-review" element={<MrWriteReviewPage />} />
+        <Route path="/write-review/:placeId" element={<MrWriteReviewPage />} />
+        <Route path="/write-review/:placeId/:reviewId" element={<MrWriteReviewPage />} />
       </Routes>
     );
   }
