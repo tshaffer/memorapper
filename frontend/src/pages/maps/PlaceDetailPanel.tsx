@@ -12,6 +12,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { PlaceType, MrPlaceWithGooglePlace, GoogleGeometry } from '../../types';
 import { restaurantTypeLabelFromRestaurantType } from '../../utilities';
 import { OpeningHours } from '../../components';
+import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router-dom';
@@ -231,19 +232,30 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
 
     return (
       <Box sx={{ mt: 4 }}>
-        <Typography variant="h6" gutterBottom>Reviews</Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6">Reviews</Typography>
+          <IconButton
+            size="small"
+            // onClick={() => navigate(`/write-review/${place._id}`)}
+            title="Add Review"
+          >
+            <AddIcon />
+          </IconButton>
+        </Box>
         {place.restaurantReviews.map((review, reviewIndex) => (
           <Box key={reviewIndex} sx={{ mb: 2, pl: 1 }}>
-            <Typography variant="subtitle2">
-              Date of Visit: {new Date(review.dateOfVisit).toLocaleDateString()}
-            </Typography>
-            <Box>
-              <IconButton onClick={() => handleEditReview('x')}>
-                <EditIcon fontSize="small" />
-              </IconButton>
-              <IconButton onClick={() => handleDeleteReview(review._id!)}>
-                <DeleteIcon fontSize="small" />
-              </IconButton>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="subtitle2">
+                Date of Visit: {new Date(review.dateOfVisit).toLocaleDateString()}
+              </Typography>
+              <Box>
+                <IconButton size="small" onClick={() => handleEditReview(review._id!)}>
+                  <EditIcon fontSize="small" />
+                </IconButton>
+                <IconButton size="small" onClick={() => handleDeleteReview(review._id!)}>
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </Box>
             </Box>
             <Box sx={{ ml: 2 }}>
               {review.itemReviews && review.itemReviews.length > 0 ? (
