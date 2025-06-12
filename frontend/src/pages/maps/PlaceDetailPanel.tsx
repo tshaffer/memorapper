@@ -5,7 +5,6 @@ import {
   IconButton,
   Box,
   Typography,
-  Button,
   Rating
 } from '@mui/material';
 import DirectionsIcon from '@mui/icons-material/TurnRight'; // or use a better-fitting icon
@@ -13,20 +12,17 @@ import CloseIcon from '@mui/icons-material/Close';
 import { PlaceType, MrPlaceWithGooglePlace, GoogleGeometry } from '../../types';
 import { restaurantTypeLabelFromRestaurantType } from '../../utilities';
 import { OpeningHours } from '../../components';
-import { render } from 'react-dom';
 
 interface PlaceDetailPanelProps {
   open: boolean;
   place: MrPlaceWithGooglePlace & { visited?: boolean }; // <- includes visited
   onClose: () => void;
-  onDeletePlace: (_id: string) => void;
 }
 
 const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
   open,
   place,
   onClose,
-  onDeletePlace,
 }) => {
 
   const placeLocation: GoogleGeometry = place.googlePlace!.geometry!;
@@ -207,6 +203,41 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
     );
   }
 
+  const renderReviewsSection = (): JSX.Element | null => {
+    if (!place.restaurantReviews || place.restaurantReviews.length === 0) return null;
+
+    return (
+      <Box sx={{ mt: 4 }}>
+        <Typography variant="h6" gutterBottom>Reviews</Typography>
+        {place.restaurantReviews.map((review, reviewIndex) => (
+          <Box key={reviewIndex} sx={{ mb: 2, pl: 1 }}>
+            <Typography variant="subtitle2">
+              Date of Visit: {new Date(review.dateOfVisit).toLocaleDateString()}
+            </Typography>
+            <Box sx={{ ml: 2 }}>
+              {review.itemReviews && review.itemReviews.length > 0 ? (
+                review.itemReviews.map((item, itemIndex) => (
+                  <Box key={itemIndex} sx={{ mb: 1 }}>
+                    <Typography variant="body2"><strong>Item:</strong> {item.itemName}</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body2"><strong>Rating:</strong></Typography>
+                      <Rating value={item.rating} max={10} readOnly size="small" />
+                    </Box>
+                    {item.comments && (
+                      <Typography variant="body2"><strong>Comments:</strong> {item.comments}</Typography>
+                    )}
+                  </Box>
+                ))
+              ) : (
+                <Typography variant="body2" color="textSecondary">No items recorded.</Typography>
+              )}
+            </Box>
+          </Box>
+        ))}
+      </Box>
+    );
+  };
+
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
       <Box sx={{ width: 350, padding: 2 }}>
@@ -223,9 +254,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
           {renderOpeningHours()}
           {renderLinkToWebsite()}
           {renderDirectionsButton()}
-          <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
-            <Button variant="outlined" color="error" onClick={() => onDeletePlace(place._id!)}>Delete</Button>
-          </Box>
+          {renderReviewsSection()}
         </Box>
       </Box>
     </Drawer>
