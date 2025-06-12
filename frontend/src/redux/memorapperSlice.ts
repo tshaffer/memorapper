@@ -22,6 +22,16 @@ interface MemorapperState {
   error: string | null;
 }
 
+interface UpdateReviewPayload {
+  placeId: string;
+  updatedReview: MrRestaurantReview; // must include `_id`
+}
+
+interface DeleteReviewPayload {
+  placeId: string;
+  reviewId: string;
+}
+
 const initialState: MemorapperState = {
   googlePlacesById: {},
   mrPlacesById: {},
@@ -157,6 +167,26 @@ const memorapperSlice = createSlice({
         target.restaurantSpecs = { ...restaurantSpecs };
       }
     },
+    updateMrRestaurantReview: (state, action: PayloadAction<UpdateReviewPayload>) => {
+      const { placeId, updatedReview } = action.payload;
+      const place = state.mrPlacesById[placeId];
+
+      if (!place || !updatedReview._id) return;
+
+      const index = place.restaurantReviews.findIndex(r => r._id === updatedReview._id);
+      if (index !== -1) {
+        place.restaurantReviews[index] = updatedReview;
+      }
+    },
+    deleteMrRestaurantReview: (state, action: PayloadAction<DeleteReviewPayload>) => {
+      const { placeId, reviewId } = action.payload;
+      const place = state.mrPlacesById[placeId];
+      if (place) {
+        place.restaurantReviews = place.restaurantReviews.filter(
+          (review) => review._id !== reviewId
+        );
+      }
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -211,6 +241,8 @@ export const {
   addMrPlace,
   addMrRestaurantReview,
   deleteMrPlace,
+  updateMrRestaurantReview,
+  deleteMrRestaurantReview,
 } = memorapperSlice.actions;
 
 export default memorapperSlice.reducer;

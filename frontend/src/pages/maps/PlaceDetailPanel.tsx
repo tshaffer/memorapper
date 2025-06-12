@@ -15,6 +15,8 @@ import { OpeningHours } from '../../components';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router-dom';
+import { deleteMrRestaurantReview } from '../../redux';
+import { useDispatch } from 'react-redux';
 
 interface PlaceDetailPanelProps {
   open: boolean;
@@ -28,6 +30,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
   onClose,
 }) => {
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const placeLocation: GoogleGeometry = place.googlePlace!.geometry!;
@@ -63,6 +66,9 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
       console.error("Cannot delete review: place._id is missing");
       return;
     }
+
+    dispatch(deleteMrRestaurantReview({ placeId: place._id!, reviewId })); // You may want a new updateMrRestaurantReview action
+
   };
 
   const handleShowDirections = () => {
@@ -235,7 +241,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
               <IconButton onClick={() => handleEditReview('x')}>
                 <EditIcon fontSize="small" />
               </IconButton>
-              <IconButton onClick={() => handleDeleteReview('y')}>
+              <IconButton onClick={() => handleDeleteReview(review._id!)}>
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </Box>
