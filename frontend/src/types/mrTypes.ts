@@ -16,7 +16,7 @@ export interface MrPlace {
 export type MrPlaceWithGooglePlace = {
   _id?: string;
   googlePlaceId: string;
-  placeType?: PlaceType;
+  placeType: PlaceType;
   interestLevel?: number;
   placePreview?: string;
   placeReview?: string;

@@ -120,7 +120,7 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
           disabled={!mrReviewData?.place}
           style={getDisabledStyle(!mrReviewData?.place)}
         >
-          Add Review
+          {mrReviewData._id ? 'Save Changes' : 'Add Review'}
         </Button>
       </div >
 
@@ -128,7 +128,7 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
         mrReviewData={mrReviewData}
         setMrReviewData={setMrReviewData}
       />
-      
+
       <Box sx={{ padding: 2 }}>
         <Paper elevation={1} sx={{ padding: 2 }}>
           <Divider sx={{ mb: 2 }} />

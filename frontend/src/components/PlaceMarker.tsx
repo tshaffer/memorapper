@@ -92,8 +92,6 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick, isHover
 
   const getVisitedPlaceHoverElement = (): JSX.Element => {
 
-    console.log('getVisitedPlaceHoverElement called for place:', place.googlePlace?.name);
-
     const elements: JSX.Element[] = [];
 
     if (place.placeRating && place.placeRating > 0) {
