@@ -215,7 +215,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
 
   const renderReviewsSection = (): JSX.Element | null => {
     if (!place.restaurantReviews || place.restaurantReviews.length === 0) return null;
-
+    
     return (
       <Box sx={{ mt: 4 }}>
         <Typography variant="h6" gutterBottom>Reviews</Typography>

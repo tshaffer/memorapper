@@ -34,6 +34,7 @@ export interface MrRestaurant {
 }
 
 export interface MrRestaurantReview {
+  _id?: string;
   dateOfVisit: string;
   itemReviews: MrItemOrdered[];
 }
