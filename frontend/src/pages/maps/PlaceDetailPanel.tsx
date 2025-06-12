@@ -50,12 +50,19 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
 
   const handleEditReview = (reviewId: string) => {
     console.log('handleEditReview called for reviewId:', reviewId);
-    // navigate(`/write-review/${place._id}/${reviewId}`);
+    navigate(`/write-review/${place._id}/${reviewId}`);
   };
 
   const handleDeleteReview = (reviewId: string) => {
     console.log('handleDeleteReview called for reviewId:', reviewId);
     // confirm and then call deleteReview API
+
+    if (!window.confirm("Are you sure you want to delete this review?")) return;
+
+    if (!place._id) {
+      console.error("Cannot delete review: place._id is missing");
+      return;
+    }
   };
 
   const handleShowDirections = () => {
@@ -215,7 +222,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
 
   const renderReviewsSection = (): JSX.Element | null => {
     if (!place.restaurantReviews || place.restaurantReviews.length === 0) return null;
-    
+
     return (
       <Box sx={{ mt: 4 }}>
         <Typography variant="h6" gutterBottom>Reviews</Typography>
