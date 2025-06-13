@@ -283,6 +283,51 @@ const addReviewToDb = async (
   }
 };
 
+export const updateReviewHandler = async (
+  req: Request<{}, {}, MrReviewData>,
+  res: Response
+): Promise<any> => {
+  const reviewData: MrReviewData = req.body;
+  const { _id: reviewId, place, dateOfVisit, itemReviews } = reviewData;
+
+  if (!place || !place._id || !reviewId) {
+    return res.status(400).json({ error: 'Missing place ID or review ID.' });
+  }
+
+  try {
+    const updatedPlace = await updateReviewInDb(place._id, reviewId, dateOfVisit, itemReviews);
+
+    return res.status(200).json({ message: 'Review updated successfully!', place: updatedPlace });
+  } catch (error) {
+    console.error('Error updating review:', error);
+    return res.status(500).json({ error: 'An error occurred while updating the review.' });
+  }
+};
+
+const updateReviewInDb = async (
+  placeId: string,
+  reviewId: string,
+  dateOfVisit: string,
+  itemReviews: MrItemOrdered[]
+): Promise<IMrPlace> => {
+  const existingPlace = await MrPlaceModel.findById(placeId).exec();
+
+  if (!existingPlace) {
+    throw new Error(`Place with _id ${placeId} not found`);
+  }
+
+  const review = existingPlace.restaurantReviews.find(r => String(r._id) === String(reviewId));
+  if (!review) {
+    throw new Error(`Review with _id ${reviewId} not found in place ${placeId}`);
+  }
+
+  review.dateOfVisit = new Date(dateOfVisit);
+  review.itemReviews = itemReviews;
+
+  await existingPlace.save();
+  return existingPlace.toObject() as IMrPlace; // ✅ return plain object typed correctly
+};
+
 export const deletePlaceHandler = async (
   req: Request,
   res: Response
