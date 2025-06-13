@@ -113,7 +113,13 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
 
   return (
     <>
-      <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
+      <div
+        style={{
+          marginTop: '1rem',
+          display: 'flex',
+          gap: '1rem'
+        }}
+      >
         <Button
           variant="contained"
           onClick={onSubmit}
@@ -124,19 +130,26 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
         </Button>
       </div >
 
-      <RestaurantRating
-        mrReviewData={mrReviewData}
-        setMrReviewData={setMrReviewData}
-      />
+      <Box
+        sx={{
+          height: '92vh',           // fill the viewport height
+          overflowY: 'auto',         // enable vertical scrolling
+        }}>
 
-      <Box sx={{ padding: 2 }}>
-        <Paper elevation={1} sx={{ padding: 2 }}>
-          <Divider sx={{ mb: 2 }} />
-          <Stack spacing={2}>
-            {renderOrderedItems()}
-            {renderDateOfVisit()}
-          </Stack>
-        </Paper>
+        <RestaurantRating
+          mrReviewData={mrReviewData}
+          setMrReviewData={setMrReviewData}
+        />
+
+        <Box sx={{ padding: 2 }}>
+          <Paper elevation={1} sx={{ padding: 2 }}>
+            <Divider sx={{ mb: 2 }} />
+            <Stack spacing={2}>
+              {renderOrderedItems()}
+              {renderDateOfVisit()}
+            </Stack>
+          </Paper>
+        </Box>
       </Box>
 
       {renderPulsingDots()}
