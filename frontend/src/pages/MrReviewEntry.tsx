@@ -6,11 +6,13 @@ import '../styles/multiPanelStyles.css';
 import '../styles/reviewEntryForm.css';
 import { useState } from 'react';
 import {
+  MrPlaceWithGooglePlace,
   MrReviewData,
 } from '../types';
 import React from 'react';
 import PulsingDots from '../components/PulsingDots';
 import RestaurantRating from '../components/RestaurantRating';
+import PlaceRatingInput from '../components/PlaceRatingInput';
 
 interface MrReviewEntryProps {
   mrReviewData: MrReviewData;
@@ -56,7 +58,7 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
         {items.map((item, index) => (
           <div key={index} className="ordered-item">
             <div className="form-group">
-              <label htmlFor={`itemName-${index}`}>Item Name</label>
+              <label htmlFor={`itemName-${index}`}>Menu Item</label>
               <TextField
                 id={`itemName-${index}`}
                 value={item.itemName}
@@ -65,12 +67,15 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
               />
             </div>
             <div className="form-group">
-              <label htmlFor={`itemRating-${index}`}>Rating (0-10)</label>
-              <Rating
-                id={`itemRating-${index}`}
-                max={10}
-                value={item.rating}
-                onChange={(event, newValue) => handleItemChange(index, 'rating', newValue || 0)}
+              <PlaceRatingInput
+                rating={item.rating}
+                onChange={(newRating) => {
+                  console.log('New Rating:', newRating);
+                  handleItemChange(index, 'rating', newRating || 0); // Ensure rating is never null
+                }}
+                legendLabels={["Won’t order again", "Good", "Excellent"]}
+                colorBands={["#f44336", "#fdd835", "#4caf50"]}
+                rangeBands={[[1, 3], [4, 7], [8, 10]]}
               />
             </div>
             <div className="form-group">
@@ -87,7 +92,7 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
           </div>
         ))}
         <Button variant="outlined" onClick={addNewItem} sx={{ mt: 2 }}>
-          Add Another Item
+          Add Menu Item
         </Button>
       </div>
     );

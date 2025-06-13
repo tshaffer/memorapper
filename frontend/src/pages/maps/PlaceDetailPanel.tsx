@@ -293,7 +293,13 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
                     <Typography variant="body2"><strong>Item:</strong> {item.itemName}</Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <Typography variant="body2"><strong>Rating:</strong></Typography>
-                      <Rating value={item.rating} max={10} readOnly size="small" />
+                      <Rating
+                        value={item.rating === null ? 0 : item.rating / 2}
+                        max={5}
+                        precision={0.5}
+                        readOnly
+                        size="small"
+                      />
                     </Box>
                     {item.comments && (
                       <Typography variant="body2"><strong>Comments:</strong> {item.comments}</Typography>
