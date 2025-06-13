@@ -150,7 +150,7 @@ const MapPage: React.FC = () => {
 
   const executeSearchAndFilter = async (searchQuery: SearchQuery): Promise<void> => {
 
-    console.log('executeSearchAndFilter called with searchQuery:', searchQuery);
+    // console.log('executeSearchAndFilter called with searchQuery:', searchQuery);
 
     const requestBody = { searchQuery };
 
@@ -173,7 +173,7 @@ const MapPage: React.FC = () => {
     googlePlaces: MrPlaceWithGooglePlace[], location: google.maps.LatLngLiteral, filters: Filters,
   ) => {
 
-    console.log('filterOnEntry called with googlePlaces:', googlePlaces);
+    // console.log('filterOnEntry called with googlePlaces:', googlePlaces);
 
     const { distanceAway, restaurantOpen, placeTypes, restaurantTypes, openMeals, visitedStatus } = filters;
 
@@ -231,8 +231,8 @@ const MapPage: React.FC = () => {
 
   const visiblePlacesChanged = (beforeList: MrPlaceWithGooglePlace[], afterList: MrPlaceWithGooglePlace[]): boolean => {
 
-    console.log('visiblePlacesChanged called with prevVisiblePlacesList:', beforeList);
-    console.log('visiblePlacesChanged called with visiblePlaces:', afterList);
+    // console.log('visiblePlacesChanged called with prevVisiblePlacesList:', beforeList);
+    // console.log('visiblePlacesChanged called with visiblePlaces:', afterList);
 
     const prevPlaceIds = new Set(beforeList.map(place => place._id));
     const currentPlaceIds = new Set(afterList.map(place => place._id));
@@ -251,11 +251,11 @@ const MapPage: React.FC = () => {
   }
 
   const handleVisiblePlacesChanged = (visiblePlaces: MrPlaceWithGooglePlace[]) => {
-    console.log('handleVisiblePlacesChanged');
-    console.log('prevVisiblePlacesList:', prevVisiblePlacesList.current);
-    console.log('visiblePlaces:', visiblePlaces);
+    // console.log('handleVisiblePlacesChanged');
+    // console.log('prevVisiblePlacesList:', prevVisiblePlacesList.current);
+    // console.log('visiblePlaces:', visiblePlaces);
     if (visiblePlacesChanged(prevVisiblePlacesList.current, visiblePlaces)) {
-      console.log('Visible places changed:', visiblePlaces);
+      // console.log('Visible places changed:', visiblePlaces);
       setVisiblePlaces(visiblePlaces);
       prevVisiblePlacesList.current = visiblePlaces;
     }
@@ -360,7 +360,7 @@ const MapPage: React.FC = () => {
   };
 
   const renderVisiblePlacesList = () => {
-    console.log('renderVisiblePlacesList called with visiblePlaces:', visiblePlaces);
+    // console.log('renderVisiblePlacesList called with visiblePlaces:', visiblePlaces);
     return (
       <div style={contentContainerStyle}>
         {isListVisible && (

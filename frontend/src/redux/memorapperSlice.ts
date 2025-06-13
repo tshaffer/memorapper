@@ -190,10 +190,19 @@ const memorapperSlice = createSlice({
     },
     deleteMrRestaurantReview: (state, action: PayloadAction<DeleteReviewPayload>) => {
       const { placeId, reviewId } = action.payload;
+      console.log('placeId', placeId);
+      console.log('reviewId', reviewId);
       const place = state.mrPlacesById[placeId];
-      if (place) {
+      if (place && place.restaurantReviews) {
+
+        place.restaurantReviews.forEach((review, index) => {
+          console.log(`Review ${index}:`, review);
+          console.log(`Review ID: ${review._id}, Type: ${typeof review._id}`);
+          console.log(String(review._id) !== String(reviewId));
+        });
+
         place.restaurantReviews = place.restaurantReviews.filter(
-          (review) => review._id !== reviewId
+          (review) => String(review._id) !== String(reviewId)
         );
       }
     }
