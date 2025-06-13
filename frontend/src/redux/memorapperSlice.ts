@@ -168,11 +168,10 @@ const memorapperSlice = createSlice({
       }
     },
     updateMrRestaurantReview: (state, action: PayloadAction<MrReviewData>) => {
-
       const { place, _id, dateOfVisit, itemReviews } = action.payload;
 
       if (!place || !place._id) {
-        console.warn('addMrRestaurantReview called without a valid place. Ignoring.');
+        console.warn('updateMrRestaurantReview called without a valid place. Ignoring.');
         return;
       }
 
@@ -184,12 +183,11 @@ const memorapperSlice = createSlice({
 
       const updatedReview: MrRestaurantReview = { _id, dateOfVisit, itemReviews };
 
-      const index = place.restaurantReviews.findIndex(r => r._id === updatedReview._id);
+      const index = target.restaurantReviews.findIndex(r => r._id === updatedReview._id);
       if (index !== -1) {
-        place.restaurantReviews[index] = updatedReview;
+        target.restaurantReviews[index] = updatedReview; // ✅ This is mutable, part of the draft
       }
     },
-    
     deleteMrRestaurantReview: (state, action: PayloadAction<DeleteReviewPayload>) => {
       const { placeId, reviewId } = action.payload;
       const place = state.mrPlacesById[placeId];
