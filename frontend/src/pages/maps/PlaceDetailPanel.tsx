@@ -34,10 +34,16 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  if (!place.googlePlace?.geometry) {
+    return null; // or loading spinner
+  }
+
   const placeLocation: GoogleGeometry = place.googlePlace!.geometry!;
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
   useEffect(() => {
+  if (place?.googlePlace?.geometry?.location) {
+    setCurrentLocation(null); // optional: reset before setting new
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -50,7 +56,9 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
         { enableHighAccuracy: true }
       );
     }
-  }, []);
+  }
+}, [place]);
+
 
   const handleEditReview = (reviewId: string) => {
     console.log('handleEditReview called for reviewId:', reviewId);
@@ -236,7 +244,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
           <Typography variant="h6">Reviews</Typography>
           <IconButton
             size="small"
-            // onClick={() => navigate(`/write-review/${place._id}`)}
+            onClick={() => navigate(`/write-review/${place._id}`)}
             title="Add Review"
           >
             <AddIcon />

@@ -42,7 +42,13 @@ const MapPage: React.FC = () => {
 
   const [isListVisible, setIsListVisible] = useState(true);
   const [visiblePlaces, setVisiblePlaces] = useState<MrPlaceWithGooglePlace[]>([]);
-  const [selectedPlace, setSelectedPlace] = useState<MrPlaceWithGooglePlace | null>(null);
+
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+  const selectedPlace = useSelector((state: RootState) =>
+    selectedPlaceId
+      ? selectAllMrPlacesWithGooglePlaces(state).find(p => p._id === selectedPlaceId)
+      : null
+  );
 
   const [hoveredPlaceId, setHoveredPlaceId] = useState<string | null>(null);
 
@@ -263,13 +269,13 @@ const MapPage: React.FC = () => {
 
   // Handler called when a user clicks a place icon or a visible list item.
   const handlePlaceSelect = (place: MrPlaceWithGooglePlace) => {
-    setSelectedPlace(place);
+    setSelectedPlaceId(place._id!);
   };
 
   const handleUpdatePlace = async (updatedPlace: MrPlaceWithGooglePlace) => {
 
     // Update the place in your state (and optionally propagate changes to your backend/global store)
-    setSelectedPlace(updatedPlace);
+    setSelectedPlaceId(updatedPlace._id!);
 
     setIsLoading(true);
 
@@ -302,7 +308,7 @@ const MapPage: React.FC = () => {
     });
 
     dispatch(deleteMrPlace(_id));
-    setSelectedPlace(null);
+    setSelectedPlaceId(null);
   };
 
   const handleAddReview = (_id: string, review: MrRestaurantReview) => {
@@ -441,7 +447,7 @@ const MapPage: React.FC = () => {
         <PlaceDetailPanel
           open={true}
           place={selectedPlace}
-          onClose={() => setSelectedPlace(null)}
+          onClose={() => setSelectedPlaceId(null)}
         />
       )}
 
