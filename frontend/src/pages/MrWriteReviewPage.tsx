@@ -63,8 +63,6 @@ const MrWriteReviewPage = () => {
       dispatch(addMrRestaurantReview(mrReviewData)); // You may want a new updateMrRestaurantReview action
     }
 
-    return;
-
     // 2️⃣ Save to backend
     try {
       const response = await fetch(isEditing ? `/api/updateReview` : `/api/addReview`, {
