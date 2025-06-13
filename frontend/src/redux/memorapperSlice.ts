@@ -167,17 +167,29 @@ const memorapperSlice = createSlice({
         target.restaurantSpecs = { ...restaurantSpecs };
       }
     },
-    updateMrRestaurantReview: (state, action: PayloadAction<UpdateReviewPayload>) => {
-      const { placeId, updatedReview } = action.payload;
-      const place = state.mrPlacesById[placeId];
+    updateMrRestaurantReview: (state, action: PayloadAction<MrReviewData>) => {
 
-      if (!place || !updatedReview._id) return;
+      const { place, _id, dateOfVisit, itemReviews } = action.payload;
+
+      if (!place || !place._id) {
+        console.warn('addMrRestaurantReview called without a valid place. Ignoring.');
+        return;
+      }
+
+      const target = state.mrPlacesById[place._id];
+      if (!target) {
+        console.warn(`Place not found for _id: ${place._id}`);
+        return;
+      }
+
+      const updatedReview: MrRestaurantReview = { _id, dateOfVisit, itemReviews };
 
       const index = place.restaurantReviews.findIndex(r => r._id === updatedReview._id);
       if (index !== -1) {
         place.restaurantReviews[index] = updatedReview;
       }
     },
+    
     deleteMrRestaurantReview: (state, action: PayloadAction<DeleteReviewPayload>) => {
       const { placeId, reviewId } = action.payload;
       const place = state.mrPlacesById[placeId];

@@ -68,7 +68,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
       return;
     }
 
-    dispatch(deleteMrRestaurantReview({ placeId: place._id!, reviewId })); // You may want a new updateMrRestaurantReview action
+    dispatch(deleteMrRestaurantReview({ placeId: place._id!, reviewId }));
 
   };
 

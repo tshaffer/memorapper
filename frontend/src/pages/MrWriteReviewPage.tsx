@@ -3,7 +3,7 @@ import { MrPlace, MrPlaceWithGooglePlace, MrReviewData } from "../types";
 import { getFormattedDate } from "../utilities";
 import MrReviewEntry from "./MrReviewEntry";
 import { useDispatch, useSelector } from 'react-redux';
-import { addMrRestaurantReview } from '../redux/memorapperSlice';
+import { addMrRestaurantReview, updateMrRestaurantReview } from '../redux/memorapperSlice';
 import {
   selectAllMrPlacesWithGooglePlaces
 } from "../redux/memorapperSelectors";
@@ -26,7 +26,7 @@ const MrWriteReviewPage = () => {
 
   useEffect(() => {
     if (!placeId) return;
-
+    
     const place = allMrPlacesWithGooglePlaces.find(p => p._id === placeId) as MrPlace;
     if (!place) return;
 
@@ -57,7 +57,13 @@ const MrWriteReviewPage = () => {
     const isEditing = Boolean(mrReviewData._id);
 
     // 1️⃣ Update Redux
-    dispatch(addMrRestaurantReview(mrReviewData)); // You may want a new updateMrRestaurantReview action
+    if (isEditing) {
+      dispatch(updateMrRestaurantReview(mrReviewData));
+    } else {
+      dispatch(addMrRestaurantReview(mrReviewData)); // You may want a new updateMrRestaurantReview action
+    }
+
+    return;
 
     // 2️⃣ Save to backend
     try {
