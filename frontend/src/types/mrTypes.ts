@@ -54,6 +54,11 @@ export type EditablePlace = {
   placeReview: string;
 }
 
+export type MrDeleteReviewRequestBody = {
+  placeId: string;
+  reviewId: string;
+};
+
 export type MrSubmitPlaceRequestBody = {
   _id?: string;
   placeType?: PlaceType;

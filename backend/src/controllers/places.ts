@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import MongoPlaceModel, { IMongoPlace } from "../models/MongoPlace";
-import { GooglePlace, MongoPlace, MrItemOrdered, MrPlace, MrPlaceWithGooglePlace, MrReviewData, MrSubmitPlaceRequestBody } from "../types";
+import { GooglePlace, MongoPlace, MrDeleteReviewRequestBody, MrItemOrdered, MrPlace, MrPlaceWithGooglePlace, MrReviewData, MrSubmitPlaceRequestBody } from "../types";
 import { MongoGeometry } from "../types";
 import { convertGoogleGeometryToMongoGeometry, convertMongoGeometryToGoogleGeometry, convertMongoPlacesToGooglePlaces } from '../utilities';
 import MrPlaceModel, { IMrPlace } from '../models/MrPlace';
@@ -229,6 +229,26 @@ const updateMrPlace = async (placeRequestBody: MrSubmitPlaceRequestBody): Promis
   return updatedPlace;
 };
 
+export const deletePlaceHandler = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const body = req.body;
+  const placeId = body.placeId;
+
+  try {
+    await deletePlace(placeId);
+    return res.status(200).json({ message: 'Place deleted successfully.' }); // ✅ ends the response
+  } catch (error) {
+    console.error('Error deleting place:', error);
+    return res.status(500).json({ error: 'An error occurred while deleting the place.' });
+  }
+};
+
+const deletePlace = async (placeId: string) => {
+  await MrPlaceModel.findOneAndDelete({ _id: placeId });
+}
+
 export const addReviewHandler = async (
   req: Request<{}, {}, MrReviewData>,
   res: Response
@@ -328,22 +348,47 @@ const updateReviewInDb = async (
   return existingPlace.toObject() as IMrPlace; // ✅ return plain object typed correctly
 };
 
-export const deletePlaceHandler = async (
-  req: Request,
+export const deleteReviewHandler = async (
+  req: Request<{}, {}, MrDeleteReviewRequestBody>,
   res: Response
 ): Promise<any> => {
-  const body = req.body;
-  const placeId = body.placeId;
+  const { placeId, reviewId } = req.body;
+
+  if (!placeId || !reviewId) {
+    return res.status(400).json({ error: 'Missing place ID or review ID.' });
+  }
 
   try {
-    await deletePlace(placeId);
-    return res.status(200).json({ message: 'Place deleted successfully.' }); // ✅ ends the response
+    const updatedPlace = await deleteReviewFromDb(placeId, reviewId);
+    return res.status(200).json({ message: 'Review deleted successfully!', place: updatedPlace });
   } catch (error) {
-    console.error('Error deleting place:', error);
-    return res.status(500).json({ error: 'An error occurred while deleting the place.' });
+    console.error('Error deleting review:', error);
+    return res.status(500).json({ error: 'An error occurred while deleting the review.' });
   }
 };
 
-const deletePlace = async (placeId: string) => {
-  await MrPlaceModel.findOneAndDelete({ _id: placeId });
-}
+export const deleteReviewFromDb = async (
+  placeId: string,
+  reviewId: string
+): Promise<IMrPlace> => {
+  const existingPlace = await MrPlaceModel.findById(placeId).exec();
+
+  if (!existingPlace) {
+    throw new Error(`Place with _id ${placeId} not found`);
+  }
+
+  const originalLength = existingPlace.restaurantReviews.length;
+
+  existingPlace.restaurantReviews = existingPlace.restaurantReviews.filter(
+    (r) => String(r._id) !== String(reviewId)
+  );
+
+  if (existingPlace.restaurantReviews.length === originalLength) {
+    throw new Error(`Review with _id ${reviewId} not found in place ${placeId}`);
+  }
+
+  await existingPlace.save();
+  console.log(`Review ${reviewId} deleted from place ${placeId}`);
+
+  return existingPlace.toObject() as IMrPlace;
+};

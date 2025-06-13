@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import DirectionsIcon from '@mui/icons-material/TurnRight'; // or use a better-fitting icon
 import CloseIcon from '@mui/icons-material/Close';
-import { PlaceType, MrPlaceWithGooglePlace, GoogleGeometry } from '../../types';
+import { PlaceType, MrPlaceWithGooglePlace, GoogleGeometry, MrRestaurantReview, MrDeleteReviewRequestBody } from '../../types';
 import { restaurantTypeLabelFromRestaurantType } from '../../utilities';
 import { OpeningHours } from '../../components';
 import AddIcon from '@mui/icons-material/Add';
@@ -42,22 +42,22 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
   useEffect(() => {
-  if (place?.googlePlace?.geometry?.location) {
-    setCurrentLocation(null); // optional: reset before setting new
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setCurrentLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => console.error("Error getting current location: ", error),
-        { enableHighAccuracy: true }
-      );
+    if (place?.googlePlace?.geometry?.location) {
+      setCurrentLocation(null); // optional: reset before setting new
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setCurrentLocation({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            });
+          },
+          (error) => console.error("Error getting current location: ", error),
+          { enableHighAccuracy: true }
+        );
+      }
     }
-  }
-}, [place]);
+  }, [place]);
 
 
   const handleEditReview = (reviewId: string) => {
@@ -65,9 +65,10 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
     navigate(`/write-review/${place._id}/${reviewId}`);
   };
 
-  const handleDeleteReview = (reviewId: string) => {
+  const handleDeleteReview = async (review: MrRestaurantReview) => {
+
+    const reviewId: string = review._id!;
     console.log('handleDeleteReview called for reviewId:', reviewId);
-    // confirm and then call deleteReview API
 
     if (!window.confirm("Are you sure you want to delete this review?")) return;
 
@@ -78,7 +79,27 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
 
     dispatch(deleteMrRestaurantReview({ placeId: place._id!, reviewId }));
 
+    const deleteReviewRequestBody: MrDeleteReviewRequestBody = {
+      placeId: place._id,
+      reviewId: review._id!,
+    };
+
+    try {
+      const response = await fetch(`/api/deleteReview`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(deleteReviewRequestBody),
+      });
+
+      const data = await response.json();
+      console.log('Review saved to backend:', data);
+      navigate('/'); // or back to the place panel
+    } catch (error) {
+      console.error('Error saving review to backend:', error);
+    }
   };
+
+
 
   const handleShowDirections = () => {
     if (placeLocation && currentLocation) {
@@ -260,7 +281,7 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
                 <IconButton size="small" onClick={() => handleEditReview(review._id!)}>
                   <EditIcon fontSize="small" />
                 </IconButton>
-                <IconButton size="small" onClick={() => handleDeleteReview(review._id!)}>
+                <IconButton size="small" onClick={() => handleDeleteReview(review)}>
                   <DeleteIcon fontSize="small" />
                 </IconButton>
               </Box>
