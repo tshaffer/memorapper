@@ -256,21 +256,12 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
     );
   }
 
-  const renderReviewsSection = (): JSX.Element | null => {
+  const renderListOfReviews = (): JSX.Element | null => {
+
     if (!place.restaurantReviews || place.restaurantReviews.length === 0) return null;
 
     return (
-      <Box sx={{ mt: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6">Reviews</Typography>
-          <IconButton
-            size="small"
-            onClick={() => navigate(`/write-review/${place._id}`)}
-            title="Add Review"
-          >
-            <AddIcon />
-          </IconButton>
-        </Box>
+      <>
         {place.restaurantReviews.map((review, reviewIndex) => (
           <Box key={reviewIndex} sx={{ mb: 2, pl: 1 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -312,6 +303,24 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
             </Box>
           </Box>
         ))}
+      </>
+    );
+  }
+
+  const renderReviewsSection = (): JSX.Element | null => {
+    return (
+      <Box sx={{ mt: 4 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6">Reviews</Typography>
+          <IconButton
+            size="small"
+            onClick={() => navigate(`/write-review/${place._id}`)}
+            title="Add Review"
+          >
+            <AddIcon />
+          </IconButton>
+        </Box>
+        {renderListOfReviews()}
       </Box>
     );
   };
