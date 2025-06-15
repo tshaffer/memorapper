@@ -10,6 +10,7 @@ import {
   deletePlaceHandler,
   updateReviewHandler,
   deleteReviewHandler,
+  getMrPlacesWithGooglePlaceHandler,
 } from '../controllers';
 
 const router = Router();
@@ -22,6 +23,7 @@ router.get('/googlePlaces', getGooglePlaces);
 router.post('/searchAndFilter', searchAndFilterHandler);
 
 router.get('/mrPlaces', getMrPlacesHandler);
+router.get('/mrPlacesWithGooglePlace', getMrPlacesWithGooglePlaceHandler);
 router.post('/upsertMrPlace', upsertMrPlaceHandler);
 router.post('/deletePlace', deletePlaceHandler);
 

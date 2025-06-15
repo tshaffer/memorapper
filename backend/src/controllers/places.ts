@@ -50,6 +50,19 @@ export const addMongoPlace = async (googlePlace: GooglePlace): Promise<IMongoPla
   }
 }
 
+export const getMrPlacesWithGooglePlaceHandler = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const mrPlaces: MrPlaceWithGooglePlace[] = await getMrPlacesWithGooglePlace();
+    return res.status(200).json({ places: mrPlaces });
+  } catch (error) {
+    console.error('Error fetching places with Google Place:', error);
+    return res.status(500).json({ error: 'An error occurred while fetching places with Google Place.' });
+  }
+};
+
 export const getMrPlacesHandler = async (
   req: Request,
   res: Response
