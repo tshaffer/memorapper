@@ -131,7 +131,7 @@ const MrPlaceForm = () => {
     setPlaceName(googlePlace.name!);
   };
 
-  const handleChange = (field: keyof MrPlace, value: any) => {
+  const handleChange = (field: keyof MrPlaceWithGooglePlace, value: any) => {
     setMrPlaceWithGooglePlace(prev => ({ ...prev, [field]: value }));
   };
 
@@ -162,25 +162,32 @@ const MrPlaceForm = () => {
 
   const handleSubmitPlace = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const mrPlace: MrPlace = {
-      _id: mrPlaceWithGooglePlace._id || uuidv4(),
-      googlePlaceId: mrPlaceWithGooglePlace.googlePlaceId,
-      placeType: mrPlaceWithGooglePlace.placeType || PlaceType.Restaurant,
-      interestLevel: mrPlaceWithGooglePlace.interestLevel || 0,
-      placePreview: mrPlaceWithGooglePlace.placePreview || '',
-      placeReview: mrPlaceWithGooglePlace.placeReview || '',
-      placeRating: mrPlaceWithGooglePlace.placeRating || 0,
-      restaurantSpecs: mrPlaceWithGooglePlace.restaurantSpecs || {
-        restaurantType: RestaurantType.Restaurant,
-        openForBreakfast: false,
-        openForLunch: false,
-        openForDinner: false,
-      },
-      restaurantReviews: mrPlaceWithGooglePlace.restaurantReviews || [],
-    };
+    // const mrPlace: MrPlace = {
+    //   _id: mrPlaceWithGooglePlace._id || uuidv4(),
+    //   googlePlaceId: mrPlaceWithGooglePlace.googlePlaceId,
+    //   placeType: mrPlaceWithGooglePlace.placeType || PlaceType.Restaurant,
+    //   interestLevel: mrPlaceWithGooglePlace.interestLevel || 0,
+    //   placePreview: mrPlaceWithGooglePlace.placePreview || '',
+    //   placeReview: mrPlaceWithGooglePlace.placeReview || '',
+    //   placeRating: mrPlaceWithGooglePlace.placeRating || 0,
+    //   restaurantSpecs: mrPlaceWithGooglePlace.restaurantSpecs || {
+    //     restaurantType: RestaurantType.Restaurant,
+    //     openForBreakfast: false,
+    //     openForLunch: false,
+    //     openForDinner: false,
+    //   },
+    //   restaurantReviews: mrPlaceWithGooglePlace.restaurantReviews || [],
+    // };
 
-    dispatch(addMrPlace(mrPlace));
+    mrPlaceWithGooglePlace._id = mrPlaceWithGooglePlace._id || uuidv4();
+
+    // debugger;
+    // console.log('mrPlaceWithGooglePlace:', mrPlaceWithGooglePlace);
+    // console.log('mrPlace:', mrPlace);
+    dispatch(addMrPlace(mrPlaceWithGooglePlace as MrPlace));
     setIsLoading(true);
+
+    return;
 
     try {
       const response = await fetch('/api/upsertMrPlace', {
