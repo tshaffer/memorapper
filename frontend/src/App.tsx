@@ -39,7 +39,6 @@ const App: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       console.log('loadData useEffect called');
-      // await dispatch(fetchGooglePlacesWithGooglePlaces());
       await dispatch(fetchMrPlacesWithGooglePlace());
     };
     loadData();
