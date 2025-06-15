@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteMrPlace, selectAllMrPlacesWithGooglePlaces } from '../redux';
+import { deleteMrPlace, selectMrPlaces } from '../redux';
 
 import { Box, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Tooltip, IconButton } from '@mui/material';
 
@@ -23,7 +23,7 @@ const MrPlaces: React.FC<any> = () => {
 
   const dispatch = useDispatch();
 
-  const mrPlacesWithGooglePlaces: MrPlaceWithGooglePlace[] = useSelector(selectAllMrPlacesWithGooglePlaces);
+  const mrPlacesWithGooglePlaces: MrPlaceWithGooglePlace[] = useSelector(selectMrPlaces);
   const sortedPlaces = mrPlacesWithGooglePlaces
     .slice()
     .sort((a, b) => {

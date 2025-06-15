@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
-import { MrPlace, MrPlaceWithGooglePlace, MrReviewData } from "../types";
+import { MrPlaceWithGooglePlace, MrReviewData } from "../types";
 import { getFormattedDate } from "../utilities";
 import MrReviewEntry from "./MrReviewEntry";
 import { useDispatch, useSelector } from 'react-redux';
 import { addMrRestaurantReview, updateMrRestaurantReview } from '../redux/memorapperSlice';
-import {
-  selectAllMrPlacesWithGooglePlaces
-} from "../redux/memorapperSelectors";
 import { useParams, useNavigate } from 'react-router-dom';
+import { selectMrPlaces } from "../redux";
 
 const MrWriteReviewPage = () => {
 
@@ -22,12 +20,12 @@ const MrWriteReviewPage = () => {
     itemReviews: [],
   });
 
-  const allMrPlacesWithGooglePlaces = useSelector(selectAllMrPlacesWithGooglePlaces);
+  const allMrPlacesWithGooglePlaces: MrPlaceWithGooglePlace[] = useSelector(selectMrPlaces);
 
   useEffect(() => {
     if (!placeId) return;
     
-    const place = allMrPlacesWithGooglePlaces.find(p => p._id === placeId) as MrPlace;
+    const place = allMrPlacesWithGooglePlaces.find(p => p._id === placeId);
     if (!place) return;
 
     if (reviewId) {
