@@ -244,7 +244,7 @@ export const addReviewHandler = async (
 }
 
 const addReviewToDb = async (
-  place: MrPlace,
+  place: MrPlaceWithGooglePlace,
   // placeId: string,
   dateOfVisit: string,
   itemReviews: MrItemOrdered[]

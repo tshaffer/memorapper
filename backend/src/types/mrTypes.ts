@@ -40,7 +40,7 @@ export interface MrRestaurantReview {
 }
 
 export interface MrReviewData extends MrRestaurantReview {
-  place: MrPlace | null;
+  place: MrPlaceWithGooglePlace | null;
 }
 
 export interface MrItemOrdered {
