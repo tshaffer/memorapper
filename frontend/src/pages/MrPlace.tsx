@@ -163,9 +163,8 @@ const MrPlaceForm = () => {
   const handleSubmitPlace = async (e: React.MouseEvent<HTMLButtonElement>) => {
     
     e.preventDefault();
-    mrPlaceWithGooglePlace._id = mrPlaceWithGooglePlace._id || uuidv4();
 
-    dispatch(addMrPlace(mrPlaceWithGooglePlace as MrPlaceWithGooglePlace));
+    dispatch(addMrPlace(mrPlaceWithGooglePlace));
     setIsLoading(true);
 
     try {
