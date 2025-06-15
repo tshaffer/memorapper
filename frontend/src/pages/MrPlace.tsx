@@ -161,10 +161,9 @@ const MrPlaceForm = () => {
   };
 
   const handleSubmitPlace = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    
+
     e.preventDefault();
 
-    dispatch(addMrPlace(mrPlaceWithGooglePlace));
     setIsLoading(true);
 
     try {
@@ -174,7 +173,10 @@ const MrPlaceForm = () => {
         body: JSON.stringify(mrPlaceWithGooglePlace),
       });
       const data = await response.json();
+      const upsertedMrPlace: MrPlaceWithGooglePlace = data.place;
+      mrPlaceWithGooglePlace._id = upsertedMrPlace._id; // Update local state with the returned ID
       console.log('Place submitted:', data);
+      dispatch(addMrPlace(mrPlaceWithGooglePlace));
       setIsLoading(false);
     } catch (error) {
       console.error('Error submitting place:', error);
