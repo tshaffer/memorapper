@@ -1,4 +1,4 @@
-import { Filters, SearchResponse, RestaurantType, RestaurantOpen, MealType, PlaceType, MrPlaceWithGooglePlace, MrPlace, VisitedStatus } from "../types";
+import { Filters, SearchResponse, RestaurantType, RestaurantOpen, MealType, PlaceType, MrPlaceWithGooglePlace, VisitedStatus } from "../types";
 
 export const filterResults = async (
   filter: Filters,
