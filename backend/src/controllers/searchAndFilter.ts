@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { SearchQuery, Filters, SearchResponse, MrPlaceWithGooglePlace } from "../types";
 import { filterResults } from './filterResults';
-import { getMrPlaces, getMrPlacesWithGooglePlace } from './places';
+import { getMrPlacesWithGooglePlace } from './places';
 
 export const searchAndFilterHandler = async (
   req: Request<{}, {}, {

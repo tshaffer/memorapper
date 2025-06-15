@@ -63,42 +63,6 @@ export const getMrPlacesWithGooglePlaceHandler = async (
   }
 };
 
-export const getMrPlacesHandler = async (
-  req: Request,
-  res: Response
-): Promise<any> => {
-  try {
-    const mrPlaces: MrPlace[] = await getMrPlaces();
-    return res.status(200).json({ places: mrPlaces });
-  } catch (error) {
-    console.error('Error fetching places:', error);
-    return res.status(500).json({ error: 'An error occurred while fetching places.' });
-  }
-};
-
-export const getMrPlaces = async (): Promise<MrPlace[]> => {
-  try {
-    const mongoPlaceDocuments: IMongoPlace[] = await MongoPlaceModel.find({}).exec();
-    const mrPlacesDocuments: IMrPlace[] = await MrPlaceModel.find({}).exec();
-
-    const mrPlaces: MrPlace[] = [];
-
-    for (const placeDocument of mrPlacesDocuments) {
-      const placeGooglePlaceId = placeDocument.googlePlaceId;
-      for (const mongoPlaceDocument of mongoPlaceDocuments) {
-        if (mongoPlaceDocument.googlePlaceId === placeGooglePlaceId) {
-          const place: MrPlace = placeDocument.toObject();
-          mrPlaces.push(place);
-        }
-      }
-    }
-    return mrPlaces;
-  } catch (error) {
-    console.error('Error fetching places:', error);
-    return [];
-  }
-}
-
 export const getMrPlacesWithGooglePlace = async (): Promise<MrPlaceWithGooglePlace[]> => {
   try {
     const mongoPlaceDocuments: IMongoPlace[] = await MongoPlaceModel.find({}).exec();
