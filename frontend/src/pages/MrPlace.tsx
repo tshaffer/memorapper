@@ -4,7 +4,7 @@ import { useMediaQuery } from "@mui/material";
 import { useLocation, useParams } from 'react-router-dom';
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { PlaceType, MrPlace, MrPlaceWithGooglePlace } from '../types';
+import { PlaceType, MrPlaceWithGooglePlace } from '../types';
 import { useDispatch } from 'react-redux';
 import { addMrPlace } from '../redux/memorapperSlice';
 import { Button, MenuItem, Select, Checkbox, FormControlLabel, TextField, Rating } from "@mui/material";
@@ -184,7 +184,7 @@ const MrPlaceForm = () => {
     // debugger;
     // console.log('mrPlaceWithGooglePlace:', mrPlaceWithGooglePlace);
     // console.log('mrPlace:', mrPlace);
-    dispatch(addMrPlace(mrPlaceWithGooglePlace as MrPlace));
+    dispatch(addMrPlace(mrPlaceWithGooglePlace as MrPlaceWithGooglePlace));
     setIsLoading(true);
 
     return;

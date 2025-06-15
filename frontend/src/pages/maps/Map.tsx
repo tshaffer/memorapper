@@ -20,7 +20,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import VisiblePlacesList from './VisiblePlacesList';
 import PlaceDetailPanel from './PlaceDetailPanel';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteMrPlace, RootState, selectAllMrPlacesWithGooglePlaces, setCurrentMapLocation, setFilters } from '../../redux';
+import { deleteMrPlace, RootState, selectMrPlaces, setCurrentMapLocation, setFilters } from '../../redux';
 
 const MapPage: React.FC = () => {
 
@@ -28,7 +28,7 @@ const MapPage: React.FC = () => {
 
   const { currentMapLocation } = useSelector((state: RootState) => state.memorapper);
 
-  const mrPlacesWithGooglePlaces: MrPlaceWithGooglePlace[] = useSelector(selectAllMrPlacesWithGooglePlaces);
+  const mrPlacesWithGooglePlaces: MrPlaceWithGooglePlace[] = useSelector(selectMrPlaces);
   const { settings } = useSelector((state: RootState) => state.memorapper);
   const { _id } = useParams<{ _id: string }>();
 
@@ -46,7 +46,7 @@ const MapPage: React.FC = () => {
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
   const selectedPlace = useSelector((state: RootState) =>
     selectedPlaceId
-      ? selectAllMrPlacesWithGooglePlaces(state).find(p => p._id === selectedPlaceId)
+      ? selectMrPlaces(state).find(p => p._id === selectedPlaceId)
       : null
   );
 

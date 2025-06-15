@@ -16,12 +16,12 @@ import {
   PlaceType,
   MrPlaceWithGooglePlace,
   MrReviewData,
-  MrPlace,
+  // MrPlace,
 } from '../types';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import PlaceRatingInput from '../components/PlaceRatingInput';
-import { selectAllMrPlacesWithGooglePlaces } from '../redux/memorapperSelectors';
+import { selectMrPlaces } from '../redux/memorapperSelectors';
 
 interface RestaurantRatingProps {
   mrReviewData: MrReviewData;
@@ -29,7 +29,7 @@ interface RestaurantRatingProps {
 }
 
 const RestaurantRating: React.FC<RestaurantRatingProps> = ({ mrReviewData, setMrReviewData }) => {
-  const mrPlacesWithGooglePlaces: MrPlaceWithGooglePlace[] = useSelector(selectAllMrPlacesWithGooglePlaces);
+  const mrPlacesWithGooglePlaces: MrPlaceWithGooglePlace[] = useSelector(selectMrPlaces);
 
   const isMobile = useMediaQuery('(max-width:768px)');
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +38,7 @@ const RestaurantRating: React.FC<RestaurantRatingProps> = ({ mrReviewData, setMr
     .filter((place) => place.placeType === PlaceType.Restaurant);
 
   const handlePlaceReviewChange = (value: string) => {
-    const updatedPlace: MrPlace = { ...mrReviewData.place!, placeReview: value };
+    const updatedPlace: MrPlaceWithGooglePlace = { ...mrReviewData.place!, placeReview: value };
     setMrReviewData((prev) => ({ ...prev, place: updatedPlace }));
   };
 
@@ -47,7 +47,7 @@ const RestaurantRating: React.FC<RestaurantRatingProps> = ({ mrReviewData, setMr
     const selected = restaurantPlaces.find((p) => p._id === _id);
     if (!selected) return;
 
-    const selectedMrPlace: MrPlace = {
+    const selectedMrPlace: MrPlaceWithGooglePlace = {
       _id: selected._id,
       googlePlaceId: selected.googlePlaceId,
       placeType: selected.placeType || PlaceType.Restaurant,
@@ -87,7 +87,7 @@ const RestaurantRating: React.FC<RestaurantRatingProps> = ({ mrReviewData, setMr
       <PlaceRatingInput
         rating={mrReviewData?.place?.placeRating || null}
         onChange={(newRating) => {
-          const updatedPlace: MrPlace = {
+          const updatedPlace: MrPlaceWithGooglePlace = {
             ...mrReviewData.place!,
             placeRating: newRating ?? undefined,
           };

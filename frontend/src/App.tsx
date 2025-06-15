@@ -11,8 +11,8 @@ import { Distance, RestaurantOpen, Settings, VisitedStatus, } from './types';
 import Map from './pages/maps/Map';
 import SettingsDialog from './components/SettingsDialog';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { AppDispatch, fetchMrPlaces, RootState } from './redux';
-import { setSettings, setFilters, fetchGooglePlaces } from './redux';
+import { AppDispatch, fetchMrPlacesWithGooglePlace, RootState } from './redux';
+import { setSettings, setFilters } from './redux';
 import MrPlaceForm from './pages/MrPlace';
 import MrWriteReviewPage from './pages/MrWriteReviewPage';
 import MrPlaces from './pages/MrPlaces';
@@ -39,8 +39,8 @@ const App: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       console.log('loadData useEffect called');
-      await dispatch(fetchGooglePlaces());
-      await dispatch(fetchMrPlaces());
+      // await dispatch(fetchGooglePlacesWithGooglePlaces());
+      await dispatch(fetchMrPlacesWithGooglePlace());
     };
     loadData();
   }, [dispatch]);
