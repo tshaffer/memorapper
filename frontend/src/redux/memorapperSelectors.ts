@@ -16,6 +16,15 @@ export const selectMrPlaces = createSelector(
   (placesById, ids) => ids.map(id => placesById[id])
 );
 
+export const selectMrPlacesWithVisited = createSelector(
+  selectMrPlaces,
+  (places): (MrPlaceWithGooglePlace & { visited: boolean })[] =>
+    places.map((place) => ({
+      ...place,
+      visited: isPlaceVisited(place),
+    }))
+);
+
 // Individual MrPlaceWithGooglePlace by ID
 export const selectMrPlaceById = (placeId: string) =>
   (state: RootState) => state.memorapper.mrPlacesById[placeId];
