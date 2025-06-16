@@ -223,6 +223,13 @@ export const deletePlaceHandler = async (
 };
 
 const deletePlace = async (placeId: string) => {
+  const place = await MrPlaceModel.findOne({ _id: placeId }).exec();
+  if (!place) {
+    console.error(`Place with _id ${placeId} not found`);
+    // return res.status(500).json({ error: `An error occurred upsertMrPlaceHandler, Place with _id ${placeId} not found.` });
+    throw new Error(`An error occurred deletePlace, Place with _id ${placeId} not found.`);
+  }
+  await MongoPlaceModel.findOneAndDelete({ googlePlaceId: place.googlePlaceId });
   await MrPlaceModel.findOneAndDelete({ _id: placeId });
 }
 
