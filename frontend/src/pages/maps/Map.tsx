@@ -12,7 +12,6 @@ import {
 } from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
 import PulsingDots from '../../components/PulsingDots';
-// import { useUserContext } from '../../contexts/UserContext';
 import { newFilterResults } from '../../utilities/newFilterResults';
 import MapWithMarkers from '../../components/MapWIthMarkers';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -274,30 +273,6 @@ const MapPage: React.FC = () => {
     setSelectedPlaceId(place._id!);
   };
 
-  const handleUpdatePlace = async (updatedPlace: MrPlaceWithGooglePlace) => {
-
-    // Update the place in your state (and optionally propagate changes to your backend/global store)
-    setSelectedPlaceId(updatedPlace._id!);
-
-    setIsLoading(true);
-
-    try {
-      const response = await fetch('/api/submitPlace', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...updatedPlace,
-        }),
-      });
-      const data = await response.json();
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error submitting updatePlace:', error);
-      setIsLoading(false);
-    }
-
-  };
-
   const handleDeletePlace = async (_id: string) => {
     console.log('Delete place with id: ', _id);
     const deletePlaceBody = {
@@ -311,28 +286,6 @@ const MapPage: React.FC = () => {
 
     dispatch(deleteMrPlace(_id));
     setSelectedPlaceId(null);
-  };
-
-  const handleAddReview = (_id: string, review: MrRestaurantReview) => {
-    // Update the selected place with a new review
-    // if (selectedPlace) {
-    //   const updatedReviews = selectedPlace.restaurant!.restaurantReviews ? [...selectedPlace.restaurantReviews, review] : [review];
-    //   setSelectedPlace({ ...selectedPlace, restaurantReviews: updatedReviews });
-    // }
-  };
-
-  const handleEditReview = (_id: string, review: MrRestaurantReview) => {
-    // if (selectedPlace && selectedPlace.restaurantReviews) {
-    //   const updatedReviews = selectedPlace.restaurantReviews.map(r => r._idRestaurantReview === review._idRestaurantReview ? review : r);
-    //   setSelectedPlace({ ...selectedPlace, restaurantReviews: updatedReviews });
-    // }
-  };
-
-  const handleDeleteReview = (_id: string, reviewId: string) => {
-    // if (selectedPlace && selectedPlace.restaurantReviews) {
-    //   const updatedReviews = selectedPlace.restaurantReviews.filter(r => r._idRestaurantReview !== reviewId);
-    //   setSelectedPlace({ ...selectedPlace, restaurantReviews: updatedReviews });
-    // }
   };
 
   const renderPulsingDots = (): JSX.Element | null => {

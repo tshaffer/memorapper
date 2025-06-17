@@ -4,7 +4,6 @@ import { AdvancedMarker, APIProvider, Map } from '@vis.gl/react-google-maps';
 import '../App.css';
 
 // // https://icon-sets.iconify.design/?query=<query>
-// import { useUserContext } from '../contexts/UserContext';
 import PlaceMarker from './PlaceMarker';
 const DEFAULT_ZOOM = 14;
 
@@ -64,15 +63,6 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ initialCenter, places, 
 
   const handlePlaceClicked = (place: MrPlaceWithGooglePlace) => {
     onPlaceSelect(place);
-  };
-
-  const handleLinkClick = (): void => {
-    console.log('handleLinkClick', selectedPlace);
-    onPlaceSelect(selectedPlace!);
-  }
-
-  const handleCloseInfoWindow = () => {
-    setSelectedPlace(null);
   };
 
   const renderPlaceMarker = (place: MrPlaceWithGooglePlace, index: number): JSX.Element => {

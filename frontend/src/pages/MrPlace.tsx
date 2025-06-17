@@ -3,7 +3,6 @@ import '../styles/multiPanelStyles.css';
 import { useMediaQuery } from "@mui/material";
 import { useLocation, useParams } from 'react-router-dom';
 import React from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { PlaceType, MrPlaceWithGooglePlace } from '../types';
 import { useDispatch } from 'react-redux';
 import { addMrPlace } from '../redux/memorapperSlice';

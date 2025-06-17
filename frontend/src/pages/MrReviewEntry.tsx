@@ -6,7 +6,6 @@ import '../styles/multiPanelStyles.css';
 import '../styles/reviewEntryForm.css';
 import { useState } from 'react';
 import {
-  MrPlaceWithGooglePlace,
   MrReviewData,
 } from '../types';
 import React from 'react';

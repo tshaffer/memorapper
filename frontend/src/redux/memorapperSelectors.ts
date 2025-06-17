@@ -30,7 +30,7 @@ export const selectMrPlaceById = (placeId: string) =>
   (state: RootState) => state.memorapper.mrPlacesById[placeId];
 
 // Determine if a place has been visited
-export const isPlaceVisited = (place: MrPlaceWithGooglePlace): boolean =>
+const isPlaceVisited = (place: MrPlaceWithGooglePlace): boolean =>
   (typeof place.placeRating === 'number' && place.placeRating > 0) ||
   (place.placeReview?.trim() ?? '') !== '' ||
   (place.restaurantReviews?.length ?? 0) > 0;

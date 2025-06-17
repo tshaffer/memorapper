@@ -99,8 +99,6 @@ const PlaceDetailPanel: React.FC<PlaceDetailPanelProps> = ({
     }
   };
 
-
-
   const handleShowDirections = () => {
     if (placeLocation && currentLocation) {
       const destinationLocation: google.maps.LatLngLiteral = placeLocation.location;
