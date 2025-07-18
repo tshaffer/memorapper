@@ -115,51 +115,56 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
     return <PulsingDots />;
   };
 
-  return (
-    <>
-      <div
-        style={{
-          marginTop: '1rem',
-          display: 'flex',
-          gap: '1rem'
-        }}
-      >
-        <Button
-          variant="contained"
-          onClick={onSubmit}
-          disabled={!mrReviewData?.place}
-          style={getDisabledStyle(!mrReviewData?.place)}
-        >
-          {mrReviewData._id ? 'Save Changes' : 'Add Review'}
-        </Button>
-      </div >
+return (
+  <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+    {/* Scrollable Content */}
+    <Box
+      sx={{
+        height: 'calc(100vh - 168px)', // adjust if your button height + padding differs
+        overflowY: 'auto',
+      }}
+    >
+      <RestaurantRating
+        mrReviewData={mrReviewData}
+        setMrReviewData={setMrReviewData}
+      />
 
-      <Box
-        sx={{
-          height: '92vh',           // fill the viewport height
-          overflowY: 'auto',         // enable vertical scrolling
-        }}>
-
-        <RestaurantRating
-          mrReviewData={mrReviewData}
-          setMrReviewData={setMrReviewData}
-        />
-
-        <Box sx={{ padding: 2 }}>
-          <Paper elevation={1} sx={{ padding: 2 }}>
-            <Divider sx={{ mb: 2 }} />
-            <Stack spacing={2}>
-              {renderOrderedItems()}
-              {renderDateOfVisit()}
-            </Stack>
-          </Paper>
-        </Box>
+      <Box sx={{ padding: 2 }}>
+        <Paper elevation={1} sx={{ padding: 2 }}>
+          <Divider sx={{ mb: 2 }} />
+          <Stack spacing={2}>
+            {renderOrderedItems()}
+            {renderDateOfVisit()}
+          </Stack>
+        </Paper>
       </Box>
+    </Box>
 
-      {renderPulsingDots()}
+    {/* Bottom Button */}
+    <Box
+      sx={{
+        position: 'sticky',
+        bottom: 0,
+        backgroundColor: 'background.paper',
+        borderTop: '1px solid #ccc',
+        p: 2,
+        zIndex: 1,
+      }}
+    >
+      <Button
+        variant="contained"
+        onClick={onSubmit}
+        disabled={!mrReviewData?.place}
+        style={getDisabledStyle(!mrReviewData?.place)}
+        fullWidth
+      >
+        {mrReviewData._id ? 'Save Changes' : 'Add Review'}
+      </Button>
+    </Box>
 
-    </>
-  );
+    {renderPulsingDots()}
+  </Box>
+);
 };
 
 export default MrReviewEntry;
