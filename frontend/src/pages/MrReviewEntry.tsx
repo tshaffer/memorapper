@@ -98,12 +98,18 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
   };
 
   const renderDateOfVisit = (): JSX.Element => {
+
     const formatDateForInput = (dateString: string): string => {
-      // Only return a valid format if dateString is defined
+      // If the string is already in yyyy-MM-dd format, return it
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+        return dateString;
+      }
+
+      // Otherwise, parse it from ISO and convert it manually
       const date = new Date(dateString);
-      const yyyy = date.getFullYear();
-      const mm = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-      const dd = String(date.getDate()).padStart(2, '0');
+      const yyyy = date.getUTCFullYear();
+      const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
+      const dd = String(date.getUTCDate()).padStart(2, '0');
       return `${yyyy}-${mm}-${dd}`;
     };
 
