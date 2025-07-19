@@ -265,7 +265,7 @@ const MrPlaceForm = () => {
           fullWidth
         >
           <MenuItem value={RestaurantType.Restaurant}>Restaurant</MenuItem>
-          <MenuItem value={RestaurantType.CoffeeShop}>Coffee</MenuItem>
+          <MenuItem value={RestaurantType.CoffeeShop}>Café</MenuItem>
           <MenuItem value={RestaurantType.Seafood}>Seafood</MenuItem>
           <MenuItem value={RestaurantType.PizzaPlace}>Pizza</MenuItem>
           <MenuItem value={RestaurantType.Bar}>Bar</MenuItem>

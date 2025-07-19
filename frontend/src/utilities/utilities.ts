@@ -129,7 +129,7 @@ export const restaurantTypeLabelFromRestaurantType = (restaurantType: Restaurant
     case RestaurantType.Bar:
       return 'Bar';
     case RestaurantType.CoffeeShop:
-      return 'Coffee Shop';
+      return 'Café';
     case RestaurantType.PizzaPlace:
       return 'Pizza Place';
     case RestaurantType.ItalianRestaurant:

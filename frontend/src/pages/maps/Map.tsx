@@ -31,6 +31,9 @@ const MapPage: React.FC = () => {
 
   const { settings } = useSelector((state: RootState) => state.memorapper);
   const { _id } = useParams<{ _id: string }>();
+  if (_id) {
+    debugger;
+  }
 
   const isMobile = useMediaQuery('(max-width:768px)');
 

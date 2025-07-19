@@ -32,7 +32,7 @@ const FiltersSettings: React.FC<FiltersSettingsProps> = (props: FiltersSettingsP
 
   const RESTAURANT_TYPE_OPTIONS: { label: string; value: RestaurantType }[] = [
     { label: 'Restaurant', value: RestaurantType.Restaurant },
-    { label: 'Coffee Shop', value: RestaurantType.CoffeeShop },
+    { label: 'Café', value: RestaurantType.CoffeeShop },
     { label: 'Seafood', value: RestaurantType.Seafood },
     { label: 'Pizza', value: RestaurantType.PizzaPlace },
     { label: 'Bar', value: RestaurantType.Bar },
