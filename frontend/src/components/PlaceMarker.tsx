@@ -94,6 +94,8 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick, isHover
 
     const elements: JSX.Element[] = [];
 
+    elements.push(<span key="name">{place.googlePlace!.name}</span>);
+
     if (place.placeRating && place.placeRating > 0) {
       elements.push(
         <span key="rating-label">
@@ -114,7 +116,10 @@ const PlaceMarker: React.FC<PlaceMarkerProps> = ({ place, onMarkerClick, isHover
   }
 
   const getUnvisitedPlaceHoverElement = (): JSX.Element => {
+
     const elements: JSX.Element[] = [];
+
+    elements.push(<span key="name">{place.googlePlace!.name}</span>);
 
     if (place.interestLevel && place.interestLevel > 0) {
       elements.push(
