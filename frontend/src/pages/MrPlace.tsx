@@ -365,7 +365,7 @@ const MrPlaceForm = () => {
       }}
     >
       <div id='MrPlace' style={containerStyle}>
-        <h2>Add Place</h2>
+        <h2>{_id ? 'Edit Place' : 'Add Place'}</h2>
         <form>
           {renderPlaceName()}
           {/* {renderPlaceType()} */}
@@ -382,7 +382,7 @@ const MrPlaceForm = () => {
             onClick={handleSubmitPlace}
             disabled={isLoading || !mrPlaceWithGooglePlace.googlePlace?.googlePlaceId}
           >
-            Add Place
+            {_id ? 'Save Changes' : 'Add Place'}
           </Button>
         </div>
         {isLoading && <PulsingDots />}
