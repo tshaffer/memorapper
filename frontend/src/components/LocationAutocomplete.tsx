@@ -44,7 +44,6 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
 
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const [selectedLocationKey, setSelectedLocationKey] = useState<string>('');
-  const [showCustomInput, setShowCustomInput] = useState<boolean>(false);
 
   const recentLocations: RecentLocation[] = useSelector(selectRecentLocations);
 
@@ -70,7 +69,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
     if (currentLocation) {
       onSetMapLocation(currentLocation);
       setSelectedLocationKey(''); // Clear dropdown
-      setShowCustomInput(false);
+      // setShowCustomInput(false);
     }
   };
 
@@ -119,14 +118,9 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
     const key = event.target.value;
     setSelectedLocationKey(key);
 
-    if (key === '__custom__') {
-      setShowCustomInput(true);
-    } else {
-      const selected = recentLocations.find(loc => loc.label === key);
-      if (selected) {
-        setShowCustomInput(false);
-        onSetMapLocation({ lat: selected.lat, lng: selected.lng });
-      }
+    const selected = recentLocations.find(loc => loc.label === key);
+    if (selected) {
+      onSetMapLocation({ lat: selected.lat, lng: selected.lng });
     }
   };
 
@@ -172,31 +166,28 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
             {loc.label}
           </MenuItem>
         ))}
-        <MenuItem value="__custom__">Custom…</MenuItem>
       </Select>
 
-      {showCustomInput && (
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Autocomplete
-            onLoad={(autocomplete) => (mapAutocompleteRef.current = autocomplete)}
-            onPlaceChanged={handleMapLocationChanged}
-          >
-            <input
-              ref={inputRef}
-              type="text"
-              placeholder="Enter a location"
-              style={{
-                width: '100%',
-                padding: isMobile ? '8px' : '10px',
-                fontSize: isMobile ? '14px' : '16px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                boxSizing: 'border-box',
-              }}
-            />
-          </Autocomplete>
-        </Box>
-      )}
+      <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Autocomplete
+          onLoad={(autocomplete) => (mapAutocompleteRef.current = autocomplete)}
+          onPlaceChanged={handleMapLocationChanged}
+        >
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder="Enter a location"
+            style={{
+              width: '100%',
+              padding: isMobile ? '8px' : '10px',
+              fontSize: isMobile ? '14px' : '16px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              boxSizing: 'border-box',
+            }}
+          />
+        </Autocomplete>
+      </Box>
 
       <Button
         size="small"
