@@ -1,3 +1,2 @@
 export * from './MongoPlace';
-export * from './User';
-
+export * from './MrPlace';

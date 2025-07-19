@@ -5,7 +5,7 @@ const collections = [
   "mrplaces",
 ];
 
-const outputDir = "/Users/tedshaffer/Documents/MongoDBBackups/memoRapper/backup-07-12-02";
+const outputDir = "/Users/tedshaffer/Documents/MongoDBBackups/memoRapper/backup-07-18-01";
 
 const fs = require("fs");
 
