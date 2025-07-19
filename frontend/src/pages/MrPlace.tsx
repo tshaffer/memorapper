@@ -134,21 +134,6 @@ const MrPlaceForm = () => {
     setMrPlaceWithGooglePlace(prev => ({ ...prev, [field]: value }));
   };
 
-  const handlePlaceTypeChange = (newType: PlaceType) => {
-    setMrPlaceWithGooglePlace(prev => ({
-      ...prev,
-      placeType: newType,
-      restaurantSpecs: newType === PlaceType.Restaurant
-        ? {
-          restaurantType: RestaurantType.Restaurant,
-          openForBreakfast: false,
-          openForLunch: false,
-          openForDinner: false,
-        }
-        : undefined
-    }));
-  };
-
   const handleRestaurantFieldChange = (field: keyof MrRestaurant, value: any) => {
     setMrPlaceWithGooglePlace(prev => ({
       ...prev,
@@ -203,23 +188,6 @@ const MrPlaceForm = () => {
         onSetRestaurantName={(name: string) => setPlaceName(name)}
         onSetGooglePlace={(googlePlace: GooglePlace) => handleChangeGooglePlace(googlePlace)}
       />
-    </div>
-  );
-
-  const renderPlaceType = () => (
-    <div style={{ marginBottom: '1rem' }}>
-      <label>{'Type:'}</label>
-      <Select
-        labelId="place-type-select-label"
-        value={mrPlaceWithGooglePlace.placeType}
-        onChange={e => handlePlaceTypeChange(e.target.value as PlaceType)}
-        fullWidth
-      >
-        <MenuItem value={PlaceType.Restaurant}>Restaurant</MenuItem>
-        <MenuItem value={PlaceType.Accommodations}>Accommodations</MenuItem>
-        <MenuItem value={PlaceType.Destination}>Other</MenuItem>
-        <MenuItem value={PlaceType.GroceryStore}>Grocery Store</MenuItem>
-      </Select>
     </div>
   );
 
@@ -368,7 +336,6 @@ const MrPlaceForm = () => {
         <h2>{_id ? 'Edit Place' : 'Add Place'}</h2>
         <form>
           {renderPlaceName()}
-          {/* {renderPlaceType()} */}
           {renderRestaurantType()}
           {renderInterestLevel()}
           {renderPlacePreview()}
