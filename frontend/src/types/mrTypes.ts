@@ -74,3 +74,9 @@ export interface GooglePlace {
   vicinity?: string;
   website: string;
 }
+
+export interface RecentLocation {
+  label: string; // e.g., 'Bend, OR'
+  lat: number;   // latitude
+  lng: number;   // longitude
+}

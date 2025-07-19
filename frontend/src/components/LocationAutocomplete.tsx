@@ -1,135 +1,240 @@
-import React from 'react';
-import { Autocomplete } from '@react-google-maps/api';
-import { IconButton, useMediaQuery, Typography, Box, Tooltip } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import {
+  Box,
+  IconButton,
+  Typography,
+  useMediaQuery,
+  Tooltip,
+  Select,
+  MenuItem,
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+  Button
+} from '@mui/material';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
-import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import { Autocomplete } from '@react-google-maps/api';
+import { SelectChangeEvent } from '@mui/material/Select';
+import { RecentLocation } from '../types';
+import { useSelector } from 'react-redux';
+import { selectRecentLocations, setRecentLocations } from '../redux';
 
 interface LocationAutocompleteProps {
   onSetMapLocation: (mapLocation: google.maps.LatLngLiteral) => void;
 }
 
-const LocationAutocomplete: React.FC<LocationAutocompleteProps> = (props: LocationAutocompleteProps) => {
-  const { _id } = useParams<{ _id: string }>();
+const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
+  onSetMapLocation,
+}) => {
+
+  const dispatch = useDispatch();
 
   const isMobile = useMediaQuery('(max-width:768px)');
-
-  const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
-
   const mapAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    const fetchCurrentLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const location = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            };
-            if (!_id) {
-              setCurrentLocation(location);
-            }
-          },
-          (error) => console.error('Error getting current location: ', error),
-          { enableHighAccuracy: true }
-        );
-      }
-    };
+  const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral | null>(null);
+  const [selectedLocationKey, setSelectedLocationKey] = useState<string>('');
+  const [showCustomInput, setShowCustomInput] = useState<boolean>(false);
 
-    fetchCurrentLocation();
-  }, [_id]);
+  const recentLocations: RecentLocation[] = useSelector(selectRecentLocations);
+
+  const [manageDialogOpen, setManageDialogOpen] = useState(false);
+
+  // Get device's current location
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const location = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+        setCurrentLocation(location);
+      },
+      (error) => console.error('Error getting current location: ', error),
+      { enableHighAccuracy: true }
+    );
+  }, []);
+
 
   const handleUseCurrentLocation = () => {
-    props.onSetMapLocation(currentLocation!);
-
-    // Clear the Autocomplete input field
-    if (inputRef.current) {
-      inputRef.current.value = '';
+    if (currentLocation) {
+      onSetMapLocation(currentLocation);
+      setSelectedLocationKey(''); // Clear dropdown
+      setShowCustomInput(false);
     }
   };
 
   const handleMapLocationChanged = () => {
     if (mapAutocompleteRef.current) {
-      const googlePlace: google.maps.places.PlaceResult = mapAutocompleteRef.current.getPlace();
-      if (googlePlace?.geometry !== undefined) {
-        const geometry = googlePlace.geometry!;
-        const newCoordinates: google.maps.LatLngLiteral = {
-          lat: geometry.location!.lat(),
-          lng: geometry.location!.lng(),
+      const place = mapAutocompleteRef.current.getPlace();
+      if (place?.geometry?.location && place.formatted_address) {
+        const newCoordinates = {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng(),
         };
-        props.onSetMapLocation(newCoordinates);
-        // console.log('Place changed:', place, newCoordinates);
+
+        const newLocation: RecentLocation = {
+          label: place.formatted_address,
+          lat: newCoordinates.lat,
+          lng: newCoordinates.lng,
+        };
+
+        // Check for duplicates
+        const exists = recentLocations.some(loc => loc.label === newLocation.label);
+        let updatedLocations = [...recentLocations];
+        if (!exists) {
+          updatedLocations.push(newLocation);
+          dispatch(setRecentLocations(updatedLocations));
+          localStorage.setItem('recentLocations', JSON.stringify(updatedLocations));
+        }
+
+        onSetMapLocation(newCoordinates);
       } else {
         console.error('No place found in handleMapLocationChanged');
       }
     }
   };
 
+  const handleDeleteLocation = (labelToDelete: string) => {
+    const updated = recentLocations.filter(loc => loc.label !== labelToDelete);
+    dispatch(setRecentLocations(updated));
+    localStorage.setItem('recentLocations', JSON.stringify(updated));
+
+    if (labelToDelete === selectedLocationKey) {
+      setSelectedLocationKey('');
+    }
+  };
+
+  const handleLocationSelect = (event: SelectChangeEvent<string>) => {
+    const key = event.target.value;
+    setSelectedLocationKey(key);
+
+    if (key === '__custom__') {
+      setShowCustomInput(true);
+    } else {
+      const selected = recentLocations.find(loc => loc.label === key);
+      if (selected) {
+        setShowCustomInput(false);
+        onSetMapLocation({ lat: selected.lat, lng: selected.lng });
+      }
+    }
+  };
+
   return (
     <Box
-      id="location-autocomplete-container"
       sx={{
         display: 'flex',
         alignItems: 'center',
-        gap: isMobile ? '4px' : 2,
+        gap: isMobile ? 1 : 2,
         width: '100%',
-        minWidth: 0, // Ensures proper flex shrinking when needed
+        flexWrap: 'wrap',
       }}
     >
-      {/* Current Location Icon */}
-      <Tooltip title="Current Location">
+      <Tooltip title="Use Current Location">
         <IconButton
           onClick={handleUseCurrentLocation}
           sx={{
             backgroundColor: '#007bff',
             color: '#fff',
-            '&:hover': {
-              backgroundColor: '#0056b3',
-            },
+            '&:hover': { backgroundColor: '#0056b3' },
           }}
         >
           <MyLocationIcon />
         </IconButton>
       </Tooltip>
 
-      {/* Label */}
-      <Typography
-        variant="body1"
-        sx={{
-          whiteSpace: 'nowrap',
-        }}
-      >
-        Specify location:
+      <Typography variant="body1" sx={{ whiteSpace: 'nowrap' }}>
+        Location:
       </Typography>
 
-      {/* Autocomplete Input */}
-      <Box
-        sx={{
-          flex: 1, // Take remaining space after the label
-          minWidth: 0, // Prevent layout issues with shrinking
-        }}
+      <Select
+        value={selectedLocationKey}
+        onChange={handleLocationSelect}
+        displayEmpty
+        size="small"
+        sx={{ minWidth: isMobile ? 140 : 180, flexGrow: 1 }}
       >
-        <Autocomplete
-          onLoad={(autocomplete) => (mapAutocompleteRef.current = autocomplete)}
-          onPlaceChanged={handleMapLocationChanged}
-        >
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder="Enter the location"
-            style={{
-              width: '100%', // Fill available space
-              padding: isMobile ? '8px' : '10px',
-              boxSizing: 'border-box',
-              fontSize: isMobile ? '14px' : '16px',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-            }}
-          />
-        </Autocomplete>
-      </Box>
+        <MenuItem value="" disabled>
+          Select a location
+        </MenuItem>
+        {recentLocations.map((loc) => (
+          <MenuItem key={loc.label} value={loc.label}>
+            {loc.label}
+          </MenuItem>
+        ))}
+        <MenuItem value="__custom__">Custom…</MenuItem>
+      </Select>
+
+      {showCustomInput && (
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Autocomplete
+            onLoad={(autocomplete) => (mapAutocompleteRef.current = autocomplete)}
+            onPlaceChanged={handleMapLocationChanged}
+          >
+            <input
+              ref={inputRef}
+              type="text"
+              placeholder="Enter a location"
+              style={{
+                width: '100%',
+                padding: isMobile ? '8px' : '10px',
+                fontSize: isMobile ? '14px' : '16px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                boxSizing: 'border-box',
+              }}
+            />
+          </Autocomplete>
+        </Box>
+      )}
+
+      <Button
+        size="small"
+        startIcon={<ManageAccountsIcon />}
+        onClick={() => setManageDialogOpen(true)}
+        sx={{ marginLeft: isMobile ? 0 : 'auto', marginTop: isMobile ? 1 : 0 }}
+      >
+        Manage Locations
+      </Button>
+
+
+      <Dialog open={manageDialogOpen} onClose={() => setManageDialogOpen(false)}>
+        <DialogTitle>Manage Saved Locations</DialogTitle>
+        <DialogContent>
+          <List dense>
+            {recentLocations
+              .slice()
+              .sort((a, b) => a.label.localeCompare(b.label))
+              .map((loc) => (
+                <ListItem
+                  key={loc.label}
+                  secondaryAction={
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => handleDeleteLocation(loc.label)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  }
+                >
+                  <ListItemText primary={loc.label} />
+                </ListItem>
+              ))}
+          </List>
+        </DialogContent>
+      </Dialog>
+
     </Box>
   );
 };

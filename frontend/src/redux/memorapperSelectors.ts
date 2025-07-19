@@ -48,6 +48,7 @@ export const selectVisitedPlaceIds = createSelector(
 // Misc selectors
 export const selectLoading = (state: RootState) => state.memorapper.loading;
 export const selectError = (state: RootState) => state.memorapper.error;
+export const selectRecentLocations = (state: RootState) => state.memorapper.recentLocations;
 export const selectFilters = (state: RootState) => state.memorapper.settings.filters;
 export const selectSettings = (state: RootState) => state.memorapper.settings;
 export const selectCurrentMapLocation = (state: RootState) => state.memorapper.currentMapLocation;

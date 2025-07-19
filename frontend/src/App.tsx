@@ -7,11 +7,11 @@ import GoogleMapsProvider from './components/GoogleMapsProvider';
 
 import './App.css';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, useMediaQuery } from '@mui/material';
-import { Distance, RestaurantOpen, Settings, VisitedStatus, } from './types';
+import { Distance, RecentLocation, RestaurantOpen, Settings, VisitedStatus, } from './types';
 import Map from './pages/maps/Map';
 import SettingsDialog from './components/SettingsDialog';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { AppDispatch, fetchMrPlacesWithGooglePlace, RootState } from './redux';
+import { AppDispatch, fetchMrPlacesWithGooglePlace, RootState, setRecentLocations } from './redux';
 import { setSettings, setFilters } from './redux';
 import MrPlaceForm from './pages/MrPlace';
 import MrWriteReviewPage from './pages/MrWriteReviewPage';
@@ -45,7 +45,17 @@ const App: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log('getAppSettings useEffect called');
+    console.log('getLocalStorage useEffect called');
+
+    const getRecentLocations = (): RecentLocation[] => {
+      const recentLocations: string | null = localStorage.getItem('recentLocations');
+      if (recentLocations) {
+        return JSON.parse(recentLocations);
+      } else {
+        return [];
+      }
+    };
+    
     const getAppSettings = (): Settings => {
       const appSettings: string | null = localStorage.getItem('appSettings');
       if (appSettings) {
@@ -69,6 +79,10 @@ const App: React.FC = () => {
         return settings;
       }
     }
+
+    const recentLocations = getRecentLocations();
+    console.log("recentLocations:", recentLocations);
+    dispatch(setRecentLocations(recentLocations));
 
     const appSettings: Settings = getAppSettings();
     dispatch(setSettings(appSettings));

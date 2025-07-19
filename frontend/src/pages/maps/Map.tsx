@@ -7,7 +7,6 @@ import {
   // ExtendedGooglePlaceToVisit,
   Filters,
   SearchQuery,
-  MrRestaurantReview,
   MrPlaceWithGooglePlace,
 } from '../../types';
 import FiltersDialog from '../../components/FiltersDialog';
@@ -371,7 +370,9 @@ const MapPage: React.FC = () => {
           id="map-page-locationAutocomplete-container"
           sx={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 0 }}
         >
-          <LocationAutocomplete onSetMapLocation={handleSetMapLocation} />
+          <LocationAutocomplete
+            onSetMapLocation={handleSetMapLocation}
+          />
         </Box>
 
         {/* Filters Button */}

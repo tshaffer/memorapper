@@ -10,12 +10,14 @@ import {
   MrReviewData,
   MrRestaurant,
   VisitedStatus,
+  RecentLocation,
 } from '../types';
 
 interface MemorapperState {
   mrPlacesById: Record<string, MrPlaceWithGooglePlace>;
   mrPlaceIds: string[];
   currentMapLocation: google.maps.LatLngLiteral | null;
+  recentLocations: RecentLocation[];
   settings: Settings;
   loading: boolean;
   error: string | null;
@@ -44,6 +46,7 @@ const initialState: MemorapperState = {
     },
   },
   currentMapLocation: null,
+  recentLocations: [] as RecentLocation[],
   loading: true,
   error: null,
 };
@@ -68,6 +71,9 @@ const memorapperSlice = createSlice({
   name: 'memorapper',
   initialState,
   reducers: {
+    setRecentLocations: (state, action: PayloadAction<RecentLocation[]>) => {
+      state.recentLocations = action.payload;
+    },
     setFilters(state, action: PayloadAction<Filters>) {
       state.settings.filters = action.payload;
     },
@@ -174,6 +180,7 @@ const memorapperSlice = createSlice({
 });
 
 export const {
+  setRecentLocations,
   setFilters,
   setSettings,
   setCurrentMapLocation,
