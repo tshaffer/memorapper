@@ -24,7 +24,7 @@ const MrWriteReviewPage = () => {
 
   useEffect(() => {
     if (!placeId) return;
-    
+        
     const place = allMrPlacesWithGooglePlaces.find(p => p._id === placeId);
     if (!place) return;
 

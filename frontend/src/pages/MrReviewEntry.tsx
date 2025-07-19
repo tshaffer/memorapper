@@ -97,74 +97,90 @@ const MrReviewEntry: React.FC<MrReviewEntryProps> = (props: MrReviewEntryProps) 
     );
   };
 
-  const renderDateOfVisit = (): JSX.Element => (
-    <div className="form-group">
-      <label htmlFor="date-of-visit">Date of Visit</label>
-      <TextField
-        id="date-of-visit"
-        type="date"
-        fullWidth
-        value={mrReviewData.dateOfVisit}
-        onChange={(e) => handleChange('dateOfVisit', e.target.value)}
-      />
-    </div>
-  );
+  const renderDateOfVisit = (): JSX.Element => {
+    const formatDateForInput = (dateString: string): string => {
+      // Only return a valid format if dateString is defined
+      const date = new Date(dateString);
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+      const dd = String(date.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    };
+
+    const formattedDate = mrReviewData.dateOfVisit
+      ? formatDateForInput(mrReviewData.dateOfVisit)
+      : '';
+
+    return (
+      <div className="form-group">
+        <label htmlFor="date-of-visit">Date of Visit</label>
+        <TextField
+          id="date-of-visit"
+          type="date"
+          fullWidth
+          value={formattedDate}
+          onChange={(e) => handleChange('dateOfVisit', e.target.value)}
+        />
+      </div>
+    );
+  };
+
 
   const renderPulsingDots = (): JSX.Element | null => {
     if (!isLoading) return null;
     return <PulsingDots />;
   };
 
-return (
-  <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-    {/* Scrollable Content */}
-    <Box
-      sx={{
-        height: 'calc(100vh - 168px)', // adjust if your button height + padding differs
-        overflowY: 'auto',
-      }}
-    >
-      <RestaurantRating
-        mrReviewData={mrReviewData}
-        setMrReviewData={setMrReviewData}
-      />
-
-      <Box sx={{ padding: 2 }}>
-        <Paper elevation={1} sx={{ padding: 2 }}>
-          <Divider sx={{ mb: 2 }} />
-          <Stack spacing={2}>
-            {renderOrderedItems()}
-            {renderDateOfVisit()}
-          </Stack>
-        </Paper>
-      </Box>
-    </Box>
-
-    {/* Bottom Button */}
-    <Box
-      sx={{
-        position: 'sticky',
-        bottom: 0,
-        backgroundColor: 'background.paper',
-        borderTop: '1px solid #ccc',
-        p: 2,
-        zIndex: 1,
-      }}
-    >
-      <Button
-        variant="contained"
-        onClick={onSubmit}
-        disabled={!mrReviewData?.place}
-        style={getDisabledStyle(!mrReviewData?.place)}
-        fullWidth
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      {/* Scrollable Content */}
+      <Box
+        sx={{
+          height: 'calc(100vh - 168px)', // adjust if your button height + padding differs
+          overflowY: 'auto',
+        }}
       >
-        {mrReviewData._id ? 'Save Changes' : 'Add Review'}
-      </Button>
-    </Box>
+        <RestaurantRating
+          mrReviewData={mrReviewData}
+          setMrReviewData={setMrReviewData}
+        />
 
-    {renderPulsingDots()}
-  </Box>
-);
+        <Box sx={{ padding: 2 }}>
+          <Paper elevation={1} sx={{ padding: 2 }}>
+            <Divider sx={{ mb: 2 }} />
+            <Stack spacing={2}>
+              {renderOrderedItems()}
+              {renderDateOfVisit()}
+            </Stack>
+          </Paper>
+        </Box>
+      </Box>
+
+      {/* Bottom Button */}
+      <Box
+        sx={{
+          position: 'sticky',
+          bottom: 0,
+          backgroundColor: 'background.paper',
+          borderTop: '1px solid #ccc',
+          p: 2,
+          zIndex: 1,
+        }}
+      >
+        <Button
+          variant="contained"
+          onClick={onSubmit}
+          disabled={!mrReviewData?.place}
+          style={getDisabledStyle(!mrReviewData?.place)}
+          fullWidth
+        >
+          {mrReviewData._id ? 'Save Changes' : 'Add Review'}
+        </Button>
+      </Box>
+
+      {renderPulsingDots()}
+    </Box>
+  );
 };
 
 export default MrReviewEntry;
