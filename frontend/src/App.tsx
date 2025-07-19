@@ -11,7 +11,7 @@ import { Distance, RecentLocation, RestaurantOpen, Settings, VisitedStatus, } fr
 import Map from './pages/maps/Map';
 import SettingsDialog from './components/SettingsDialog';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { AppDispatch, fetchMrPlacesWithGooglePlace, RootState, setRecentLocations } from './redux';
+import { AppDispatch, fetchMrPlacesWithGooglePlace, RootState, setCurrentMapLocation, setRecentLocations } from './redux';
 import { setSettings, setFilters } from './redux';
 import MrPlaceForm from './pages/MrPlace';
 import MrWriteReviewPage from './pages/MrWriteReviewPage';
@@ -55,7 +55,7 @@ const App: React.FC = () => {
         return [];
       }
     };
-    
+
     const getAppSettings = (): Settings => {
       const appSettings: string | null = localStorage.getItem('appSettings');
       if (appSettings) {
@@ -89,6 +89,54 @@ const App: React.FC = () => {
     setFilters(appSettings.filters);
 
   }, []);
+
+  // Fetch current location on startup
+  useEffect(() => {
+
+    const fetchCurrentLocation = async (): Promise<google.maps.LatLngLiteral | null> => {
+
+      if (!navigator.geolocation) {
+        console.error('Geolocation is not supported by this browser.');
+        return null;
+      }
+
+      try {
+        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(
+            resolve,
+            reject,
+            { enableHighAccuracy: true }
+          );
+        });
+
+        const location = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+
+
+        dispatch(setCurrentMapLocation(location));
+
+        return location;
+
+      } catch (error) {
+        console.error('Error getting current location: ', error);
+
+        const defaultLocation = {
+          lat: 37.3920898, // Default to Crapshack
+          lng: -122.1479873,
+        };
+        console.warn('Using default location:', defaultLocation);
+
+        dispatch(setCurrentMapLocation(defaultLocation));
+
+        return defaultLocation;
+      }
+    };
+
+    fetchCurrentLocation();
+  }, []);
+
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [settingsAnchorEl, setSettingsAnchorEl] = useState<null | HTMLElement>(null);

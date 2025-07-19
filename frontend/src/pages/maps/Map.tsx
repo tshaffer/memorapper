@@ -32,6 +32,7 @@ const MapPage: React.FC = () => {
   const { settings } = useSelector((state: RootState) => state.memorapper);
   const { _id } = useParams<{ _id: string }>();
   if (_id) {
+    // catch this as I don't believe it's used anymore
     debugger;
   }
 
@@ -71,56 +72,10 @@ const MapPage: React.FC = () => {
     overflow: 'hidden',
   };
 
-  // Fetch current location and places/reviews on mount
   useEffect(() => {
 
-    const fetchCurrentLocation = async (): Promise<google.maps.LatLngLiteral | null> => {
-
-      if (!navigator.geolocation) {
-        console.error('Geolocation is not supported by this browser.');
-        return null;
-      }
-
-      try {
-        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(
-            resolve,
-            reject,
-            { enableHighAccuracy: true }
-          );
-        });
-
-        const location = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-
-        if (!_id) {
-          dispatch(setCurrentMapLocation(location));
-        }
-
-        return location;
-
-      } catch (error) {
-        console.error('Error getting current location: ', error);
-
-        const defaultLocation = {
-          lat: 37.3920898, // Default to Crapshack
-          lng: -122.1479873,
-        };
-        console.warn('Using default location:', defaultLocation);
-
-        if (!_id) {
-          dispatch(setCurrentMapLocation(defaultLocation));
-        }
-
-        return defaultLocation;
-      }
-    };
-
     const fetchData = async () => {
-      const location = await fetchCurrentLocation();
-      filterOnEntry(mrPlacesWithGooglePlaces, location!, settings.filters);
+      filterOnEntry(mrPlacesWithGooglePlaces, currentMapLocation!, settings.filters);
     };
 
     fetchData();
